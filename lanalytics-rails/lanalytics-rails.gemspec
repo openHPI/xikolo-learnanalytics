@@ -18,6 +18,9 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 4.0"
+  s.add_dependency 'gon'
+  s.add_dependency 'msgr', '~> 0.10'
 
-  s.add_development_dependency "sqlite3"
+  s.add_development_dependency 'coffee-rails', '~> 4.0.0'
+
 end
