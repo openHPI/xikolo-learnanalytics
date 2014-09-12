@@ -1,0 +1,27 @@
+# This plugin was created for the xikolo-web application in order to track the events from the (custom) video player
+# This is exactly the situation for which a olugin is designed for ...
+class window.Lanalytics.Plugins.Html5VideoPlayerTracker extends Lanalytics.Plugin
+
+  # This is the interface method expected by Lanalytics
+  # Should return a valid instance of the plugin
+  @newInstance: (lanalytics) ->
+    return new Lanalytics.Plugins.Html5VideoPlayerTracker(lanalytics)
+
+  constructor: (lanalytics) ->
+    super(lanalytics)
+    this._init()
+
+  _init: ->
+    $(document).on("video-play", @trackVideoPlay)
+    $(document).on("video-pause", @trackVideoPause)
+
+  # It is important to user '=>' because this is how CoffeeScript wants us to implement callbacks
+  trackVideoPlay: (event, videoPlayerData) =>
+    @lanalytics.trackCurrentUserDoing("video-play", {
+      ressource_id: videoPlayerData.ressource
+    })
+
+  trackVideoPause: (event, videoPlayerData) =>
+    @lanalytics.trackCurrentUserDoing("video-pause", {
+      ressource_id: videoPlayerData.ressource
+    })
