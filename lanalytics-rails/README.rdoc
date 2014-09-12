@@ -1,3 +1,10 @@
-= Lanalytics
+Lanalytics-Rails
+=========================== 
 
-This project rocks and uses MIT-LICENSE.
+A gem that integrate with the LAnalytics service and allows to track user event in a rails application.
+
+## Installation 
+
+- Include the gem 'lanalytics-rails' into the application's Gemfile ```gem 'lanalytics-rails'```
+  - When you want to work also on this gem, don't forget to include the path the folder where you checked out the gem. The gem should then look like ```gem 'lanalytics-rails',  path: '<path_to_gem_in_your_dev_env>'```.
+
