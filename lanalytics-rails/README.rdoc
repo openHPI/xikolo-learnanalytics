@@ -8,3 +8,5 @@ A gem that integrate with the LAnalytics service and allows to track user event 
 - Include the gem 'lanalytics-rails' into the application's Gemfile ```gem 'lanalytics-rails'```
   - When you want to work also on this gem, don't forget to include the path the folder where you checked out the gem. The gem should then look like ```gem 'lanalytics-rails',  path: '<path_to_gem_in_your_dev_env>'```.
 
+## How to build a plugin for event tracking in application
+...

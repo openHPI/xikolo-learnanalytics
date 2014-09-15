@@ -1,2 +1,5 @@
-module TrackingHelper
+module Lanalytics
+  module TrackingHelper
+    
+  end
 end
