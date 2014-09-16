@@ -52,7 +52,7 @@ class window.Lanalytics
       data: logEvent,
       success: (response_data, text_status, jqXHR) ->
         # Do nothing for now
-      error: (jqXHR, textStatus, errorThrown) ->
+      error: (jqXHR, textStatus, errorThrown) =>
         @eventQueue.push(logEvent)
     })
 
@@ -65,6 +65,9 @@ class window.Lanalytics.VerbDictionary
     },
     "video-pause": {
       verb_id: "http://lanalytics.open.hpi.de/expapi/verbs/video-stop"
+    },
+    "quiz-submitted": {
+      verb_id: 'http://lanalytics.open.hpi.de/expapi/verbs/quiz-submitted'
     }
   }
 

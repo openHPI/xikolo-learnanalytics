@@ -25,5 +25,10 @@ module Lanalytics
 
     def bulk_track
     end
+
+    private
+    def log_params
+      params.permit("actor", "verb", "object")
+    end
   end
 end
