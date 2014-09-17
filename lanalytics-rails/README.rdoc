@@ -1,12 +1,28 @@
 Lanalytics-Rails
 =========================== 
 
-A gem that integrate with the LAnalytics service and allows to track user event in a rails application.
+A gem that integrate with the LAnalytics service and allows to track user event in a rails application. This is done by providing Javascript and Ruby helpers that can hook into the rails application. The gem helpers help you to track events very easily. But the gem is also tracking some events automatically.
 
-## Installation 
+An event can be broken down into 3 main parts: actor, verb and ressource. This way, we are able very flexible in defining and creating events, e.g. 'User (id:111) observed ressource (id:333, type: video)'
 
-- Include the gem 'lanalytics-rails' into the application's Gemfile ```gem 'lanalytics-rails'```
-  - When you want to work also on this gem, don't forget to include the path the folder where you checked out the gem. The gem should then look like ```gem 'lanalytics-rails',  path: '<path_to_gem_in_your_dev_env>'```.
+## Getting Started
+- Include the gem 'lanalytics' into the application's Gemfile `gem 'lanalytics'`
+  - When working on this gem, don't forget to include the path the dev folder of gem, see `gem 'lanalytics',  path: '<path_to_gem_on_local_sys>'`
 
-## How to build a plugin for event tracking in application
-...
+
+## Getting Started: Lanalytics in front end projects
+
+- As mentioned, each tracking event consists of three main parts: actor, verb and ressource. In most cases, the actor will be the current user - the person that is currently logged in. Fir this case, the lanalytics gem gives also some help by providing an controller filter that will inject the current user in to javascript code for tracking event. To do this include the following lines into the `application_controller.rb`:
+```
+    include Lanalytics::LanalyticsControllerFilter
+    before_filter :add_lanalytics_filter
+```
+- Now, let's track some events in the front end views. Depending on your use case, you can either use one of provided plugins from the lanalytics gem or you can build your own plugins for special cases, e.g. tracking events from a video player
+
+## Provided tracking plugins from the lanalytics gem 
+
+- StaticHtmlEventTracker
+
+
+## Custom tracking plugins for your application
+- ...
