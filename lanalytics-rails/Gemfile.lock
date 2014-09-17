@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lanalytics-rails (0.0.1)
+    lanalytics-rails (0.1)
       gon
       msgr (~> 0.10)
       rails (~> 4.0)
@@ -38,7 +38,7 @@ GEM
     amq-protocol (1.9.2)
     arel (5.0.1.20140414130214)
     builder (3.2.2)
-    bunny (1.4.0)
+    bunny (1.4.1)
       amq-protocol (>= 1.9.2)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
@@ -89,7 +89,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.3.2)
-    request_store (1.0.8)
+    request_store (1.1.0)
     sprockets (2.12.2)
       hike (~> 1.2)
       multi_json (~> 1.0)

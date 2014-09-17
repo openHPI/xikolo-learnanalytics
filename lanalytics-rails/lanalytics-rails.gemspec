@@ -5,7 +5,7 @@ require "lanalytics/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "lanalytics"
+  s.name        = "lanalytics-rails"
   s.version     = Lanalytics::VERSION
   s.authors     = ['Open HPI Dev Team']
   s.email       = ['xikolo-dev@hpi.uni-potsdam.de']
