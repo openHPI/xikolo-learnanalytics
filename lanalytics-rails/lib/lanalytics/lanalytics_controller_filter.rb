@@ -7,6 +7,11 @@ module Lanalytics
 
     def add_lanalytics_filter
       if current_user
+        
+        if gon.nil?
+          raise "The gem 'gon' is not included. Plz include this gem"
+        end
+
         # Setting a meta lanaytics variable via gon, e.g. the current user so that it can be retrieved by tracking js code on the page
         gon.lanalytics = {
           :current_user => current_user
