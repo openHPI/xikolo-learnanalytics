@@ -40,7 +40,7 @@ class Lanalytics::SnapshotController < ApplicationController
         ressource: lanalytics_ressource_model
       }
       puts "#{lanalytics_ressource_model_event}"
-      # Msgr.publish(lanalytics_ressource_model_event, to: "lanalytics.domain.model")
+      Msgr.publish(lanalytics_ressource_model_event, to: "lanalytics.domain.model")
     end
 
   end
