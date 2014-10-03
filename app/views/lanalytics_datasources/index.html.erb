@@ -1,0 +1,27 @@
+<h1>Listing lanalytics_datasources</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Root url</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @lanalytics_datasources.each do |lanalytics_datasource| %>
+      <tr>
+        <td><%= lanalytics_datasource.name %></td>
+        <td><%= lanalytics_datasource.root_url %></td>
+        <td><%= link_to 'Show', lanalytics_datasource %></td>
+        <td><%= link_to 'Edit', edit_lanalytics_datasource_path(lanalytics_datasource) %></td>
+        <td><%= link_to 'Destroy', lanalytics_datasource, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Lanalytics datasource', new_lanalytics_datasource_path %>

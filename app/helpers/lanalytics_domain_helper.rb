@@ -1,0 +1,2 @@
+module LanalyticsDomainHelper
+end
