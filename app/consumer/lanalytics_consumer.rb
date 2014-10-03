@@ -18,17 +18,12 @@ class LanalyticsConsumer < Msgr::Consumer
 
       if ressource.has_key?(:relationships) and not ressource[:relationships].nil? and not ressource[:relationships].empty?
         for relationship in ressource[:relationships]
-          puts "#{relationship}"
+          relationship_properties = relationship.except(*%w(with_rel_type to_ressource_type to_ressource_uuid))
           Neo4j::Session.query
-            .merge(r1: {("Item".to_sym) => {ressource_uuid: ressource[:ressource_uuid] }}).break
+            .merge(r1: {ressource_type.to_sym => {ressource_uuid: ressource[:ressource_uuid] }}).break
             .merge(r2: {relationship[:to_ressource_type].to_sym => {ressource_uuid: relationship[:to_ressource_uuid] }}).break
-            .merge("(r1)-[:#{relationship[:with_rel_type]}]->(r2)")
+            .merge("(r1)-[:#{relationship[:with_rel_type]} #{Neo4j::Core::Query.new.merge(relationship_properties).to_cypher[8..-2]}]->(r2)")
             .pluck(:r1)
-
-          #Neo4j::Session.query
-            #.match(r1: {ressource_type.to_sym => {ressource_uuid: ressource_uuid }})
-            #.merge(r2: {relationship[:to_ressource_type].to_sym => {ressource_uuid: relationship[:to_ressource_uuid] }})
-            #.merge("(r1)-[:#{relationship[:with_rel_type]}]->(r2)").pluck(:r1)
         end
       end
 
