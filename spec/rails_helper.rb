@@ -41,3 +41,7 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
 end
+
+# This strategy is defined in spec/support
+require "#{Rails.root}/spec/support/factory_girl/json_strategy.rb"
+FactoryGirl.register_strategy(:json, JsonStrategy)

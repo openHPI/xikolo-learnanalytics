@@ -2,30 +2,46 @@ require 'rails_helper'
 
 RSpec.describe Lanalytics::Model::Ressource do
 
-  it "from json hash" do
-    resource = Lanalytics::Model::Ressource.new_from_json(example_item_json_hash)
-    expect(resource).to be_instance_of(Lanalytics::Model::Ressource)
-    expect(resource.type).to eq("Item")
-    expect(resource.uuid).to eq("00000003-3100-4444-9999-000000000003")
+  before(:each) do
+    @resource = FactoryGirl.build(:resource)
+    @resource_hash = FactoryGirl.attributes_for(:resource)
   end
 
-  it "from json string" do
-    resource = Lanalytics::Model::Ressource.new_from_json(JSON.dump(example_item_json_hash))
-    expect(resource).to be_instance_of(Lanalytics::Model::Ressource)
-    expect(resource.type).to eq("Item")
-    expect(resource.uuid).to eq("00000003-3100-4444-9999-000000000003")
+  describe "doing JSON De-/Serialization" do
+    it "from json hash" do
+      resource = Lanalytics::Model::Ressource.new_from_json(@resource_hash)
+      check_resource_properties(resource)
+    end
+
+    it "from json string" do
+      resource_json_str = JSON.dump(@resource_hash)
+      resource = Lanalytics::Model::Ressource.new_from_json(resource_json_str)
+      check_resource_properties(resource)
+    end
+
+    it "from nil should raise error" do
+      expect do
+        resource = Lanalytics::Model::Ressource.new_from_json(nil)
+      end.to raise_error
+    end
+
+    it "to json string" do
+      resource = FactoryGirl.build(:resource)
+      resource_json_str = JSON.dump(resource)
+      expect(resource_json_str).to be_a(String)
+      expect(JSON.parse(resource_json_str)).to include('json_class' => resource.class.name, 'data' => {'type' => resource.type, 'uuid' => resource.uuid})
+    end
   end
+
 
   it "marshales correctly" do
-    
+
   end
 
-  def example_item_json_hash
-    return {
-      "type" => "Item",
-      "uuid" => "00000003-3100-4444-9999-000000000003"
-    }
+  def check_resource_properties(actual_resource)
+    expect(actual_resource).to be_a(Lanalytics::Model::Ressource)
+    expect(actual_resource.type).to eq(@resource.type)
+    expect(actual_resource.uuid).to eq(@resource.uuid)
   end
-
 
 end
