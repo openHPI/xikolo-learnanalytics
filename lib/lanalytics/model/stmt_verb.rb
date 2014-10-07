@@ -1,8 +1,8 @@
 module Lanalytics::Model
-  class StmtUser < Lanalytics::Model::StmtComponent
+  class StmtVerb < Lanalytics::Model::StmtComponent
 
-    def initialize(uuid)
-      super("User", uuid)
+    def initialize(type)
+      super(type)
     end
 
     def self.new_from_json(json)

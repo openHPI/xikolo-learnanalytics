@@ -1,9 +1,13 @@
 require 'json'
 
-class Lanalytics::Model::Ressource
+class Lanalytics::Model::StmtComponent
   attr_accessor :type, :uuid
 
   def initialize(type, uuid)
+
+    raise "'type' argument cannot be nil" unless type
+    raise "'uuid' argument cannot be nil" unless uuid
+
     @type = type
     @uuid = uuid
   end

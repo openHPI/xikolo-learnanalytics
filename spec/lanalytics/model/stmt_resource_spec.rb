@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Lanalytics::Model::Ressource do
+RSpec.describe Lanalytics::Model::StmtResource do
 
   before(:each) do
     @resource = FactoryGirl.build(:resource)
@@ -20,9 +20,7 @@ RSpec.describe Lanalytics::Model::Ressource do
     end
 
     it "from nil should raise error" do
-      expect do
-        resource = Lanalytics::Model::Ressource.new_from_json(nil)
-      end.to raise_error
+      expect { resource = Lanalytics::Model::Ressource.new_from_json(nil) }.to raise_error
     end
 
     it "to json string" do
@@ -33,10 +31,7 @@ RSpec.describe Lanalytics::Model::Ressource do
     end
   end
 
-
-  it "marshales correctly" do
-
-  end
+  #it "marshales correctly" do
 
   def check_resource_properties(actual_resource)
     expect(actual_resource).to be_a(Lanalytics::Model::Ressource)
