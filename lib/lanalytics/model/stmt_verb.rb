@@ -14,8 +14,16 @@ module Lanalytics::Model
         raise "'json' argument is not a JSON Hash or String"
       end
 
-      return new(json[:uuid])
+      return new(json[:type])
     end
+
+    def to_json(*a)
+      {
+          "json_class"   => self.class.name,
+          "data"         => {"type" => @type }
+      }.to_json(*a)
+    end
+
 
   end
 end

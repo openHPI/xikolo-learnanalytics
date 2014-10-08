@@ -10,7 +10,7 @@ RSpec.describe Lanalytics::Model::StmtUser do
   it "initializes correctly" do
     stmt_user_uuid = "1234567890"
     stmt_user = Lanalytics::Model::StmtUser.new(stmt_user_uuid)
-    expect(stmt_user.type).to eq('User')
+    expect(stmt_user.type).to eq(:User)
     expect(stmt_user.uuid).to eq(stmt_user_uuid)
   end
 
@@ -30,7 +30,7 @@ RSpec.describe Lanalytics::Model::StmtUser do
       stmt_user = FactoryGirl.build(:stmt_user)
       stmt_user_json_str = JSON.dump(stmt_user)
       expect(stmt_user_json_str).to be_a(String)
-      expect(JSON.parse(stmt_user_json_str)).to include('json_class' => @stmt_user.class.name, 'data' => {'type' => @stmt_user.type, 'uuid' => @stmt_user.uuid})
+      expect(JSON.parse(stmt_user_json_str)).to include('json_class' => @stmt_user.class.name, 'data' => {'type' => stmt_user.type.to_s, 'uuid' => stmt_user.uuid.to_s})
     end
 
   end

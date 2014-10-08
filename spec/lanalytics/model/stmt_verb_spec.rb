@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe Lanalytics::Model::StmtVerb do
 
   it "initializes correctly" do
-    stmt_verb_type = "PLAY_VIDEO"
-    stmt_verb = Lanalytics::Model::StmtVerb.new(type)
-    expect(stmt_verb.type).to be(stmt_verb_type)
+    stmt_verb_type = :PLAY_VIDEO
+    stmt_verb = Lanalytics::Model::StmtVerb.new(stmt_verb_type)
+    expect(stmt_verb.type).to be_a(Symbol)
+    expect(stmt_verb.type).to be(stmt_verb_type.to_sym)
   end
 
   describe "(JSON De-/Serialization)" do
@@ -29,7 +30,7 @@ RSpec.describe Lanalytics::Model::StmtVerb do
       stmt_verb = FactoryGirl.build(:stmt_verb)
       stmt_verb_json_str = JSON.dump(stmt_verb)
       expect(stmt_verb_json_str).to be_a(String)
-      expect(JSON.parse(stmt_verb_json_str)).to include('json_class' => @stmt_verb.class.name, 'data' => {'type' => @stmt_verb.type})
+      expect(JSON.parse(stmt_verb_json_str)).to include('json_class' => @stmt_verb.class.name, 'data' => {'type' => @stmt_verb.type.to_s})
     end
 
     def check_stmt_verb_properties(actual_stmt_verb)
