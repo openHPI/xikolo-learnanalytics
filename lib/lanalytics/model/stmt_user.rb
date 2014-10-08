@@ -16,4 +16,12 @@ class Lanalytics::Model::StmtUser < Lanalytics::Model::StmtResource
     return new(json[:uuid])
   end
 
+  def _dump(level)
+    return @uuid.to_s
+  end
+
+  def self._load(marshalled_stmt_user)
+    return new(marshalled_stmt_user)
+  end
+
 end

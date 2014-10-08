@@ -1,11 +1,6 @@
 class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
   attr_reader :uuid
 
-  def initialize(type)
-    raise "'type' argument cannot be nil" unless type.is_a? String or type.is_a? Symbol
-    @type = type.to_sym
-  end
-
   def initialize(type, uuid)
     super(type)
 
@@ -34,7 +29,6 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
     }.to_json(*a)
   end
 
-
   # JSON Deserialization
   # {
   #    "json_class"   => self.class.name,
@@ -45,19 +39,19 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
   end
 
   # Implementing the required interface for marshalling objects, see http://ruby-doc.org/core-2.1.3/Marshal.html
-  def marshal_dump
-    [@type, @uuid]
+  def _dump level
+    return [@type, @uuid].join(':|stmt_resource|:')
   end
 
-  def marshal_load(serialized_stmt_array)
-    @type, @uuid = serialized_stmt_array
+  def self._load(marshalled_stmt_resource)
+    return new(*marshalled_stmt_resource.split(':|stmt_resource|:'))
   end
 
   def == (other)
     unless other.class == self.class
       return false
     end
-    return @type == other.type && @uuid == other.uuid
+    return (@type == other.type and @uuid == other.uuid)
   end
   alias_method :eql?, :==
 

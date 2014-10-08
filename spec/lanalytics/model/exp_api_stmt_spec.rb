@@ -115,6 +115,30 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
   end
 
+  describe "(Marshalling)" do
+
+    it "should marshal the objects" do
+      stmt = FactoryGirl.build(:stmt)
+      marshalled_stmt = Marshal.dump(stmt)
+      expect(marshalled_stmt).to be_a(String)
+      expect(marshalled_stmt).to include(stmt.class.name)
+      expect(marshalled_stmt).to include('Lanalytics::Model::StmtUser')
+      expect(marshalled_stmt).to include('Lanalytics::Model::StmtVerb')
+      expect(marshalled_stmt).to include('Lanalytics::Model::StmtResource')
+
+    end
+
+    it "should be able to do the whole cycle" do
+      stmt = FactoryGirl.build(:stmt)
+      marshalled_stmt = Marshal.dump(stmt)
+      new_stmt = Marshal.load(marshalled_stmt)
+      expect(new_stmt).to be_a(Lanalytics::Model::ExpApiStatement)
+      expect(new_stmt).not_to be(stmt)
+      expect(new_stmt).to eq(stmt)
+    end
+
+  end
+
   #it "marshales correctly" do
 
   def check_stmt_properties(actual_stmt)
