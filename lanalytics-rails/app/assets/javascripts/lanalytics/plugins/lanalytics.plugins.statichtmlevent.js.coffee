@@ -14,13 +14,18 @@ class window.Lanalytics.Plugins.StaticHtmlEventTracker extends Lanalytics.Plugin
   _init: ->
     $("*[data-lanalytics-event]").on("click", @processStaticHtmlEvent)
 
-  # It is important to user '=>' because this is how CoffeeScript wants us to implement callbacks
-  @processStaticHtmlEvent: (event) =>
-    if $(this).parents("[data-lanalytics-ressource]").length == 0
-      throw "No 'data-lanalytics-ressource' field could be found in the parents of #{$(this).html().trim()}."
+  # It is important to use '=>' because then 'this' will be binded to StaticHtmlEventTracker instance (in order to access lanalytics)
+  processStaticHtmlEvent: (event) =>
+    
+    clickedElement = event.target
+    lanalyticsParentsOfElement = $(clickedElement).parents("[data-lanalytics-resource]")
+    if lanalyticsParentsOfElement.length == 0
+      throw "No 'data-lanalytics-resource' field could be found in the parents of #{$(clickedElement).html().trim()}."
 
-    eventObjectId = $(this).parents("[data-lanalytics-ressource]").first().data("lanalytics-object");
+    eventData = $(clickedElement).data("lanalytics-event")
+    stmtVerb = new Lanalytics.Model.StmtVerb(eventData['verb'])
 
-    lanalytics.trackCurrentUserDoing($(this).data("lanalytics-event").verb, {
-      ressource_id: eventObjectId
-    })
+    eventResourceData = lanalyticsParentsOfElement.first().data("lanalytics-resource");
+    stmtResource = new Lanalytics.Model.StmtResource(eventResourceData['type'], eventResourceData['uuid'])
+
+    @lanalytics.trackCurrentUserDoing(stmtVerb, stmtResource)
