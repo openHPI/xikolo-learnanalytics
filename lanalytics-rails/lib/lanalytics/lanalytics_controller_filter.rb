@@ -1,4 +1,5 @@
 require 'action_controller'
+require 'gon'
 
 module Lanalytics
   module LanalyticsControllerFilter
