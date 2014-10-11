@@ -1,7 +1,7 @@
 require 'json'
 
 class Lanalytics::Model::StmtComponent
-  attr_accessor :type
+  attr_reader :type
 
   def initialize(type)
     raise "'type' argument cannot be nil" unless type.is_a? String or type.is_a? Symbol

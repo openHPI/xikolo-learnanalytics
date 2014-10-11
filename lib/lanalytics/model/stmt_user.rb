@@ -1,3 +1,5 @@
+require_relative 'stmt_resource'
+
 class Lanalytics::Model::StmtUser < Lanalytics::Model::StmtResource
 
   def initialize(uuid)
@@ -9,6 +11,8 @@ class Lanalytics::Model::StmtUser < Lanalytics::Model::StmtResource
       json = json.with_indifferent_access
     elsif json.is_a? String
       json = JSON.parse(json, symbolize_names: true) if json.is_a? String
+    elsif not json
+      raise "'json' cannot be nil"
     else
       raise "'json' argument is not a JSON Hash or String"
     end

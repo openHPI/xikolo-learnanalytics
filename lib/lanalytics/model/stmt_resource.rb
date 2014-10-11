@@ -1,3 +1,5 @@
+require_relative 'stmt_component'
+
 class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
   attr_reader :uuid
 
@@ -14,6 +16,8 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
       json = json.with_indifferent_access
     elsif json.is_a? String
       json = JSON.parse(json, symbolize_names: true) if json.is_a? String
+    elsif not json
+      raise "'json' cannot be nil"
     else
       raise "'json' argument is not a JSON Hash or String"
     end
