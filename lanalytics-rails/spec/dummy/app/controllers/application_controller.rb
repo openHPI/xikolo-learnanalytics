@@ -5,5 +5,5 @@ class ApplicationController < ActionController::Base
 
 
   include Lanalytics::LanalyticsControllerFilter
-  before_filter :add_lanalytics_filter
+  before_action :add_lanalytics_filter
 end

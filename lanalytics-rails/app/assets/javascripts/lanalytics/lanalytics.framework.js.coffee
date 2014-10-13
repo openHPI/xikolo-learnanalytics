@@ -12,12 +12,14 @@ class window.Lanalytics.Framework
 
   currentUser: ->
     if gon?.lanalytics?.current_user?
-      return new Lanalytics.Model.StmtUser(gon.lanalytics.current_user.id)
+      return new Lanalytics.Model.StmtUser(gon.lanalytics.current_user.attributes.id)
     else
       return new Lanalytics.Model.StmtUser("ANONYMOUS")
 
   track: (user, verb, ressource, withResult, inContext) ->
     
+    # If a verb is key, we will replace it with the verb that we need to transmit
+    verb = Lanalytics.VerbDictionary.getVerb(verb) if typeof verb is "string"
     now = new Date()
     
     experienceStmt = new Lanalytics.Model.ExpApiStatement(user, verb, ressource, now, withResult, inContext)
@@ -33,9 +35,6 @@ class window.Lanalytics.Framework
   trackCurrentUserDoing: (verb, ressource) ->
 
     user = @currentUser()
-    # If a verb is key, we will replace it with the verb that we need to transmit
-    verb = Lanalytics.VerbDictionary.getVerb(verb) if typeof verb is "string"
-
     @track(user, verb, ressource, null, null)
 
   processEventQueue: ->

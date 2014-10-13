@@ -16,7 +16,7 @@ class window.Lanalytics.Plugins.NewLanalyticsPlugin extends Lanalytics.Plugin
     $(document).on("video-pause", @trackVideoPause)
 
   # Handler for the event in the DOM
-  # It is important to user '=>' because this is how CoffeeScript wants us to implement callbacks
+  # It is important to use '=>' because then 'this' will be binded to NewLanalyticsPlugin instance (in order to access lanalytics)
   # trackVideoPlay: (event, videoPlayerData) =>
   #   @lanalytics.trackCurrentUserDoing("video-play", {
   #     ressource_id: videoPlayerData.ressource

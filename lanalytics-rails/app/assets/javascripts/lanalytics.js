@@ -11,7 +11,7 @@
 //= require_directory ./lanalytics/plugins
 
 // Files that we do not want to release
-//= stub lanalytics/plugins/lanalytics.plugins.newplugintemplate.js.coffee
-//= stub lanalytics/plugins/lanalytics.plugins.example.html5videoplayer.js.coffee
+//= stub ./lanalytics/plugins/lanalytics.plugins.newplugintemplate.js.coffee
+//= stub ./lanalytics/plugins/lanalytics.plugins.example.html5videoplayer.js.coffee
 
 lanalytics = new Lanalytics.Framework();

@@ -15,10 +15,10 @@ class window.Lanalytics.Plugins.Html5VideoPlayerTracker extends Lanalytics.Plugi
     $(document).on("video-play", @trackVideoPlay)
     $(document).on("video-pause", @trackVideoPause)
 
-  # It is important to user '=>' because this is how CoffeeScript wants us to implement callbacks
+  # It is important to use '=>' because then 'this' will be binded to StaticHtmlEventTracker instance (in order to access lanalytics)
   trackVideoPlay: (event, videoPlayerData) =>
     stmtResource = new Lanalytics.Model.StmtResource("Item", videoPlayerData.ressource)
-    @lanalytics.trackCurrentUserDoing("video-play", stmtResource)
+    @lanalytics.track("video-play", stmtResource)
 
   trackVideoPause: (event, videoPlayerData) =>
     stmtResource = new Lanalytics.Model.StmtResource("Item", videoPlayerData.ressource)

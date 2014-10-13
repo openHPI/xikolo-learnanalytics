@@ -7,7 +7,7 @@ class Lanalytics::TrackingController < ApplicationController
   
   def track
     exp_api_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(params.to_h)
-    Msgr.publish(Marshal.dump(exp_api_stmt), to: "lanalytics.event.stream")
+    Msgr.publish(exp_api_stmt.as_json, to: "lanalytics.event.stream")
     render json: { status: "ok" }
   end
 
