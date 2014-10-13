@@ -6,8 +6,16 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
   def initialize(type, uuid)
     super(type)
 
-    raise "'uuid' argument cannot be nil" unless uuid
+    raise ArgumentError.new("'uuid' argument cannot be nil") unless uuid
     @uuid = uuid.to_s
+    raise ArgumentError.new("'uuid' argument cannot be empty") if uuid.empty?
+  end
+
+  def as_json
+    {
+      :type => @type,
+      :uuid => @uuid
+    }
   end
 
   def self.new_from_json(json)
@@ -23,14 +31,6 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
     end
 
     return new(json[:type], json[:uuid])
-  end
-
-  # JSON Serialization (Marshalling)
-  def to_json(*a)
-    {
-        "json_class"   => self.class.name,
-        "data"         => {"type" => @type, "uuid" => @uuid }
-    }.to_json(*a)
   end
 
   # JSON Deserialization

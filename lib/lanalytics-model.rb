@@ -4,6 +4,7 @@ require "lanalytics/model/stmt_resource"
 require "lanalytics/model/stmt_verb"
 
 module Lanalytics
+  module Model
 
-
+  end
 end

@@ -2,12 +2,24 @@ require 'rails_helper'
 
 RSpec.describe Lanalytics::Model::StmtResource do
 
-  before(:each) do
-    @resource = FactoryGirl.build(:stmt_resource)
-    @resource_hash = FactoryGirl.attributes_for(:stmt_resource)
+  describe "(Initialization)" do
+
+  it "should not initialize when 'type' or 'uuid' are nil or empty" do
+    expect { stmt_resource = Lanalytics::Model::StmtResource.new(nil, nil) }.to raise_error(ArgumentError)
+    expect { stmt_resource = Lanalytics::Model::StmtResource.new('User', nil) }.to raise_error(ArgumentError)
+    expect { stmt_resource = Lanalytics::Model::StmtResource.new('User', '') }.to raise_error(ArgumentError)
+    expect { stmt_resource = Lanalytics::Model::StmtResource.new(nil, '1231451') }.to raise_error(ArgumentError)
+    expect { stmt_resource = Lanalytics::Model::StmtResource.new('', '1231451') }.to raise_error(ArgumentError)
+  end
+
   end
 
   describe "doing JSON De-/Serialization" do
+    before(:each) do
+      @resource = FactoryGirl.build(:stmt_resource)
+      @resource_hash = FactoryGirl.attributes_for(:stmt_resource)
+    end
+
     it "from json hash" do
       resource = Lanalytics::Model::StmtResource.new_from_json(@resource_hash)
       check_resource_properties(resource)

@@ -1,6 +1,8 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+#File.expand_path('../lib/lanalytics/experience_api/statement', __FILE__)
+#require '../lanalytics/experience_api/statement'
 
 #require 'rails'
 
@@ -37,7 +39,8 @@ module Lanalytics
     #config.neo4j.session_type = :server_db
     #config.neo4j.session_path = ENV['GRAPHENEDB_URL'] || 'http://localhost:7474'
 
-
+    config.autoload_paths << Rails.root.join('lib')
+    config.eager_load_paths << Rails.root.join('lib')
 
   end
 end

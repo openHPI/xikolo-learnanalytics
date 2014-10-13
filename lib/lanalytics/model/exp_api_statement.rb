@@ -29,6 +29,17 @@ class Lanalytics::Model::ExpApiStatement
     @in_context = in_context.to_hash
   end
 
+  def as_json
+    {
+      :user => @user.as_json,
+      :verb => @verb.as_json,
+      :resource => @resource.as_json,
+      :timestamp => @timestamp,
+      :with_result => @with_result,
+      :in_context => @in_context
+    }
+  end
+
   def self.new_from_json(json)
 
     if json.is_a? Hash
@@ -54,15 +65,12 @@ class Lanalytics::Model::ExpApiStatement
   def to_json(*a)
     {
         :json_class => self.class.name,
-        :data => {
-            :user => JSON.dump(@user),
-            :verb => JSON.dump(@verb),
-            :resource => JSON.dump(@resource),
-            :timestamp => @timestamp,
-            :with_result => @with_result,
-            :in_context => @in_context
-        }
+        :data => self.as_json
     }.to_json(*a)
+  end
+
+  def self.json_create(json_hash)
+    self.new_from_json(json_hash['data'])
   end
 
   #def actor_uuid
@@ -84,6 +92,7 @@ class Lanalytics::Model::ExpApiStatement
     new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! { | arg | Marshal.load(arg) })
   end
 
+  # Implementing the equals method
   def ==(other)
     unless other.class == self.class
       return false
@@ -91,4 +100,5 @@ class Lanalytics::Model::ExpApiStatement
     return (@user == other.user and @verb == other.verb and @resource == other.resource and @timestamp == other.timestamp and @with_result == other.with_result and @in_context == other.in_context)
   end
   alias_method :eql?, :==
+
 end

@@ -24,17 +24,25 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       expect(stmt.in_context).to be(@stmt_context)
     end
 
-    it "should initilize even when context and result missing" do
+    it "should initialize even when context and result missing" do
       stmt = Lanalytics::Model::ExpApiStatement.new(@stmt_user, @stmt_verb, @stmt_resource, @stmt_timestamp)
-      expect(stmt.user).to be(@stmt_user)
-      expect(stmt.verb).to be(@stmt_verb)
-      expect(stmt.resource).to be(@stmt_resource)
-      expect(stmt.timestamp).to be(@stmt_timestamp)
       expect(stmt.with_result).to be_empty
       expect(stmt.in_context).to be_empty
     end
 
-    it "should not initilaize when a critical component (user, verb, resource) is missing" do
+    it "should not initialize when 'type' or 'uuid' of stmt_resource or stmt_user are empty" do
+      
+      expect do
+        stmt = Lanalytics::Model::ExpApiStatement.new(Lanalytics::Model::StmtUser.new(""), @stmt_verb, @stmt_resource, @stmt_timestamp, @stmt_result, @stmt_context)
+      end.to raise_error(ArgumentError)
+        
+      expect do
+        stmt = Lanalytics::Model::ExpApiStatement.new(@stmt_user, @stmt_verb, @stmt_resource, Lanalytics::Model::StmtResource.new(""), @stmt_result, @stmt_context)
+      end.to raise_error(ArgumentError)
+
+    end
+
+    it "should not initialize when a critical component (user, verb, resource) is missing" do
       expect { resource = Lanalytics::Model::ExpApiStatement.new }.to raise_error
 
       for i in (0...7)

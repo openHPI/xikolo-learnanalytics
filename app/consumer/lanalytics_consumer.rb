@@ -19,6 +19,7 @@ class LanalyticsConsumer < Msgr::Consumer
       if ressource.has_key?(:relationships) and not ressource[:relationships].nil? and not ressource[:relationships].empty?
         for relationship in ressource[:relationships]
           relationship_properties = relationship.except(*%w(with_rel_type to_ressource_type to_ressource_uuid))
+          # ::TODO:: Issue this as a github issue
           Neo4j::Session.query
             .merge(r1: {ressource_type.to_sym => {ressource_uuid: ressource[:ressource_uuid] }}).break
             .merge(r2: {relationship[:to_ressource_type].to_sym => {ressource_uuid: relationship[:to_ressource_uuid] }}).break
@@ -29,5 +30,18 @@ class LanalyticsConsumer < Msgr::Consumer
 
     end
 
+  end
+
+
+  def handle_user_event
+    puts "#{payload.inspect}"
+
+    exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(payload)
+
+    Neo4j::Session.query
+    .merge(r1: {exp_stmt.user.type => { ressource_uuid: exp_stmt.user.uuid }}).break
+    .merge(r2: {exp_stmt.resource.type => { ressource_uuid: exp_stmt.resource.uuid }}).break
+    .create("(r1)-[:#{exp_stmt.verb.type} #{Neo4j::Core::Query.new.merge(exp_stmt.with_result).to_cypher[8..-2]}]->(r2)")
+    .exec
   end
 end

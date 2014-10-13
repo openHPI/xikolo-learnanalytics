@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Ruby / Rails client gem for the Lanalytics Service as found on: git@openhpi-utils.hpi.uni-potsdam.de:gerardo.navarro-suarez/lanalytics.git"
   s.license     = "MIT"
 
-  s.files = Dir["lib/lanalytics/model/**/*"]
+  s.files = Dir['lib/lanalytics-model.rb', 'lib/lanalytics/model/**/*']
 
   s.add_dependency 'json'
 end
