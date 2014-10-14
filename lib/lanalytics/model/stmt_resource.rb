@@ -1,14 +1,17 @@
 require_relative 'stmt_component'
 
 class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
-  attr_reader :uuid
+  attr_reader :uuid, :properties
 
-  def initialize(type, uuid)
+  def initialize(type, uuid, properties = {})
     super(type)
 
     raise ArgumentError.new("'uuid' argument cannot be nil") unless uuid
     @uuid = uuid.to_s
     raise ArgumentError.new("'uuid' argument cannot be empty") if uuid.empty?
+
+    properties ||= {}
+    @properties = properties
   end
 
   def as_json

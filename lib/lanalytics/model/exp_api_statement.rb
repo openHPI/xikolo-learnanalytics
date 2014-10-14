@@ -73,14 +73,6 @@ class Lanalytics::Model::ExpApiStatement
     self.new_from_json(json_hash['data'])
   end
 
-  #def actor_uuid
-  #
-  #end
-  #
-  #def ressource_uuid
-  #  return self.ressource.uuid
-  #end
-
   # Implementing the required interface for marshalling objects, see http://ruby-doc.org/core-2.1.3/Marshal.html
   def _dump level
     [@user, @verb, @resource, @timestamp, @with_result, @in_context].map do | attribute |
