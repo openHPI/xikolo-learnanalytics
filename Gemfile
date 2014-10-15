@@ -22,12 +22,16 @@ gem 'jbuilder', '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+gem 'restify'
 
 # Connecting to RabbitMQ
 gem 'msgr'
 
 gem 'neo4j', github: 'andreasronge/neo4j'
 gem 'rest-client'
+gem 'multi_json'
+
+gem 'ruby-progressbar'
 
 
 # Use ActiveModel has_secure_password
