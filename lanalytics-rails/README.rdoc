@@ -12,11 +12,14 @@ An event can be broken down into 3 main parts: actor, verb and ressource. This w
 
 ## Getting Started: Lanalytics in front end projects
 
-- As mentioned, each tracking event consists of three main parts: actor, verb and ressource. In most cases, the actor will be the current user - the person that is currently logged in. Fir this case, the lanalytics gem gives also some help by providing an controller filter that will inject the current user in to javascript code for tracking event. To do this include the following lines into the `application_controller.rb`:
+- As mentioned, each tracking event consists of three main parts: user, verb and resource. In most cases, the actor will be the current user - the person that is currently logged in. For this case, the lanalytics-rails gem gives some help by providing an controller filter that will inject the current user in to javascript code for tracking event. To do this include the following lines into the `application_controller.rb`:
 ```
     include Lanalytics::LanalyticsControllerFilter
     before_filter :add_lanalytics_filter
 ```
+- Do not forget to include the `<%= include_gon %>` in your app/views/layouts/application.html`
+
+
 - Now, let's track some events in the front end views. Depending on your use case, you can either use one of provided plugins from the lanalytics gem or you can build your own plugins for special cases, e.g. tracking events from a video player
 
 ## Provided tracking plugins from the lanalytics gem 

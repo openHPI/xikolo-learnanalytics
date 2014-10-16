@@ -84,6 +84,7 @@ GEM
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
     hike (1.2.3)
+    http_link_header (0.1.0)
     http_parser.rb (0.6.0)
     httparty (0.13.1)
       json (~> 1.8)
@@ -96,6 +97,7 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
+    link_header (0.0.8)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -219,8 +221,10 @@ DEPENDENCIES
   binding_of_caller
   coffee-rails (~> 4.0.0)
   factory_girl_rails
+  http_link_header (~> 0.1.0)
   jbuilder (~> 2.0)
   jquery-rails
+  link_header
   meta_request
   msgr
   multi_json

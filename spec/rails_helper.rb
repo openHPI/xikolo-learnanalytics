@@ -45,3 +45,7 @@ end
 # This strategy is defined in spec/support
 require "#{Rails.root}/spec/support/factory_girl/json_strategy.rb"
 FactoryGirl.register_strategy(:json, JsonStrategy)
+
+def logger
+  return RAILS_DEFAULT_LOGGER
+end

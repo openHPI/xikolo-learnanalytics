@@ -6,7 +6,7 @@ class window.Lanalytics.Model.StmtResource extends Lanalytics.Model.StmtComponen
   constructor: (type, uuid) ->
     super(type)
 
-    throw "'uuid' argument cannot be nil" if !uuid?
+    throw "'uuid' argument cannot be nil or empty" if !uuid? || !uuid.trim().length
     @uuid = uuid.toString()
 
   params: ->

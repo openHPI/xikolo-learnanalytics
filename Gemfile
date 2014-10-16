@@ -32,6 +32,8 @@ gem 'rest-client'
 gem 'multi_json'
 
 gem 'ruby-progressbar'
+gem 'http_link_header', '~> 0.1.0'
+gem 'link_header'
 
 
 # Use ActiveModel has_secure_password

@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   
+  mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
   namespace :lanalytics do
 
     #  Managing domain model

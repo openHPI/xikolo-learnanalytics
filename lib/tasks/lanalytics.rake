@@ -1,3 +1,5 @@
+require 'link_header'
+
 namespace :lanalytics do
   
   desc "Loads all lanalytics data initially"
@@ -36,28 +38,41 @@ namespace :lanalytics do
 
     lanalytics_datasources.each do | lanalytics_datasource |
       
+      progress_bar = ProgressBar.create(title: "Syncing from #{lanalytics_datasource.url}:", format: '%p%% %t |%b>>%i| %a', starting_at: 0, total: nil)
+      datasource_partial_url = lanalytics_datasource.url
+
+      first_round = true
       begin
-        ressource_type = lanalytics_datasource.type
-        response = RestClient.get(lanalytics_datasource.url)
-        resources_hash = MultiJson.load(response, symbolize_keys: true)
-      rescue Exception => any_error
-        puts "Lanalytics Datasource on url (#{lanalytics_datasource.url}) could not be processed and failed with the following error:"
-        puts "#{any_error.message[0..100]}..."
-        next
-      end
+        begin
+          ressource_type = lanalytics_datasource.type
+          response = RestClient.get(datasource_partial_url)
+          resources_hash = MultiJson.load(response, symbolize_keys: true)
+        rescue Exception => any_error
+          puts "Lanalytics Datasource on url (#{lanalytics_datasource.url}) could not be processed and failed with the following error:"
+          puts "#{any_error.message[0..100]}..."
+          next
+        end
 
-      progress_bar = ProgressBar.create(:title => "Syncing from #{lanalytics_datasource.url}:", :format => '%p%% %t |%b>>%i| %a', :starting_at => 0, :total => resources_hash.length)
-      resources_hash.each do | resource_hash |
-        lanalytics_datasource.process(resource_hash)
-        progress_bar.increment
-      end
+        link_header = LinkHeader.parse(response.headers[:link])
 
-        # lanalytics_datasource.finish
+        # In the first round
+        if first_round
+          last_datasource_url_page_url = link_header.find_link(['rel', 'last']).href
+          last_page_index = /.*?page=(.+).*/.match(last_datasource_url_page_url)[1].to_i
+          total_item_count = (last_page_index-1) * resources_hash.length
+          progress_bar.total = total_item_count
+          first_round = false
+        end
 
-      # response = response.to_s.encode('UTF-8', {:invalid => :replace, :undef => :replace, :replace => '?'})
-      # RestClient.get(lanalytics_datasource.url).each do | resource_hash |
-      #   puts "#{ressource_hash}"
-      # end
+        resources_hash.each do | resource_hash |
+          lanalytics_datasource.process(resource_hash)
+          progress_bar.increment unless progress_bar.finished?
+        end
+
+        link_header_next_link = link_header.find_link(['rel', 'next'])
+        datasource_partial_url = link_header_next_link ? link_header_next_link.href : nil
+
+      end while datasource_partial_url
     end
   end
 
