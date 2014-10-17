@@ -2,7 +2,7 @@ module Lanalytics
   module Filter
     
     class EnrollmentDataFilter < Lanalytics::Filter::DataFilter
-      def filter(datasource, original_resource_as_hash, processed_resources)
+      def filter(datasource, original_resource_as_hash, processed_resources, opts = nil)
 
         processed_resources << Lanalytics::Model::ResourceRelationship.new(
           Lanalytics::Model::StmtResource.new(:USER, original_resource_as_hash[:user_id]),

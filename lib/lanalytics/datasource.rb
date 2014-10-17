@@ -28,3 +28,8 @@ module Lanalytics
 
   end
 end
+
+# class Lanalytics::DataImporter
+#   def transform_load()
+#   end
+# end

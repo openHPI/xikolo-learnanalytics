@@ -2,7 +2,7 @@ module Lanalytics
   module Processor
     class Neo4jProcessor < Lanalytics::Processor::DataProcessor
         
-      def process(original_resource_as_hash, processed_resources)
+      def process(original_resource_as_hash, processed_resources, opts = nil)
         
         if processed_resources.nil? or processed_resources.empty?
           puts "'processed_resources' cannot be nil or empty"

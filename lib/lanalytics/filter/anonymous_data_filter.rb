@@ -5,7 +5,7 @@ module Lanalytics
 
       DANGEROUS_KEYWORDS = %w(email name password)
 
-      def filter(datasource, original_resource_as_hash, processed_resources)
+      def filter(datasource, original_resource_as_hash, processed_resources, opts = nil)
 
         processed_resources.map! do | processed_resource |
           next unless processed_resource.is_a? Lanalytics::Model::StmtResource
