@@ -38,7 +38,7 @@ namespace :lanalytics do
 
     lanalytics_datasources.each do | lanalytics_datasource |
       
-      progress_bar = ProgressBar.create(title: "Syncing from #{lanalytics_datasource.url}:", format: '%p%% %t |%b>>%i| %a', starting_at: 0, total: nil)
+      progress_bar = ProgressBar.create(title: "Syncing from #{lanalytics_datasource.url}", format: '%p%% %t (%c/%C) |%b>>%i| %a', starting_at: 0, total: nil)
       datasource_partial_url = lanalytics_datasource.url
 
       first_round = true
@@ -58,8 +58,12 @@ namespace :lanalytics do
         # In the first round
         if first_round
           last_datasource_url_page_url = link_header.find_link(['rel', 'last']).href
-          last_page_index = /.*?page=(.+).*/.match(last_datasource_url_page_url)[1].to_i
-          total_item_count = (last_page_index-1) * resources_hash.length
+          last_page_index = /.*?page=(?<page_index>.+).*/.match(last_datasource_url_page_url)[:page_index].to_i
+          if last_page_index == 1
+            total_item_count = resources_hash.length
+          else
+            total_item_count = (last_page_index-1) * resources_hash.length
+          end
           progress_bar.total = total_item_count
           first_round = false
         end
