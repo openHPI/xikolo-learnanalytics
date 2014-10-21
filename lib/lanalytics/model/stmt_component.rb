@@ -18,7 +18,7 @@ class Lanalytics::Model::StmtComponent
     }.to_json(*a)
   end
 
-  def == (other)
+  def ==(other)
     unless other.class == self.class
       return false
     end

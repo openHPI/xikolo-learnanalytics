@@ -16,7 +16,7 @@ class window.Lanalytics.Framework
     else
       return new Lanalytics.Model.StmtUser("ANONYMOUS")
 
-  track: (user, verb, ressource, withResult, inContext) ->
+  track: (user, verb, ressource, withResult = {}, inContext = {}) ->
     
     # If a verb is key, we will replace it with the verb that we need to transmit
     verb = Lanalytics.VerbDictionary.getVerb(verb) if typeof verb is "string"
@@ -32,10 +32,10 @@ class window.Lanalytics.Framework
 
   # Verb can a key or an js object
   # Ressource should be an object that contains the ressource type and the ressource key
-  trackCurrentUserDoing: (verb, ressource) ->
+  trackCurrentUserDoing: (verb, ressource, withResult = {}, inContext = {}) ->
 
     user = @currentUser()
-    @track(user, verb, ressource, null, null)
+    @track(user, verb, ressource, withResult, inContext)
 
   processEventQueue: ->
 
@@ -65,6 +65,14 @@ class window.Lanalytics.VerbDictionary
     "video-pause": {
       verb_key: "video_pause",
       verb_id: "http://lanalytics.open.hpi.de/expapi/verbs/video-stop"
+    },
+    "video-seek": {
+      verb_key: "video_seek",
+      verb_id: 'http://lanalytics.open.hpi.de/expapi/verbs/quiz-submitted'
+    },
+    "video-change-speed": {
+      verb_key: "video_change_speed",
+      verb_id: 'http://lanalytics.open.hpi.de/expapi/verbs/quiz-submitted'
     },
     "quiz-submitted": {
       verb_key: "quiz_submitted",
