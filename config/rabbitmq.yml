@@ -6,7 +6,6 @@ test:
   <<: *common
   # pool_class: TestPool
 
-
 development:
   <<: *common
   autostart: true
