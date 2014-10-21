@@ -19,21 +19,26 @@ gem 'jquery-rails'
 gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
+
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'restify'
 
 # Connecting to RabbitMQ
-gem 'msgr'
-
+gem 'msgr', :git => 'https://github.com/jgraichen/msgr'
 gem 'neo4j', github: 'andreasronge/neo4j'
 gem 'rest-client'
 gem 'multi_json'
 
 gem 'ruby-progressbar'
-gem 'http_link_header', '~> 0.1.0'
+# gem 'http_link_header', '~> 0.1.0'
 gem 'link_header'
+
+
+# Gems for the web application
+# gem 'bootstrap-rails'
+# gem 'sorcery'
 
 
 # Use ActiveModel has_secure_password

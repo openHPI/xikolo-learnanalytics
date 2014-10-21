@@ -10,6 +10,16 @@ GIT
       orm_adapter (~> 0.5.0)
       railties (~> 4)
 
+GIT
+  remote: https://github.com/jgraichen/msgr
+  revision: db8cc0b378171c39d081472b3a441d9119f52ef7
+  specs:
+    msgr (0.11.0)
+      activesupport
+      bunny (~> 1.0)
+      concurrent-ruby (~> 0.5.0)
+      multi_json
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -52,7 +62,7 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
-    bunny (1.4.1)
+    bunny (1.5.0)
       amq-protocol (>= 1.9.2)
     callsite (0.0.11)
     coderay (1.1.0)
@@ -84,7 +94,6 @@ GEM
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
     hike (1.2.3)
-    http_link_header (0.1.0)
     http_parser.rb (0.6.0)
     httparty (0.13.1)
       json (~> 1.8)
@@ -107,11 +116,6 @@ GEM
       railties (>= 3.0.0, < 5.0.0)
     mime-types (1.25.1)
     minitest (5.4.1)
-    msgr (0.11.0)
-      activesupport
-      bunny (~> 1.0)
-      concurrent-ruby (~> 0.5.0)
-      multi_json
     multi_json (1.10.1)
     multi_xml (0.5.5)
     neo4j-community (2.1.4)
@@ -221,12 +225,11 @@ DEPENDENCIES
   binding_of_caller
   coffee-rails (~> 4.0.0)
   factory_girl_rails
-  http_link_header (~> 0.1.0)
   jbuilder (~> 2.0)
   jquery-rails
   link_header
   meta_request
-  msgr
+  msgr!
   multi_json
   neo4j!
   os
