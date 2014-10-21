@@ -50,7 +50,7 @@ namespace :lanalytics do
         rescue Exception => any_error
           puts "Lanalytics Datasource on url (#{lanalytics_datasource.url}) could not be processed and failed with the following error:"
           puts "#{any_error.message[0..100]}..."
-          next
+          break
         end
 
         link_header = LinkHeader.parse(response.headers[:link])
@@ -79,5 +79,4 @@ namespace :lanalytics do
       end while datasource_partial_url
     end
   end
-
 end
