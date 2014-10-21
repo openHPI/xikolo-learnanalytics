@@ -2,7 +2,7 @@ module Lanalytics
   module Filter
     
     class ItemDataFilter < Lanalytics::Filter::DataFilter
-      def filter(datasource, original_resource_as_hash, processed_resources, opts = nil)
+      def filter(original_resource_as_hash, processed_resources, opts = nil)
 
         from_resource_properties = original_resource_as_hash.slice(:title, :content_type, :start_date, :end_date, :created_at, :updated_at)
         from_resource = Lanalytics::Model::StmtResource.new(:ITEM, original_resource_as_hash[:id], from_resource_properties)    

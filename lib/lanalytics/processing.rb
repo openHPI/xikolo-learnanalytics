@@ -1,5 +1,6 @@
 module Lanalytics
-  class ProcessingManager
+  # ::TODO:: Rename to Lanalytics::RabbitMQProcessingManager
+  class Processing
     include Singleton
 
     def initialize()
@@ -19,7 +20,8 @@ module Lanalytics
       return {filters: filters, processors: processors}
     end
 
-    def process_data_for(routing_key, payload, opts)
+    def process_data_for(routing_key, payload, opts = {})
+
 
       processing_info = @processing_map[routing_key.to_s]
       if processing_info.nil?
@@ -27,10 +29,11 @@ module Lanalytics
         # Rails.logger.warn "No processing found for routing key: #{routing_key}"
         return
       end
-
+      
+      # ::TODO:: Create a new processing class that encapsulates this code
       processed_resources = []
       processing_info[:filters].each do | data_filter |
-        data_filter.filter(self, payload, processed_resources, opts)
+        data_filter.filter(payload, processed_resources, opts)
       end
 
       processing_info[:processors].each do | data_processor |

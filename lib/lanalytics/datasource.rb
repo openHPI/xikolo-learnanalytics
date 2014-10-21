@@ -17,12 +17,17 @@ module Lanalytics
     def process(original_resource_as_hash)
       processed_resources = []
       
+      opts = {
+        import_action: Lanalytics::Processor::ProcessingAction::CREATE,
+        data_source: self
+      }
+      
       @filters.each do | data_filter |
-        filter_result = data_filter.filter(self, original_resource_as_hash, processed_resources)
+        filter_result = data_filter.filter(original_resource_as_hash, processed_resources, opts)
       end
 
       @processors.each do | data_processor |
-        data_processor.process(original_resource_as_hash, processed_resources)
+        data_processor.process(original_resource_as_hash, processed_resources, opts)
       end
     end
 
@@ -30,6 +35,6 @@ module Lanalytics
 end
 
 # class Lanalytics::DataImporter
-#   def transform_load()
+#   def import()
 #   end
 # end
