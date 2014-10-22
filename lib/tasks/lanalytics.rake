@@ -48,7 +48,7 @@ namespace :lanalytics do
           response = RestClient.get(datasource_partial_url)
           resources_hash = MultiJson.load(response, symbolize_keys: true)
         rescue Exception => any_error
-          puts "Lanalytics Datasource on url (#{lanalytics_datasource.url}) could not be processed and failed with the following error:"
+          puts "Lanalytics Datasource on url (#{lanalytics_datasource.url}) could not be processed and failed with the following error:\033[K"
           puts "#{any_error.message[0..100]}..."
           break
         end
