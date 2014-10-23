@@ -64,3 +64,7 @@ group :development do
   gem 'binding_of_caller'
   gem 'meta_request'
 end
+
+group :test do
+  gem 'webmock'
+end
