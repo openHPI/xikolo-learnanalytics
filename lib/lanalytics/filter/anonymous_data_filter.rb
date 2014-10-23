@@ -3,14 +3,14 @@ module Lanalytics
     
     class AnonymousDataFilter < Lanalytics::Filter::DataFilter
 
-      DANGEROUS_KEYWORDS = %w(email name password)
-
       def filter(original_resource_as_hash, processed_resources, opts = nil)
 
         processed_resources.map! do | processed_resource |
           next unless processed_resource.is_a? Lanalytics::Model::StmtResource
 
+          puts "Vorher #{processed_resource.properties}"
           processed_resource.properties.delete_if { |key, value| symbol_anonymous?(key) }
+          puts "Nachher #{processed_resource.properties}"
           processed_resource
         end
       end
@@ -18,9 +18,10 @@ module Lanalytics
 
       private
       def symbol_anonymous?(symbol)
-        DANGEROUS_KEYWORDS.each do | dangerous_keyword |
-          return if symbol.to_s.include?(dangerous_keyword)
+        %w(email name password).each do | dangerous_keyword |
+          return true if symbol.to_s.include?(dangerous_keyword)
         end
+        return false
       end
     end
   
