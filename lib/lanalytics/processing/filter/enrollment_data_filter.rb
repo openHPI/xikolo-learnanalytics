@@ -10,6 +10,7 @@ module Lanalytics
             Lanalytics::Model::StmtResource.new(:COURSE, original_resource_as_hash[:course_id]),
             original_resource_as_hash.slice(:role, :created_at))
         end
+        alias_method :process, :filter
       end
     
     end

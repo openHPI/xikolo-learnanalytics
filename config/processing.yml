@@ -1,3 +1,4 @@
+# ------------------- User Entities -------------------
 xikolo.account.user.url: 'http://localhost:3100/users.json'
 xikolo.account.user.create: &XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::UserDataFilter.new
@@ -9,6 +10,7 @@ xikolo.account.user.destroy:
   *XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
 
 
+# ------------------- Course Entities -------------------
 xikolo.course.course.url: 'http://localhost:3300/courses.json'
 xikolo.course.course.create: &XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::CourseDataFilter.new
@@ -24,8 +26,18 @@ xikolo.course.item.create:
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
+xikolo.course.enrollment.create:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :course_id, :ENROLLED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
-# Learning Room Entities
+xikolo.course.enrollment.destroy:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :course_id, :UN_ENROLLED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
+
+# ------------------- Learning Room Entities -------------------
 xikolo.learning_room.learning_room.create: &LEARNING_ROOM_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::LearningRoomDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new

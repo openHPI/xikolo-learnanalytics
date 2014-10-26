@@ -33,13 +33,13 @@ describe LanalyticsResourceConsumer do
       expect(expected_node.labels).to include(:USER)
 
       result = Neo4j::Session.query(%{
-        MATCH (u:USER {resource_uuid: '#{@amqp_enrollment_event_data[:user_id]}'})-[e:ATTENDING]->(c:COURSE {resource_uuid: '#{@amqp_enrollment_event_data[:course_id]}'})
+        MATCH (u:USER {resource_uuid: '#{@amqp_enrollment_event_data[:user_id]}'})-[e:ENROLLED]->(c:COURSE {resource_uuid: '#{@amqp_enrollment_event_data[:course_id]}'})
         RETURN e
       })
       expect(result.to_a.length).to eq(1)
       expected_enrollemnt_relationship = result.first.e
       puts "#{expected_enrollemnt_relationship.instance_variables}"
-      expect(expected_enrollemnt_relationship.rel_type).to eq(:ATTENDING)
+      expect(expected_enrollemnt_relationship.rel_type).to eq(:ENROLLED)
       expect(expected_enrollemnt_relationship[:role]).to eq(@amqp_enrollment_event_data[:role])
     end
 
@@ -61,13 +61,13 @@ describe LanalyticsResourceConsumer do
       expect(expected_node[:other_prop]).to_not be_nil
 
       result = Neo4j::Session.query(%{
-        MATCH (u:USER {resource_uuid: '#{@amqp_enrollment_event_data[:user_id]}'})-[e:ATTENDING]->(c:COURSE {resource_uuid: '#{@amqp_enrollment_event_data[:course_id]}'})
+        MATCH (u:USER {resource_uuid: '#{@amqp_enrollment_event_data[:user_id]}'})-[e:ENROLLED]->(c:COURSE {resource_uuid: '#{@amqp_enrollment_event_data[:course_id]}'})
         RETURN e
       })
       expect(result.to_a.length).to eq(1)
       expected_enrollemnt_relationship = result.first.e
       puts "#{expected_enrollemnt_relationship.instance_variables}"
-      expect(expected_enrollemnt_relationship.rel_type).to eq(:ATTENDING)
+      expect(expected_enrollemnt_relationship.rel_type).to eq(:ENROLLED)
       expect(expected_enrollemnt_relationship[:role]).to eq(@amqp_enrollment_event_data[:role])
     end
 

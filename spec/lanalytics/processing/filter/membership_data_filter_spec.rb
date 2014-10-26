@@ -77,5 +77,22 @@ describe Lanalytics::Processing::Filter::MembershipDataFilter do
       expect(learning_room_rel.to_resource.uuid).to eq(original_hash[:learning_room_id])
       expect(learning_room_rel.to_resource.type).to eq(:LEARNING_ROOM)
     end
+
+    it 'should should create :USER resource with correct properties' do
+      original_hash = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
+      data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :course_id, :ENROLLED)
+
+      processed_resources = []
+      data_filter.filter(original_hash, processed_resources)
+
+      expect(processed_resources.length).to eq(1)
+      learning_room_rel = processed_resources.last
+      expect(learning_room_rel).to be_a(Lanalytics::Model::ResourceRelationship)
+      expect(learning_room_rel.type).to eq(:ENROLLED)
+      expect(learning_room_rel.from_resource.uuid).to eq(original_hash[:user_id])
+      expect(learning_room_rel.from_resource.type).to eq(:USER)
+      expect(learning_room_rel.to_resource.uuid).to eq(original_hash[:course_id])
+      expect(learning_room_rel.to_resource.type).to eq(:COURSE)
+    end
   end
 end

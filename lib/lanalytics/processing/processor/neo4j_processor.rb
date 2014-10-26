@@ -12,8 +12,8 @@ module Lanalytics
 
           processed_resources.each do | processed_resource |
             
-            if opts[:import_action] == Lanalytics::Processor::ProcessingAction::CREATE or
-              opts[:import_action] == Lanalytics::Processor::ProcessingAction::UPDATE
+            if opts[:processing_action] == Lanalytics::Processing::ProcessingAction::CREATE or
+              opts[:processing_action] == Lanalytics::Processing::ProcessingAction::UPDATE
               case processed_resource
               when Lanalytics::Model::StmtResource
                 self.merge_resource(original_resource_as_hash, processed_resource)
@@ -24,7 +24,7 @@ module Lanalytics
               else
                 puts "'processed_resource' (#{processed_resource.class.name}) could not be mapped to an operation"
               end
-            elsif opts[:import_action] == Lanalytics::Processor::ProcessingAction::DESTROY
+            elsif opts[:processing_action] == Lanalytics::Processing::ProcessingAction::DESTROY
               case processed_resource
               when Lanalytics::Model::StmtResource
                 self.destroy_resource(original_resource_as_hash, processed_resource)
