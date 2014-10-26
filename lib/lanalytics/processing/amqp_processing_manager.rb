@@ -23,6 +23,16 @@ module Lanalytics
           return
         end
 
+        if routing_key.end_with?('.create')
+          opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
+        elsif routing_key.end_with?('.update')
+          opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::UPDATE })
+        elsif routing_key.end_with?('.destroy')
+          opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::DESTROY })
+        else
+          opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::UNDEFINED })
+        end
+
         processing_chain.process(payload, opts)
       end
 
