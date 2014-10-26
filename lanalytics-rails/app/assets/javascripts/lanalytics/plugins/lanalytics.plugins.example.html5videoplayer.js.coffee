@@ -17,9 +17,9 @@ class window.Lanalytics.Plugins.Html5VideoPlayerTracker extends Lanalytics.Plugi
 
   # It is important to use '=>' because then 'this' will be binded to StaticHtmlEventTracker instance (in order to access lanalytics)
   trackVideoPlay: (event, videoPlayerData) =>
-    stmtResource = new Lanalytics.Model.StmtResource("Item", videoPlayerData.ressource)
+    stmtResource = new Lanalytics.Model.StmtResource("Item", videoPlayerData.resource)
     @lanalytics.track("video-play", stmtResource)
 
   trackVideoPause: (event, videoPlayerData) =>
-    stmtResource = new Lanalytics.Model.StmtResource("Item", videoPlayerData.ressource)
+    stmtResource = new Lanalytics.Model.StmtResource("Item", videoPlayerData.resource)
     @lanalytics.trackCurrentUserDoing("video-pause", stmtResource)

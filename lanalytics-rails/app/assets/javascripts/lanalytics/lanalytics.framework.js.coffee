@@ -16,13 +16,13 @@ class window.Lanalytics.Framework
     else
       return new Lanalytics.Model.StmtUser("ANONYMOUS")
 
-  track: (user, verb, ressource, withResult = {}, inContext = {}) ->
+  track: (user, verb, resource, withResult = {}, inContext = {}) ->
     
     # If a verb is key, we will replace it with the verb that we need to transmit
     verb = Lanalytics.VerbDictionary.getVerb(verb) if typeof verb is "string"
     now = new Date()
     
-    experienceStmt = new Lanalytics.Model.ExpApiStatement(user, verb, ressource, now, withResult, inContext)
+    experienceStmt = new Lanalytics.Model.ExpApiStatement(user, verb, resource, now, withResult, inContext)
 
     @eventQueue.push(experienceStmt)
 
@@ -31,11 +31,11 @@ class window.Lanalytics.Framework
     console.debug("New event was tracked:", experienceStmt)
 
   # Verb can a key or an js object
-  # Ressource should be an object that contains the ressource type and the ressource key
-  trackCurrentUserDoing: (verb, ressource, withResult = {}, inContext = {}) ->
+  # Resource should be an object that contains the resource type and the resource key
+  trackCurrentUserDoing: (verb, resource, withResult = {}, inContext = {}) ->
 
     user = @currentUser()
-    @track(user, verb, ressource, withResult, inContext)
+    @track(user, verb, resource, withResult, inContext)
 
   processEventQueue: ->
 

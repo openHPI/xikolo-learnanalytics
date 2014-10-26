@@ -19,5 +19,5 @@ class window.Lanalytics.Plugins.NewLanalyticsPlugin extends Lanalytics.Plugin
   # It is important to use '=>' because then 'this' will be binded to NewLanalyticsPlugin instance (in order to access lanalytics)
   # trackVideoPlay: (event, videoPlayerData) =>
   #   @lanalytics.trackCurrentUserDoing("video-play", {
-  #     ressource_id: videoPlayerData.ressource
+  #     resource_id: videoPlayerData.resource
   #   })
