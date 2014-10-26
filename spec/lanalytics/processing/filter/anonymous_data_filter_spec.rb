@@ -1,12 +1,10 @@
 require 'rails_helper'
 
-# describe Lanalytics::Processing::AmqpProcessing do
-describe Lanalytics::Filter::AnonymousDataFilter do
+describe Lanalytics::Processing::Filter::AnonymousDataFilter do
 
   before(:each) do
-    
     @original_hash = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
-    @data_filter = Lanalytics::Filter::AnonymousDataFilter.new
+    @data_filter = Lanalytics::Processing::Filter::AnonymousDataFilter.new
     @processed_resources = [ Lanalytics::Model::StmtResource.new(@original_hash[:id], :USER, {
         language: "en",
         born_at: "1985-04-24T00:00:00.000Z",

@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 # describe Lanalytics::Processing::AmqpProcessing do
-describe Lanalytics::Filter::UserDataFilter do
+describe Lanalytics::Processing::Filter::UserDataFilter do
 
   describe '(without custom fields)' do
 
     before(:each) do
       @original_hash = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
-      @data_filter = Lanalytics::Filter::UserDataFilter.new
+      @data_filter = Lanalytics::Processing::Filter::UserDataFilter.new
     end
 
     it 'should should create :USER resource with correct properties' do
@@ -35,7 +35,7 @@ describe Lanalytics::Filter::UserDataFilter do
   describe '(with custom fields)' do
     before(:each) do
       @original_hash = FactoryGirl.attributes_for(:amqp_user_with_fields).with_indifferent_access
-      @data_filter = Lanalytics::Filter::UserDataFilter.new
+      @data_filter = Lanalytics::Processing::Filter::UserDataFilter.new
     end
 
     it 'should convert (custom) field properties into resource properties' do

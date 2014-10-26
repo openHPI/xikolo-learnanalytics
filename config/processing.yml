@@ -1,0 +1,51 @@
+xikolo.account.user.url: 'http://localhost:3100/users.json'
+xikolo.account.user.create: &XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
+  - Lanalytics::Processing::Filter::UserDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.account.user.update:
+  *XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
+xikolo.account.user.destroy: 
+  *XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
+
+
+xikolo.course.course.url: 'http://localhost:3300/courses.json'
+xikolo.course.course.create: &XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
+  - Lanalytics::Processing::Filter::CourseDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.course.course.update:
+  *XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
+xikolo.course.course.destroy:
+  *XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
+
+xikolo.course.item.create:
+  - Lanalytics::Processing::Filter::ItemDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
+
+# Learning Room Entities
+xikolo.learning_room.learning_room.create: &LEARNING_ROOM_PROCESSING_CHAIN
+  - Lanalytics::Processing::Filter::LearningRoomDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.learning_room.learning_room.update:
+  *LEARNING_ROOM_PROCESSING_CHAIN
+xikolo.learning_room.learning_room.destroy:
+  *LEARNING_ROOM_PROCESSING_CHAIN
+
+xikolo.learning_room.membership.create:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :JOINED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.learning_room.membership.destroy:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :UN_JOINED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
+
+xikolo.web.event.create:
+  - Lanalytics::Processing::Filter::ExpApiStatementDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new

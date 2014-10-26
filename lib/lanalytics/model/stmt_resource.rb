@@ -11,7 +11,7 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
     raise ArgumentError.new("'uuid' argument cannot be empty") if uuid.empty?
 
     properties ||= {}
-    @properties = properties
+    @properties = properties.with_indifferent_access
   end
 
   def as_json

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-describe Lanalytics::Filter::LearningRoomDataFilter do
+describe Lanalytics::Processing::Filter::LearningRoomDataFilter do
 
   before(:each) do
     @original_hash = FactoryGirl.attributes_for(:amqp_learning_room).with_indifferent_access
-    @data_filter = Lanalytics::Filter::LearningRoomDataFilter.new
+    @data_filter = Lanalytics::Processing::Filter::LearningRoomDataFilter.new
   end
 
   it 'should should create :USER resource with correct properties' do
@@ -39,4 +39,11 @@ describe Lanalytics::Filter::LearningRoomDataFilter do
   #   expect(@data_filter).to respond_to?(:process)
   # end
 
+   describe "(Processing Registration on Rails Startup)" do
+    it "should register some main processings" do
+      internal_processing_map = Lanalytics::Processing::AmqpProcessingManager.instance.instance_eval { @processing_map }
+      expect(internal_processing_map.keys).to include(
+        'xikolo.learning_room.learning_room.create', 'xikolo.learning_room.learning_room.update', 'xikolo.learning_room.learning_room.destroy')
+    end
+  end
 end

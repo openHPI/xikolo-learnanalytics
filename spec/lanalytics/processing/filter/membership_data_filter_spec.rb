@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe Lanalytics::Filter::MembershipDataFilter do
+describe Lanalytics::Processing::Filter::MembershipDataFilter do
 
   describe 'Instantiation' do
 
     it 'should correctly parse resource type and key' do
-      data_filter = Lanalytics::Filter::MembershipDataFilter.new(:user_id, :learning_room_id)
+      data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id)
       expect(data_filter.instance_eval { @from_resource_id_key }).to eq(:user_id)
       expect(data_filter.instance_eval { @from_resource_type }).to eq(:USER)
       expect(data_filter.instance_eval { @to_resource_id_key }).to eq(:learning_room_id)
@@ -16,21 +16,20 @@ describe Lanalytics::Filter::MembershipDataFilter do
     end
 
     it 'should raise an error when no type found' do
-      expect { Lanalytics::Filter::MembershipDataFilter.new(:id, :learning_room_id) }.to raise_error(ArgumentError)
-      expect { Lanalytics::Filter::MembershipDataFilter.new(:_id, :learning_room_id) }.to raise_error(ArgumentError)
-      expect { Lanalytics::Filter::MembershipDataFilter.new(nil, :learning_room_id) }.to raise_error(ArgumentError)
-      expect { Lanalytics::Filter::MembershipDataFilter.new(:user_id, :asdasdasdasd) }.to raise_error(ArgumentError)
-      expect { Lanalytics::Filter::MembershipDataFilter.new(:user_id, nil) }.to raise_error(ArgumentError)
+      expect { Lanalytics::Processing::Filter::MembershipDataFilter.new(:id, :learning_room_id) }.to raise_error(ArgumentError)
+      expect { Lanalytics::Processing::Filter::MembershipDataFilter.new(:_id, :learning_room_id) }.to raise_error(ArgumentError)
+      expect { Lanalytics::Processing::Filter::MembershipDataFilter.new(nil, :learning_room_id) }.to raise_error(ArgumentError)
+      expect { Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :asdasdasdasd) }.to raise_error(ArgumentError)
+      expect { Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, nil) }.to raise_error(ArgumentError)
     end
 
   end
-
 
   describe '(Processing with default relationship type)' do
 
     before(:each) do
       @original_hash = FactoryGirl.attributes_for(:amqp_learning_room_membership).with_indifferent_access
-      @data_filter = Lanalytics::Filter::MembershipDataFilter.new(:user_id, :learning_room_id)
+      @data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id)
     end
 
     it 'should should create :USER resource with correct properties' do
@@ -64,7 +63,7 @@ describe Lanalytics::Filter::MembershipDataFilter do
 
     it 'should should create :USER resource with correct properties' do
       original_hash = FactoryGirl.attributes_for(:amqp_learning_room_membership).with_indifferent_access
-      data_filter = Lanalytics::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :JOINED)
+      data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :JOINED)
 
       processed_resources = []
       data_filter.filter(original_hash, processed_resources)
