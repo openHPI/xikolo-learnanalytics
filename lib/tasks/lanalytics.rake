@@ -5,50 +5,39 @@ namespace :lanalytics do
   desc "Loads all lanalytics data initially"
   task sync: :environment do
 
-    lanalytics_datasources = [
-      
-      Lanalytics::Datasource.new(:COURSE, 'http://localhost:3300/courses.json', [
-        Lanalytics::Filter::CourseDataFilter.new
-      ], [
-        # Lanalytics::Processor::LoggerProcessor.new,
-        Lanalytics::Processor::Neo4jProcessor.new
-      ]),
-      
-      Lanalytics::Datasource.new(:ITEM, 'http://localhost:3300/items.json', [
-        Lanalytics::Filter::ItemDataFilter.new
-      ], [
-        # Lanalytics::Processor::LoggerProcessor.new,
-        Lanalytics::Processor::Neo4jProcessor.new
-      ]),
+    old_logger_level = Rails.logger.level
+    Rails.logger.level = 1 # :info
 
-      Lanalytics::Datasource.new(nil, 'http://localhost:3300/enrollments.json', [
-        Lanalytics::Filter::EnrollmentDataFilter.new
-      ], [
-        Lanalytics::Processor::Neo4jProcessor.new
-      ]),
+    processing_definitions = YAML.load_file("#{Rails.root}/config/processing.yml")
 
-      Lanalytics::Datasource.new(:USER, 'http://localhost:3100/users.json', [
-        Lanalytics::Filter::UserDataFilter.new,
-        Lanalytics::Filter::AnonymousDataFilter.new
-      ], [
-        # Lanalytics::Processor::LoggerProcessor.new,
-        Lanalytics::Processor::Neo4jProcessor.new
-      ])
-    ]
+    processing_definitions.each do | processing_definition_key, service_url |
+      next unless processing_definition_key.end_with?('.url')
 
-    lanalytics_datasources.each do | lanalytics_datasource |
+      # Replacing '.url' of processing_definition_key with '.create'
+      processing_steps = processing_definitions["#{processing_definition_key[0...-4]}.create"]
+      unless processing_steps
+        logger.info "'#{processing_definition_key[0...-4]}.create' in processing.yml but needed in order to process the resources"
+        next
+      end
       
-      progress_bar = ProgressBar.create(title: "Syncing from #{lanalytics_datasource.url}", format: '%p%% %t (%c/%C) |%b>>%i| %a', starting_at: 0, total: nil)
-      datasource_partial_url = lanalytics_datasource.url
+      processing_steps.map! do | processing_step |
+        # Some processing steps are not loaded during 'YAML.load_file'; that's why we are evaluating this in ruby
+        processing_step = eval(processing_step) if processing_step.is_a?(String)
+        processing_step
+      end
+      
+      processing_chain_for_url = Lanalytics::Processing::ProcessingChain.new(processing_steps)
+
+      progress_bar = ProgressBar.create(title: "Syncing from #{service_url}", format: '%p%% %t (%c/%C) |%b>>%i| %a', starting_at: 0, total: nil)
+      datasource_partial_url = service_url
 
       first_round = true
       begin
         begin
-          ressource_type = lanalytics_datasource.type
           response = RestClient.get(datasource_partial_url)
           resources_hash = MultiJson.load(response, symbolize_keys: true)
         rescue Exception => any_error
-          puts "Lanalytics Datasource on url (#{lanalytics_datasource.url}) could not be processed and failed with the following error:\033[K"
+          puts "Lanalytics Datasource on url (#{service_url}) could not be processed and failed with the following error:\033[K"
           puts "#{any_error.message[0..100]}..."
           break
         end
@@ -69,7 +58,7 @@ namespace :lanalytics do
         end
 
         resources_hash.each do | resource_hash |
-          lanalytics_datasource.process(resource_hash)
+          processing_chain_for_url.process(resource_hash, { processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
           progress_bar.increment unless progress_bar.finished?
         end
 
@@ -78,5 +67,7 @@ namespace :lanalytics do
 
       end while datasource_partial_url
     end
+
+    Rails.logger.level = old_logger_level
   end
 end
