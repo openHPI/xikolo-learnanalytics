@@ -44,6 +44,7 @@ describe Lanalytics::Processing::Filter::MembershipDataFilter do
       expect(learning_room_rel.from_resource.type).to eq(:USER)
       expect(learning_room_rel.to_resource.uuid).to eq(@original_hash[:learning_room_id])
       expect(learning_room_rel.to_resource.type).to eq(:LEARNING_ROOM)
+      expect(learning_room_rel.properties).to_not include(:id)
     end
 
     it "should not modify the original hash" do

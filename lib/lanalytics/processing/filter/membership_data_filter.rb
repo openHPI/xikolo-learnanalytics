@@ -22,11 +22,11 @@ module Lanalytics
 
         def filter(original_resource_as_hash, processed_resources, opts = nil)
           
-           from_resource =  Lanalytics::Model::StmtResource.new(@from_resource_type, original_resource_as_hash[@from_resource_id_key])
+          from_resource =  Lanalytics::Model::StmtResource.new(@from_resource_type, original_resource_as_hash[@from_resource_id_key])
 
           to_resource = Lanalytics::Model::StmtResource.new(@to_resource_type, original_resource_as_hash[@to_resource_id_key])
 
-          relationship_properties = original_resource_as_hash.except(@from_resource_id_key, @to_resource_id_key)
+          relationship_properties = original_resource_as_hash.except(@from_resource_id_key, @to_resource_id_key, :id)
 
           processed_resources << Lanalytics::Model::ResourceRelationship.new(from_resource, @relationship_type, to_resource, relationship_properties)
         end
