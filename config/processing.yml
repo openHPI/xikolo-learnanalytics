@@ -2,6 +2,7 @@
 xikolo.account.user.url: 'http://localhost:3100/users.json'
 xikolo.account.user.create: &XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::UserDataFilter.new
+  - Lanalytics::Processing::Filter::AnonymousDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 xikolo.account.user.update:
@@ -38,6 +39,11 @@ xikolo.course.enrollment.destroy:
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
+xikolo.course.visit.create:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :item_id, :PROGRESSED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
 
 
 # ------------------- Learning Room Entities -------------------
@@ -63,7 +69,7 @@ xikolo.learning_room.membership.destroy:
 
 
 
-# ------------------- Learning Room Entities -------------------
+# ------------------- Web Events -------------------
 xikolo.web.event.create:
   - Lanalytics::Processing::Filter::ExpApiStatementDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
