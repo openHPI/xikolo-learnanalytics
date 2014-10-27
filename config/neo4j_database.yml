@@ -1,17 +1,16 @@
 # Neo4j
-#   Make sure that gem 'neo4j-core' is in your Gemfile
-
-default: &default
-  db_type: server_db
+# Make sure that gem 'neo4j-core' is in your Gemfile
 
 development:
-  <<: *default
+  db_type: server_db
   db_url: 'http://localhost:7474'
 
 test:
-  <<: *default
-#  database: db/test.sqlite3
+  # db_type: embedded_db
+  # db_url: 'db/test/neo4j'
+  db_type: server_db
+  db_url: 'http://localhost:8474'
 
-production:
-  <<: *default
+# production:
+  # <<: *default
 #  database: db/production.sqlite3
