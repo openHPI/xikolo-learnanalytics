@@ -8,6 +8,7 @@ module Lanalytics
           processed_resources << exp_stmt
           opts[:import_action] = Lanalytics::Processor::ProcessingAction::CREATE
         end
+        alias_method :process, :filter
       end
 
     end

@@ -50,7 +50,7 @@ module Lanalytics
             end
             self.instance.add_processing_for(processing_definition_key, processing_steps)
           end
-        end        
+        end
 
         return self.instance
 

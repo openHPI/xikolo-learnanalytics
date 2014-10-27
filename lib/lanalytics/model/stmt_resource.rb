@@ -7,8 +7,8 @@ class Lanalytics::Model::StmtResource < Lanalytics::Model::StmtComponent
     super(type)
 
     raise ArgumentError.new("'uuid' argument cannot be nil") unless uuid
+    raise ArgumentError.new("'uuid' argument cannot be empty") if uuid.to_s.empty?
     @uuid = uuid.to_s
-    raise ArgumentError.new("'uuid' argument cannot be empty") if uuid.empty?
 
     properties ||= {}
     @properties = properties.with_indifferent_access

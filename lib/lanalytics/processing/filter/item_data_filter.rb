@@ -14,8 +14,9 @@ module Lanalytics
           processed_resources << Lanalytics::Model::ResourceRelationship.new(from_resource, :BELONGS_TO, to_resource)
 
         end
+        alias_method :process, :filter
       end
-    
+      
     end
   end
 end

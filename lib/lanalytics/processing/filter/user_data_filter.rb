@@ -17,7 +17,6 @@ module Lanalytics
               resource_properties[field_name] = field_value unless field_value.nil? or field_value.blank?
             end
           end
-
           processed_resources << Lanalytics::Model::StmtResource.new(:USER, original_resource_as_hash[:id], resource_properties)    
         end
         alias_method :process, :filter
