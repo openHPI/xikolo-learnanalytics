@@ -1,6 +1,6 @@
 common: &common
   uri: amqp://localhost/
-  # pool_class: NullPool
+  pool_class: NullPool
 
 test:
   <<: *common
