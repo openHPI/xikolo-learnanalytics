@@ -10,7 +10,7 @@ RSpec.describe Lanalytics::Model::StmtUser do
   it "initializes correctly" do
     stmt_user_uuid = "1234567890"
     stmt_user = Lanalytics::Model::StmtUser.new(stmt_user_uuid)
-    expect(stmt_user.type).to eq(:User)
+    expect(stmt_user.type).to eq(:USER)
     expect(stmt_user.uuid).to eq(stmt_user_uuid)
   end
 

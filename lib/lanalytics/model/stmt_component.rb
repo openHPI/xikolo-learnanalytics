@@ -7,7 +7,7 @@ class Lanalytics::Model::StmtComponent
 
     raise ArgumentError.new("'type' argument cannot be nil") unless type.is_a? String or type.is_a? Symbol
     raise ArgumentError.new("'type' argument cannot be empty") if type.is_a? String and type.empty?
-    @type = type.to_sym
+    @type = type.to_sym.upcase
   end
 
   # JSON Serialization (Marshalling)

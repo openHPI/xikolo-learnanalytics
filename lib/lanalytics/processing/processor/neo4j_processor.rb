@@ -11,7 +11,7 @@ module Lanalytics
           end
 
           processed_resources.each do | processed_resource |
-            
+
             if opts[:processing_action] == Lanalytics::Processing::ProcessingAction::CREATE or
               opts[:processing_action] == Lanalytics::Processing::ProcessingAction::UPDATE
               case processed_resource
@@ -41,7 +41,6 @@ module Lanalytics
         end
 
         def merge_resource(original_resource_as_hash, resource)
-
           resource_type = resource.type
           resource_uuid = resource.uuid
           resource_properties = resource.properties.merge({ resource_uuid: resource_uuid })
