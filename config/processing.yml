@@ -68,6 +68,7 @@ xikolo.learning_room.membership.destroy:
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 
+
 # ------------------- Submission Domain Entities -------------------
 xikolo.submission.submission.create:
   - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :item_id, :SUBMITTED)
@@ -75,12 +76,31 @@ xikolo.submission.submission.create:
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 
+
 # ------------------- Pinboard Domain Entities -------------------
 xikolo.pinboard.question.url: http://localhost:3500/questions.json
-xikolo.pinboard.question.create:
+xikolo.pinboard.question.create: &PINBOARD_QUESTION_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::PinboardQuestionDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.pinboard.question.update:
+  *PINBOARD_QUESTION_PROCESSING_CHAIN
+
+xikolo.pinboard.subscription.url: 'http://localhost:3500/subscriptions.json'
+xikolo.pinboard.subscription.create:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :question_id, :SUBSCRIBED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.pinboard.subscription.destroy:
+  - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :question_id, :UN_SUBSCRIBED)
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
+xikolo.pinboard.comment.create:
+  - Lanalytics::Processing::Filter::PinboardCommentDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
 
 
 

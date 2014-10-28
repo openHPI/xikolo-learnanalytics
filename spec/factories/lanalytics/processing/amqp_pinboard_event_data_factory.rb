@@ -31,4 +31,26 @@ FactoryGirl.define do
     learning_room_id "00000001-3300-4444-9999-000000000001"
   end
 
+  factory :amqp_pinboard_question_subscription, class: Hash do
+    id "803b458b-1ee1-45d4-bed1-c52f43c6502c"
+    user_id "00000001-3100-4444-9999-000000000001"
+    question_id "00000002-3500-4444-9999-000000000001"
+    created_at "2014-10-20T20:00:26.550Z"
+  end
+
+  factory :amqp_pinboard_question_comment, class: Hash do
+    id "4fb3c476-9c33-407c-8d58-7c8bddcc3a3d"
+    text "Test Ccmment 0"
+    user_id "00000001-3100-4444-9999-000000000003"
+    commentable_id "00000002-3500-4444-9999-000000000001"
+    commentable_type "Question"
+    created_at "2014-10-20T20:00:25Z"
+    updated_at "2014-10-20T20:00:25Z"
+  end
+
+  factory :amqp_pinboard_answer_comment, parent: :amqp_pinboard_question_comment do
+    commentable_id "00000003-3500-4444-9999-000000000001"
+    commentable_type "Answer"
+  end
+
 end
