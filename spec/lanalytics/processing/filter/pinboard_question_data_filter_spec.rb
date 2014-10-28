@@ -16,9 +16,8 @@ describe Lanalytics::Processing::Filter::PinboardQuestionDataFilter do
       @original_hash = FactoryGirl.attributes_for(:amqp_pinboard_question).with_indifferent_access
     end
     
-    it 'should should create :QUESTION resource, a relationship to :USER and :COURSE' do
+    it 'should create :QUESTION resource, a relationship to :USER and :COURSE' do
       processed_resources = []
-      puts "1 #{@original_hash}"
       @data_filter.filter(@original_hash, processed_resources)
 
       expect(processed_resources.length).to eq(3)
@@ -54,10 +53,9 @@ describe Lanalytics::Processing::Filter::PinboardQuestionDataFilter do
 
   describe '(Connection to :LEARNING_ROOM resource)' do
 
-    it 'should should create :QUESTION resource, a relationship to :USER and :LEARNING_ROOM' do
+    it 'should create :QUESTION resource, a relationship to :USER and :LEARNING_ROOM' do
       @original_hash = FactoryGirl.attributes_for(:amqp_pinboard_learning_room_question).with_indifferent_access
 
-      puts "2 #{@original_hash}"
       processed_resources = []
       
       @data_filter.filter(@original_hash, processed_resources)

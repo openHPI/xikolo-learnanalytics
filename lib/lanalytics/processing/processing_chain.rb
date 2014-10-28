@@ -23,7 +23,7 @@ module Lanalytics
         processsing_opts ||= {}
 
         unless data
-          Rails.logger.info 'Nothing to import'
+          Rails.logger.info 'Data that should be imported is nil; there is nothing to process ...'
           return
         end
 
