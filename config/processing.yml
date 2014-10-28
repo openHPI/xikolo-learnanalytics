@@ -103,6 +103,10 @@ xikolo.pinboard.comment.create:
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 
+xikolo.helpdesk.ticket.create:
+  - Lanalytics::Processing::Filter::HelpdeskTicketDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 
 
