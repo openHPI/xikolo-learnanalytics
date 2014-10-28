@@ -24,6 +24,15 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       expect(stmt.in_context).to be(@stmt_context)
     end
 
+    it 'should build properties' do
+      stmt = Lanalytics::Model::ExpApiStatement.new(@stmt_user, @stmt_verb, @stmt_resource, @stmt_timestamp, @stmt_result, @stmt_context)
+      expect(stmt).to respond_to(:properties)
+      expect(stmt.properties).to be_a(Hash)
+      expect(stmt.properties).to include(timestamp: '8 May 1989 05:00:00')
+      expect(stmt.properties).to include(with_result: { result: 1000 })
+      expect(stmt.properties).to include(in_context: { location: 'Potsdam' })
+    end
+
     it "should initialize even when context and result missing" do
       stmt = Lanalytics::Model::ExpApiStatement.new(@stmt_user, @stmt_verb, @stmt_resource, @stmt_timestamp)
       expect(stmt.with_result).to be_empty

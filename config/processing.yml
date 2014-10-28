@@ -75,6 +75,14 @@ xikolo.submission.submission.create:
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 
+# ------------------- Pinboard Domain Entities -------------------
+xikolo.pinboard.question.url: http://localhost:3500/questions.json
+xikolo.pinboard.question.create:
+  - Lanalytics::Processing::Filter::PinboardQuestionDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
+
 
 
 # ------------------- Web Events -------------------

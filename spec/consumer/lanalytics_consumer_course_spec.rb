@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe LanalyticsResourceConsumer do
+describe LanalyticsConsumer do
 
   after(:each) do
     Neo4j::Session.query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r;")
@@ -110,5 +110,4 @@ describe LanalyticsResourceConsumer do
       expect(expected_node.props).to include(sub_description: "COURSE SUB DESCRIPTION") # Old property should be still in there
     end
   end
-
 end
