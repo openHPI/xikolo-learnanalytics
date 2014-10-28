@@ -11,7 +11,7 @@ describe LanalyticsConsumer do
 
     before(:each) do
       @amqp_enrollment_event_data = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
-      @consumer = LanalyticsResourceConsumer.new
+      @consumer = LanalyticsConsumer.new
       allow(@consumer).to receive(:payload).and_return(@amqp_enrollment_event_data)
       allow(@consumer).to receive(:message)
       allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.enrollment.create'})
@@ -77,7 +77,7 @@ describe LanalyticsConsumer do
 
     before(:each) do
       @amqp_course_event_data = FactoryGirl.attributes_for(:amqp_course).with_indifferent_access
-      @consumer = LanalyticsResourceConsumer.new
+      @consumer = LanalyticsConsumer.new
       allow(@consumer).to receive(:payload).and_return(@amqp_course_event_data)
       allow(@consumer).to receive(:message)
       allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.course.create'})
