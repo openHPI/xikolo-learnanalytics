@@ -27,7 +27,8 @@ gem 'restify'
 
 # Connecting to RabbitMQ
 gem 'msgr', :git => 'https://github.com/jgraichen/msgr'
-gem 'neo4j', github: 'andreasronge/neo4j'
+# gem 'neo4j', github: 'andreasronge/neo4j'
+gem 'neo4j-core', git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'rest-client'
 gem 'multi_json'
 
