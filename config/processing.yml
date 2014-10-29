@@ -96,6 +96,13 @@ xikolo.pinboard.subscription.destroy:
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
+xikolo.pinboard.answer.url: 'http://localhost:3500/answers.json'
+xikolo.pinboard.answer.create:
+  - Lanalytics::Processing::Filter::PinboardAnswerDataFilter.new
+  - Lanalytics::Processing::Processor::LoggerProcessor.new
+  - Lanalytics::Processing::Processor::Neo4jProcessor.new
+
+
 xikolo.pinboard.comment.url: http://localhost:3500/comments.json
 xikolo.pinboard.comment.create:
   - Lanalytics::Processing::Filter::PinboardCommentDataFilter.new
@@ -103,6 +110,8 @@ xikolo.pinboard.comment.create:
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 
+
+# ------------------- Helpdesk Domain Entities -------------------
 xikolo.helpdesk.ticket.create:
   - Lanalytics::Processing::Filter::HelpdeskTicketDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new

@@ -31,6 +31,17 @@ FactoryGirl.define do
     learning_room_id "00000001-3300-4444-9999-000000000001"
   end
 
+  factory :amqp_pinboard_answer, class: Hash do
+    id "00000003-3500-4444-9999-000000000002"
+    text "Schau einfach auf Wikipedia nach: http://en.wikipedia.org/wiki/SQL"
+    question_id "00000002-3500-4444-9999-000000000001"
+    created_at "2014-10-20T20:00:26Z"
+    updated_at "2014-10-20T20:00:26Z"
+    user_id "00000001-3100-4444-9999-000000000003"
+    votes 0
+    file_id nil
+  end
+
   factory :amqp_pinboard_question_subscription, class: Hash do
     id "803b458b-1ee1-45d4-bed1-c52f43c6502c"
     user_id "00000001-3100-4444-9999-000000000001"
