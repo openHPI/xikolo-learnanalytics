@@ -1,4 +1,4 @@
-# Neo4j
+# Neo4j Database Configuration
 # Make sure that gem 'neo4j-core' is in your Gemfile
 
 development:
@@ -11,6 +11,6 @@ test:
   db_type: server_db
   db_url: 'http://localhost:8474'
 
-# production:
-  # <<: *default
-#  database: db/production.sqlite3
+production:
+  db_type: server_db
+  db_url: 'http://localhost:7474'

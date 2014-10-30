@@ -6,7 +6,7 @@ if File.exists?(NEO4J_DATABASE_CONFIG_FILE)
 
   # Register a default Neo4j::Session for this applilcation
   neo4j_db_type = NEO4J_DATABASE_CONFIG[:db_type].to_sym
-  neo4j_db_url = NEO4J_DATABASE_CONFIG[:db_url]
+  neo4j_db_url = NEO4J_DATABASE_CONFIG[:db_url].to_s
   session = Neo4j::Session.open(neo4j_db_type, neo4j_db_url, NEO4J_DATABASE_CONFIG.except(:db_type, :db_url))
 
   raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...' unless session
