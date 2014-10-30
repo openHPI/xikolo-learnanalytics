@@ -1,0 +1,17 @@
+production:
+  services:
+    account: http://10.210.0.31:7001/
+    certificate: http://10.210.0.31:7002/
+    course: http://10.210.0.31:7003/
+    file: http://10.210.0.31:7004/
+    helpdesk: http://10.210.0.31:7005/
+    learning_room: http://10.210.0.31:7006/
+    lti: http://10.210.0.31:7015/
+    news: http://10.210.0.31:7007/
+    notification: http://10.210.0.31:7008/
+    peerassessment: http://10.210.0.31:7016/
+    pinboard: http://10.210.0.31:7009/
+    quiz: http://10.210.0.31:7011/
+    richtext: http://10.210.0.31:7012/
+    submission: http://10.210.0.31:7013/
+    video: http://10.210.0.31:7014/
