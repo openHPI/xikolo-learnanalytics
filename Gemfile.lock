@@ -1,28 +1,3 @@
-GIT
-  remote: https://github.com/jgraichen/msgr
-  revision: 0c1d5e9f39994ea22a88075bfe4e70878f60728b
-  specs:
-    msgr (0.12.0)
-      activesupport
-      bunny (~> 1.5)
-      multi_json
-
-GIT
-  remote: https://github.com/neo4jrb/neo4j-core
-  revision: 5288fffedb81bee5ff9f594fae85f7c10d6aa77c
-  branch: master
-  specs:
-    neo4j-core (3.0.3)
-      activesupport
-      faraday (~> 0.9.0)
-      faraday_middleware (~> 0.9.1)
-      httparty
-      httpclient
-      json
-      net-http-persistent
-      os
-      zip
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -104,7 +79,7 @@ GEM
     httparty (0.13.1)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
-    httpclient (2.5.1)
+    httpclient (2.5.2)
     i18n (0.6.11)
     jbuilder (2.1.3)
       activesupport (>= 3.0.0, < 5)
@@ -113,6 +88,7 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
+    libv8 (3.16.14.7)
     link_header (0.0.8)
     mail (2.5.4)
       mime-types (~> 1.16)
@@ -123,9 +99,23 @@ GEM
       railties (>= 3.0.0, < 5.0.0)
     mime-types (1.25.1)
     minitest (5.4.2)
+    msgr (0.12.0)
+      activesupport
+      bunny (~> 1.5)
+      multi_json
     multi_json (1.10.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
+    neo4j-core (3.0.3)
+      activesupport
+      faraday (~> 0.9.0)
+      faraday_middleware (~> 0.9.1)
+      httparty
+      httpclient
+      json
+      net-http-persistent
+      os
+      zip
     net-http-persistent (2.9.4)
     netrc (0.7.7)
     obligation (0.1.0)
@@ -155,6 +145,7 @@ GEM
     rake (10.3.2)
     rdoc (4.1.2)
       json (~> 1.4)
+    ref (1.0.5)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
@@ -203,6 +194,9 @@ GEM
       activesupport (>= 3.0)
       sprockets (~> 2.8)
     sqlite3 (1.3.9)
+    therubyracer (0.12.1)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
@@ -233,9 +227,9 @@ DEPENDENCIES
   jquery-rails
   link_header
   meta_request
-  msgr!
+  msgr
   multi_json
-  neo4j-core!
+  neo4j-core
   os
   rails (= 4.1.5)
   rest-client
@@ -246,6 +240,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   spring
   sqlite3
+  therubyracer
   turbolinks
   uglifier (>= 1.3.0)
   webmock

@@ -11,7 +11,7 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer',  platforms: :ruby
+gem 'therubyracer',  platforms: :ruby, group: :production
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -26,16 +26,15 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'restify'
 
 # Connecting to RabbitMQ
-gem 'msgr', :git => 'https://github.com/jgraichen/msgr'
+gem 'msgr'#, :git => 'https://github.com/jgraichen/msgr'
 # gem 'neo4j', github: 'andreasronge/neo4j'
-gem 'neo4j-core', git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
+gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'rest-client'
 gem 'multi_json'
 
 gem 'ruby-progressbar'
 # gem 'http_link_header', '~> 0.1.0'
 gem 'link_header'
-
 
 # Gems for the web application
 # gem 'bootstrap-rails'
