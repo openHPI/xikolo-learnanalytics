@@ -13,7 +13,7 @@ gem 'lanalytics-model', :path => '..'
 
 
 group :development do
-  gem 'geminabox'
+  gem 'geminabox-rake'
 end
 
 # To use debugger
