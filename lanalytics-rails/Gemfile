@@ -11,5 +11,10 @@ gemspec
 # your gem to rubygems.org.
 gem 'lanalytics-model', :path => '..'
 
+
+group :development do
+  gem 'geminabox'
+end
+
 # To use debugger
 # gem 'debugger'

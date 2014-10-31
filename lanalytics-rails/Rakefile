@@ -4,6 +4,11 @@ rescue LoadError
   puts 'You must `gem install bundler` and `bundle install` to run rake tasks'
 end
 
+require 'geminabox/rake'
+Geminabox::Rake.install host: 'https://gemuser:K6c1mcRWtrTQepS6aI8HRXc7DPoRYXbG@openhpi-utils.hpi.uni-potsdam.de/gems/',
+                        dir: '.',
+                        namespace: 'lanalytics-rails'
+                        
 require 'rdoc/task'
 
 RDoc::Task.new(:rdoc) do |rdoc|
