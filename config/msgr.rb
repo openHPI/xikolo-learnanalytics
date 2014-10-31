@@ -3,7 +3,7 @@ route 'xikolo.account.user.create', to: 'Lanalytics#create'
 route 'xikolo.account.user.update', to: 'Lanalytics#update'
 route 'xikolo.account.user.destroy', to: 'Lanalytics#destroy'
 
-route 'xikolo.account.session.create', to: 'Lanalytics#create'
+# route 'xikolo.account.session.create', to: 'Lanalytics#create'
 
 
 # ------------------- Course Domain Entities -------------------
@@ -30,6 +30,13 @@ route 'xikolo.learning_room.membership.destroy', to: 'Lanalytics#destroy'
 
 # ------------------- Submissions Domain Entities -------------------
 route 'xikolo.submission.submission.create', to: 'Lanalytics#create'
+
+
+# ------------------- Pinboard Domain Entities -------------------
+route 'xikolo.pinboard.question.create', to: 'Lanalytics#create'
+route 'xikolo.pinboard.question.update', to: 'Lanalytics#update'
+route 'xikolo.pinboard.subscription.create', to: 'Lanalytics#create'
+route 'xikolo.pinboard.subscription.destroy', to: 'Lanalytics#destroy'
 
 
 # ------------------- Web Events -------------------
