@@ -7,29 +7,29 @@ RSpec.describe Lanalytics::TrackingController, :type => :controller do
     # Msgr.publish(tracking_event, to: "lanalytics.event.stream")
   # end
 
-  describe "POST 'lanalytics/track'" do
     
-    it "returns http success" do
-      post('track', request_data)
-      expect(response).to be_success
+  it "returns http success" do
+    post('track', request_data)
+    expect(response).to be_success
+  end
+
+  it "should push a message into the RabbitMQ Queue" do
+    
+    expect(Msgr).to receive(:publish) do | exp_stmt_as_hash, msgr_params |
+
+      expect(exp_stmt_as_hash).to be_a(Hash)
+      exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(exp_stmt_as_hash)
+      expect(exp_stmt).to be_an_instance_of(Lanalytics::Model::ExpApiStatement)
+      expect(exp_stmt.user.uuid).to eq('00000001-3100-4444-9999-000000000001')
+      expect(exp_stmt.verb.type).to eq(:VIDEO_PLAY)
+      expect(exp_stmt.resource.type).to eq(:ITEM)
+      expect(exp_stmt.resource.uuid).to eq('00000003-3100-4444-9999-000000000003')
+
+      expect(msgr_params).to include(:to => 'xikolo.web.event.create')
     end
 
-    it "should push a message into the RabbitMQ Queue" do
-      expect(Msgr).to receive(:publish) do | marshalled_exp_api_stmt, msgr_params |
-
-        expect(marshalled_exp_api_stmt).to be_an_instance_of(String)
-        exp_api_stmt = Marshal.load(marshalled_exp_api_stmt)
-        expect(exp_api_stmt).to be_an_instance_of(Lanalytics::Model::ExpApiStatement)
-        expect(exp_api_stmt.user.uuid).to eq('00000001-3100-4444-9999-000000000001')
-        expect(exp_api_stmt.verb.type).to eq(:video_play)
-        expect(exp_api_stmt.resource.type).to eq(:Item)
-        expect(exp_api_stmt.resource.uuid).to eq('00000003-3100-4444-9999-000000000003')
-
-        expect(msgr_params).to include(:to => 'lanalytics.event.stream')
-      end
-      post('track', request_data)
-      expect(response).to be_success
-    end
+    post('track', request_data)
+    expect(response).to be_success
   end
 
   def request_data
