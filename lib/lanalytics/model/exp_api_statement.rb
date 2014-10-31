@@ -1,7 +1,4 @@
 require 'date'
-#require_relative 'stmt_user'
-#require_relative 'stmt_verb'
-#require_relative 'stmt_resource'
 
 class Lanalytics::Model::ExpApiStatement
   attr_reader :user, :verb, :resource, :timestamp, :with_result, :in_context
@@ -27,6 +24,14 @@ class Lanalytics::Model::ExpApiStatement
 
     in_context ||= {}
     @in_context = in_context.to_hash
+  end
+
+  def properties
+    return {
+      timestamp: @timestamp.to_s, 
+      with_result: @with_result.symbolize_keys,
+      in_context: @in_context.symbolize_keys
+    }
   end
 
   def as_json
