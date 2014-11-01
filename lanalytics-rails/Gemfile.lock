@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lanalytics-rails (0.2)
+    lanalytics-rails (0.2.1)
       gon
       jquery-rails
       lanalytics-model
@@ -46,7 +46,7 @@ GEM
     amq-protocol (1.9.2)
     arel (5.0.1.20140414130214)
     builder (3.2.2)
-    bunny (1.4.1)
+    bunny (1.5.1)
       amq-protocol (>= 1.9.2)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
@@ -55,7 +55,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.8.0)
-    concurrent-ruby (0.5.0)
     diff-lcs (1.2.5)
     erubis (2.7.0)
     execjs (2.2.1)
@@ -95,10 +94,9 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     minitest (5.4.1)
-    msgr (0.11.0)
+    msgr (0.12.0)
       activesupport
-      bunny (~> 1.0)
-      concurrent-ruby (~> 0.5.0)
+      bunny (~> 1.5)
       multi_json
     multi_json (1.10.1)
     nesty (1.0.2)
