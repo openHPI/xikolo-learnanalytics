@@ -1,14 +1,13 @@
 common: &common
   uri: amqp://localhost/
-  pool_class: NullPool
 
 test:
   <<: *common
-  # pool_class: TestPool
 
 development:
   <<: *common
   autostart: true
 
 production:
-  <<: *common
+  uri: amqp://openhpi:YwoXVln8AyTCang1USfA@10.210.0.31/openhpi
+  autostart: false
