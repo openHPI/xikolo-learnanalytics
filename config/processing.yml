@@ -9,7 +9,7 @@ xikolo.account.user.update:
   *XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
 xikolo.account.user.destroy: 
   *XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
-
+  
 
 
 # ------------------- Course Domain Entities -------------------
@@ -97,10 +97,12 @@ xikolo.pinboard.subscription.destroy:
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
 xikolo.pinboard.answer.url: 'http://localhost:3500/answers.json'
-xikolo.pinboard.answer.create:
+xikolo.pinboard.answer.create: &PINBOARD_ANSWER_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::PinboardAnswerDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
+xikolo.pinboard.answer.update:
+  *PINBOARD_ANSWER_PROCESSING_CHAIN
 
 
 xikolo.pinboard.comment.url: http://localhost:3500/comments.json

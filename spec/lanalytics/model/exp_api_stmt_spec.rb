@@ -28,7 +28,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       stmt = Lanalytics::Model::ExpApiStatement.new(@stmt_user, @stmt_verb, @stmt_resource, @stmt_timestamp, @stmt_result, @stmt_context)
       expect(stmt).to respond_to(:properties)
       expect(stmt.properties).to be_a(Hash)
-      expect(stmt.properties).to include(timestamp: '8 May 1989 05:00:00')
+      expect(stmt.properties).to include(timestamp: @stmt_timestamp.rfc3339)
       expect(stmt.properties).to include(with_result: { result: 1000 })
       expect(stmt.properties).to include(in_context: { location: 'Potsdam' })
     end

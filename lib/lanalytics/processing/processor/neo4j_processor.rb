@@ -55,6 +55,7 @@ module Lanalytics
 
         def merge_relationship(original_resource_as_hash, resource_relationship)
 
+          resource_relationship.properties.delete_if {|key, value| value.nil? }
           # resource_relationship_properties = resource_relationship.properties
           # relationship_properties = relationship.except(*%w(with_rel_type to_resource_type to_resource_uuid))
           # ::TODO:: Issue this as a github issue
@@ -66,10 +67,17 @@ module Lanalytics
         end
 
         def create_experience_statement(original_resource_as_hash, exp_stmt)
+
+          relationship_properties = {}
+          relationship_properties[:timestamp] = exp_stmt.properties[:timestamp]
+          exp_stmt.properties[:with_result].each { | k, v | relationship_properties["result_#{k}".to_sym] = v }
+          exp_stmt.properties[:in_context].each { | k, v | relationship_properties["context_#{k}".to_sym] = v }
+
+
           Neo4j::Session.query
           .merge(r1: {exp_stmt.user.type => { resource_uuid: exp_stmt.user.uuid }}).break
           .merge(r2: {exp_stmt.resource.type => { resource_uuid: exp_stmt.resource.uuid }}).break
-          .create("(r1)-[:#{exp_stmt.verb.type} #{Neo4j::Core::Query.new.merge(exp_stmt.with_result).to_cypher[8..-2]}]->(r2)")
+          .create("(r1)-[:#{exp_stmt.verb.type} #{Neo4j::Core::Query.new.merge(relationship_properties).to_cypher[8..-2]}]->(r2)")
           .exec
         end
 

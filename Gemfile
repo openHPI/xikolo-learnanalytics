@@ -63,6 +63,9 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
+
+  # To release the lanalytics-model gem
+  gem 'geminabox-rake', '~> 1.1.0'
 end
 
 group :test do

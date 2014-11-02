@@ -3,7 +3,9 @@ require 'link_header'
 namespace :lanalytics do
   
   desc "Loads all lanalytics data initially"
-  task sync: :environment do
+  task :sync, [:urls] => :environment do | task, args |
+
+    args.urls = args.urls.split(' ').map! { | url | url.strip } if args.urls
 
     old_logger_level = Rails.logger.level
     Rails.logger.level = 1 # :info
@@ -11,7 +13,10 @@ namespace :lanalytics do
     processing_definitions = YAML.load_file("#{Rails.root}/config/processing.yml")
 
     processing_definitions.each do | processing_definition_key, service_url |
+      
       next unless processing_definition_key.end_with?('.url')
+
+      next if args.urls and not args.urls.include?(processing_definition_key)
 
       # Replacing '.url' of processing_definition_key with '.create'
       processing_steps = processing_definitions["#{processing_definition_key[0...-4]}.create"]
