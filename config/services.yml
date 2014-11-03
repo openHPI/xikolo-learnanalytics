@@ -1,17 +1,56 @@
+development: &dev
+  services: &devserv
+    account: http://localhost:3100
+    notification: http://localhost:3200
+    course: http://localhost:3300
+    gamification: http://localhost:3400
+    pinboard: http://localhost:3500
+    video: http://localhost:3600
+    richtext: http://localhost:3700
+    quiz: http://localhost:3800
+    submission: http://localhost:3900
+    file: http://localhost:4000
+    certificate: http://localhost:4100
+    log: http://localhost:4200
+    news: http://localhost:4300
+    socialnetworking: http://localhost:4400
+#    crowdsourcing: http://localhost:4500
+#    motivation: http://localhost:4600
+    helpdesk: http://localhost:4700
+    learning_room: http://localhost:4800
+    progress: http://localhost:4900
+    lti: http://localhost:5000
+    game: http://localhost:5100
+    wiki: http://localhost:5200
+    usertesting: http://localhost:5300
+    peerassessment: http://localhost:5400
+
+test:
+  services:
+    <<: *devserv
+
 production:
   services:
-    account: http://10.210.0.31:7001/
-    certificate: http://10.210.0.31:7002/
-    course: http://10.210.0.31:7003/
-    file: http://10.210.0.31:7004/
-    helpdesk: http://10.210.0.31:7005/
-    learning_room: http://10.210.0.31:7006/
-    lti: http://10.210.0.31:7015/
-    news: http://10.210.0.31:7007/
-    notification: http://10.210.0.31:7008/
-    peerassessment: http://10.210.0.31:7016/
-    pinboard: http://10.210.0.31:7009/
-    quiz: http://10.210.0.31:7011/
-    richtext: http://10.210.0.31:7012/
-    submission: http://10.210.0.31:7013/
-    video: http://10.210.0.31:7014/
+    account: http://services:8080/account
+    notification: http://services:8080/notification
+    course: http://services:8080/course
+    gamification: http://services:8080/gamification
+    pinboard: http://services:8080/pinboard
+    video: http://services:8080/video
+    richtext: http://services:8080/richtext
+    quiz: http://services:8080/quiz
+    submission: http://services:8080/submission
+    socialnetworking: http://services:8080/socialnetworking
+    crowdsourcing: http://services:8080/crowdsourcing
+    file: http://services:8080/file
+    certificate: http://services:8080/certificate
+    log: http://services:8080/log
+    news: http://services:8080/news
+    motivation: http://services:8080/motivation
+    helpdesk: http://services:8080/helpdesk
+    learning_room: http://services:8080/learning-room
+    progress: http://services:8080/progress
+    lti: http://services:8080/lti
+    game: http://services:8080/game
+    peer_assessment: http://services:8080/peerassessment
+    usertesting: http://services:8080/usertesting

@@ -1,13 +1,12 @@
 common: &common
   uri: amqp://localhost/
 
-test:
-  <<: *common
-
 development:
   <<: *common
   autostart: true
 
+test:
+  <<: *common
+
 production:
-  uri: amqp://openhpi:YwoXVln8AyTCang1USfA@10.210.0.31/openhpi
-  autostart: false
+  <<: *common
