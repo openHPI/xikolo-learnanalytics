@@ -1,29 +1,33 @@
 require_relative 'stmt_component'
 
-class Lanalytics::Model::StmtVerb < Lanalytics::Model::StmtComponent
+module Lanalytics
+  module Model
+    class Lanalytics::Model::StmtVerb < Lanalytics::Model::StmtComponent
 
-  def initialize(type)
-    super(type)
-  end
+      def initialize(type)
+        super(type)
+      end
 
-  def as_json
-    {
-      :type => @type,
-    }
-  end
+      def as_json
+        {
+          :type => @type,
+        }
+      end
 
-  def self.new_from_json(json)
-    if json.is_a? Hash
-      json = json.with_indifferent_access
-    elsif json.is_a? String
-      json = JSON.parse(json, symbolize_names: true) if json.is_a? String
-    elsif not json
-      raise ArgumentError.new("'json' cannot be nil")
-    else
-      raise ArgumentError.new("'json' argument is not a JSON Hash or String")
+      def self.new_from_json(json)
+        if json.is_a? Hash
+          json = json.with_indifferent_access
+        elsif json.is_a? String
+          json = JSON.parse(json, symbolize_names: true) if json.is_a? String
+        elsif not json
+          raise ArgumentError.new("'json' cannot be nil")
+        else
+          raise ArgumentError.new("'json' argument is not a JSON Hash or String")
+        end
+
+        return new(json[:type])
+      end
+
     end
-
-    return new(json[:type])
   end
-
 end
