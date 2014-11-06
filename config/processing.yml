@@ -1,5 +1,5 @@
 # ------------------- User Domain Entities -------------------
-xikolo.account.user.url: 'http://localhost:3100/users.json'
+xikolo.account.user.url: '/users.json'
 xikolo.account.user.create: &XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::UserDataFilter.new
   - Lanalytics::Processing::Filter::AnonymousDataFilter.new
@@ -13,7 +13,7 @@ xikolo.account.user.destroy:
 
 
 # ------------------- Course Domain Entities -------------------
-xikolo.course.course.url: 'http://localhost:3300/courses.json'
+xikolo.course.course.url: '/courses.json'
 xikolo.course.course.create: &XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::CourseDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -23,13 +23,13 @@ xikolo.course.course.update:
 xikolo.course.course.destroy:
   *XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
 
-xikolo.course.item.url: 'http://localhost:3300/items.json'
+xikolo.course.item.url: '/items.json'
 xikolo.course.item.create:
   - Lanalytics::Processing::Filter::ItemDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
-xikolo.course.enrollment.url: 'http://localhost:3300/enrollments.json'
+xikolo.course.enrollment.url: '/enrollments.json'
 xikolo.course.enrollment.create:
   - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :course_id, :ENROLLED)
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -47,7 +47,7 @@ xikolo.course.visit.create:
 
 
 # ------------------- Learning Room Domain Entities -------------------
-xikolo.learning_room.learning_room.url: 'http://localhost:4800/learning_rooms.json'
+xikolo.learning_room.learning_room.url: '/learning_rooms.json'
 xikolo.learning_room.learning_room.create: &LEARNING_ROOM_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::LearningRoomDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -57,7 +57,7 @@ xikolo.learning_room.learning_room.update:
 xikolo.learning_room.learning_room.destroy:
   *LEARNING_ROOM_PROCESSING_CHAIN
 
-xikolo.learning_room.membership.url: 'http://localhost:4800/memberships.json'
+xikolo.learning_room.membership.url: '/memberships.json'
 xikolo.learning_room.membership.create:
   - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :JOINED)
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -78,7 +78,7 @@ xikolo.submission.submission.create:
 
 
 # ------------------- Pinboard Domain Entities -------------------
-xikolo.pinboard.question.url: http://localhost:3500/questions.json
+xikolo.pinboard.question.url: '/questions.json'
 xikolo.pinboard.question.create: &PINBOARD_QUESTION_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::PinboardQuestionDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -86,7 +86,7 @@ xikolo.pinboard.question.create: &PINBOARD_QUESTION_PROCESSING_CHAIN
 xikolo.pinboard.question.update:
   *PINBOARD_QUESTION_PROCESSING_CHAIN
 
-xikolo.pinboard.subscription.url: 'http://localhost:3500/subscriptions.json'
+xikolo.pinboard.subscription.url: '/subscriptions.json'
 xikolo.pinboard.subscription.create:
   - Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :question_id, :SUBSCRIBED)
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -96,7 +96,7 @@ xikolo.pinboard.subscription.destroy:
   - Lanalytics::Processing::Processor::LoggerProcessor.new
   - Lanalytics::Processing::Processor::Neo4jProcessor.new
 
-xikolo.pinboard.answer.url: 'http://localhost:3500/answers.json'
+xikolo.pinboard.answer.url: '/answers.json'
 xikolo.pinboard.answer.create: &PINBOARD_ANSWER_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::PinboardAnswerDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
@@ -105,7 +105,7 @@ xikolo.pinboard.answer.update:
   *PINBOARD_ANSWER_PROCESSING_CHAIN
 
 
-xikolo.pinboard.comment.url: http://localhost:3500/comments.json
+xikolo.pinboard.comment.url: '/comments.json'
 xikolo.pinboard.comment.create:
   - Lanalytics::Processing::Filter::PinboardCommentDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
