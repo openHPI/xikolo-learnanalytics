@@ -1,0 +1,73 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Lanalytics - Lear more about your students</title>
+  <%= stylesheet_link_tag('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css') %>
+  <%= stylesheet_link_tag('//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css') %>
+  <%= stylesheet_link_tag('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css') %>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+        .navbar-header
+          button.navbar-toggle data-target='#navbar-collapse' data-toggle='collapse' type='button'
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand href=root_path
+            i.fa.fa-code
+            = application_name
+        #navbar-collapse.collapse.navbar-collapse
+          = render('navigation')
+          ul.nav.navbar-nav.navbar-right
+            = render('locale_selector')
+            li = link_to(t('shared.help.link'), '#modal-help', data: {toggle: 'modal'})
+            = render('session')
+
+<%= yield %>
+
+</body>
+</html> -->
+
+doctype html
+html lang='en'
+  head
+    meta charset='utf8'
+    meta name='viewport' content='width=device-width, initial-scale=1'
+    title 'LAnalytics'
+    = stylesheet_link_tag('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css')
+    = stylesheet_link_tag('//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css')
+    = stylesheet_link_tag('//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css')
+    = stylesheet_link_tag('application', media: 'all', 'data-turbolinks-track' => true)
+    = javascript_include_tag('application', 'data-turbolinks-track' => true)
+    = javascript_include_tag('//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js')
+    = javascript_include_tag('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
+    = yield(:head)
+    = csrf_meta_tags
+  body
+    nav.navbar.navbar-default role='navigation'
+      .container
+        .navbar-header
+          button.navbar-toggle data-target='#navbar-collapse' data-toggle='collapse' type='button'
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand href=root_path
+            i.fa.fa-code
+            LAnalytics
+        #navbar-collapse.collapse.navbar-collapse
+          = render('navigation')
+          ul.nav.navbar-nav.navbar-right
+            = render('locale_selector')
+            li = link_to(t('shared.help.link'), '#modal-help', data: {toggle: 'modal'})
+            = render('session')
+    .container data-controller=controller_name
+      = render('breadcrumbs')
+      = render('flash')
+      = yield
+    - template_variables = {execution_environment: @exercise.execution_environment} if action_name == 'implement'
+    = render('shared/modal', classes: 'modal-lg', id: 'modal-help', template: 'application/help', template_variables: template_variables, title: t('shared.help.headline'))
