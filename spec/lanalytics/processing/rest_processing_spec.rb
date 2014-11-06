@@ -20,6 +20,7 @@ describe Lanalytics::Processing::RestProcessing do
     Lanalytics::Processing::RestProcessing.process('http://localhost:3000/data.json', [processing_step])
   end
 
+
   it 'processes url on two pages' do
     data_1 = {'id' => '1', 'property' => 'A'}
     stub_request(:get, 'http://localhost:3000/data.json').to_return(status: 200,
@@ -32,7 +33,6 @@ describe Lanalytics::Processing::RestProcessing do
       body: [ data_3, {'id' => '4', 'property' => 'D'} ].to_json)
 
     processing_step = Lanalytics::Processing::ProcessingStep.new
-    # expect(processing_step).to receive(:process).exactly(5).times
     expect(processing_step).to receive(:process).with(data_1, anything(), anything())
     expect(processing_step).to receive(:process).with(kind_of(Hash), anything(), anything())
     expect(processing_step).to receive(:process).with(data_3, anything(), anything())
@@ -40,6 +40,7 @@ describe Lanalytics::Processing::RestProcessing do
     expect(processing_step).to_not receive(:process)
     Lanalytics::Processing::RestProcessing.process('http://localhost:3000/data.json', [processing_step])
   end
+
 
   it "processes url with no link header" do
 
