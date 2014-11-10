@@ -5,7 +5,7 @@ namespace :lanalytics do
   desc "Loads all lanalytics data initially"
   task :sync, [:allowed_processing_keys] => :environment do | task, args |
 
-    args.allowed_processing_keys = args.allowed_processing_keys.split(' ').map! { | processing_key | processing_keys.strip } if args.allowed_processing_keys
+    args.allowed_processing_keys = args.allowed_processing_keys.split(' ').map! { | processing_key | processing_key.strip } if args.allowed_processing_keys
 
     old_logger_level = Rails.logger.level
     Rails.logger.level = 1 # :info
