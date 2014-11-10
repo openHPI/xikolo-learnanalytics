@@ -22,6 +22,7 @@ namespace :lanalytics do
       # If processing keys are given, then we look if the current processing should be handled
       next if args.allowed_processing_keys and not args.allowed_processing_keys.include?(processing_key)
 
+      # Find out the base url for the service
       service_name = /^xikolo\.(?<service_name>\w+)\.\w+\.url$/.match(processing_key.to_s)[:service_name].to_s
       unless service_urls.has_key?(service_name)
         Rails.logger.info "Service '#{service_name}' not defined in service.yml"
