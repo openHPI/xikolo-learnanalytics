@@ -37,7 +37,7 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
-    bunny (1.6.0)
+    bunny (1.4.1)
       amq-protocol (>= 1.9.2)
     callsite (0.0.11)
     coderay (1.1.0)
@@ -108,9 +108,9 @@ GEM
       railties (>= 3.0.0, < 5.0.0)
     mime-types (1.25.1)
     minitest (5.4.2)
-    msgr (0.12.0)
+    msgr (0.12.1)
       activesupport
-      bunny (~> 1.5)
+      bunny (~> 1.4)
       multi_json
     multi_json (1.10.1)
     multi_xml (0.5.5)
@@ -237,6 +237,7 @@ PLATFORMS
 DEPENDENCIES
   better_errors
   binding_of_caller
+  bunny (< 1.5)
   coffee-rails (~> 4.0.0)
   factory_girl_rails
   geminabox-rake (~> 1.1.0)

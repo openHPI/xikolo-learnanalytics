@@ -26,7 +26,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'restify'
 
 # Connecting to RabbitMQ
-gem 'msgr'#, :git => 'https://github.com/jgraichen/msgr'
+gem 'msgr'
+gem 'bunny', '< 1.5' # On production we are using an older RabbitMQ Version (2.XX); this is only supported by a bunny verion < 1.5
+
 # gem 'neo4j', github: 'andreasronge/neo4j'
 gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'rest-client'
