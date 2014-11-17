@@ -62,7 +62,7 @@ describe Lanalytics::Processing::Filter::MembershipDataFilter do
 
   describe '(Processing with custom relationship type)' do
 
-    it 'should should create :USER resource with correct properties' do
+    it 'should create :USER resource with correct properties' do
       original_hash = FactoryGirl.attributes_for(:amqp_learning_room_membership).with_indifferent_access
       data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :JOINED)
 
@@ -79,7 +79,7 @@ describe Lanalytics::Processing::Filter::MembershipDataFilter do
       expect(learning_room_rel.to_resource.type).to eq(:LEARNING_ROOM)
     end
 
-    it 'should should create :USER resource with correct properties' do
+    it 'should create :USER resource with correct properties' do
       original_hash = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
       data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :course_id, :ENROLLED)
 
