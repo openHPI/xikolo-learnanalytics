@@ -17,3 +17,4 @@
 
 .rspec
 pkg
+*.iml
