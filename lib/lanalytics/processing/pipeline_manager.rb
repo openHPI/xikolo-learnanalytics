@@ -25,6 +25,7 @@ module Lanalytics
 
       def pipeline_for(name, schema, processing_action, &block)
         @pipelines[schema][processing_action][name] = Pipeline.new(name, schema, processing_action, &block)
+        Rails.logger.info "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'"
       end
 
       # Look in all schemas for the pipeline name
