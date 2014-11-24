@@ -2,19 +2,18 @@ require 'rails_helper'
 
 describe LanalyticsConsumer do
 
-  after(:each) do
-    Neo4j::Session.query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r;")
-    expect(Neo4j::Session.query.match(:n).pluck(:n).length).to eq(0)
+  before(:each) do
+    Neo4jTestHelper.clean_database
   end
 
-  describe "for routes 'xikolo.web.event.create'" do
+  describe "for routes 'xikolo.web.exp_event.create'" do
 
     before(:each) do
       @amqp_exp_stmt_data = FactoryGirl.attributes_for(:amqp_exp_stmt).with_indifferent_access
-      @consumer = LanalyticsConsumer  .new
+      @consumer = LanalyticsConsumer.new
       allow(@consumer).to receive(:payload).and_return(@amqp_exp_stmt_data)
       allow(@consumer).to receive(:message).and_return(double('message'))
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.web.event.create'})
+      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.web.exp_event.create'})
     end
 
     it "should create a new enrollment relationship between newly created USER and COURSE nodes" do
@@ -37,12 +36,12 @@ describe LanalyticsConsumer do
         RETURN e
       })
       expect(result.to_a.length).to eq(1)
-      expected_enrollemnt_relationship = result.first.e
-      expect(expected_enrollemnt_relationship.rel_type).to eq(@amqp_exp_stmt_data[:verb][:type])
-      expect(expected_enrollemnt_relationship[:timestamp]).to eq(@amqp_exp_stmt_data[:timestamp])
-      expect(expected_enrollemnt_relationship[:with_result]).to be_nil
-      expect(expected_enrollemnt_relationship[:context_currentTime]).to_not be_nil
-      expect(expected_enrollemnt_relationship[:context_currentSpeed]).to_not be_nil
+      expected_exp_statment = result.first.e
+      expect(expected_exp_statment.rel_type).to eq(@amqp_exp_stmt_data[:verb][:type])
+      expect(expected_exp_statment[:timestamp]).to eq(@amqp_exp_stmt_data[:timestamp])
+      expect(expected_exp_statment[:with_result]).to be_nil
+      expect(expected_exp_statment[:in_context_current_time]).to_not be_nil
+      expect(expected_exp_statment[:in_context_current_speed]).to_not be_nil
     end
 
   end

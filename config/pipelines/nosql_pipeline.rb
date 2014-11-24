@@ -1,0 +1,74 @@
+
+def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
+  
+  pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.#{processing_action.to_s.downcase}", :nosql, processing_action) do
+    extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
+
+    transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
+    transformer Lanalytics::Processing::Transformer::NosqlDataSchemaTransformer.new
+    
+    loader Lanalytics::Processing::Loader::Neo4jLoader.new(:nosql_neo)
+  end
+
+end
+
+# NoSQL Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
+def nosql_pipelines_for_crud(event_domain_ns_type, event_domain_type)
+  
+  nosql_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, event_domain_ns_type, event_domain_type)
+  nosql_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, event_domain_ns_type, event_domain_type)
+  nosql_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, event_domain_ns_type, event_domain_type)
+end
+
+create_action = Lanalytics::Processing::ProcessingAction::CREATE
+update_action = Lanalytics::Processing::ProcessingAction::UPDATE
+destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
+
+
+# ------------------- User Domain Entities -------------------
+nosql_pipelines_for_crud(:account, :user)
+
+# ------------------- Course Domain Entities -------------------
+nosql_pipelines_for_crud(:course, :course)
+nosql_pipelines_for_crud(:course, :item)
+nosql_pipeline(create_action, :course, :enrollment)
+nosql_pipeline(destroy_action, :course, :enrollment)
+nosql_pipeline(create_action, :course, :visit)
+
+
+# ------------------- Learning Room Domain Entities -------------------
+nosql_pipelines_for_crud(:learning_room, :learning_room)
+nosql_pipeline(create_action, :learning_room, :membership)
+nosql_pipeline(destroy_action, :learning_room, :membership)
+
+# ------------------- Submission Domain Entities -------------------
+nosql_pipeline(create_action, :submission, :submission)
+
+# ------------------- Pinboard Domain Entities -------------------
+nosql_pipeline(create_action, :pinboard, :question)
+nosql_pipeline(update_action, :pinboard, :question)
+nosql_pipeline(create_action, :pinboard, :subscription)
+nosql_pipeline(destroy_action, :pinboard, :subscription)
+nosql_pipeline(create_action, :pinboard, :answer)
+nosql_pipeline(update_action, :pinboard, :answer)
+nosql_pipeline(create_action, :pinboard, :comment)
+nosql_pipeline(update_action, :pinboard, :comment)
+
+# ------------------- Helpdesk Domain Entities -------------------
+nosql_pipeline(create_action, :helpdesk, :ticket)
+
+
+nosql_pipeline(create_action, :web, :exp_event)
+
+
+
+
+
+
+
+
+
+
+
+
+

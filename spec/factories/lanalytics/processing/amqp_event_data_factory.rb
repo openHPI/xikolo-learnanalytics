@@ -10,7 +10,7 @@ FactoryGirl.define do
   end
 
   factory :amqp_course, class: Hash do
-    id "596420be-95ec-4586-9c4c-b76b31593217"
+    id "00000001-3300-4444-9999-000000000006"
     title "testkurs"
     start_date "2014-08-21T00:00:00Z"
     display_start_date nil
