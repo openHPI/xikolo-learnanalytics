@@ -1,1 +1,0 @@
-# Stores every  event data into a ruby file to simulate payload at a later stage
