@@ -1,25 +1,14 @@
-<h1>Listing research_cases</h1>
+<!-- <h1>Your Research Cases</h1> -->
 
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @research_cases.each do |research_case| %>
-      <tr>
-        <td><%= research_case.title %></td>
-        <td><%= link_to 'Show', research_case %></td>
-        <td><%= link_to 'Edit', edit_research_case_path(research_case) %></td>
-        <td><%= link_to 'Destroy', research_case, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+<div class='row'>
+  <% #@research_cases.in_groups_of(3, false) do | three_research_cases | %>
+    <% @research_cases.each do | research_case | %>
+      <div class="col-md-4">
+        <%= render research_case %>
+      </div>
     <% end %>
-  </tbody>
-</table>
+  <% #end %>
+</div>
 
-<br>
 
 <%= link_to 'New Research case', new_research_case_path %>

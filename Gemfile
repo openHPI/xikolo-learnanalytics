@@ -25,15 +25,21 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'restify'
 
-
+# Gems needed for the LAnalytics UI
 gem 'slim'
+gem 'forgery'
 
 
 # Connecting to RabbitMQ
 gem 'msgr'
 gem 'bunny', '< 1.5' # On production we are using an older RabbitMQ Version (2.XX); this is only supported by a bunny verion < 1.5
 
-# gem 'neo4j', github: 'andreasronge/neo4j'
+#  Needed for some hashing in DataTransformers ...
+gem 'murmurhash3'
+
+gem 'connection_pool'
+
+# Different database adapters to store the data
 gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'pg'
 
