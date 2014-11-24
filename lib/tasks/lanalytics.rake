@@ -13,38 +13,31 @@ namespace :lanalytics do
     service_urls = YAML.load_file("#{Rails.root}/config/services.yml")
     service_urls = (service_urls[Rails.env] || service_urls)['services']
 
-    processings = YAML.load_file("#{Rails.root}/config/processing.yml")
+    processings = YAML.load_file("#{Rails.root}/config/lanalytics_sync.yml")
 
-    processings.each do | processing_key, entity_json_route |
+    processings.each do | pipeline_name, entity_json_route |
       
-      next unless processing_key.end_with?('.url')
-
       # If processing keys are given, then we look if the current processing should be handled
-      next if args.allowed_processing_keys and not args.allowed_processing_keys.include?(processing_key)
+      next if args.allowed_processing_keys and not args.allowed_processing_keys.include?(pipeline_name)
 
       # Find out the base url for the service
-      service_name = /^xikolo\.(?<service_name>\w+)\.\w+\.url$/.match(processing_key.to_s)[:service_name].to_s
+      service_name = /^xikolo\.(?<service_name>\w+)\.\w+\.create$/.match(pipeline_name.to_s)[:service_name].to_s
       unless service_urls.has_key?(service_name)
         Rails.logger.info "Service '#{service_name}' not defined in service.yml"
         next
       end
+
       service_base_url = service_urls[service_name]
       json_url = "#{service_base_url}#{entity_json_route}"
 
       # Replacing '.url' of processing_definition_key with '.create'
-      processing_steps = processings["#{processing_key[0...-4]}.create"]
-      unless processing_steps
-        logger.info "'#{processing_key[0...-4]}.create' in processing.yml but needed in order to process the resources"
-        next
-      end
+      # processing_steps = processings["#{processing_key[0...-4]}.create"]
+      # unless processing_steps
+      #   logger.info "'#{processing_key[0...-4]}.create' in processing.yml but needed in order to process the resources"
+      #   next
+      # end
 
-      processing_steps.map! do | processing_step |
-        # Some processing steps are not loaded during 'YAML.load_file'; that's why we are evaluating this in ruby
-        processing_step = eval(processing_step) if processing_step.is_a?(String)
-        processing_step
-      end
-
-      Lanalytics::Processing::RestProcessing.process(json_url, processing_steps)
+      Lanalytics::Processing::RestPipeline.process(json_url, pipeline_name)
     end
 
     Rails.logger.level = old_logger_level

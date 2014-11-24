@@ -1,19 +1,29 @@
 class LanalyticsConsumer < Msgr::Consumer
 
   def create
-    Lanalytics::Processing::AmqpProcessingManager.instance.process_data_for(message.delivery_info[:routing_key], payload, processing_opts(message))
+    process_message_with(Lanalytics::Processing::ProcessingAction::CREATE)
   end
 
   def update
-    Lanalytics::Processing::AmqpProcessingManager.instance.process_data_for(message.delivery_info[:routing_key], payload, processing_opts(message))
+    process_message_with(Lanalytics::Processing::ProcessingAction::UPDATE)
   end
 
   def destroy
-    Lanalytics::Processing::AmqpProcessingManager.instance.process_data_for(message.delivery_info[:routing_key], payload, processing_opts(message))
+    process_message_with(Lanalytics::Processing::ProcessingAction::DESTROY)
   end
 
   def handle_user_event
-    Lanalytics::Processing::AmqpProcessingManager.instance.process_data_for(message.delivery_info[:routing_key], payload, processing_opts(message))
+    process_message_with(Lanalytics::Processing::ProcessingAction::CREATE)
+  end
+
+  def process_message_with(processing_action)
+    pipeline_manager.schema_pipelines_with(processing_action, message.delivery_info[:routing_key]).each do | schema, schema_pipeline |
+      schema_pipeline.process(payload, processing_opts(message))
+    end
+  end
+
+  def pipeline_manager
+    return Lanalytics::Processing::PipelineManager.instance
   end
 
   def processing_opts(message)

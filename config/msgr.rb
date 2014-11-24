@@ -40,4 +40,4 @@ route 'xikolo.pinboard.subscription.destroy', to: 'Lanalytics#destroy'
 
 
 # ------------------- Web Events -------------------
-route 'xikolo.web.event.create', to: 'Lanalytics#handle_user_event'
+route 'xikolo.web.exp_event.create', to: 'Lanalytics#handle_user_event'
