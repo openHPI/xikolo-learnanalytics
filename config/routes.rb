@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
 
+  root to: 'application#welcome'
+
   resources :research_cases
+
+  get '/datasources', to: 'datasources#index', as: 'datasources'
   
   # This is deprecated ...
   # get "/lanalytics_datasources/trigger_snapshot", to: 'snapshots#trigger_snapshot'
@@ -8,8 +12,6 @@ Rails.application.routes.draw do
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
-  # You can have the root of your site routed with "root"
-  root 'research_cases#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
