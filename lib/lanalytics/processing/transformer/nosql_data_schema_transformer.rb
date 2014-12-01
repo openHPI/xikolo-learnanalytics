@@ -20,7 +20,7 @@ module Lanalytics
           processing_units.each do | processing_unit |
             
             if processing_unit.type == :exp_event
-              load_commands << Lanalytics::Processing::LoadORM::CreateEntityCommand.with(transform_exp_event_unit(processing_unit))
+              load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(transform_exp_event_unit(processing_unit))
               next
             end
 
