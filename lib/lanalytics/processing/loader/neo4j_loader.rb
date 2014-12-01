@@ -19,6 +19,8 @@ module Lanalytics
 
         end
 
+
+
         def do_merge_entity_command_for_entity(merge_entity_command)
           entity = merge_entity_command.entity
 
@@ -53,6 +55,34 @@ Following error occurred when executing a Cypher query on Neo4j: #{e.message}
             # .on_create_set(r: resource_properties)
             # .on_match_set(r: resource_properties)
         end
+        
+        def do_destroy_command_for_entity(destroy_command)
+          entity = destroy_command.entity
+          enitity_type = entity.entity_key
+          Neo4j::Session.query
+            .match(e: {enitity_type => {entity.primary_attribute.name => entity.primary_attribute.value }})
+            .delete(:e)
+            .exec
+        end
+
+
+        # Handling commands for entity relationships
+        def do_create_command_for_entity_relationship(create_entity_command)
+
+          entity_rel = create_entity_command.entity
+
+          from_entity_key = entity_rel.from_entity.entity_key
+          from_entity_pattribute = entity_rel.from_entity.primary_attribute
+          to_entity_key = entity_rel.to_entity.entity_key
+          to_entity_pattribute = entity_rel.to_entity.primary_attribute
+
+          Neo4j::Session.query
+            .merge(r1: {from_entity_key.to_sym => {from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s }}).break
+            .merge(r2: {to_entity_key.to_sym => {to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s }}).break
+            .create("(r1)-[:#{entity_rel.relationship_key} #{Neo4j::Core::Query.new.merge(Hash[entity_rel.all_non_nil_attributes.map { |attr| [attr.name.to_s, attr.value.to_s] }]).to_cypher[8..-2]}]->(r2)")
+            .exec
+
+        end
 
         def do_merge_entity_command_for_entity_relationship(merge_entity_command)
 
@@ -70,6 +100,10 @@ Following error occurred when executing a Cypher query on Neo4j: #{e.message}
             .exec
         end
 
+        def do_update_command_for_entity_relationship(update_command)
+          do_merge_entity_command_for_entity_relationship(update_command)
+        end
+
         def do_destroy_command_for_entity_relationship(destroy_command)
 
           entity_rel = destroy_command.entity
@@ -82,14 +116,6 @@ Following error occurred when executing a Cypher query on Neo4j: #{e.message}
             .exec
         end
 
-        def do_destroy_command_for_entity(destroy_command)
-          entity = destroy_command.entity
-          enitity_type = entity.entity_key
-          Neo4j::Session.query
-            .match(e: {enitity_type => {entity.primary_attribute.name => entity.primary_attribute.value }})
-            .delete(:e)
-            .exec
-        end
 
         # def load(processing_unit, load_commands, pipeline_ctx)
           
