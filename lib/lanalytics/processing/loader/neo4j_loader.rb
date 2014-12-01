@@ -10,9 +10,8 @@ module Lanalytics
           load_commands.each do | load_command |
             begin
               self.method("do_#{load_command.class.name.demodulize.underscore}_for_#{load_command.entity.class.name.demodulize.underscore}").call(load_command)
-            rescue
-              Rails.logger.error(%Q{  
-Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for processing_unit:
+            rescue Exception => e
+              Rails.logger.error(%Q{Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for processing_unit: #{e.message}
 #{processing_unit.inspect}
               })  
             end
