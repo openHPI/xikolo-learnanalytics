@@ -29,6 +29,8 @@ gem 'restify'
 gem 'slim'
 gem 'forgery'
 
+# For the MOOCdb Schema
+gem 'youyouaidi'
 
 # Connecting to RabbitMQ
 gem 'msgr'
@@ -81,6 +83,8 @@ group :development do
 
   # To release the lanalytics-model gem
   gem 'geminabox-rake', '~> 1.1.0'
+
+  gem 'ruby-prof' # To do performance evaluation
 end
 
 group :test do

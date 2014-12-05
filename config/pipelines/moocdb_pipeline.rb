@@ -13,9 +13,46 @@ def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
 
 end
 
-create_action = Lanalytics::Processing::ProcessingAction::CREATE
+# MOOCdb Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
+def moocdb_pipelines_for_crud(event_domain_ns_type, event_domain_type)
+  
+  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, event_domain_ns_type, event_domain_type)
+  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, event_domain_ns_type, event_domain_type)
+  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, event_domain_ns_type, event_domain_type)
+end
 
-moocdb_pipeline(create_action, :account, :user)
-moocdb_pipeline(create_action, :course, :course)
-# moocdb_pipeline(create_action, :course, :item)
+create_action = Lanalytics::Processing::ProcessingAction::CREATE
+update_action = Lanalytics::Processing::ProcessingAction::UPDATE
+destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
+
+
+# ------------------- User Domain Entities -------------------
+moocdb_pipelines_for_crud(:account, :user)
+
+# ------------------- Course Domain Entities -------------------
+moocdb_pipelines_for_crud(:course, :course)
+moocdb_pipelines_for_crud(:course, :item)
 moocdb_pipeline(create_action, :course, :enrollment)
+moocdb_pipeline(destroy_action, :course, :enrollment)
+
+
+# ------------------- Submission Domain Entities -------------------
+moocdb_pipeline(create_action, :submission, :submission)
+
+# ------------------- Learning Room Domain Entities -------------------
+# moocdb_pipelines_for_crud(:learning_room, :learning_room)
+# moocdb_pipeline(create_action, :learning_room, :membership)
+# moocdb_pipeline(destroy_action, :learning_room, :membership)
+
+# ------------------- Pinboard Domain Entities -------------------
+moocdb_pipeline(create_action, :pinboard, :question)
+moocdb_pipeline(update_action, :pinboard, :question)
+moocdb_pipeline(create_action, :pinboard, :subscription)
+moocdb_pipeline(destroy_action, :pinboard, :subscription)
+moocdb_pipeline(create_action, :pinboard, :answer)
+moocdb_pipeline(update_action, :pinboard, :answer)
+moocdb_pipeline(create_action, :pinboard, :comment)
+moocdb_pipeline(update_action, :pinboard, :comment)
+
+
+moocdb_pipeline(create_action, :web, :exp_event)
