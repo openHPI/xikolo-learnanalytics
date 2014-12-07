@@ -14,10 +14,14 @@ module Lanalytics
 
         private
         def symbol_anonymous?(symbol)
-          %w(mail email name password).each do | dangerous_keyword |
-            return true if symbol.to_s.include?(dangerous_keyword)
-          end
+
+          return true if symbol[/(mail)|(email)|(name)|(password)/]
+
           return false
+          # %w(mail email name password).each do | dangerous_keyword |
+          #   return true if symbol.to_s.include?(dangerous_keyword)
+          # end
+          # return false
         end
 
       end
