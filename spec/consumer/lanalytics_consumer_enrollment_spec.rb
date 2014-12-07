@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 describe LanalyticsConsumer do
-
+  include LanalyticsConsumerSpecsHelper
+  
   before(:each) do
     Neo4jTestHelper.clean_database
   end
@@ -11,9 +12,7 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_enrollment_event_data = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_enrollment_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.enrollment.create'})
+      prepare_rabbitmq_stubs(@amqp_enrollment_event_data, 'xikolo.course.enrollment.create')
     end
 
     it "should create a new enrollment relationship between newly created USER and COURSE nodes" do
@@ -25,7 +24,6 @@ describe LanalyticsConsumer do
       expect(expected_node[:resource_uuid]).to eq(@amqp_enrollment_event_data[:course_id])
       expect(expected_node.labels).to include(:COURSE)
 
-      puts "#{Neo4j::Session.query.match(u: {:USER => {resource_uuid: @amqp_enrollment_event_data[:user_id] }}).to_cypher}"
       result = Neo4j::Session.query.match(u: {:USER => {resource_uuid: @amqp_enrollment_event_data[:user_id] }}).pluck(:u)
 
       expect(result.length).to eq(1)
@@ -75,17 +73,13 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_enrollment_event_data = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_enrollment_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.enrollment.create'})
+      prepare_rabbitmq_stubs(@amqp_enrollment_event_data, 'xikolo.course.enrollment.create')
       @consumer.create
     end
 
     it 'should be deleted' do
       @amqp_enrollment_event_data = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
-      allow(@consumer).to receive(:payload).and_return(@amqp_enrollment_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.enrollment.destroy'})
+      prepare_rabbitmq_stubs(@amqp_enrollment_event_data, 'xikolo.course.enrollment.destroy')
       @consumer.destroy
 
       result = Neo4j::Session.query(%{

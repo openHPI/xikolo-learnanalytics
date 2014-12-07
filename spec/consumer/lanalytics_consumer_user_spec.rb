@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe LanalyticsConsumer do
+  include LanalyticsConsumerSpecsHelper
 
   before(:each) do
     Neo4jTestHelper.clean_database
@@ -11,9 +12,7 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_user_event_data = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_user_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.account.user.create'})
+      prepare_rabbitmq_stubs(@amqp_user_event_data, 'xikolo.account.user.create')
     end
 
     it "should create a new USER node" do
@@ -49,9 +48,7 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_user_event_data = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_user_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.account.user.create'})
+      prepare_rabbitmq_stubs(@amqp_user_event_data, 'xikolo.account.user.create')
       @consumer.create
     end
 
@@ -60,10 +57,7 @@ describe LanalyticsConsumer do
       updated_amqp_user_event_data = @amqp_user_event_data
       updated_amqp_user_event_data[:name] = 'Christoph'
       updated_amqp_user_event_data[:language] = 'es'
-      allow(@consumer).to receive(:payload).and_return(updated_amqp_user_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.account.user.update'})
-      
+      prepare_rabbitmq_stubs(updated_amqp_user_event_data, 'xikolo.account.user.update')
       @consumer.update
 
       result = Neo4j::Session.query.match(u: {:USER => {resource_uuid: updated_amqp_user_event_data[:id] }}).pluck(:u)
@@ -81,17 +75,13 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_user_event_data = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_user_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.account.user.create'})
+      prepare_rabbitmq_stubs(@amqp_user_event_data, 'xikolo.account.user.create')
       @consumer.create
     end
 
     it 'should be deleted' do
 
-      allow(@consumer).to receive(:payload).and_return(@amqp_user_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.account.user.destroy'})
+      prepare_rabbitmq_stubs(@amqp_user_event_data,'xikolo.account.user.destroy')
       @consumer.destroy
 
       result = Neo4j::Session.query.match(u: {:USER => {resource_uuid: @amqp_user_event_data[:id] }}).pluck(:u)

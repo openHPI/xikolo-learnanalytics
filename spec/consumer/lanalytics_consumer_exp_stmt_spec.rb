@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe LanalyticsConsumer do
+  include LanalyticsConsumerSpecsHelper
 
   before(:each) do
     Neo4jTestHelper.clean_database
@@ -11,9 +12,7 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_exp_stmt_data = FactoryGirl.attributes_for(:amqp_exp_stmt).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_exp_stmt_data)
-      allow(@consumer).to receive(:message).and_return(double('message'))
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.web.exp_event.create'})
+      prepare_rabbitmq_stubs(@amqp_exp_stmt_data, 'xikolo.web.exp_event.create')
     end
 
     it "should create a new enrollment relationship between newly created USER and COURSE nodes" do

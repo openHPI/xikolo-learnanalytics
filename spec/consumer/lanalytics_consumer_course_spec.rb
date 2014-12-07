@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe LanalyticsConsumer do
+  include LanalyticsConsumerSpecsHelper
 
   before(:each) do
     Neo4jTestHelper.clean_database
@@ -11,9 +12,7 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_course_event_data = FactoryGirl.attributes_for(:amqp_course).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_course_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.course.create'})
+      prepare_rabbitmq_stubs(@amqp_course_event_data, 'xikolo.course.course.create')
     end
 
     it "should create a new COURSE node" do
@@ -48,9 +47,7 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_course_event_data = FactoryGirl.attributes_for(:amqp_course).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_course_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.course.create'})
+      prepare_rabbitmq_stubs(@amqp_course_event_data, 'xikolo.course.course.create')
       @consumer.create
     end
 
@@ -58,9 +55,7 @@ describe LanalyticsConsumer do
 
       updated_amqp_course_event_data = @amqp_course_event_data
       updated_amqp_course_event_data[:title] = 'Updated Awesome Prof. Meinel Course'
-      allow(@consumer).to receive(:payload).and_return(updated_amqp_course_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.course.update'})
+      prepare_rabbitmq_stubs(updated_amqp_course_event_data, 'xikolo.course.course.update')
       
       @consumer.update
 
@@ -78,17 +73,13 @@ describe LanalyticsConsumer do
     before(:each) do
       @amqp_course_event_data = FactoryGirl.attributes_for(:amqp_course).with_indifferent_access
       @consumer = LanalyticsConsumer.new
-      allow(@consumer).to receive(:payload).and_return(@amqp_course_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.course.create'})
+      prepare_rabbitmq_stubs(@amqp_course_event_data, 'xikolo.course.course.create')
       @consumer.create
     end
 
     it 'should be deleted' do
 
-      allow(@consumer).to receive(:payload).and_return(@amqp_course_event_data)
-      allow(@consumer).to receive(:message)
-      allow(@consumer.message).to receive(:delivery_info).and_return({routing_key: 'xikolo.course.course.destroy'})
+      prepare_rabbitmq_stubs(@amqp_course_event_data, 'xikolo.course.course.destroy')
       @consumer.destroy
 
       result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: @amqp_course_event_data[:id] }}).pluck(:c)
