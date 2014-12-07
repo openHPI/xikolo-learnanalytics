@@ -2,6 +2,8 @@ module Lanalytics
   module Processing
     module Loader
       class PostgresLoader < LoadStep
+
+
           
         def load(original_event, load_commands, pipeline_ctx)
 
@@ -26,12 +28,45 @@ module Lanalytics
           })
         end
 
+
+        def do_create_command(create_command)
+          
+          entity = create_command.entity
+
+          execute_sql(%Q{
+            INSERT INTO #{entity.entity_key} (#{entity.all_attribute_names.join(', ')})
+            VALUES (#{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')});
+          })
+        end
+
+        def do_update_command(update_command)
+          entity = update_command.entity
+
+          execute_sql(%Q{
+            UPDATE #{entity.entity_key}
+            SET #{entity.all_non_nil_attributes.collect { | attr | attr.name.to_s + ' = ' + sql_value_of(attr)}.join(', ')}
+            WHERE #{entity.primary_attribute.name} = #{sql_value_of(entity.primary_attribute)}
+          })
+        end
+
+        def do_custom_load_command(custom_load_command)
+          return unless custom_load_command.loader_type.to_sym.downcase == :postgres
+
+          execute_sql(custom_load_command.query)
+        end
+
         def sql_value_of(attribute)
           return case attribute.data_type
-            when :string, :date, :uuid
+            when :string
+              "'#{PGconn.escape_string(attribute.value)}'"
+            when :bool
+              (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
+            when :date, :timestamp, :uuid
               "'#{attribute.value.to_s}'"
             when :int, :float
               attribute.value.to_s
+            else
+              "'#{attribute.value.to_s}'"
             end
         end
 

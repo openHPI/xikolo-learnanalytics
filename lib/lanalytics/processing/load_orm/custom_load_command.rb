@@ -2,7 +2,7 @@ module Lanalytics
   module Processing
     module LoadORM
       class CustomLoadCommand
-        attr_reader :query
+        attr_reader :loader_type, :query
 
         def self.sql_for(loader_type, query)
           self.new(loader_type, query)

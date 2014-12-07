@@ -1,7 +1,7 @@
 
 def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   
-  pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.create", :mooc_db, processing_action) do
+  pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.#{processing_action.to_s.downcase}", :mooc_db, processing_action) do
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
@@ -47,8 +47,8 @@ moocdb_pipeline(create_action, :submission, :submission)
 # ------------------- Pinboard Domain Entities -------------------
 moocdb_pipeline(create_action, :pinboard, :question)
 moocdb_pipeline(update_action, :pinboard, :question)
-moocdb_pipeline(create_action, :pinboard, :subscription)
-moocdb_pipeline(destroy_action, :pinboard, :subscription)
+# moocdb_pipeline(create_action, :pinboard, :subscription)
+# moocdb_pipeline(destroy_action, :pinboard, :subscription)
 moocdb_pipeline(create_action, :pinboard, :answer)
 moocdb_pipeline(update_action, :pinboard, :answer)
 moocdb_pipeline(create_action, :pinboard, :comment)

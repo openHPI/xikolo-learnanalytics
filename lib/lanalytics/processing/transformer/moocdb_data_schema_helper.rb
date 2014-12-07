@@ -16,22 +16,33 @@ module Lanalytics
           end
         end
 
-        def new_collaboration(processing_unit, collaboration_content, collaboration_parent_id)
-          collboration_type_id, collaboration_type_name = collaboration_type(processing_unit)
+        def wrap_in_update_commands(entities)
 
-          collboration_type_entity = new_collaboration_type_entity(collboration_type_id, collaboration_type_name)
+          entities = yield if block_given?
 
-          collboration_entity = new_collaboration_entity(processing_unit, collboration_type_id, collaboration_content, collaboration_parent_id)
-          
-          return [collboration_type_entity, collboration_entity]
+          if entities.is_a?(Array)
+            return entities.map { |entity| Lanalytics::Processing::LoadORM::UpdateCommand.with(entity) }
+          else
+            return [Lanalytics::Processing::LoadORM::UpdateCommand.with(entities)]
+          end
         end
 
-        def new_collaboration_entity(processing_unit, collboration_type_id, collaboration_content, collaboration_parent_id)
+        def new_collaboration(processing_unit, collaboration_content, collaboration_parent_id)
+          collaboration_type_id, collaboration_type_name = collaboration_type(processing_unit)
+
+          collaboration_type_entity = new_collaboration_type_entity(collaboration_type_id, collaboration_type_name)
+
+          collaboration_entity = new_collaboration_entity(processing_unit, collaboration_type_id, collaboration_content, collaboration_parent_id)
+          
+          return [collaboration_type_entity, collaboration_entity]
+        end
+
+        def new_collaboration_entity(processing_unit, collaboration_type_id, collaboration_content, collaboration_parent_id)
 
           return Lanalytics::Processing::LoadORM::Entity.create(:collaborations) do
             with_primary_attribute :collaboration_id, :uuid, processing_unit[:id]
             with_attribute :user_id, :uuid, processing_unit[:user_id]
-            with_attribute :collaboration_type_id, :int, collboration_type_id
+            with_attribute :collaboration_type_id, :int, collaboration_type_id
             with_attribute :collaboration_timestamp, :timestamp, processing_unit[:created_at]
             with_attribute :collaboration_content, :string, collaboration_content
             with_attribute :collaboration_parent_id, :uuid, collaboration_parent_id
@@ -39,7 +50,7 @@ module Lanalytics
             with_attribute :collaborations_ip, :string, nil
             with_attribute :collaborations_os, :int, nil
             with_attribute :collaborations_agent, :int, nil
-            with_attribute :resource_id, :uuid, nil
+            with_attribute :resource_id, :uuid, processing_unit[:id]
             with_attribute :collaboration_thread_id, :uuid, collaboration_parent_id
           end
         end

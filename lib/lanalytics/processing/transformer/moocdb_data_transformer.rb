@@ -12,23 +12,90 @@ module Lanalytics
           return if pipeline_ctx.processing_action == ProcessingAction::UNDEFINED
 
           processing_action = pipeline_ctx.processing_action.to_s.downcase
-          transform_method = self.method("transform_to_load_commands_for_#{processing_action}")
-          transform_method.call(processing_units, load_commands)
+
+          processing_units.each do | processing_unit |
+            processing_unit_type = processing_unit.type.to_s.downcase
+            transform_method = self.method("transform_#{processing_unit_type}_punit_to_#{processing_action}_load_commands")
+            transform_method.call(processing_unit, load_commands)
+          end
+
         end
 
-        # def create_load_commands_for_user_punit(processing_unit, load_commands)
+        def transform_to_create_load_commands(processing_unit, load_commands)
+          transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
+          entities = transform_method.call(processing_unit)
+          load_commands.push(*wrap_in_merge_commands(entities))
+        end
 
-        # end
+        def transform_to_update_load_commands(processing_unit, load_commands)
+          transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
+          entities = transform_method.call(processing_unit)
+          load_commands.push(*wrap_in_update_commands(entities))
+        end        
 
-        
+        # --------------- Alias for Create Events  --------------------
+        alias_method :transform_user_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_course_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_item_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_enrollment_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_enrollment_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_submission_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_question_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_answer_punit_to_create_load_commands, :transform_to_create_load_commands
+        alias_method :transform_comment_punit_to_create_load_commands, :transform_to_create_load_commands
 
-        def transform_to_load_commands_for_create(processing_units, load_commands)
-          processing_units.each do | processing_unit |
+        # --------------- Alias for Update Events  --------------------
+        alias_method :transform_user_punit_to_update_load_commands, :transform_to_update_load_commands
+        alias_method :transform_course_punit_to_update_load_commands, :transform_to_update_load_commands
+        alias_method :transform_item_punit_to_update_load_commands, :transform_to_update_load_commands
+        alias_method :transform_question_punit_to_update_load_commands, :transform_to_update_load_commands
+        alias_method :transform_answer_punit_to_update_load_commands, :transform_to_update_load_commands
+        alias_method :transform_comment_punit_to_update_load_commands, :transform_to_update_load_commands
 
-            transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
-            entities = transform_method.call(processing_unit)
-            load_commands.push(*wrap_in_merge_commands(entities))
+        def transform_exp_event_punit_to_create_load_commands(processing_unit, load_commands)
+          exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
+
+          return unless exp_stmt.verb.type.to_s.downcase == 'viewed_page'
+
+          # This is a special situation where the mapping is not that easy and requires some more logic
+          load_commands << Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
+            UPDATE observed_events
+            SET observed_event_duration = 60
+            WHERE 
+              user_id = '#{exp_stmt.user.uuid}'
+              AND observed_event_duration IS NULL
+              AND (current_timestamp - observed_event_timestamp) > ('60 min'::interval);
+          })
+
+          load_commands << Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
+            UPDATE observed_events
+            SET observed_event_duration = (extract(epoch from timestamp with time zone '#{exp_stmt.timestamp}') - extract(epoch from observed_event_timestamp)) / 60
+            WHERE 
+              user_id = '#{exp_stmt.user.uuid}'
+              AND observed_event_duration IS NULL;
+          })
+
+          
+          # At the moment we are only page views on the items page 
+          match = /^\/courses\/(?<course_code>\w+)\/items\/(?<item_short_uuid>\w+)/.match(exp_stmt.resource.uuid)
+          
+          return unless match
+
+          course_code = match[:course_code]
+          item_uuid = UUID(match[:item_short_uuid]).to_s
+
+          new_exp_event_entity = Lanalytics::Processing::LoadORM::Entity.create(:observed_events) do
+            # with_primary_attribute :observed_event_id,          :uuid,      processing_unit[:id]
+            with_attribute :user_id, :uuid, exp_stmt.user.uuid
+            with_attribute :url_id, :int, MoocdbDataSchemaHashingHelper.hash_to_url_id(course_code, item_uuid)
+            with_attribute :observed_event_timestamp, :timestamp, exp_stmt.timestamp
+            with_attribute :observed_event_duration,  :float, nil
+            with_attribute :observed_event_ip, :string, exp_stmt.in_context[:user_ip]
+            with_attribute :observed_event_os, :int, exp_stmt.in_context[:user_os]
+            with_attribute :observed_event_agent, :int, exp_stmt.in_context[:user_agent]
           end
+
+          load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(new_exp_event_entity)
         end
 
         def transform_user_unit(processing_unit)
@@ -77,7 +144,7 @@ module Lanalytics
             with_attribute :resource_name, :string, processing_unit.data[:title]
             with_attribute :resource_uri, :string, resource_uri
             with_attribute :resource_type_id, :int, MoocdbDataSchemaHashingHelper.hash_to_resource_type_id(type_content, type_medium)
-            with_attribute :resource_parent_id, :string, nil
+            with_attribute :resource_parent_id, :string, processing_unit[:course_id]
             with_attribute :resource_child_number, :string, nil
             with_attribute :resource_relevant_start_date, :date, processing_unit[:start_date]
             with_attribute :resource_relevant_end_date, :date, processing_unit[:end_date]
@@ -118,9 +185,9 @@ module Lanalytics
               with_attribute :problem_parent_id, :string, nil
               with_attribute :problem_child_number, :string, nil
               with_attribute :problem_type_id, :int, problem_type_id
-              with_attribute :problem_release_timestamp, :timestamp, processing_unit[:submission_publishing_date] or processing_unit[:start_date]or processing_unit[:effective_start_date]
-              with_attribute :problem_soft_deadline, :timestamp, processing_unit[:submission_deadline] or processing_unit[:end_date] or processing_unit[:effective_end_date]
-              with_attribute :problem_hard_deadline, :timestamp, processing_unit[:submission_deadline] or processing_unit[:end_date] or processing_unit[:effective_end_date]
+              with_attribute :problem_release_timestamp, :timestamp, (processing_unit[:submission_publishing_date] or processing_unit[:start_date]or processing_unit[:effective_start_date])
+              with_attribute :problem_soft_deadline, :timestamp, (processing_unit[:submission_deadline] or processing_unit[:end_date] or processing_unit[:effective_end_date])
+              with_attribute :problem_hard_deadline, :timestamp, (processing_unit[:submission_deadline] or processing_unit[:end_date] or processing_unit[:effective_end_date])
               with_attribute :problem_max_submission, :int, 1 # This is depends on the problem type
               with_attribute :problem_max_duration, :int, nil
               with_attribute :problem_weight, :int, nil
@@ -134,7 +201,7 @@ module Lanalytics
 
         def transform_enrollment_unit(processing_unit)
           global_user_id = processing_unit.data[:user_id]
-          course_user_id = hash_to_course_user_id(global_user_id)
+          course_user_id = MoocdbDataSchemaHashingHelper.hash_to_course_user_id(global_user_id)
 
           global_user_entity = Lanalytics::Processing::LoadORM::Entity.create(:global_user) do
             with_primary_attribute :global_user_id, :uuid, global_user_id
@@ -168,8 +235,8 @@ module Lanalytics
           submission_entity = Lanalytics::Processing::LoadORM::Entity.create(:submissions) do
             with_primary_attribute :submission_id,      :uuid,      processing_unit[:id]
             with_attribute :user_id,                    :uuid,      processing_unit[:user_id]
-            with_attribute :problem_id,                 :uuid,      processing_unit[:quiz_id]
-            with_attribute :submission_timestamp,       :timestamp, processing_unit[:quiz_submission_time]
+            with_attribute :problem_id,                 :uuid,      processing_unit[:item_id]
+            with_attribute :submission_timestamp,       :timestamp, (processing_unit[:quiz_submission_time] or processing_unit[:created_at])
             with_attribute :submission_attempt_number,  :int,       nil
             with_attribute :submission_answer,          :string,    nil 
             with_attribute :submission_is_submitted,    :bool,      processing_unit[:submitted]
@@ -194,13 +261,51 @@ module Lanalytics
 
         # ==================== Pinboard Domain Models =====================
         def transform_question_unit(processing_unit)
-          
-          return new_collaboration(processing_unit,
-            %Q{
+          return new_collaboration(processing_unit, %Q{
 Title: #{processing_unit[:title]}
 ===============================================
 #{processing_unit[:text]}},
-            (processing_unit[:course_id] or processing_unit[:learning_room_id]))
+            (processing_unit[:course_id] or processing_unit[:learning_room_id])
+          )
+
+          # # We cannot link the learning_room in this schema, which is why we are not inlcuding the learning_rooms in the resources table
+          # return collaboration_entities if processing_unit[:learning_room_id]
+          
+          # course = lookup_course(processing_unit.data[:course_id])
+          
+          # type_content, type_medium = ['forum', 'text']
+
+          # resource_type_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource_types) do
+          #   with_primary_attribute :resource_type_id, :int, MoocdbDataSchemaHashingHelper.hash_to_resource_type_id(type_content, type_medium)
+          #   with_attribute :resource_type_content, :string, type_content
+          #   with_attribute :resource_type_medium, :string, type_medium
+          # end
+          
+          # resource_uri = "/courses/#{course[:course_code]}/item/#{UUID(processing_unit[:id]).to_short_string}"
+
+          # resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resources) do
+          #   with_primary_attribute :resource_id, :uuid, processing_unit.data[:id]
+          #   with_attribute :resource_name, :string, "Forum Question #{processing_unit[:id]} for course #{processing_unit[:course_id]}"
+          #   with_attribute :resource_uri, :string, resource_uri
+          #   with_attribute :resource_type_id, :int, MoocdbDataSchemaHashingHelper.hash_to_resource_type_id(type_content, type_medium)
+          #   with_attribute :resource_parent_id, :string, processing_unit[:course_id]
+          #   with_attribute :resource_child_number, :string, nil
+          #   with_attribute :resource_relevant_start_date, :date, processing_unit[:start_date]
+          #   with_attribute :resource_relevant_end_date, :date, processing_unit[:end_date]
+          #   with_attribute :resource_relevant_week, :int, processing_unit[:position] # Change this make a call to the COURSE REST service with Rails Caching mechanism
+          #   with_attribute :resource_release_timestamp, :timestamp, processing_unit[:created_at]
+          # end
+
+          # url_type_entity = Lanalytics::Processing::LoadORM::Entity.create(:urls) do
+          #   with_primary_attribute :url_id, :int, MoocdbDataSchemaHashingHelper.hash_to_url_id(course[:course_code], processing_unit[:id])
+          #   with_attribute :url, :string, resource_uri
+          # end
+
+          # resource_url_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource_urls) do
+          #   with_primary_attribute :resources_urls_id, :int, MoocdbDataSchemaHashingHelper.hash_to_url_id(course[:course_code], processing_unit[:id])
+          #   with_attribute :resource_id, :uuid, processing_unit.data[:id]
+          #   with_attribute :url_id, :int, MoocdbDataSchemaHashingHelper.hash_to_url_id(course[:course_code], processing_unit[:id])
+          # end
         end
 
         def transform_answer_unit(processing_unit)
@@ -211,44 +316,6 @@ Title: #{processing_unit[:title]}
         def transform_comment_unit(processing_unit)
           return new_collaboration(processing_unit, processing_unit[:text],
             processing_unit[:commentable_id])
-        end
-
-        def transform_exp_event_unit(processing_unit)
-
-          exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
-
-          return unless exp_stmt.verb.type.to_s.downcase == 'viewed_page'
-
-          # This is a special situation where the mapping is not that easy and requires some more logic
-          Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
-            UPDATE observed_events
-            SET observed_event_duration = 60
-            WHERE 
-              user_id = '#{exp_stmt.user.uuid}'
-              AND observed_event_duration IS NULL
-              AND (current_timestamp - observed_event_timestamp) > ('60 min'::interval);
-          })
-
-          Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
-            UPDATE observed_events
-            SET observed_event_duration = (extract(epoch from timestamp '#{exp_stmt.timestamp}') - extract(epoch from observed_event_timestamp)) / 60::float
-            WHERE 
-              user_id = '#{exp_stmt.user.uuid}'
-              AND observed_event_duration IS NULL;
-          })
-
-          new_exp_event_entity = Lanalytics::Processing::LoadORM::Entity.create(:observed_events) do
-            # with_primary_attribute :observed_event_id,          :uuid,      processing_unit[:id]
-            with_attribute :user_id, :uuid, exp_stmt.user.uuid
-            with_attribute :url_id, :int, exp_stmt.resource.uuid # hashing
-            with_attribute :observed_event_timestamp, :timestamp, exp_stmt.timestamp
-            with_attribute :observed_event_duration,  :float,  nil
-            with_attribute :oberved_event_ip, :uuid, exp_stmt.in_context[:user_ip]
-            with_attribute :oberved_event_os, :int, exp_stmt.in_context[:user_os]
-            with_attribute :oberved_event_agent, :int, exp_stmt.in_context[:user_agent]
-          end
-
-          return [new_exp_event_entity]
         end
 
       end

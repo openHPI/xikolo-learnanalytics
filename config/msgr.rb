@@ -35,6 +35,10 @@ route 'xikolo.submission.submission.create', to: 'Lanalytics#create'
 # ------------------- Pinboard Domain Entities -------------------
 route 'xikolo.pinboard.question.create', to: 'Lanalytics#create'
 route 'xikolo.pinboard.question.update', to: 'Lanalytics#update'
+route 'xikolo.pinboard.answer.create', to: 'Lanalytics#create'
+route 'xikolo.pinboard.answer.update', to: 'Lanalytics#update'
+route 'xikolo.pinboard.comment.create', to: 'Lanalytics#create'
+route 'xikolo.pinboard.comment.update', to: 'Lanalytics#update'
 route 'xikolo.pinboard.subscription.create', to: 'Lanalytics#create'
 route 'xikolo.pinboard.subscription.destroy', to: 'Lanalytics#destroy'
 
@@ -44,3 +48,6 @@ route 'xikolo.helpdesk.ticket.create', to: 'Lanalytics#create'
 
 # ------------------- Web Events -------------------
 route 'xikolo.web.exp_event.create', to: 'Lanalytics#handle_user_event'
+
+
+puts @routes.inspect

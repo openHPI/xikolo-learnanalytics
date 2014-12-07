@@ -2,9 +2,9 @@ module Lanalytics
   module Processing
     class RestPipeline
 
-      def initialize(url, pipeline_name)
+      def initialize(url, pipelines = [])
         @url = url
-        @pipeline_name = pipeline_name
+        @pipelines = pipelines
       end
 
       def process
@@ -54,16 +54,7 @@ module Lanalytics
           
           rest_response_data.each do | resource_hash |
 
-            create_action = Lanalytics::Processing::ProcessingAction::CREATE
-
-            Lanalytics::Processing::PipelineManager.instance
-              .schema_pipelines_with(create_action, @pipeline_name)
-              .each do | schema, schema_pipeline |
-
-                schema_pipeline.process(resource_hash, { rest_url: @url })
-              
-              end
-
+            @pipelines.each { | p | p.process(resource_hash, { rest_url: @url }) }
             progress_bar.increment unless progress_bar.finished?
 
           end
@@ -71,8 +62,14 @@ module Lanalytics
         end while current_url_page
       end
 
-      def self.process(url, pipeline_name)
-        rest_processing = self.new(url, pipeline_name)
+      def self.process(url, pipelines)
+        
+        if pipelines.nil? or pipelines.empty?
+          Rails.logger.info "No pipeline given for url '#{url}'"
+          return
+        end
+
+        rest_processing = self.new(url, pipelines)
         rest_processing.process
       end
 
