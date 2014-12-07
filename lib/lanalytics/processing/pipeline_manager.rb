@@ -42,37 +42,17 @@ module Lanalytics
         return pipelines
       end
 
-      # def add_processing_for(routing_key, processing_steps)
-      #   raise ArgumentError.new("'routing key' cannot be nil") if routing_key.nil?
+      def find_piplines(schema, processing_action, pipeline_name)
 
-      #   processing_chain = Lanalytics::Processing::ProcessingChain.new(processing_steps)
-      #   @processing_map[routing_key.to_s] = processing_chain
-      #   Rails.logger.info "Registered processing chain (#{processing_chain.processing_steps}) for routing key: #{routing_key}"
-      # end
+        if schema.nil? or schema.empty?
+          return schema_pipelines_with(processing_action, pipeline_name).values
+        end
+        pipeline = @pipelines[schema.to_sym][processing_action.to_sym][pipeline_name.to_s]
+        
+        return [] unless pipeline
 
-      # def process_data_for(routing_key, payload, opts = {})
-
-      #   processing_chain = @processing_map[routing_key.to_s]
-      #   unless processing_chain
-      #     Rails.logger.warn "No processing found for routing key: #{routing_key}"
-      #     return
-      #   end
-
-      #   if routing_key.end_with?('.create')
-      #     opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
-      #   elsif routing_key.end_with?('.update')
-      #     opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::UPDATE })
-      #   elsif routing_key.end_with?('.destroy')
-      #     opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::DESTROY })
-      #   else
-      #     opts.merge!({ processing_action: Lanalytics::Processing::ProcessingAction::UNDEFINED })
-      #   end
-
-      #   processing_chain.process(payload, opts)
-      # end
-
-
-
+        return [pipeline]
+      end
     end
   end
 end

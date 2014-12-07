@@ -8,7 +8,7 @@ module Lanalytics
           # Needs to be taken care of in the child class
         end
 
-        def load(processing_unit, load_commands, pipeline_ctx)
+        def load(processing_units, load_commands, pipeline_ctx)
           raise NotImplementedError("This method has to be implemented in the subclass!")
         end
       end
