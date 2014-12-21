@@ -1,0 +1,23 @@
+= form_for(@user_for_registration, class: "form-horizontal", role: "form") do | form |
+
+  .form-group
+    = form.label(:email, class: "control-label", for: "input_email")
+    br
+    = form.text_field(:email, class: "form-control", id: "input_email", placeholder: "Email")
+  
+  .form-group
+    = form.label(:password, class: "control-label", for: "input_password")
+    br
+    = form.password_field(:password, class: "form-control", id: "input_password", placeholder: "Password")
+  
+  .form-group
+    = form.label(:password_confirmation, class: "control-label", for: "input_password_confirmation")
+    br
+    = form.password_field(:password_confirmation, class: "form-control", id: "input_password_confirmation", placeholder: "Confirm Password")
+  
+  .actions
+    = form.submit "Register", class: "btn btn-default"
+
+
+
+

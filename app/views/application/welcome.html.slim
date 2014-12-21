@@ -1,8 +1,7 @@
 .jumbotron
-  h1 = t('breadcrumbs.welcome')
-  p This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.
+  h1 LAnalytics Service:
+  h1 MOOC Data for Your Research
+  p This service provides access to the data collected by openHPI.
   p
-    a.btn.btn-primary.btn-lg Learn more
-
-
-p = Forgery(:lorem_ipsum).words(100)
+    / a.btn.btn-primary.btn-lg
+    = link_to('Learn more', '#modal-help', data: {toggle: 'modal'}, class: 'btn btn-primary btn-lg')

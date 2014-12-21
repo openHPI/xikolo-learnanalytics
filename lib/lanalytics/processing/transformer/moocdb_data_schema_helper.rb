@@ -79,6 +79,8 @@ module Lanalytics
             return course
           end
 
+          puts "Cache miss at #{course_id}"
+
           service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
           service_base_urls = (service_base_urls[Rails.env] || service_base_urls)['services']
           course_service_base_url = service_base_urls['course']

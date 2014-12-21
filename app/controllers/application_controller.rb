@@ -3,6 +3,26 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  before_action :require_login
+  
+  before_action :set_new_user_for_registration
+
+  skip_before_action :require_login, only: [:welcome]
   def welcome
+    # @user = User.new
+  end
+
+
+
+  private
+
+  def set_new_user_for_registration
+    return if current_user
+
+    @user_for_registration = User.new
+  end
+
+  def not_authenticated
+    redirect_to login_path, alert: "Please login first"
   end
 end

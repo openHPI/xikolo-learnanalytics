@@ -1,0 +1,68 @@
+
+h1
+  strong Title: &nbsp;
+  = @research_case.title
+
+- unless @research_case.description.blank?
+  p
+    strong Description: &nbsp;
+    = @research_case.description
+
+p
+  strong Contributors: &nbsp;
+  = @research_case.contributers.map { | user | user.email }.join(", ")
+
+br
+
+div role="tabpanel" 
+  /! Nav tabs
+  ul.nav.nav-tabs role="tablist" 
+    li.active role="presentation"
+      a aria-controls="home" data-toggle="tab" href="#available_datasources" role="tab"
+        h3 Available Datasources
+    li role="presentation"
+      a aria-controls="profile" data-toggle="tab" href="#activated_datasources" role="tab"
+        h3  Activated Datasources
+    li role="presentation"
+      a aria-controls="profile" data-toggle="tab" href="#your_queries" role="tab"
+        h3 Your Queries
+
+  /! Tab panes
+  .tab-content
+
+    #available_datasources.tab-pane.active role="tabpanel"
+      
+      br
+      
+      / .form-group
+      /   input.form-control placeholder="Search" type="text"
+      / button.btn.btn-default type="submit" 
+      /   span.glyphicon.glyphicon-search
+
+      - if @available_datasources.empty?
+        p No Schemas available ...
+
+      - for datasource in @available_datasources
+        .panel.panel-default
+          a href="#{research_case_path(@research_case)}/access_datasource/#{datasource.key}"
+            .panel-body
+              h4
+                strong = datasource.name
+              p = datasource.description
+          .panel-footer style=("padding-top: 7.5px;")
+            a.btn.btn-info.btn-sm href="#{research_case_path(@research_case)}/access_datasource/#{datasource.key}" data-toggle="tooltip" data-placement="top" title="Have a closer look at the schema"
+              i.fa.fa-eye.fa-2x
+            | &nbsp;
+            a.btn.btn-default.btn-sm  data-toggle="tooltip" data-placement="top" title="Share this site with your friends!" href="mailto:?subject=openHPI LAnalytics - You might want to have a look at this&body= I found this awesome website where we can get data for our research: http://lanalytics.openhpi.de"
+              i.fa.fa-share.fa-2x
+            | &nbsp;
+            a.btn.btn-default.btn-sm href="" data-toggle="tooltip" data-placement="top" title="Make this schema your favorite!"
+              i.fa.fa-star.fa-2x
+
+
+    #activated_datasources.tab-pane role="tabpanel"  ...
+      / # - if @research.activated_datasources.empty?
+
+
+
+    #your_queries.tab-pane role="tabpanel"  ...

@@ -1,3 +1,12 @@
+nosql_neo_datasource = Lanalytics::Processing::DatasourceManager.new_datasource do
+  Lanalytics::Processing::Datasources::Neo4jDatasource.new(
+    key: 'nosql_neo',
+    name: 'NoSQL on Neo4j',
+    description: 'MOOC data in a Graph database allows you to query the data set very easily. Try out some of the queries ...',
+    # db_type: :server_db,
+    # db_url: 'http://localhost:8474'
+  )
+end
 
 def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   
@@ -7,7 +16,7 @@ def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::NosqlDataSchemaTransformer.new
     
-    loader Lanalytics::Processing::Loader::Neo4jLoader.new(:nosql_neo)
+    loader Lanalytics::Processing::Loader::Neo4jLoader.new(datasources['nosql_neo'])
   end
 
 end

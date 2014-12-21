@@ -1,3 +1,11 @@
+moocdb_postgres_sql = Lanalytics::Processing::DatasourceManager.new_datasource do
+  Lanalytics::Processing::Datasources::PostgresqlDatasource.new(
+    key: 'moocdb_postgres_sql',
+    name: 'MOOCdb on PostgreSQL',
+    description: 'The MOOCdb project aims to brings together education researchers, computer science researchers, machine learning researchers, technologists, database and big data experts to advance MOOC data science. The openHPI Team wants to contribute to this project by providing their data in the proposed schema.'
+  )
+end
+
 
 def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   
@@ -7,7 +15,7 @@ def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::MoocdbDataTransformer.new
     
-    loader Lanalytics::Processing::Loader::PostgresLoader.new
+    loader Lanalytics::Processing::Loader::PostgresLoader.new(datasources['moocdb_postgres_sql'])
     # loader Lanalytics::Processing::Loader::Neo4jLoader.new(:moocdb_neo)
   end
 

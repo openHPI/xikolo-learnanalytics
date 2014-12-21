@@ -43,4 +43,14 @@ module Lanalytics
     config.eager_load_paths << Rails.root.join('lib')
 
   end
+
+
+  def self.rake?
+    !!@rake
+  end
+
+  def self.rake=(value)
+    @rake = !!value
+  end
+  
 end

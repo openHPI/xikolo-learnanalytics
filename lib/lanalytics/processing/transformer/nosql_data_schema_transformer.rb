@@ -90,7 +90,7 @@ module Lanalytics
         end
 
         def transform_item_unit(processing_unit)
-          item_entity = new_entity_template(processing_unit, [:title, :content_type, :start_date, :end_date, :created_at, :updated_at])
+          item_entity = new_entity_template(processing_unit, [:title, :content_type, :start_date, :end_date, :effective_start_date, :effective_end_date, :created_at, :updated_at])
 
           item_course_rel = Lanalytics::Processing::LoadORM::EntityRelationship.create(:BELONGS_TO) do
 
@@ -203,15 +203,8 @@ module Lanalytics
           answer_entity = new_entity_template(processing_unit, [:text, :created_at, :updated_at])
 
           user_answer_rel = Lanalytics::Processing::LoadORM::EntityRelationship.create(:POSTED_ANSWER) do
-
-            with_from_entity(:USER) do
-              with_primary_attribute :resource_uuid, :uuid, processing_unit[:user_id]
-            end
-
-            with_to_entity(:ANSWER) do
-              with_primary_attribute :resource_uuid, :uuid, processing_unit[:id]
-            end
-
+            with_from_entity(:USER) { with_primary_attribute :resource_uuid, :uuid, processing_unit[:user_id] }
+            with_to_entity(:ANSWER) { with_primary_attribute :resource_uuid, :uuid, processing_unit[:id] }
             with_attribute :created_at, :datetime, processing_unit[:created_at]
           end
 

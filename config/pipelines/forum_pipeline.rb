@@ -1,0 +1,8 @@
+
+forum_elastic_datasource = Lanalytics::Processing::DatasourceManager.new_datasource do
+  Lanalytics::Processing::Datasources::ElasticDatasource.new(
+    key: 'forum_elastic',
+    name: 'Forum Data on ElasticSearch',
+    description: %q{Explore the content of the forum and identify pattern in the students text with ElasticSearch}
+  )
+end

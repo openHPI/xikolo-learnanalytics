@@ -1,0 +1,19 @@
+= form_for(@research_case, class: "form-horizontal", role: "form") do |form|
+  
+  - if @research_case.errors.any?
+    #error_explanation
+      h4 The Research Case could not be saved because of #{ pluralize(@research_case.errors.count, "error") }:
+      ul
+        - @research_case.errors.full_messages.each do |message|
+          li = message
+
+  .form-group
+    = form.label(:title, class: "control-label", for: "input_title")
+    = form.text_field(:title, class: "form-control", id: "input_title", placeholder: "Title")
+
+  .form-group
+    = form.label(:description, class: "control-label", for: "input_description")
+    = form.text_area(:description, class: "form-control", rows: "5", id: "input_description", placeholder: "What do you want to do?")
+
+  .actions
+    = form.submit "Create New Research Case", class: "btn btn-default"

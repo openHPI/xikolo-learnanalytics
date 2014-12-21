@@ -1,0 +1,2 @@
+class ElasticDatasource < Datasource
+end

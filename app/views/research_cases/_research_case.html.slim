@@ -7,8 +7,17 @@
       | &nbsp;
     a.btn.btn-primary.btn-sm.pull-right href="#{edit_research_case_path(research_case)}"
       i.fa.fa-pencil-square-o
-  .panel-body.fix-panel-height
-    = link_to(research_case) do
-      h3.text-center = research_case.title
-      hr/
-      p Contributers ...
+  a href="#{research_case_path(research_case)}"
+    .panel-body.fix-panel-height
+      h3.text-center style=("height:270px") = research_case.title
+      hr
+      / p
+      - for contributer in research_case.contributers do
+        span.fa-stack.fa-lg data-toggle="tooltip" data-placement="top" title="#{contributer.email}"
+          i.fa.fa-square-o.fa-stack-2x
+          i.fa.fa-user.fa-stack-1x
+        / i.fa.fa-user.fa-3x data-toggle="tooltip" data-placement="top" title="#{contributer.email}"
+
+      a.btn.btn-primary.btn-sm.pull-right data-toggle="modal" data-target="#modal-add_contributer_for_research_case_#{research_case.id}" title="#{contributer.email}"
+        i.fa.fa-plus-circle
+  = render('shared/modal', classes: 'modal-md', id: "modal-add_contributer_for_research_case_#{research_case.id}", template: 'research_cases/add_contributer', title: 'Add Contributer to your Research Case ...', template_variables: {add_contributer_path: "/research_cases/#{research_case.id}/add_contributer"})

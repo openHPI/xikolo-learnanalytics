@@ -1,0 +1,3 @@
+class PostgresqlDatasource < Datasource
+
+end

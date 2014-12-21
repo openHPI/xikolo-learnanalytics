@@ -12,6 +12,7 @@ module Lanalytics
         # TODO:: Check for validity and type
       end
       
+      # These methods are used inside the block when block is initialized ...
       def extractor(extractor)
         raise ArgumentError.new('Needs to be of type \'ExtractStep\'!!') unless extractor and extractor.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
         @extractors << extractor
@@ -25,6 +26,10 @@ module Lanalytics
       def loader(loader)
         raise ArgumentError.new('Needs to be of type \'LoadStep\'!!') unless loader and loader.is_a?(Lanalytics::Processing::Loader::LoadStep)
         @loaders << loader
+      end
+
+      def datasources
+        return Lanalytics::Processing::DatasourceManager.instance.get_datasources
       end
 
       def full_name

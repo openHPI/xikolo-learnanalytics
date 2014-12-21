@@ -28,6 +28,7 @@ gem 'restify'
 # Gems needed for the LAnalytics UI
 gem 'slim'
 gem 'forgery'
+gem 'sorcery' # Authentication ...
 
 # For the MOOCdb Schema
 gem 'youyouaidi'

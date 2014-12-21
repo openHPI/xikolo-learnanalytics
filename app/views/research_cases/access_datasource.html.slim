@@ -1,0 +1,45 @@
+= content_for :breadcrumbs do
+  ul.breadcrumb
+    li
+      a href="#{research_case_path(@research_case)}" = @research_case.title
+    li.active = @datasource.key
+
+p#notice
+  = notice
+
+.page-header
+  h2
+    = @datasource.name
+    br
+    - unless @datasource.description.blank?
+      small = @datasource.description
+
+p
+  h3 Find your channel for this Datasource
+  small We provide many ways to access our data source. Find the one data suits you ;-D
+
+- if @datasource.channels.nil? or @datasource.channels.empty?
+  p No Channels available
+
+- else
+  - for channel in @datasource.channels
+      / - present(_channel) do | channel |
+      .panel.panel-default
+        .panel-body
+          h4
+            strong = channel.name
+          p = channel.description
+        .panel-footer style=("padding-top: 7.5px;")
+          - if channel.documentation_url
+            a.btn.btn-info.btn-md href="#{channel.documentation_url}" data-toggle="tooltip" data-placement="top" title="Look into Documentation" target="_blank"
+              i.fa.fa-book.fa-2x
+          / | &nbsp;
+          / a.btn.btn-default.btn-md href="" data-toggle="tooltip" data-placement="top" title="Make this schema your favorite!"
+          /   i.fa.fa-star.fa-2x
+          / | &nbsp;
+          /   input type="checkbox" data-toggle="toggle" checked="false"
+          .pull-right
+            = render(partial: "channels/access_button_for_#{channel.class.name.underscore}", locals: {datasource: @datasource, channel: channel})
+            / = channel.present_access_button
+            / a.btn.btn-default.btn-md data-toggle="tooltip" data-placement="top" title="Access the datasource ..."
+            /   i.fa.fa-arrow-right.fa-2x
