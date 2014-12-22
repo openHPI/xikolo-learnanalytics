@@ -7,8 +7,6 @@ Rails.application.load_tasks
 
 Lanalytics.rake = true
 
-
-
 if Rails.env.development?
   require 'geminabox/rake'
   Geminabox::Rake.install host: 'https://gemuser:K6c1mcRWtrTQepS6aI8HRXc7DPoRYXbG@openhpi-utils.hpi.uni-potsdam.de/gems/',

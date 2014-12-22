@@ -70,34 +70,31 @@ module Lanalytics
           end
         end
 
+        # Class variable
+        @@course_cache = ActiveSupport::Cache::MemoryStore.new
+
         def lookup_course(course_id)
 
-          @course_cache = ActiveSupport::Cache::MemoryStore.new
-
-          # If course is not there, then nil is returned
-          if course = @course_cache.read(course_id)
-            return course
-          end
-
-          puts "Cache miss at #{course_id}"
-
-          service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
-          service_base_urls = (service_base_urls[Rails.env] || service_base_urls)['services']
-          course_service_base_url = service_base_urls['course']
-          json_url = "#{course_service_base_url}/courses/#{course_id}.json"
-          course_data = nil
-          begin
-            course_service_rest_response = RestClient.get(json_url)
-            course_data = MultiJson.load(course_service_rest_response, symbolize_keys: true)
-          rescue Exception => any_error
-            Rails.logger.error "Following error happened when trying to retrieve additional information for the transforming of items in the MoocdbDataTransformer: #{any_error.message}"
-            throw any_error
-          end
-
-          raise Error.new "No course data could be retrieved for uuid #{course_id}" unless course_data
+          return @@course_cache.fetch(course_id) do
           
-          @course_cache.write(course_id, course_data)
-          return course_data
+            service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
+            service_base_urls = (service_base_urls[Rails.env] || service_base_urls)['services']
+            course_service_base_url = service_base_urls['course']
+            json_url = "#{course_service_base_url}/courses/#{course_id}.json"
+            course_data = nil
+            begin
+              course_service_rest_response = RestClient.get(json_url)
+              course_data = MultiJson.load(course_service_rest_response, symbolize_keys: true)
+            rescue Exception => any_error
+              Rails.logger.error "Following error happened when trying to retrieve additional information for the transforming of items in the MoocdbDataTransformer: #{any_error.message}"
+              throw any_error
+            end
+
+            raise Error.new "No course data could be retrieved for uuid #{course_id}" unless course_data
+            
+            course_data
+          end
+
 
         end
 
