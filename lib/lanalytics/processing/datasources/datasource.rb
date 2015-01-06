@@ -12,10 +12,17 @@ module Lanalytics
         end
 
         def name
-          
           return key unless @name
-
           return @name
+        end
+
+        # Datasource specific methods
+        def exec(&block)
+          raise NotImplementedError("This method has to be implemented in the subclass!")
+        end
+
+        def settings
+          raise NotImplementedError("This method has to be implemented in the subclass!")
         end
 
       end

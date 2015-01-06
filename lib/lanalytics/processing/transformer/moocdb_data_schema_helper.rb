@@ -27,6 +27,17 @@ module Lanalytics
           end
         end
 
+        def wrap_in_destroy_commands(entities)
+
+          entities = yield if block_given?
+
+          if entities.is_a?(Array)
+            return entities.map { |entity| Lanalytics::Processing::LoadORM::DestroyCommand.with(entity) }
+          else
+            return [Lanalytics::Processing::LoadORM::DestroyCommand.with(entities)]
+          end
+        end
+
         def new_collaboration(processing_unit, collaboration_content, collaboration_parent_id)
           collaboration_type_id, collaboration_type_name = collaboration_type(processing_unit)
 

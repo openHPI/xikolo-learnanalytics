@@ -28,10 +28,6 @@ module Lanalytics
         @loaders << loader
       end
 
-      def datasources
-        return Lanalytics::Processing::DatasourceManager.instance.get_datasources
-      end
-
       def full_name
         return "#{schema}::#{name}"
       end

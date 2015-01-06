@@ -1,22 +1,29 @@
-nosql_neo_datasource = Lanalytics::Processing::DatasourceManager.new_datasource do
-  Lanalytics::Processing::Datasources::Neo4jDatasource.new(
-    key: 'nosql_neo',
-    name: 'NoSQL on Neo4j',
-    description: 'MOOC data in a Graph database allows you to query the data set very easily. Try out some of the queries ...',
-    # db_type: :server_db,
-    # db_url: 'http://localhost:8474'
-  )
+# nosql_neo_datasource = Lanalytics::Processing::DatasourceManager.new_datasource do
+#   Lanalytics::Processing::Datasources::Neo4jDatasource.new(
+#     key: 'nosql_neo',
+#     name: 'NoSQL on Neo4j',
+#     description: 'MOOC data in a Graph database allows you to query the data set very easily. Try out some of the queries ...',
+#     # db_type: :server_db,
+#     # db_url: 'http://localhost:8474'
+#   )
+# end
+
+unless Lanalytics::Processing::DatasourceManager.datasource_exists?('nosql_neo4j')
+  raise "Datasource 'nosql_neo4j' is not available."
 end
 
 def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   
   pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.#{processing_action.to_s.downcase}", :nosql, processing_action) do
+    
+    datasource = Lanalytics::Processing::DatasourceManager.get_datasource('nosql_neo4j')
+
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::NosqlDataSchemaTransformer.new
     
-    loader Lanalytics::Processing::Loader::Neo4jLoader.new(datasources['nosql_neo'])
+    loader Lanalytics::Processing::Loader::Neo4jLoader.new(datasource)
   end
 
 end

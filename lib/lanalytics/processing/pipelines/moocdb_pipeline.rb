@@ -1,21 +1,27 @@
-moocdb_postgres_sql = Lanalytics::Processing::DatasourceManager.new_datasource do
-  Lanalytics::Processing::Datasources::PostgresqlDatasource.new(
-    key: 'moocdb_postgres_sql',
-    name: 'MOOCdb on PostgreSQL',
-    description: 'The MOOCdb project aims to brings together education researchers, computer science researchers, machine learning researchers, technologists, database and big data experts to advance MOOC data science. The openHPI Team wants to contribute to this project by providing their data in the proposed schema.'
-  )
-end
+# moocdb_postgres_sql = Lanalytics::Processing::DatasourceManager.new_datasource do
+#   Lanalytics::Processing::Datasources::PostgresqlDatasource.new(
+#     key: 'moocdb_postgres_sql',
+#     name: 'MOOCdb on PostgreSQL',
+#     description: 'The MOOCdb project aims to brings together education researchers, computer science researchers, machine learning researchers, technologists, database and big data experts to advance MOOC data science. The openHPI Team wants to contribute to this project by providing their data in the proposed schema.'
+#   )
+# end
 
+unless Lanalytics::Processing::DatasourceManager.datasource_exists?('moocdb_postgresql')
+  raise "Datasource 'moocdb_postgresql' is not available."
+end
 
 def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   
   pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.#{processing_action.to_s.downcase}", :mooc_db, processing_action) do
+
+    datasource = Lanalytics::Processing::DatasourceManager.get_datasource('moocdb_postgresql')
+
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::MoocdbDataTransformer.new
     
-    loader Lanalytics::Processing::Loader::PostgresLoader.new(datasources['moocdb_postgres_sql'])
+    loader Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
     # loader Lanalytics::Processing::Loader::Neo4jLoader.new(:moocdb_neo)
   end
 

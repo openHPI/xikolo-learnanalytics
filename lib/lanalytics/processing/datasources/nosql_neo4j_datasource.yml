@@ -1,16 +1,23 @@
 # Neo4j Database Configuration
 # Make sure that gem 'neo4j-core' is in your Gemfile
 
+common: &common
+  datasource_adapter: 'Neo4jDatasource'
+  key: 'nosql_neo4j'
+  name: 'NoSQL on Neo4j'
+  description: 'MOOC data in a Graph database allows you to query the data set very easily. Try out some of the queries ...'
+
 development:
+  <<: *common
   db_type: server_db
   db_url: 'http://localhost:7474'
 
 test:
-  # db_type: embedded_db
-  # db_url: 'db/test/neo4j'
+  <<: *common
   db_type: server_db
   db_url: 'http://localhost:8474'
 
 production:
+  <<: *common
   db_type: server_db
   db_url: 'http://localhost:7474'

@@ -31,13 +31,18 @@ module Lanalytics
           transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
           entities = transform_method.call(processing_unit)
           load_commands.push(*wrap_in_update_commands(entities))
+        end
+
+        def transform_to_destroy_load_commands(processing_unit, load_commands)
+          transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
+          entities = transform_method.call(processing_unit)
+          load_commands.push(*wrap_in_destroy_commands(entities))
         end        
 
         # --------------- Alias for Create Events  --------------------
         alias_method :transform_user_punit_to_create_load_commands, :transform_to_create_load_commands
         alias_method :transform_course_punit_to_create_load_commands, :transform_to_create_load_commands
         alias_method :transform_item_punit_to_create_load_commands, :transform_to_create_load_commands
-        alias_method :transform_enrollment_punit_to_create_load_commands, :transform_to_create_load_commands
         alias_method :transform_enrollment_punit_to_create_load_commands, :transform_to_create_load_commands
         alias_method :transform_submission_punit_to_create_load_commands, :transform_to_create_load_commands
         alias_method :transform_question_punit_to_create_load_commands, :transform_to_create_load_commands
@@ -51,6 +56,12 @@ module Lanalytics
         alias_method :transform_question_punit_to_update_load_commands, :transform_to_update_load_commands
         alias_method :transform_answer_punit_to_update_load_commands, :transform_to_update_load_commands
         alias_method :transform_comment_punit_to_update_load_commands, :transform_to_update_load_commands
+
+        # --------------- Alias for Destroy Events  --------------------
+        alias_method :transform_course_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
+        alias_method :transform_user_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
+        alias_method :transform_enrollment_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
+        
 
         def transform_exp_event_punit_to_create_load_commands(processing_unit, load_commands)
           exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)

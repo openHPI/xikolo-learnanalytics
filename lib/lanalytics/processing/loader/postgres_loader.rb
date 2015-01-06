@@ -3,14 +3,26 @@ module Lanalytics
     module Loader
       class PostgresLoader < LoadStep
 
+        def initialize(datasource = nil)
+          @postgres_datasource = datasource
+        end
 
-          
         def load(original_event, load_commands, pipeline_ctx)
 
           load_commands.each do | load_command |
             self.method("do_#{load_command.class.name.demodulize.underscore}").call(load_command)
           end
 
+        end
+
+        def do_create_command(create_command)
+          
+          entity = create_command.entity
+
+          execute_sql(%Q{
+            INSERT INTO #{entity.entity_key} (#{entity.all_attribute_names.join(', ')})
+            VALUES (#{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')});
+          })
         end
 
         def do_merge_entity_command(merge_entity_command)
@@ -28,23 +40,21 @@ module Lanalytics
           })
         end
 
-
-        def do_create_command(create_command)
-          
-          entity = create_command.entity
-
-          execute_sql(%Q{
-            INSERT INTO #{entity.entity_key} (#{entity.all_attribute_names.join(', ')})
-            VALUES (#{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')});
-          })
-        end
-
         def do_update_command(update_command)
           entity = update_command.entity
 
           execute_sql(%Q{
             UPDATE #{entity.entity_key}
             SET #{entity.all_non_nil_attributes.collect { | attr | attr.name.to_s + ' = ' + sql_value_of(attr)}.join(', ')}
+            WHERE #{entity.primary_attribute.name} = #{sql_value_of(entity.primary_attribute)}
+          })
+        end
+
+        def do_destroy_command(destroy_command)
+          entity = destroy_command.entity
+
+          execute_sql(%Q{
+            DELETE FROM #{entity.entity_key}
             WHERE #{entity.primary_attribute.name} = #{sql_value_of(entity.primary_attribute)}
           })
         end
@@ -73,7 +83,8 @@ module Lanalytics
         def execute_sql(sql)
           return if sql.nil? or sql.empty?
 
-          $postgres_connection.with do |conn|
+          @postgres_datasource.exec do | conn |
+          # $postgres_connection.with do |conn|
             begin
               conn.exec(sql)
             rescue Exception => e
