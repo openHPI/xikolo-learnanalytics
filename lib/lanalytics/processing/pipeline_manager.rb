@@ -7,7 +7,11 @@ module Lanalytics
 
         Dir.glob("#{pipelines_dir}/*_pipeline.rb") do | pipeline_file_name |
           # raise ArgumentError.new "File `#{file}` does not exists." unless File.exists? file
-          self.instance.instance_eval(File.read(pipeline_file_name))
+          begin
+            self.instance.instance_eval(File.read(pipeline_file_name))
+          rescue Exception => error
+            raise "The following error occurred when registering pipeline #{pipeline_file_name}: #{error.message}"
+          end
         end
 
         return self.instance
@@ -24,7 +28,11 @@ module Lanalytics
       end
 
       def pipeline_for(name, schema, processing_action, &block)
-        @pipelines[schema][processing_action][name] = Pipeline.new(name, schema, processing_action, &block)
+        if Rails.env.staging?
+          @pipelines[schema][processing_action][name] = ProfilingPipeline.new(name, schema, processing_action, &block)
+        else
+          @pipelines[schema][processing_action][name] = Pipeline.new(name, schema, processing_action, &block)
+        end
         Rails.logger.info "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'"
       end
 

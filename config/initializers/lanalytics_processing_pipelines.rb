@@ -17,6 +17,7 @@ Dir.glob("#{DATASOURCES_FOLDER}/*_datasource.yml") do | datasource_yml |
   Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
 end
 
+
 # Setup the pipelines
 PIPELINES_FOLDER = "#{Rails.root}/lib/lanalytics/processing/pipelines"
 Lanalytics::Processing::PipelineManager.setup_pipelines(PIPELINES_FOLDER)

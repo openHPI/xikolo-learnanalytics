@@ -1,0 +1,29 @@
+#  ElasticDatasource Database Configuration
+
+common: &common
+  datasource_adapter: 'ElasticDatasource'
+  key: 'exp_api_elastic'
+  name: 'Experience API On Elastic'
+  description: '...'
+
+development:
+  <<: *common
+  host: 'localhost'
+  port: '9200'
+  index: 'lanalytics' 
+  user: 'lanalytics'
+  password: 'lanalytics'
+
+test:
+  <<: *common
+
+staging:
+  <<: *common
+  host: 'localhost'
+  port: '10200'
+  index: 'lanalytics' 
+  user: 'lanalytics'
+  password: 'lanalytics'
+
+production:
+  <<: *common

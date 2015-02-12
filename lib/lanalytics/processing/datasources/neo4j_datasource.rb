@@ -2,7 +2,7 @@ module Lanalytics
   module Processing
     module Datasources
       class Neo4jDatasource < Datasource
-        attr_reader :db_type, :db_url
+        attr_reader :db_type, :db_url, :username, :password
 
         def initialize(neo4j_config)
           super(neo4j_config)
@@ -17,7 +17,11 @@ module Lanalytics
           
           # Register a default Neo4j::Session for this application
           # @session = Neo4j::Session.open(@db_type, @db_url, neo4j_config.except(:db_type, :db_url))
-          @session = Neo4j::Session.open(@db_type.to_sym, @db_url)
+          if @username and @password
+            @session = Neo4j::Session.open(@db_type.to_sym, @db_url, basic_auth: { username: @username, password: @password})
+          else
+            @session = Neo4j::Session.open(@db_type.to_sym, @db_url)
+          end
 
           raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...' unless @session
         end

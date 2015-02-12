@@ -1,6 +1,7 @@
 module Lanalytics
   module Processing
     module Transformer
+      # TODO:: Rename to Lanalytics::Processing::Transformer::ExperienceGraphSchemaTransformer
       class NosqlDataSchemaTransformer < TransformStep
         include Lanalytics::Processing::Transformer::NosqlDataSchemaHelper
 
@@ -22,7 +23,14 @@ module Lanalytics
             if processing_unit.type == :exp_event
               load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(transform_exp_event_unit(processing_unit))
               next
+            elsif processing_unit.type == :question
+              entities = transform_question_unit(processing_unit)
+              load_commands << Lanalytics::Processing::LoadORM::MergeEntityCommand.with(entities[0])
+              load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entities[1])
+              load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entities[2])
+              next
             end
+
 
             transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
             entities = transform_method.call(processing_unit)

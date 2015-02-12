@@ -9,7 +9,12 @@ class ApplicationController < ActionController::Base
 
   skip_before_action :require_login, only: [:welcome]
   def welcome
-    # @user = User.new
+    
+    if current_user
+      redirect_to research_cases_path
+      return
+    end
+
   end
 
 
@@ -23,6 +28,6 @@ class ApplicationController < ActionController::Base
   end
 
   def not_authenticated
-    redirect_to login_path, alert: "Please login first"
+    redirect_to root_path, alert: "Please login first"
   end
 end

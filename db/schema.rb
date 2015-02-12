@@ -11,16 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141216161312) do
+ActiveRecord::Schema.define(version: 20150107135440) do
+
+  create_table "datasource_accesses", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "research_case_id"
+    t.string   "datasource_key"
+    t.string   "channel"
+    t.datetime "accessed_at",      default: '2015-02-10 14:22:01', null: false
+  end
 
   create_table "datasources", id: false, force: true do |t|
-    t.string   "key",         null: false
-    t.string   "name"
-    t.string   "description"
-    t.string   "settings"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "type"
+    t.string "key",         null: false
+    t.string "name"
+    t.string "description"
+    t.string "settings"
+    t.string "type"
   end
 
   add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true
@@ -45,6 +51,7 @@ ActiveRecord::Schema.define(version: 20141216161312) do
     t.string   "salt",             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "username"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

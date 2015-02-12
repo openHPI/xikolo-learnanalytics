@@ -29,6 +29,7 @@ gem 'restify'
 gem 'slim'
 gem 'forgery'
 gem 'sorcery' # Authentication ...
+gem 'validates_email_format_of'
 
 # For the MOOCdb Schema
 gem 'youyouaidi'
@@ -45,19 +46,15 @@ gem 'connection_pool'
 # Different database adapters to store the data
 gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'pg'
+gem 'elasticsearch'
 
 
 gem 'rest-client'
 gem 'multi_json'
 
+
 gem 'ruby-progressbar'
-# gem 'http_link_header', '~> 0.1.0'
 gem 'link_header'
-
-# Gems for the web application
-# gem 'bootstrap-rails'
-# gem 'sorcery'
-
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -70,6 +67,7 @@ gem 'link_header'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
   gem 'factory_girl_rails'
@@ -91,3 +89,8 @@ end
 group :test do
   gem 'webmock'
 end
+
+
+# group :staging do
+#   gem 'unicorn'
+# end

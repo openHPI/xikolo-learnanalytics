@@ -11,9 +11,10 @@ if defined?(Rails::Server) and not Lanalytics.rake?
 
     datasources = Lanalytics::Processing::DatasourceManager.instance.get_datasources
     datasources.values.each do | datasource |
-      datasource_settings = datasource.instance_values.symbolize_keys.except(:key, :name, :description)
+      datasource_settings = datasource.settings.except(:key, :name, :description)
       
       datasource_class_name = datasource.class.name.demodulize
+      
       # If it is defined as an Active-Record Class ...
       if Object.const_defined?(datasource_class_name)
         datasource_activerecord_class = Object.const_get(datasource_class_name)

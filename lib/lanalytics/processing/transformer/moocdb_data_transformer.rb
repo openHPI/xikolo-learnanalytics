@@ -115,7 +115,7 @@ module Lanalytics
             with_primary_attribute :username, :string, Digest::SHA256.hexdigest(processing_unit.data[:id].to_s)
             with_attribute :global_user_id, :uuid, processing_unit.data[:id]
             with_attribute :gender, :string, nil
-            with_attribute :birthday, :date, processing_unit.data[:born_at]
+            with_attribute :birthday, :date, (processing_unit[:born_at] ? Date.parse(processing_unit.data[:born_at]).iso8601 : nil) 
             with_attribute :ip, :string, nil
             with_attribute :country, :string # You can also omit the value parameter
             with_attribute :timezone_offset, :int, nil

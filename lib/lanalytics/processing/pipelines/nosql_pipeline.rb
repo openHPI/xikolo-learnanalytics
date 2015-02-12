@@ -1,13 +1,3 @@
-# nosql_neo_datasource = Lanalytics::Processing::DatasourceManager.new_datasource do
-#   Lanalytics::Processing::Datasources::Neo4jDatasource.new(
-#     key: 'nosql_neo',
-#     name: 'NoSQL on Neo4j',
-#     description: 'MOOC data in a Graph database allows you to query the data set very easily. Try out some of the queries ...',
-#     # db_type: :server_db,
-#     # db_url: 'http://localhost:8474'
-#   )
-# end
-
 unless Lanalytics::Processing::DatasourceManager.datasource_exists?('nosql_neo4j')
   raise "Datasource 'nosql_neo4j' is not available."
 end
@@ -28,7 +18,7 @@ def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
 
 end
 
-# NoSQL Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
+# NoSQL Pipelines for 'CREATE', 'UPDATE' and 'DESTROY'
 def nosql_pipelines_for_crud(event_domain_ns_type, event_domain_type)
   
   nosql_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, event_domain_ns_type, event_domain_type)

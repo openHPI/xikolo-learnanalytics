@@ -14,14 +14,17 @@ Rails.application.routes.draw do
 
       post '/add_contributer', to: 'research_cases#add_contributer'
       get 'access_datasource/:datasource_key', to: 'research_cases#access_datasource'
+      post 'access_datasource/:datasource_key', to: 'research_cases#datasource_accessed'
 
     end
   end
 
   get '/datasources', to: 'datasources#index', as: 'datasources'
   
-  # This is deprecated ...
-  # get "/lanalytics_datasources/trigger_snapshot", to: 'snapshots#trigger_snapshot'
+
+  # Download routes
+  get 'download/neo4j_shell_zip'
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

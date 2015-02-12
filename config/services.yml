@@ -29,6 +29,10 @@ test:
   services:
     <<: *devserv
 
+staging:
+  services:
+    <<: *devserv
+
 production:
   services:
     account: http://services:8080/account

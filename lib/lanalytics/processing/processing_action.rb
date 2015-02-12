@@ -1,5 +1,6 @@
 module Lanalytics
   module Processing
+    # TODO:: Rename to Lanalytics::Processing::Action
     class ProcessingAction
       CREATE = :CREATE
       UPDATE = :UPDATE

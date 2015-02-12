@@ -10,12 +10,21 @@ common: &common
 development:
   <<: *common
   db_type: server_db
-  db_url: 'http://localhost:7474'
+  db_url: 'http://lanalytics.openhpi.de:7474'
+  username: 'lanalytics'
+  password: 'lanalytics'
 
 test:
   <<: *common
   db_type: server_db
   db_url: 'http://localhost:8474'
+
+staging:
+  <<: *common
+  db_type: server_db
+  db_url: 'http://localhost:9474'
+  username: 'lanalytics'
+  password: 'lanalytics'
 
 production:
   <<: *common

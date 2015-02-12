@@ -207,7 +207,7 @@ Rails.application.config.sorcery.configure do |config|
     # encryption algorithm name. See 'encryption_algorithm=' for available options.
     # Default: `:bcrypt`
     #
-    # user.encryption_algorithm =
+    user.encryption_algorithm = :none
 
 
     # make this configuration inheritable for subclasses. Useful for ActiveRecord's STI.
