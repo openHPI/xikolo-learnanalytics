@@ -37,6 +37,10 @@ module Lanalytics
         def all_attribute_values
           all_non_nil_attributes.collect { | attr | attr.value }
         end
+
+        def [](name)
+          @attributes.find { |a| a.name == name }
+        end
       end
 
       class Attribute
