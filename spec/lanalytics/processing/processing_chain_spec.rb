@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Lanalytics::Processing::ProcessingChain do
+describe Lanalytics::Processing::Pipeline, pending: true do
 
   describe "(Instantiation)" do
 

@@ -11,7 +11,6 @@ class ResearchCasesController < ApplicationController
   # GET /research_cases/1
   def show
     @available_datasources = Datasource.all
-    # puts @available_datasources.inspect 
   end
 
   # GET /research_cases/new
@@ -47,10 +46,8 @@ class ResearchCasesController < ApplicationController
     respond_to do |format|
       if @research_case.update(research_case_params)
         format.html { redirect_to @research_case, notice: 'Research case was successfully updated.' }
-        format.json { render :show, status: :ok, location: @research_case }
       else
         format.html { render :edit }
-        format.json { render json: @research_case.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -68,7 +65,6 @@ class ResearchCasesController < ApplicationController
   end
 
   # DELETE /research_cases/1
-  # DELETE /research_cases/1.json
   def destroy
     @research_case.destroy
     respond_to do |format|
@@ -79,8 +75,28 @@ class ResearchCasesController < ApplicationController
 
   def access_datasource
     @datasource = Datasource.find_by(key: params[:datasource_key])
+    @datasource.setup_channels(current_user)
+  end
 
+  def datasource_accessed
+    @research_case = ResearchCase.find_by(id: params[:research_case_id])
+    @user = User.find_by(id: params[:user_id])
+    @datasource = Datasource.find_by(key: params[:datasource_key])
     
+    channel_clazz = params[:channel][:class_name].constantize
+    @channel = channel_clazz.load(params[:channel].to_json)
+
+    # Prepare the connection to the datasource
+    @channel.access_channel_for(@user, @datasource, @research_case)
+
+    DatasourceAccess.create(
+      research_case: @research_case,
+      user: @user,
+      datasource: @datasource,
+      channel: @channel
+    )
+
+    render json: { status: 'ok' }
   end
 
   private
@@ -91,6 +107,6 @@ class ResearchCasesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def research_case_params
-      params.require(:research_case).permit(:title)
+      params.require(:research_case).permit(:title, :description)
     end
 end

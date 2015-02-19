@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Lanalytics::Processing::Pipeline do
+describe Lanalytics::Processing::Pipeline, pending: true do
 
   it "bla" do
 

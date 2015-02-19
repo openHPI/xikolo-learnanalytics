@@ -13,23 +13,26 @@
 
 ActiveRecord::Schema.define(version: 20150107135440) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "datasource_accesses", force: true do |t|
     t.integer  "user_id"
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2015-02-10 14:22:01', null: false
+    t.datetime "accessed_at",      default: '2015-02-19 10:59:16', null: false
   end
 
   create_table "datasources", id: false, force: true do |t|
     t.string "key",         null: false
     t.string "name"
-    t.string "description"
-    t.string "settings"
+    t.text   "description"
+    t.text   "settings"
     t.string "type"
   end
 
-  add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true
+  add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true, using: :btree
 
   create_table "research_cases", force: true do |t|
     t.string   "title"
@@ -43,7 +46,7 @@ ActiveRecord::Schema.define(version: 20150107135440) do
     t.integer "user_id"
   end
 
-  add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id"
+  add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",            null: false
@@ -54,6 +57,6 @@ ActiveRecord::Schema.define(version: 20150107135440) do
     t.string   "username"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
 
 end

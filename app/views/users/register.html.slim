@@ -4,6 +4,11 @@
     = form.label(:email, class: "control-label", for: "input_email")
     br
     = form.text_field(:email, class: "form-control", id: "input_email", placeholder: "Email")
+
+  .form-group
+    = form.label(:username, class: "control-label", for: "input_username")
+    br
+    = form.text_field(:username, class: "form-control", id: "input_username", placeholder: "Username")
   
   .form-group
     = form.label(:password, class: "control-label", for: "input_password")
@@ -15,8 +20,9 @@
     br
     = form.password_field(:password_confirmation, class: "form-control", id: "input_password_confirmation", placeholder: "Confirm Password")
   
-  .actions
-    = form.submit "Register", class: "btn btn-default"
+  .clearfix
+    .actions
+      = form.submit "Register", class: "btn btn-primary btn-lg col-md-12"
 
 
 

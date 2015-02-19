@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe LanalyticsConsumer do
+describe LanalyticsConsumer, pending: true do
   include LanalyticsConsumerSpecsHelper
 
   before(:each) do
