@@ -10,7 +10,7 @@ end
 describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
   let(:transformer) { described_class.new }
   let(:load_commands) { [] }
-  let(:transform_method) { transformer.method("transform_#{type}_punit_to_create_load_commands") }
+  let(:transform_method) { transformer.method("transform_#{type}_punit_to_create") }
   subject do
     transform_method.call(processing_unit, load_commands)
     load_commands.first.entity
