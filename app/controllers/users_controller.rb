@@ -31,7 +31,10 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        @user = login(user_params[:email], user_params[:password])
         format.html { redirect_to :research_cases, notice: 'User was successfully created.' }
+        # format.html { redirect_to user_sessions_url, notice: 'User was successfully created.' }
+        # format.html { redirect_to controller: 'user_session', action: 'create', notice: 'User was successfully created.' }
       else
         format.html { render :new }
       end
@@ -70,6 +73,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:email, :username, :password, :password_confirmation)
     end
 end

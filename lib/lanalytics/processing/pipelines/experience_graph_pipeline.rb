@@ -1,4 +1,4 @@
-unless Lanalytics::Processing::DatasourceManager.datasource_exists?('nosql_neo4j')
+unless Lanalytics::Processing::DatasourceManager.datasource_exists?('exp_graph_schema_neo4j')
   raise "Datasource 'nosql_neo4j' is not available."
 end
 
@@ -6,7 +6,7 @@ def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   
   pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.#{processing_action.to_s.downcase}", :nosql, processing_action) do
     
-    datasource = Lanalytics::Processing::DatasourceManager.get_datasource('nosql_neo4j')
+    datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_graph_schema_neo4j')
 
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
 

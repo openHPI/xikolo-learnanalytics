@@ -1,0 +1,33 @@
+common: &common
+  datasources:
+    - experience_graph_schema_neo4j_datasource.yml
+    - moocdb_postgresql_datasource.yml
+    - exp_api_elastic_datasource.yml
+  pipelines:
+    - exp_api_pipeline.rb
+    - experience_graph_pipeline.rb
+    - moocdb_pipeline.rb
+
+development:
+  <<: *common
+
+test:
+  datasources:
+    # - experience_graph_schema_neo4j_datasource.yml
+    - moocdb_postgresql_datasource.yml
+    - exp_api_elastic_datasource.yml
+  pipelines:
+    # - experience_graph_pipeline.rb
+    - moocdb_pipeline.rb
+    - exp_api_pipeline.rb
+  # No datasources or pipelines defined so that the tests pass
+  # pipelines:
+  #   - exp_api_pipeline.rb
+  #   # - experience_graph_pipeline.rb
+  #   - moocdb_pipeline.rb
+
+staging:
+  <<: *common
+
+production:
+  <<: *common

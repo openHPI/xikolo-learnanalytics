@@ -1,3 +1,6 @@
+a.btn.btn-default.btn-xs href="#{edit_research_case_path(@research_case)}"
+  | Edit this Research Case 
+  i.fa.fa-pencil-square-o
 
 h1
   strong Title: &nbsp;
@@ -21,8 +24,8 @@ div role="tabpanel"
       a aria-controls="home" data-toggle="tab" href="#available_datasources" role="tab"
         h3 Available Datasources
     li role="presentation"
-      a aria-controls="profile" data-toggle="tab" href="#activated_datasources" role="tab"
-        h3  Activated Datasources
+      a aria-controls="profile" data-toggle="tab" href="#accessed_datasources" role="tab"
+        h3 Accessed Datasources
     li role="presentation"
       a aria-controls="profile" data-toggle="tab" href="#your_queries" role="tab"
         h3 Your Queries
@@ -40,7 +43,8 @@ div role="tabpanel"
       /   span.glyphicon.glyphicon-search
 
       - if @available_datasources.empty?
-        p No Schemas available ...
+        br
+        h4 No Schemas available ...
 
       - for datasource in @available_datasources
         .panel.panel-default
@@ -60,9 +64,24 @@ div role="tabpanel"
               i.fa.fa-star.fa-2x
 
 
-    #activated_datasources.tab-pane role="tabpanel"  ...
-      / # - if @research.activated_datasources.empty?
+    #accessed_datasources.tab-pane role="tabpanel"
+      br
+      
+      - if @research_case.accessed_datasources.empty?
+        br
+        h4 You have not accessed any datasources so far
+      
+      - for datasource_access in @research_case.accessed_datasources_distinct
+        - accessed_datasource = datasource_access.datasource
+        - used_channel = datasource_access.channel
+        .panel.panel-default
+          .panel-body
+            h4
+              strong = "#{accessed_datasource.name} with #{used_channel.name}"
 
 
 
-    #your_queries.tab-pane role="tabpanel"  ...
+
+    #your_queries.tab-pane role="tabpanel"
+      | You have not submitted any queries at any datasource
+

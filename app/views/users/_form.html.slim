@@ -1,28 +1,21 @@
-= form_for(@user_for_registration, class: "form-horizontal", role: "form") do |form|
+= form_for(@current_user, class: "form-horizontal", role: "form") do |form|
   
-  - if @user_for_registration.errors.any?
+  - if @current_user.errors.any?
     #error_explanation
       h4 #{ pluralize(@user.errors.count, "error") } prohibited this user from being saved:
       ul
-        - @user_for_registration.errors.full_messages.each do |message|
+        - @current_user.errors.full_messages.each do |message|
           li = message
 
   .form-group
-    = form.label(:email, class: "col-sm-2 control-label", for: "input_email")
-    .col-sm-10
-      = form.text_field(:email, class: "form-control", id: "input_email", placeholder: "Email")
-  
+    = form.label(:email, class: "control-label", for: "input_email")
+    br
+    = form.text_field(:email, class: "form-control", id: "input_email", placeholder: "Email", required: true)
+
   .form-group
-    = form.label(:password, class: "col-sm-2 control-label", for: "input_password")
-    .col-sm-10
-      = form.password_field(:password, class: "form-control", id: "input_password", placeholder: "Password")
-  br
-  br
-  
-  .form-group
-    = form.label(:password_confirmation, class: "col-sm-2 control-label", for: "input_password_confirmation")
-    .col-sm-10
-      = form.password_field(:password_confirmation, class: "form-control", id: "input_password_confirmation", placeholder: "Confirm Password")
+    = form.label(:username, class: "control-label", for: "input_username")
+    br
+    = form.text_field(:username, class: "form-control", id: "input_username", placeholder: "Username", required: true)
   
   .actions
     = form.submit class: "btn btn-default"

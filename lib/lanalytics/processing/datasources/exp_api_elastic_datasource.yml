@@ -3,8 +3,8 @@
 common: &common
   datasource_adapter: 'ElasticDatasource'
   key: 'exp_api_elastic'
-  name: 'Experience API On Elastic'
-  description: '...'
+  name: 'Experience API On ElasticSearch '
+  description: 'Learning Record Store containing all activity from MOOC students in the Experience API Schema. Try out some of the queries ...'
 
 development:
   <<: *common

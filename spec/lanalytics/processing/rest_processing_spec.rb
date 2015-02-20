@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Lanalytics::Processing::RestProcessing do
+describe Lanalytics::Processing::RestPipeline, pending: true do
 
   it 'processes url on one page' do
     data_1 = {'id' => '1', 'property' => 'A'}

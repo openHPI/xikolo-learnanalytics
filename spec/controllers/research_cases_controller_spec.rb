@@ -52,7 +52,7 @@ RSpec.describe ResearchCasesController, :type => :controller do
     end
   end
 
-  describe "GET new" do
+  describe "GET new", pending: true do
     it "assigns a new research_case as @research_case" do
       get :new, {}, valid_session
       expect(assigns(:research_case)).to be_a_new(ResearchCase)

@@ -1,0 +1,32 @@
+= form_for(@user, class: "form-horizontal", role: "form") do |form|
+  
+  - if @user.errors.any?
+    #error_explanation
+      h4 #{ pluralize(@user.errors.count, "error") } prohibited this user from being saved:
+      ul
+        - @user.errors.full_messages.each do |message|
+          li = message
+
+  .form-group
+    = form.label(:email, class: "control-label", for: "input_email")
+    br
+    = form.text_field(:email, class: "form-control", id: "input_email", placeholder: "Email", required: true)
+
+  .form-group
+    = form.label(:username, class: "control-label", for: "input_username")
+    br
+    = form.text_field(:username, class: "form-control", id: "input_username", placeholder: "Username", required: true)
+  
+  .form-group
+    = form.label(:password, class: "control-label", for: "input_password")
+    br
+    = form.password_field(:password, class: "form-control", id: "input_password", placeholder: "Password", required: true)
+  
+  .form-group
+    = form.label(:password_confirmation, class: "control-label", for: "input_password_confirmation")
+    br
+    = form.password_field(:password_confirmation, class: "form-control", id: "input_password_confirmation", placeholder: "Confirm Password", required: true)
+  
+  .clearfix
+    .actions
+      = form.submit "Register", class: "btn btn-primary btn-lg col-md-12"

@@ -3,15 +3,15 @@ module Lanalytics
     class PipelineManager
       include Singleton
 
-      def self.setup_pipelines(pipelines_dir = "#{Rails.root}/config/pipelines")
+      def self.setup_pipelines(pipelines_setup_file)
 
-        Dir.glob("#{pipelines_dir}/*_pipeline.rb") do | pipeline_file_name |
-          # raise ArgumentError.new "File `#{file}` does not exists." unless File.exists? file
-          begin
-            self.instance.instance_eval(File.read(pipeline_file_name))
-          rescue Exception => error
-            raise "The following error occurred when registering pipeline #{pipeline_file_name}: #{error.message}"
-          end
+        raise ArgumentError.new("Given pipelines_setup_file cannot be nil!") unless pipelines_setup_file
+        raise ArgumentError.new "File '#{pipelines_setup_file}' does not exists." unless File.exists? pipelines_setup_file
+
+        begin
+          self.instance.instance_eval(File.read(pipelines_setup_file))
+        rescue Exception => error
+          raise "The following error occurred when registering pipeline #{pipelines_setup_file}: #{error.message}"
         end
 
         return self.instance

@@ -3,8 +3,8 @@
 
 common: &common
   datasource_adapter: 'Neo4jDatasource'
-  key: 'nosql_neo4j'
-  name: 'NoSQL on Neo4j'
+  key: 'exp_graph_schema_neo4j'
+  name: 'Experience Graph Schema on Neo4j'
   description: 'MOOC data in a Graph database allows you to query the data set very easily. Try out some of the queries ...'
 
 development:

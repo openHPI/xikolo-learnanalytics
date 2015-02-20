@@ -35,10 +35,9 @@ html lang='en'
           - if current_user
             ul.nav.navbar-nav
               li = link_to('Your Research Cases', research_cases_path)
-              li = link_to('Available Datasources', datasources_path)
             ul.nav.navbar-nav.navbar-right
               li
-                = link_to("Edit Profile", edit_user_path(current_user.id))
+                = link_to("Edit Your Profile", edit_user_path(current_user.id))
               li
                 = link_to("Logout", :logout, method: :post)
 
