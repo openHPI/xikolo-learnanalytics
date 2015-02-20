@@ -18,3 +18,4 @@
 .rspec
 pkg
 *.iml
+.rakeTasks
