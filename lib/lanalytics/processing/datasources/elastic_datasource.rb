@@ -11,10 +11,12 @@ module Lanalytics
         end
 
         def init_with(elastic_config)
+          non_elasticsearch_opts = [:client, :name, :key, :description, :index]
+          config = instance_values.symbolize_keys.reject { |k, v| non_elasticsearch_opts.include? k}
 
-          @client = Elasticsearch::Client.new host: @host, port: @port
+          @client = Elasticsearch::Client.new config
 
-          raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...' unless @client
+          raise 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...' unless @client
         end
 
         def exec
@@ -23,7 +25,7 @@ module Lanalytics
         end
 
         def settings
-          # Return all instance variables expect the instance variable 'client' 
+          # Return all instance variables expect the instance variable 'client'
           return self.instance_values.symbolize_keys.except(:client)
         end
       end
