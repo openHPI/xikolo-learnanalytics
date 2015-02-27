@@ -1,0 +1,27 @@
+Cany::Specification.new do
+  require_cany '~> 0.5'
+
+  name 'xikolo-learnanalytics'
+  version "1.0+t#{Time.now.utc.strftime('%Y%m%d%H%M')}" + (ENV.key?('BUILD_NUMBER') ? "+b#{ENV['BUILD_NUMBER']}" : '')
+  description 'Xikolo Learn Analytics Service'
+  maintainer_name 'Xikolo CI Build'
+  maintainer_email 'xikolo-dev@hpi.uni-potsdam.de'
+  website 'https://dev.xikolo.de'
+  licence 'MIT'
+
+  use :bundler do
+    skip_group :integration
+  end
+  use :rails do
+    compile_assets false
+  end
+  use :unicorn
+
+  prepare do
+    version = `dpkg-parsechangelog | grep Version: | cut -d: -f2`.strip
+    recipe(:bundler).configure :env_vars, DEB_VERSION: version
+  end
+  binary do
+    install 'client', "/usr/share/#{spec.name}"
+  end
+end
