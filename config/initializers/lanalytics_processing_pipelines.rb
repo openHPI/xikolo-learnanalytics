@@ -4,14 +4,14 @@ lanalytics_pipeline_flipper_config = lanalytics_pipeline_flipper_config[Rails.en
 
 # Load all datasources
 # TODO:: Put this code inside the DatasourceManager as done with the PipelineManager
-DATASOURCES_FOLDER = "#{Rails.root}/lib/lanalytics/processing/datasources"
+DATASOURCES_FOLDER = "#{Rails.root}/config/datasources"
 lanalytics_pipeline_flipper_config.fetch(:datasources, []).each do | datasource_yml_file |
 
   datasource_config = YAML.load_file("#{DATASOURCES_FOLDER}/#{datasource_yml_file}").with_indifferent_access
   datasource_config = datasource_config[Rails.env] || datasource_config
 
   unless datasource_adapter = datasource_config[:datasource_adapter]
-    Rails.logger.warn "The datasource config '#{datasource_yml_file}' does not contain the required key 'datasource_adapter'" 
+    Rails.logger.warn "The datasource config '#{datasource_yml_file}' does not contain the required key 'datasource_adapter'"
     next
   end
 
@@ -19,7 +19,7 @@ lanalytics_pipeline_flipper_config.fetch(:datasources, []).each do | datasource_
   datasource = datasource_class.new(datasource_config)
 
   Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
-  Rails.logger.info "The datasource config '#{datasource_yml_file}' loaded into DatasourceManager" 
+  Rails.logger.info "The datasource config '#{datasource_yml_file}' loaded into DatasourceManager"
 end
 
 # Setup the pipelines

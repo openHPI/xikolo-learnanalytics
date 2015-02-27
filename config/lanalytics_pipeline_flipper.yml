@@ -1,8 +1,8 @@
 common: &common
   datasources:
-    - experience_graph_schema_neo4j_datasource.yml
-    - moocdb_postgresql_datasource.yml
-    - exp_api_elastic_datasource.yml
+    - experience_graph_schema_neo4j.yml
+    - moocdb_postgresql.yml
+    - exp_api_elastic.yml
   pipelines:
     - exp_api_pipeline.rb
     - experience_graph_pipeline.rb
@@ -14,8 +14,8 @@ development:
 test:
   datasources:
     # - experience_graph_schema_neo4j_datasource.yml
-    - moocdb_postgresql_datasource.yml
-    - exp_api_elastic_datasource.yml
+    - moocdb_postgresql.yml
+    - exp_api_elastic.yml
   pipelines:
     # - experience_graph_pipeline.rb
     - moocdb_pipeline.rb
