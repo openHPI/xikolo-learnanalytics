@@ -2,7 +2,11 @@ module Lanalytics
   module Processing
     module Datasources
       class PostgresqlDatasource < Datasource
-        attr_reader :dbname
+        attr_reader :database, :host, :port, :user, :password, :timeout
+
+        def pool_size
+          @pool.to_i || 1
+        end
 
         def initialize(postgres_config)
           super(postgres_config)
@@ -10,17 +14,25 @@ module Lanalytics
         end
 
         def init_with(postgres_config)
-        
+
           # unless File.exists?(postgresdb_config_yml)
           #   raise ArgumentError.new("The settings file for this datasource not found under '#{postgresdb_config_yml}'")
           # end
 
           # postgresdb_config = YAML.load_file(postgresdb_config_yml).with_indifferent_access
           # postgresdb_config = postgresdb_config[Rails.env] || postgresdb_config
+          opts = {
+            host: host, port: port,
+            dbname: database,
+            user: user, password: password,
+            connect_timeout: timeout
+          }.reject { |k, v| v.nil? }
 
-          @connection_pool = ConnectionPool.new(size: 1) { PG.connect(dbname: @dbname) }
-          
-          
+          @connection_pool = ConnectionPool.new(size: pool_size) do
+            PG.connect(opts)
+          end
+
+
           # This would be an alternative of initializing the connection
           # begin
           #   @conn = PG.connect(postgres_database_config)
@@ -32,7 +44,7 @@ module Lanalytics
         end
 
         def exec(&block)
-          return unless block_given?          
+          return unless block_given?
 
           @connection_pool.with do | conn |
             yield conn
@@ -40,7 +52,7 @@ module Lanalytics
         end
 
         def settings
-          # Return all instance variables expect the instance variable 'connection_pool' 
+          # Return all instance variables expect the instance variable 'connection_pool'
           return self.instance_values.symbolize_keys.except(:connection_pool)
         end
 

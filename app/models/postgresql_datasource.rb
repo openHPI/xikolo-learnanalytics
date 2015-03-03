@@ -1,11 +1,7 @@
 class PostgresqlDatasource < Datasource
 
-  def dbname
-    return self.settings[:dbname]
-  end
-
-  def port
-    return self.settings[:port]
+  def database
+    return self.settings[:database]
   end
 
   def port
@@ -17,7 +13,7 @@ class PostgresqlDatasource < Datasource
 
     @channels << team_postgresql_browser_channel(current_user)
     # channels << neo4j_remote_shell
-    
+
     # channels << Channel.new('Neo4j Rest Interface', %q{Here is the rest interface ...}, "http://neo4j.com/developer/guide-neo4j-browser/")
     # channels << Channel.new('Neo4j Dummy Client', %q{This is dummy client.}, "http://neo4j.com/developer/guide-neo4j-browser/")
   end
@@ -36,7 +32,7 @@ class PostgresqlDatasource < Datasource
         <ul>
           <li>Database Host: #{self.settings.fetch(:host, 'lanalytics.openhpi.de')}</li>
           <li>Database Port: #{self.settings.fetch(:port, 5432)}</li>
-          <li>Database Name: #{self.dbname}</li>
+          <li>Database Name: #{self.database}</li>
           <li>Username: #{current_user.email}</li>
           <li>Password: &emsp;Type in your password for the LAnalytics Service</li>
         </ul>

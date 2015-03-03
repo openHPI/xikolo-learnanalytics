@@ -11,13 +11,13 @@ div data-placement="top" data-toggle="tooltip" title="Use this Web App to access
           span.sr-only Close
         h4.modal-title id="myModalLabel" Accessing the Web Tool '#{channel.name}'
       .modal-body
-        p 
+        p
           strong Access to the Datasource '#{datasource.name}' with the tool '#{channel.name}' by clicking on the button below and use the following credentials.
         ol
-          li Database Host: #{datasource.dbname}
+          li Database Host: #{datasource.host}
           li Database Port: #{datasource.port}
-          li Database Name: #{datasource.dbname} 
-          li Username: #{current_user.email} 
+          li Database Name: #{datasource.database}
+          li Username: #{current_user.email}
           li Password: Type in your password for the LAnalytics Service
           li Hit login
 

@@ -10,22 +10,22 @@ common: &common
 development:
   <<: *common
   host: lanalytics.openhpi.de
-  port: 5432 
-  dbname: lanalytics-development
+  port: 5432
+  database: lanalytics-development
 
 test:
   <<: *common
   host: lanalytics.openhpi.de
   port: 5432
-  dbname: lanalytics-test
+  database: lanalytics-test
 
 
 staging:
   <<: *common
   host: lanalytics.openhpi.de
-  port: 5432 
-  dbname: lanalytics-staging
+  port: 5432
+  database: lanalytics-staging
 
 production:
   <<: *common
-  dbname: lanalytics-production
+  database: lanalytics-production
