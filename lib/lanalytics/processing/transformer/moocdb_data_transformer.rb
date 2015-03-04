@@ -81,19 +81,23 @@ module Lanalytics
           load_commands << Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
             UPDATE observed_events
             SET observed_event_duration = (extract(epoch from timestamp with time zone '#{exp_stmt.timestamp}') - extract(epoch from observed_event_timestamp)) / 60
-            WHERE 
+            WHERE
               user_id = '#{exp_stmt.user.uuid}'
               AND observed_event_duration IS NULL;
           })
 
-          
-          # At the moment we are only page views on the items page 
+
+          # At the moment we are only page views on the items page
           match = /^\/courses\/(?<course_code>\w+)\/items\/(?<item_short_uuid>\w+)/.match(exp_stmt.resource.uuid)
-          
+
           return unless match
 
           course_code = match[:course_code]
-          item_uuid = UUID(match[:item_short_uuid]).to_s
+          begin
+            item_uuid = UUID(match[:item_short_uuid]).to_s
+          rescue Youyouaidi::InvalidUUIDError
+            return
+          end
 
           new_exp_event_entity = Lanalytics::Processing::LoadORM::Entity.create(:observed_events) do
             # with_primary_attribute :observed_event_id,          :uuid,      processing_unit[:id]
