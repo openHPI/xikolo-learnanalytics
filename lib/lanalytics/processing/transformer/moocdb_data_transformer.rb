@@ -61,7 +61,7 @@ module Lanalytics
         alias_method :transform_course_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
         alias_method :transform_user_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
         alias_method :transform_enrollment_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
-        
+        alias_method :transform_item_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
 
         def transform_exp_event_punit_to_create_load_commands(processing_unit, load_commands)
           exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
