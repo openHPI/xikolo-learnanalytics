@@ -79,4 +79,10 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+
+  # load puppet production specific configuration
+  if File.exist? File.expand_path('../puppet.rb', __FILE__)
+    require File.expand_path('../puppet', __FILE__)
+  end
 end
