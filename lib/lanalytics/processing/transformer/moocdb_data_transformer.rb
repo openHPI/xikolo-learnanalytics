@@ -61,7 +61,7 @@ module Lanalytics
         alias_method :transform_course_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
         alias_method :transform_user_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
         alias_method :transform_enrollment_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
-        
+        alias_method :transform_item_punit_to_destroy_load_commands, :transform_to_destroy_load_commands
 
         def transform_exp_event_punit_to_create_load_commands(processing_unit, load_commands)
           exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
@@ -81,19 +81,23 @@ module Lanalytics
           load_commands << Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
             UPDATE observed_events
             SET observed_event_duration = (extract(epoch from timestamp with time zone '#{exp_stmt.timestamp}') - extract(epoch from observed_event_timestamp)) / 60
-            WHERE 
+            WHERE
               user_id = '#{exp_stmt.user.uuid}'
               AND observed_event_duration IS NULL;
           })
 
-          
-          # At the moment we are only page views on the items page 
+
+          # At the moment we are only page views on the items page
           match = /^\/courses\/(?<course_code>\w+)\/items\/(?<item_short_uuid>\w+)/.match(exp_stmt.resource.uuid)
-          
+
           return unless match
 
           course_code = match[:course_code]
-          item_uuid = UUID(match[:item_short_uuid]).to_s
+          begin
+            item_uuid = UUID(match[:item_short_uuid]).to_s
+          rescue Youyouaidi::InvalidUUIDError
+            return
+          end
 
           new_exp_event_entity = Lanalytics::Processing::LoadORM::Entity.create(:observed_events) do
             # with_primary_attribute :observed_event_id,          :uuid,      processing_unit[:id]

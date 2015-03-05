@@ -143,6 +143,7 @@ GEM
     nesty (1.0.2)
     net-http-persistent (2.9.4)
     netrc (0.10.2)
+    newrelic_rpm (3.9.9.275)
     oauth (0.4.7)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
@@ -292,6 +293,7 @@ DEPENDENCIES
   multi_json
   murmurhash3
   neo4j-core
+  newrelic_rpm
   os
   pg
   rails (~> 4.1.0)
