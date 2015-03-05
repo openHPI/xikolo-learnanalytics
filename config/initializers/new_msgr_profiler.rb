@@ -1,7 +1,4 @@
 
-# # Msgr::Message.class_variable_set(:@@processing_count, 0)
-# # Msgr::Message.class_variable_set(:@@total_time_until_events_reaches_msgr_gem, 0)
-
 # Msgr::Message.class_eval do
 
 #   @@received_events = 0
