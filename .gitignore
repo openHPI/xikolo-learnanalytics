@@ -18,3 +18,5 @@
 .rspec
 pkg
 *.iml
+
+coverage
