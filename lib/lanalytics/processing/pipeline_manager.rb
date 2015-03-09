@@ -6,7 +6,9 @@ module Lanalytics
       def self.setup_pipelines(pipelines_setup_file)
 
         raise ArgumentError.new("Given pipelines_setup_file cannot be nil!") unless pipelines_setup_file
-        raise ArgumentError.new "File '#{pipelines_setup_file}' does not exists." unless File.exists? pipelines_setup_file
+        raise ArgumentError.new "File '#{pipelines_setup_file}' does not exist." unless File.exists? pipelines_setup_file
+        raise ArgumentError.new "File '#{pipelines_setup_file}' has to end with 'prb'." unless File.extname(pipelines_setup_file) == '.prb'
+        
 
         begin
           self.instance.instance_eval(File.read(pipelines_setup_file))
@@ -51,7 +53,9 @@ module Lanalytics
         Rails.logger.info "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'"
       end
 
-      # =============
+
+
+      # ==========================================================
       # Access methods for the registered pipelines
 
       # Look in all schemas for the pipeline name
@@ -60,9 +64,10 @@ module Lanalytics
         pipelines = Hash.new
    
         @pipelines.each do | schema_key, schema_pipelines |
-          if schema_pipeline = schema_pipelines[processing_action].fetch(pipeline_name, false)
-            pipelines[schema_key] = schema_pipeline
-          end
+          next unless schema_pipelines.include?(processing_action)
+          next unless schema_pipelines[processing_action].include?(pipeline_name)
+          
+          pipelines[schema_key] = schema_pipelines[processing_action][pipeline_name]
         end
 
         return pipelines
