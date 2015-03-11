@@ -15,8 +15,6 @@ module Lanalytics
         @processing_count += 1
         processing_start_time = Time.now
 
-
-
         processing_opts ||= {}
 
         unless original_event

@@ -14,3 +14,12 @@ if Rails.env.development?
                           namespace: 'lanalytics-model'
 end
 
+namespace :ci do
+  desc 'Setup service for CI'
+  task setup: %w(db:drop db:create:all db:setup) do
+  end
+
+  desc 'Run specs for CI'
+  task spec: %w(^default) do
+  end
+end

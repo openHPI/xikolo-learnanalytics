@@ -25,6 +25,10 @@ Rails.application.routes.draw do
   # Download routes
   get 'download/neo4j_shell_zip'
 
+  defaults format: 'json' do
+    resources :system_info, only: [:show]
+  end
+
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

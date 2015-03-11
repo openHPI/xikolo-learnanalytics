@@ -23,6 +23,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'restify'
 
+gem 'newrelic_rpm'
+
 # Gems needed for the LAnalytics UI
 gem 'slim'
 gem 'forgery'
@@ -87,4 +89,5 @@ end
 
 group :test do
   gem 'webmock'
+  gem 'simplecov'
 end

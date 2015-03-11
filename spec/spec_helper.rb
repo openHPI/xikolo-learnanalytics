@@ -19,6 +19,10 @@ require 'webmock/rspec'
 # Allow the connection to the test Neo4j instance
 WebMock.disable_net_connect!(allow: ['localhost:8474'])
 
+# Enabling coverage check during test run
+require 'simplecov'
+SimpleCov.start
+
 RSpec.configure do |config|
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

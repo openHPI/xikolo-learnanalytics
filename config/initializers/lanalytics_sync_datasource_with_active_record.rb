@@ -24,7 +24,6 @@ if defined?(Rails::Server) and not Lanalytics.rake?
           description: datasource.description, 
           settings: datasource_settings
         )
-        puts datasource_ar_entity.inspect
         next
       end
 

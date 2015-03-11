@@ -27,14 +27,32 @@ module Lanalytics
         end
       end
 
+      def register_pipeline(pipeline)
+        
+        @pipelines[pipeline.schema][pipeline.processing_action][pipeline.name] = pipeline
+
+        # Comment in if you want to do some profiling 
+        # if Rails.env.profiling?
+        #   @pipelines[schema][processing_action][name] = ProfilingPipeline.new(pipeline.pipeline.name, pipeline.schema, pipeline.processing_action, pipeline.extractors, pipeline.transformers, pipeline.loaders)
+        # end
+
+        Rails.logger.info "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'"
+      end
+
       def pipeline_for(name, schema, processing_action, &block)
-        if Rails.env.staging?
-          @pipelines[schema][processing_action][name] = ProfilingPipeline.new(name, schema, processing_action, &block)
-        else
-          @pipelines[schema][processing_action][name] = Pipeline.new(name, schema, processing_action, &block)
-        end
+
+        @pipelines[schema][processing_action][name] = Pipeline.new(name, schema, processing_action, &block)
+
+        # Comment in if you want to do some profiling 
+        # if Rails.env.profiling?
+        #   @pipelines[schema][processing_action][name] = ProfilingPipeline.new(name, schema, processing_action, &block)
+        # end
+
         Rails.logger.info "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'"
       end
+
+      # =============
+      # Access methods for the registered pipelines
 
       # Look in all schemas for the pipeline name
       def schema_pipelines_with(processing_action, pipeline_name)
