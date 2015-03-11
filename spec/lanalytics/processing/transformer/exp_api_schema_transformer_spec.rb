@@ -69,4 +69,40 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
       expect(subject[:verb].value).to eq :COMMENTED
     end
   end
+
+  describe 'visit' do
+    let(:type) { 'visit' }
+    let(:processing_unit) do
+      {
+        id: '00000005-3300-4444-9999-000000000001',
+        item_id: '00000003-3300-4444-9999-000000000001',
+        content_type: 'video',
+        user_id: '00000001-3300-4444-9999-000000000001',
+        course_id: SecureRandom.uuid,
+        created_at: Time.now
+      }
+    end
+
+    it_behaves_like 'an experience statement'
+    it 'has the correct verb' do
+      expect(subject[:verb].value).to eq :VISITED
+    end
+  end
+
+  describe 'watch' do
+    let(:type) { 'watch' }
+    let(:processing_unit) do
+      {
+        id: '00000003-3500-4444-9999-000000000001',
+        question_id: SecureRandom.uuid,
+        user_id: SecureRandom.uuid,
+        course_id: SecureRandom.uuid
+      }
+    end
+
+    it_behaves_like 'an experience statement'
+    it 'has the correct verb' do
+      expect(subject[:verb].value).to eq :WATCHED_QUESTION
+    end
+  end
 end

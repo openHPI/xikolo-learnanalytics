@@ -5,7 +5,7 @@ module Lanalytics
         def transform(_original_event, processing_units, load_commands, pipeline_ctx)
           processing_action = pipeline_ctx.processing_action.to_s.downcase
 
-          processing_units.each do | processing_unit |
+          processing_units.each do |processing_unit|
             processing_unit_type = processing_unit.type.to_s.downcase
             transform_method = method("transform_#{processing_unit_type}_punit_to_#{processing_action}")
             transform_method.call(processing_unit, load_commands)
@@ -31,14 +31,14 @@ module Lanalytics
             with_attribute :timestamp, :timestamp, exp_stmt.timestamp
 
             with_result_entity = Lanalytics::Processing::LoadORM::Entity.create(:WITH_RESULT) do
-              exp_stmt.with_result.each do | attribute, value |
+              exp_stmt.with_result.each do |attribute, value|
                 with_attribute attribute.underscore.downcase, :string, value
               end
             end
             with_attribute :with_result, :entity, with_result_entity
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
-              exp_stmt.in_context.each do | attribute, value |
+              exp_stmt.in_context.each do |attribute, value|
                 with_attribute attribute.underscore.downcase, :string, value
               end
             end
@@ -48,8 +48,8 @@ module Lanalytics
           load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
         end
 
-        def transform_question_punit_to_create(processing_unit, _load_commands)
-          transform_punit_to_create _load_commands,
+        def transform_question_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
                                     USER: { resource_uuid: processing_unit[:user_id] },
                                     verb: :ASKED_QUESTION,
                                     resource: {
@@ -69,8 +69,8 @@ module Lanalytics
                                     }
         end
 
-        def transform_answer_punit_to_create(processing_unit, _load_commands)
-          transform_punit_to_create _load_commands,
+        def transform_answer_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
                                     USER: { resource_uuid: processing_unit[:user_id] },
                                     verb: :ANSWERED_QUESTION,
                                     resource: {
@@ -85,8 +85,8 @@ module Lanalytics
                                     }
         end
 
-        def transform_comment_punit_to_create(processing_unit, _load_commands)
-          transform_punit_to_create _load_commands,
+        def transform_comment_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
                                     USER: { resource_uuid: processing_unit[:user_id] },
                                     verb: :COMMENTED,
                                     resource: {
@@ -102,6 +102,33 @@ module Lanalytics
                                     }
         end
 
+        def transform_visit_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
+                                    USER: { resource_uuid: processing_unit[:user_id] },
+                                    verb: :VISITED,
+                                    resource: {
+                                      resource_uuid: processing_unit[:item_id],
+                                      content_type: processing_unit[:content_type]
+                                    },
+                                    timestamp: processing_unit[:created_at],
+                                    in_context: {
+                                      course_id: processing_unit[:course_id]
+                                    }
+        end
+
+        def transform_watch_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
+                                    USER: { resource_uuid: processing_unit[:user_id] },
+                                    verb: :WATCHED_QUESTION,
+                                    resource: {
+                                      resource_uuid: processing_unit[:question_id]
+                                    },
+                                    timestamp: processing_unit[:updated_at],
+                                    in_context: {
+                                      course_id: processing_unit[:course_id]
+                                    }
+        end
+
         def transform_punit_to_create(load_commands, attrs)
           entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:USER) do
@@ -113,7 +140,7 @@ module Lanalytics
 
             resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource) do
               with_primary_attribute :resource_uuid, :uuid, attrs[:resource][:resource_uuid]
-              attrs[:resource].except(:resource_uuid).each do | attribute, value |
+              attrs[:resource].except(:resource_uuid).each do |attribute, value|
                 with_attribute attribute.to_s.downcase, :string, value
               end
             end
@@ -122,7 +149,7 @@ module Lanalytics
             with_attribute :timestamp, :timestamp, attrs[:resource][:timestamp]
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
-              attrs[:in_context].each do | attribute, value |
+              attrs[:in_context].each do |attribute, value|
                 with_attribute attribute.to_s.downcase, :string, value
               end
             end
