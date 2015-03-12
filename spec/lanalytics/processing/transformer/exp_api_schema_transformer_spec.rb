@@ -3,14 +3,23 @@ require 'rails_helper'
 shared_examples 'an experience statement' do
   its(:entity_key) { is_expected.to eq :EXP_STATEMENT }
   it 'has the correct attributes' do
-    expect(subject.attributes.map(&:name)).to match_array(%i(user verb resource timestamp in_context))
+    expect(subject.attributes.map(&:name)).to match_array(
+      %i(user verb resource timestamp in_context))
+  end
+
+  it 'has only non-nil attributes' do
+    p subject.attributes.map(&:value)
+    expect(subject.attributes.map(&:value).select(&:nil?).size).to eq 0
   end
 end
 
 describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
   let(:transformer) { described_class.new }
   let(:load_commands) { [] }
-  let(:transform_method) { transformer.method("transform_#{type}_punit_to_create") }
+  let(:transform_method) do
+    transformer.method("transform_#{type}_punit_to_create")
+  end
+
   subject do
     transform_method.call(processing_unit, load_commands)
     load_commands.first.entity
@@ -25,7 +34,8 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
         text: 'Text',
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
-        technical: false
+        technical: false,
+        created_at: Time.now
       }
     end
 
@@ -42,7 +52,8 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
         id: '00000002-3500-4444-9999-000000000001',
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
-        technical: false
+        technical: false,
+        created_at: Time.now
       }
     end
 
@@ -60,7 +71,8 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
         text: 'Text',
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
-        technical: false
+        technical: false,
+        created_at: Time.now
       }
     end
 
@@ -96,7 +108,8 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
         id: '00000003-3500-4444-9999-000000000001',
         question_id: SecureRandom.uuid,
         user_id: SecureRandom.uuid,
-        course_id: SecureRandom.uuid
+        course_id: SecureRandom.uuid,
+        updated_at: Time.now
       }
     end
 
