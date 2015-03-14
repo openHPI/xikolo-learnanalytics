@@ -5,7 +5,9 @@ lanalytics_pipeline_flipper_config = lanalytics_pipeline_flipper_config[Rails.en
 # Load all datasources
 # TODO:: Put this code inside the DatasourceManager as done with the PipelineManager
 DATASOURCES_FOLDER = "#{Rails.root}/config/datasources"
-lanalytics_pipeline_flipper_config.fetch(:datasources, []).each do | datasource_yml_file |
+datasources = lanalytics_pipeline_flipper_config.fetch(:datasources, [])
+datasources ||= []
+datasources.each do | datasource_yml_file |
 
   datasource_config = YAML.load_file("#{DATASOURCES_FOLDER}/#{datasource_yml_file}").with_indifferent_access
   datasource_config = datasource_config[Rails.env] || datasource_config
@@ -24,7 +26,9 @@ end
 
 # Setup the pipelines
 PIPELINES_FOLDER = "#{Rails.root}/lib/lanalytics/processing/pipelines"
-lanalytics_pipeline_flipper_config.fetch(:pipelines, []).each do | pipelines_setup_file |
+pipelines = lanalytics_pipeline_flipper_config.fetch(:pipelines, [])
+pipelines ||= []
+pipelines.each do | pipelines_setup_file |
   Lanalytics::Processing::PipelineManager.setup_pipelines("#{PIPELINES_FOLDER}/#{pipelines_setup_file}")
 end
 
