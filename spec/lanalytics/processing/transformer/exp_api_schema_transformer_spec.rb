@@ -8,7 +8,6 @@ shared_examples 'an experience statement' do
   end
 
   it 'has only non-nil attributes' do
-    p subject.attributes.map(&:value)
     expect(subject.attributes.map(&:value).select(&:nil?).size).to eq 0
   end
 end
