@@ -26,6 +26,9 @@ Rails.application.routes.draw do
 
   defaults format: 'json' do
     resources :system_info, only: [:show]
-    post 'query' => 'query#show'
+    namespace :api do
+      root to: 'api#index'
+      get 'query' => 'query#show', as: :query
+    end
   end
 end

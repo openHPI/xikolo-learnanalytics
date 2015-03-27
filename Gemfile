@@ -22,6 +22,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'restify'
+gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
 
