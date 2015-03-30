@@ -41,6 +41,8 @@ route 'xikolo.pinboard.comment.create', to: 'Lanalytics#create'
 route 'xikolo.pinboard.comment.update', to: 'Lanalytics#update'
 route 'xikolo.pinboard.subscription.create', to: 'Lanalytics#create'
 route 'xikolo.pinboard.subscription.destroy', to: 'Lanalytics#destroy'
+route 'xikolo.pinboard.watch.create', to: 'Lanalytics#create'
+route 'xikolo.pinboard.watch.update', to: 'Lanalytics#update'
 
 # ------------------- Helpdesk Domain Entities -------------------
 route 'xikolo.helpdesk.ticket.create', to: 'Lanalytics#create'
