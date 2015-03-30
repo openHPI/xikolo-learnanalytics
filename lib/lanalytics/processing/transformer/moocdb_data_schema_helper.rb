@@ -74,7 +74,7 @@ module Lanalytics
         end
 
         def collaboration_type(processing_unit)
-          return case processing_unit.type
+          return case processing_unit.type.downcase
             when :question  then [1, 'forum_question']
             when :answer    then [2, 'forum_answer']
             when :comment   then [3, 'forum_comment']

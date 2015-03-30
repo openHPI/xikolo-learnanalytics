@@ -58,4 +58,15 @@ describe Lanalytics::Processing::Transformer::MoocdbDataTransformer do
   end
 
 
+  it "should transform processing unit of type 'question'" do
+    @original_event = FactoryGirl.attributes_for(:amqp_pinboard_question).with_indifferent_access
+    @processing_units = [ Lanalytics::Processing::Unit.new(:QUESTION, @original_event) ]
+    @pipeline_ctx = pipeline_ctx(Lanalytics::Processing::ProcessingAction::CREATE)
+    @exp_api_transformer.transform(@original_event, @processing_units, @load_commands, @pipeline_ctx)
+
+    expect(@load_commands.length).to eq(2)
+    create_exp_event_command = @load_commands.first
+    expect(create_exp_event_command).to be_a(Lanalytics::Processing::LoadORM::MergeEntityCommand)
+  end
+
 end
