@@ -4,7 +4,7 @@ module Lanalytics
       
       class AmqEventExtractor < ExtractStep
 
-        def initialize(type)
+        def initialize(type = nil)
           @type = type
         end
 

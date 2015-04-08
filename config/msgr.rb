@@ -51,6 +51,8 @@ route 'xikolo.helpdesk.ticket.create', to: 'Lanalytics#create'
 # ------------------- Web Events -------------------
 route 'xikolo.web.exp_event.create', to: 'Lanalytics#handle_user_event'
 
+route 'xikolo.web.referrer', to: 'Lanalytics#create'
+
 
 # If you want to know how the routes look like, you can puts them with the following line:x
 # puts @routes.inspect

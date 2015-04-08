@@ -13,6 +13,9 @@ module Lanalytics
 
         def initialize(entity_key, attributes = [])
           # Ensure not nil
+
+          raise ArgumentError.new('Entity_key has to be a Symbol') unless entity_key and entity_key.is_a?(Symbol)
+
           @entity_key, @attributes = entity_key, attributes
         end
 

@@ -7,8 +7,12 @@ module Lanalytics
 
           processing_units.each do |processing_unit|
             processing_unit_type = processing_unit.type.to_s.downcase
-            transform_method = method("transform_#{processing_unit_type}_punit_to_#{processing_action}")
-            transform_method.call(processing_unit, load_commands)
+            transform_method = "transform_#{processing_unit_type}_punit_to_#{processing_action}"
+            if respond_to? transform_method.to_sym
+              method(transform_method).call(processing_unit, load_commands)
+            else
+              Rails.logger.error "#{transform_method} does not exist"
+            end
           end
         end
 

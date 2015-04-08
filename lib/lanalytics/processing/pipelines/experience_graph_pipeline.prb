@@ -1,5 +1,5 @@
 unless Lanalytics::Processing::DatasourceManager.datasource_exists?('exp_graph_schema_neo4j')
-  raise "Datasource 'nosql_neo4j' is not available."
+  raise "Datasource 'exp_graph_schema_neo4j' is not available. Check your 'config/datasources/experience_graph_schema_neo4j.yml' or 'lib/lanalytics/processing/datasources/Neo4jDatasource.'"
 end
 
 def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)

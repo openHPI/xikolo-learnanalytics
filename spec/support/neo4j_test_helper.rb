@@ -2,7 +2,7 @@ class Neo4jTestHelper
   # TODO:: include Assertion
   def self.clean_database
 
-    nosql_neo4j_datasource = Lanalytics::Processing::DatasourceManager.get_datasource('nosql_neo4j')
+    nosql_neo4j_datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_graph_schema_neo4j')
 
     rest_response = MultiJson.load(RestClient.get('http://localhost:8474/db/data/schema/index'), symbolize_keys: true)
     rest_response.each do | index_meta_info |
