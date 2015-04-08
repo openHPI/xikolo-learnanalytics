@@ -18,5 +18,6 @@
 .rspec
 pkg
 *.iml
+.rakeTasks
 
 coverage

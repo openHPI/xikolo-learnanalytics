@@ -1,7 +1,7 @@
 module Lanalytics
   module Processing
     module LoadORM
-      
+
       class Entity
         attr_reader :entity_key, :primary_attribute, :attributes
 
@@ -34,11 +34,15 @@ module Lanalytics
         end
 
         def all_attribute_names
-          all_non_nil_attributes.collect { | attr | attr.name }          
+          all_non_nil_attributes.collect { | attr | attr.name }
         end
 
         def all_attribute_values
           all_non_nil_attributes.collect { | attr | attr.value }
+        end
+
+        def [](name)
+          @attributes.find { |a| a.name == name }
         end
       end
 

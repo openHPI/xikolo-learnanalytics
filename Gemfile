@@ -22,6 +22,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'restify'
+gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
 
@@ -71,6 +72,7 @@ gem 'unicorn'
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
   gem 'factory_girl_rails'
+  gem 'rspec-its'
 end
 
 group :development do
