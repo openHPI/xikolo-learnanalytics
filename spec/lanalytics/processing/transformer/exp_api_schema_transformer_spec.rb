@@ -182,5 +182,4 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
       expect(subject[:verb].value).to eq :WATCHED_QUESTION
     end
   end
-
 end
