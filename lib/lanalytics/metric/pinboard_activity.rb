@@ -1,8 +1,9 @@
 module Lanalytics
   module Metric
-    class  PinboardActivity < ExpApiCountMetric
-      def self.verbs
-        @verbs ||= %w(ASKED_QUESTION ANSWERED_QUESTION COMMENTED WATCHED_QUESTION)
+    class  PinboardActivity < CombinedMetric
+      def self.dependent_metrics
+        [{class: PinboardPostingActivity},
+         {class: PinboardWatchCount, weight: 0.2}]
       end
     end
   end
