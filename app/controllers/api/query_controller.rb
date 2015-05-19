@@ -25,13 +25,13 @@ class Api::QueryController < ApplicationController
   end
 
   def metric_names
-    %w(PinboardActivity PinboardPostingActivity PinboardWatchCount VideoVisitCount VisitCount)
+    %w(PinboardActivity PinboardPostingActivity PinboardWatchCount VideoVisitCount VisitCount VideoSpeedChangeMetric)
   end
 
   def query_params
-    params.require :user_id
-    params.require :start_time
-    params.require :end_time
+    #params.require :user_id
+    #params.require :start_time
+    #params.require :end_time
     params.permit :user_id, :course_id, :start_time, :end_time
   end
 
