@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class  VisitCount < ExpApiCountMetric
       def self.verbs
-        @verbs ||= %w(VISITED_ITEM)
+        @verbs ||= %w(VISITED)
       end
     end
   end
