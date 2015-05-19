@@ -27,7 +27,7 @@ RSpec.describe Lanalytics::Metric::VisitCount do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
           .second[:match][:verb]).to eq(
-            'VISITED_ITEM')
+            'VISITED')
       end.and_return('{}')
       subject
     end

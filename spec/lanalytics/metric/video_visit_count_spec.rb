@@ -27,7 +27,7 @@ RSpec.describe Lanalytics::Metric::VideoVisitCount do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
           .second[:match][:verb]).to eq(
-            'VISITED_ITEM')
+            'VISITED')
         expect(options[:body][:query][:filtered][:query][:bool][:must]
           .fourth[:match_phrase]['resource.content_type']).to eq(
             'video')
