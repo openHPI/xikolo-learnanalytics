@@ -15,7 +15,7 @@ SET client_min_messages = warning;
 
 --
 -- TOC entry 199 (class 3079 OID 12018)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
@@ -24,7 +24,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 -- TOC entry 2334 (class 0 OID 0)
 -- Dependencies: 199
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -38,7 +38,7 @@ SET default_with_oids = false;
 
 --
 -- TOC entry 198 (class 1259 OID 163699)
--- Name: assessments; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: assessments; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE assessments (
@@ -56,7 +56,7 @@ ALTER TABLE public.assessments OWNER TO postgres;
 
 --
 -- TOC entry 194 (class 1259 OID 163669)
--- Name: collaboration_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: collaboration_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE collaboration_types (
@@ -69,7 +69,7 @@ ALTER TABLE public.collaboration_types OWNER TO postgres;
 
 --
 -- TOC entry 193 (class 1259 OID 163656)
--- Name: collaborations; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: collaborations; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE collaborations (
@@ -116,7 +116,7 @@ ALTER SEQUENCE collaborations_collaboration_type_id_seq OWNED BY collaborations.
 
 --
 -- TOC entry 170 (class 1259 OID 163318)
--- Name: course; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: course; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE course (
@@ -131,7 +131,7 @@ ALTER TABLE public.course OWNER TO postgres;
 
 --
 -- TOC entry 176 (class 1259 OID 163333)
--- Name: course_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: course_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE course_user (
@@ -270,7 +270,7 @@ ALTER SEQUENCE course_user_submitting_user_id_seq OWNED BY course_user.submittin
 
 --
 -- TOC entry 177 (class 1259 OID 163343)
--- Name: global_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: global_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE global_user (
@@ -284,7 +284,7 @@ ALTER TABLE public.global_user OWNER TO postgres;
 
 --
 -- TOC entry 182 (class 1259 OID 163583)
--- Name: observed_events; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: observed_events; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE observed_events (
@@ -375,7 +375,7 @@ ALTER SEQUENCE observed_events_url_id_seq OWNED BY observed_events.url_id;
 
 --
 -- TOC entry 195 (class 1259 OID 163676)
--- Name: problem_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: problem_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE problem_types (
@@ -388,7 +388,7 @@ ALTER TABLE public.problem_types OWNER TO postgres;
 
 --
 -- TOC entry 196 (class 1259 OID 163681)
--- Name: problems; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: problems; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE problems (
@@ -411,7 +411,7 @@ ALTER TABLE public.problems OWNER TO postgres;
 
 --
 -- TOC entry 186 (class 1259 OID 163621)
--- Name: resource_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: resource_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE resource_types (
@@ -449,7 +449,7 @@ ALTER SEQUENCE resource_types_resource_type_id_seq OWNED BY resource_types.resou
 
 --
 -- TOC entry 191 (class 1259 OID 163639)
--- Name: resource_urls; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: resource_urls; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE resource_urls (
@@ -511,7 +511,7 @@ ALTER SEQUENCE resource_urls_url_id_seq OWNED BY resource_urls.url_id;
 
 --
 -- TOC entry 184 (class 1259 OID 163613)
--- Name: resources; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: resources; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE resources (
@@ -556,7 +556,7 @@ ALTER SEQUENCE resources_resource_type_id_seq OWNED BY resources.resource_type_i
 
 --
 -- TOC entry 197 (class 1259 OID 163689)
--- Name: submissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: submissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE submissions (
@@ -577,7 +577,7 @@ ALTER TABLE public.submissions OWNER TO postgres;
 
 --
 -- TOC entry 188 (class 1259 OID 163629)
--- Name: urls; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: urls; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE urls (
@@ -615,7 +615,7 @@ ALTER SEQUENCE urls_url_id_seq OWNED BY urls.url_id;
 
 --
 -- TOC entry 178 (class 1259 OID 163348)
--- Name: user_pii; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_pii; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
 CREATE TABLE user_pii (
@@ -737,7 +737,7 @@ ALTER TABLE ONLY urls ALTER COLUMN url_id SET DEFAULT nextval('urls_url_id_seq':
 
 --
 -- TOC entry 2219 (class 2606 OID 164013)
--- Name: assessments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: assessments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY assessments
@@ -746,7 +746,7 @@ ALTER TABLE ONLY assessments
 
 --
 -- TOC entry 2211 (class 2606 OID 163673)
--- Name: collaboration_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: collaboration_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY collaboration_types
@@ -755,7 +755,7 @@ ALTER TABLE ONLY collaboration_types
 
 --
 -- TOC entry 2209 (class 2606 OID 163668)
--- Name: collaborations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: collaborations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY collaborations
@@ -764,7 +764,7 @@ ALTER TABLE ONLY collaborations
 
 --
 -- TOC entry 2191 (class 2606 OID 163322)
--- Name: course_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: course_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY course
@@ -773,7 +773,7 @@ ALTER TABLE ONLY course
 
 --
 -- TOC entry 2193 (class 2606 OID 163342)
--- Name: course_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: course_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY course_user
@@ -782,7 +782,7 @@ ALTER TABLE ONLY course_user
 
 --
 -- TOC entry 2195 (class 2606 OID 163347)
--- Name: global_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: global_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY global_user
@@ -791,7 +791,7 @@ ALTER TABLE ONLY global_user
 
 --
 -- TOC entry 2199 (class 2606 OID 163592)
--- Name: observed_events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: observed_events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY observed_events
@@ -800,7 +800,7 @@ ALTER TABLE ONLY observed_events
 
 --
 -- TOC entry 2213 (class 2606 OID 163680)
--- Name: problem_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: problem_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY problem_types
@@ -809,7 +809,7 @@ ALTER TABLE ONLY problem_types
 
 --
 -- TOC entry 2215 (class 2606 OID 163688)
--- Name: problems_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: problems_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY problems
@@ -818,7 +818,7 @@ ALTER TABLE ONLY problems
 
 --
 -- TOC entry 2203 (class 2606 OID 163626)
--- Name: resource_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: resource_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY resource_types
@@ -827,7 +827,7 @@ ALTER TABLE ONLY resource_types
 
 --
 -- TOC entry 2207 (class 2606 OID 163645)
--- Name: resource_urls_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: resource_urls_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY resource_urls
@@ -836,7 +836,7 @@ ALTER TABLE ONLY resource_urls
 
 --
 -- TOC entry 2201 (class 2606 OID 163618)
--- Name: resources_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: resources_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY resources
@@ -845,7 +845,7 @@ ALTER TABLE ONLY resources
 
 --
 -- TOC entry 2217 (class 2606 OID 163696)
--- Name: submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY submissions
@@ -854,7 +854,7 @@ ALTER TABLE ONLY submissions
 
 --
 -- TOC entry 2205 (class 2606 OID 163634)
--- Name: urls_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: urls_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY urls
@@ -863,7 +863,7 @@ ALTER TABLE ONLY urls
 
 --
 -- TOC entry 2197 (class 2606 OID 163352)
--- Name: user_pii_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+-- Name: user_pii_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
 --
 
 ALTER TABLE ONLY user_pii
@@ -888,3 +888,4 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 -- PostgreSQL database dump complete
 --
 
+CREATE INDEX user_event_duration_idx ON observed_events (user_id, observed_event_duration NULLS FIRST);
