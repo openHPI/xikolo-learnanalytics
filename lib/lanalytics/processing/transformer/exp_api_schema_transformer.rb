@@ -178,7 +178,7 @@ module Lanalytics
                 if [:points_achieved, :points_maximal, :points_percentage, :quantile].include? attribute
                   with_attribute attribute.to_s.downcase, :float, value
                 elsif [:confirmation_of_participation, :record_of_achievement, :certificate].include? attribute
-                  with_attribute attribute.to_s.downcase, :bool, (value.nil? ? 'false' : value)
+                  with_attribute attribute.to_s.downcase, :bool, (value.nil? ? false : value)
                 else
                   with_attribute attribute.to_s.downcase, :string, value
                 end

@@ -216,10 +216,10 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
         },
         certificates: {
           confirmation_of_participation: true,
-          record_of_achievement: nil,
+          record_of_achievement: false,
           certificate: nil
         },
-        completed: false,
+        completed: true,
         quantile: 0.88
       }
     end
@@ -230,9 +230,23 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
       expect(subject[:verb].value).to eq :COMPLETED_COURSE
     end
 
-    #it 'has the correct verb' do
-    #  Rails.logger.info subject[:in_context].value
-    #  expect(subject[:in_context].value[:course_id].value).to eq processing_unit[:course_id]
-    #end
+    it 'has the correct attributes' do
+      [:course_id, :quantile].each do |key|
+        expect(subject[:in_context].value[key.to_s].value).to eq processing_unit[key]
+      end
+    end
+
+    it 'has the correct points' do
+      [:achieved, :maximal, :percentage].each do |key|
+        expect(subject[:in_context].value["points_#{key}"].value).to eq processing_unit[:points][key]
+      end
+    end
+
+    it 'has the correct points' do
+      [:confirmation_of_participation, :record_of_achievement, :certificate].each do |key|
+        expect(subject[:in_context].value[key.to_s].value).to eq (
+          processing_unit[:certificates][key].nil? ?  false : processing_unit[:certificates][key])
+      end
+    end
   end
 end
