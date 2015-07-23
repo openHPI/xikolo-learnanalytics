@@ -182,4 +182,57 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
       expect(subject[:verb].value).to eq :WATCHED_QUESTION
     end
   end
+
+  describe 'watch' do
+    let(:type) { 'watch' }
+    let(:processing_unit) do
+      {
+        id: '00000003-3500-4444-9999-000000000001',
+        question_id: SecureRandom.uuid,
+        user_id: SecureRandom.uuid,
+        course_id: SecureRandom.uuid,
+        updated_at: Time.now
+      }
+    end
+
+    it_behaves_like 'an experience statement'
+    it 'has the correct verb' do
+      expect(subject[:verb].value).to eq :WATCHED_QUESTION
+    end
+  end
+
+  describe 'enrollment_completed' do
+    let(:type) { 'enrollment_completed' }
+    let(:processing_unit) do
+      {
+        id: '00000003-3500-4444-9999-000000000001',
+        user_id: SecureRandom.uuid,
+        course_id: SecureRandom.uuid,
+        updated_at: Time.now,
+        points: {
+          achieved: 156.2,
+          maximal: 180.0,
+          percentage: 86.8
+        },
+        certificates: {
+          confirmation_of_participation: true,
+          record_of_achievement: nil,
+          certificate: nil
+        },
+        completed: false,
+        quantile: 0.88
+      }
+    end
+
+    it_behaves_like 'an experience statement'
+
+    it 'has the correct verb' do
+      expect(subject[:verb].value).to eq :COMPLETED_COURSE
+    end
+
+    #it 'has the correct verb' do
+    #  Rails.logger.info subject[:in_context].value
+    #  expect(subject[:in_context].value[:course_id].value).to eq processing_unit[:course_id]
+    #end
+  end
 end

@@ -18,9 +18,12 @@ end
 
 create_action = Lanalytics::Processing::ProcessingAction::CREATE
 create_exp_pipeline('xikolo.web.exp_event.create', :exp_event, create_action)
+
 create_exp_pipeline('xikolo.pinboard.question.create', :question, create_action)
 create_exp_pipeline('xikolo.pinboard.answer.create', :answer, create_action)
 create_exp_pipeline('xikolo.pinboard.comment.create', :comment, create_action)
 create_exp_pipeline('xikolo.pinboard.watch.create', :watch, create_action)
 create_exp_pipeline('xikolo.pinboard.watch.update', :watch, create_action)
+
 create_exp_pipeline('xikolo.course.visit.create', :visit, create_action)
+create_exp_pipeline('xikolo.course.enrollment.completed', :enrollment_completed, create_action)

@@ -17,6 +17,8 @@ route 'xikolo.course.item.destroy', to: 'Lanalytics#destroy'
 
 route 'xikolo.course.visit.create', to:  'Lanalytics#create'
 
+route 'xikolo.course.enrollment.completed', to: 'Lanalytics#create'
+
 
 # ------------------- Learning Room Domain Entities -------------------
 route 'xikolo.learning_room.learning_room.create', to: 'Lanalytics#create'
