@@ -56,12 +56,12 @@ RSpec.describe Lanalytics::Metric::QuestionResponseTime do
     it 'queries the correct verbs' do
       expect(client).to receive(:search) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .second[:match][:verb]).to eq(
+          .first[:match][:verb]).to eq(
             'ANSWERED_QUESTION')
       end.and_call_original
       expect(client).to receive(:search) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .second[:match][:verb]).to eq(
+          .first[:match][:verb]).to eq(
             'ASKED_QUESTION')
       end.and_call_original
       subject

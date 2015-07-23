@@ -9,9 +9,8 @@ module Lanalytics
                 query: {
                   bool: {
                     must: [
-                      {match_phrase: {'user.resource_uuid' => user_id}},
                       {match: {verb: 'ANSWERED_QUESTION'}}
-                    ] + (all_filters(course_id))
+                    ] + (all_filters(course_id, user_id))
                   }
                 },
                 filter: {
