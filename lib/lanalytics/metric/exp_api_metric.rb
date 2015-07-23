@@ -9,11 +9,16 @@ module Lanalytics
         'exp_api_elastic'
       end
 
-      def self.all_filters(course_id)
+      def self.all_filters(course_id=nil, user_id=nil)
         filters_ = if course_id.nil?
                      []
                    else
                      [{match_phrase: {'in_context.course_id' => course_id}}]
+                   end
+        filters_ += if user_id.nil?
+                     []
+                   else
+                     [{match_phrase: {'user.resource_uuid' => user_id}}]
                    end
         filters_ + filters
       end
