@@ -133,6 +133,27 @@ module Lanalytics
                                     }
         end
 
+        def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
+          Rails.logger.info processing_unit
+          transform_punit_to_create load_commands,
+                                    USER: { resource_uuid: processing_unit[:user_id] },
+                                    verb: :COMPLETED_COURSE,
+                                    resource: {
+                                      resource_uuid: processing_unit[:course_id]
+                                    },
+                                    timestamp: processing_unit[:updated_at],
+                                    in_context: {
+                                      course_id: processing_unit[:course_id],
+                                      points_achieved: processing_unit[:points][:achieved],
+                                      points_maximal: processing_unit[:points][:maximal],
+                                      points_percentage: processing_unit[:points][:percentage],
+                                      confirmation_of_participation: processing_unit[:certificates][:confirmation_of_participation],
+                                      record_of_achievement: processing_unit[:certificates][:record_of_achievement],
+                                      certificate: processing_unit[:certificates][:certificate],
+                                      quantile: processing_unit[:quantile]
+                                    }
+        end
+
         def transform_punit_to_create(load_commands, attrs)
           entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:USER) do
@@ -154,7 +175,13 @@ module Lanalytics
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
               attrs[:in_context].each do |attribute, value|
-                with_attribute attribute.to_s.downcase, :string, value
+                if [:points_achieved, :points_maximal, :points_percentage, :quantile].include? attribute
+                  with_attribute attribute.to_s.downcase, :float, value
+                elsif [:confirmation_of_participation, :record_of_achievement, :certificate].include? attribute
+                  with_attribute attribute.to_s.downcase, :bool, (value.nil? ? false : value)
+                else
+                  with_attribute attribute.to_s.downcase, :string, value
+                end
               end
             end
             with_attribute :in_context, :entity, in_context_entity

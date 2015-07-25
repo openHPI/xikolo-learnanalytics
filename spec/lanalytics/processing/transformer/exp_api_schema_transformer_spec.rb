@@ -182,4 +182,71 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
       expect(subject[:verb].value).to eq :WATCHED_QUESTION
     end
   end
+
+  describe 'watch' do
+    let(:type) { 'watch' }
+    let(:processing_unit) do
+      {
+        id: '00000003-3500-4444-9999-000000000001',
+        question_id: SecureRandom.uuid,
+        user_id: SecureRandom.uuid,
+        course_id: SecureRandom.uuid,
+        updated_at: Time.now
+      }
+    end
+
+    it_behaves_like 'an experience statement'
+    it 'has the correct verb' do
+      expect(subject[:verb].value).to eq :WATCHED_QUESTION
+    end
+  end
+
+  describe 'enrollment_completed' do
+    let(:type) { 'enrollment_completed' }
+    let(:processing_unit) do
+      {
+        id: '00000003-3500-4444-9999-000000000001',
+        user_id: SecureRandom.uuid,
+        course_id: SecureRandom.uuid,
+        updated_at: Time.now,
+        points: {
+          achieved: 156.2,
+          maximal: 180.0,
+          percentage: 86.8
+        },
+        certificates: {
+          confirmation_of_participation: true,
+          record_of_achievement: false,
+          certificate: nil
+        },
+        completed: true,
+        quantile: 0.88
+      }
+    end
+
+    it_behaves_like 'an experience statement'
+
+    it 'has the correct verb' do
+      expect(subject[:verb].value).to eq :COMPLETED_COURSE
+    end
+
+    it 'has the correct attributes' do
+      [:course_id, :quantile].each do |key|
+        expect(subject[:in_context].value[key.to_s].value).to eq processing_unit[key]
+      end
+    end
+
+    it 'has the correct points' do
+      [:achieved, :maximal, :percentage].each do |key|
+        expect(subject[:in_context].value["points_#{key}"].value).to eq processing_unit[:points][key]
+      end
+    end
+
+    it 'has the correct points' do
+      [:confirmation_of_participation, :record_of_achievement, :certificate].each do |key|
+        expect(subject[:in_context].value[key.to_s].value).to eq (
+          processing_unit[:certificates][key].nil? ?  false : processing_unit[:certificates][key])
+      end
+    end
+  end
 end
