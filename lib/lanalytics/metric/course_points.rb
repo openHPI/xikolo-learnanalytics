@@ -26,11 +26,12 @@ module Lanalytics
             }
           }
         end['hits']['hits']
-        if completed_statements.empty?
+        result = if completed_statements.empty?
           nil
         else
           completed_statements.first['_source']['in_context']['points_achieved']
         end
+        {points: result}
       end
     end
   end
