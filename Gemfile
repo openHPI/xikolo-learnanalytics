@@ -69,6 +69,8 @@ gem 'unicorn'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'geoip' # Location tracking
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
   gem 'factory_girl_rails'
@@ -86,6 +88,8 @@ group :development do
   gem 'geminabox-rake', '~> 1.1.0'
 
   gem 'ruby-prof' # To do performance evaluation
+
+  gem 'pry-byebug'
 end
 
 group :test do
