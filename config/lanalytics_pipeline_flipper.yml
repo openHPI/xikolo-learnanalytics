@@ -4,7 +4,7 @@ common: &common
     - moocdb_postgresql.yml
     - exp_api_elastic.yml
   pipelines:
-    - experience_graph_pipeline.prb
+    # - experience_graph_pipeline.prb
     - moocdb_pipeline.prb
     - exp_api_pipeline.prb
     - referrer_pipeline.prb
