@@ -8,8 +8,7 @@ module Lanalytics
           processing_units.each do | processing_unit |
             user_ip = processing_unit[:in_context][:user_ip]
             unless user_ip.nil?
-              geoip_info = GeoIP.new('GeoLiteCity.dat').city('182.21.1.242')
-              binding.pry
+              geoip_info = GeoIP.new('GeoLiteCity.dat').city(user_ip)
               next if geoip_info.nil?
 
               processing_unit[:in_context][:user_location_city] = geoip_info[:city_name]
@@ -18,7 +17,6 @@ module Lanalytics
               processing_unit[:in_context][:user_location_latitude] = geoip_info[:latitude]
               processing_unit[:in_context][:user_location_longitude] = geoip_info[:longitude]
               processing_unit[:in_context][:user_location_time_zone] = geoip_info[:timezone]
-              binding.pry
             end
           end
         end
