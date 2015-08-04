@@ -1,6 +1,6 @@
 common: &common
   datasources:
-    - experience_graph_schema_neo4j_datasource.yml
+    # - experience_graph_schema_neo4j_datasource.yml
     - moocdb_postgresql.yml
     - exp_api_elastic.yml
   pipelines:
