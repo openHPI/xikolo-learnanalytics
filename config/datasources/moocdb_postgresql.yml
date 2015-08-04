@@ -9,13 +9,13 @@ common: &common
 
 development:
   <<: *common
-  host: lanalytics.openhpi.de
+  host: localhost
   port: 5432
   database: lanalytics-development
 
 test:
   <<: *common
-  host: lanalytics.openhpi.de
+  host: localhost
   port: 5432
   database: lanalytics-test
 

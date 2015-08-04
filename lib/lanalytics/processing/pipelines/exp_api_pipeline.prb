@@ -11,6 +11,7 @@ def create_exp_pipeline(route, extractor_type, processing_action)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::ExpApiSchemaTransformer.new
+    transformer Lanalytics::Processing::Transformer::GeolocationFinder.new
 
     loader Lanalytics::Processing::Loader::ElasticSearchLoader.new(datasource)
   end
