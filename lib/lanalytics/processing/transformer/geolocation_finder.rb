@@ -6,6 +6,8 @@ module Lanalytics
 
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
           processing_units.each do | processing_unit |
+            next unless processing_unit.key(:in_context)
+
             user_ip = processing_unit[:in_context][:user_ip]
             unless user_ip.nil?
               geoip_info = GeoIP.new('GeoLiteCity.dat').city(user_ip)
