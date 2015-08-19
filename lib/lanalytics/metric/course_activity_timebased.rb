@@ -15,7 +15,7 @@ module Lanalytics
                 }
               }, {
                 term: {
-                  'in_context.course_id': course_id
+                  'in_context.course_id' => course_id
                 }
               }]
             },
