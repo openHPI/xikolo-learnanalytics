@@ -42,6 +42,11 @@ module Lanalytics
     config.autoload_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('lib')
 
+    Timezone::Configure.begin do |c|
+      # geonames.org username
+      c.username = 'openhpi'
+    end
+
   end
 
 
@@ -52,5 +57,5 @@ module Lanalytics
   def self.rake=(value)
     @rake = !!value
   end
-  
+
 end
