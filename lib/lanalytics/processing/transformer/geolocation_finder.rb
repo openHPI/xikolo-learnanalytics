@@ -11,7 +11,16 @@ module Lanalytics
             user_ip = processing_unit[:in_context][:user_ip]
             unless user_ip.nil?
               geoip_info = GeoIP.new('GeoLiteCity.dat').city(user_ip)
-              next if geoip_info.nil?
+              if geoip_info.nil? && Rails.env.development?
+                geoip_info = {
+                  city_name: 'Localhost',
+                  country_code2: 'ZZ',
+                  country_name: 'Germany',
+                  latitude: 52.5167,
+                  longitude: 13.3833,
+                  timezone: 'Europe/Berlin'
+                }
+              end
 
               processing_unit[:in_context][:user_location_city] = geoip_info[:city_name]
               processing_unit[:in_context][:user_location_country_code] = geoip_info[:country_code2]
