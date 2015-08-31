@@ -10,9 +10,12 @@ def create_exp_pipeline(route, extractor_type, processing_action)
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
-    transformer Lanalytics::Processing::Transformer::ExpApiSchemaTransformer.new
+
     transformer Lanalytics::Processing::Transformer::GeolocationFinder.new
     transformer Lanalytics::Processing::Transformer::LocalTimestampFinder.new
+
+    # Important to be the last transformer, since it creates Entities and Attributes
+    transformer Lanalytics::Processing::Transformer::ExpApiSchemaTransformer.new
 
     loader Lanalytics::Processing::Loader::ElasticSearchLoader.new(datasource)
   end
