@@ -17,7 +17,9 @@ class LanalyticsConsumer < Msgr::Consumer
   end
 
   def process_message_with(processing_action)
-    pipeline_manager.schema_pipelines_with(processing_action, message.delivery_info[:routing_key]).each do | schema, schema_pipeline |
+    pipeline_name = message.delivery_info[:routing_key] # e.g. "xikolo.course.enrollment.update"
+
+    pipeline_manager.schema_pipelines_with(processing_action, pipeline_name).each do | schema, schema_pipeline |
       schema_pipeline.process(payload, processing_opts(message))
     end
   end
