@@ -1,3 +1,14 @@
+#
+#
+#
+# IT'S NOT ENOUGH TO SIMPLY ADD A ROUTE HERE,
+# YOU NEED TO GO TO LIB/LANALYTICS/PROCESSING/PIPELINES/...
+# AND REGISTER PIPELINES.
+# OTHERWISE YOU MIGHT BE STUCK WONDERING WHY YOUR EVENT IS NOT
+# WORKING
+#
+#
+#
 # ------------------- User Domain Entities -------------------
 route 'xikolo.account.user.create', to: 'Lanalytics#create'
 route 'xikolo.account.user.update', to: 'Lanalytics#update'
@@ -18,6 +29,9 @@ route 'xikolo.course.item.destroy', to: 'Lanalytics#destroy'
 route 'xikolo.course.visit.create', to:  'Lanalytics#create'
 
 route 'xikolo.course.enrollment.completed', to: 'Lanalytics#create'
+route 'xikolo.course.enrollment.create', to: 'Lanalytics#create'
+route 'xikolo.course.enrollment.update', to: 'Lanalytics#update'
+route 'xikolo.course.enrollment.destroy', to: 'Lanalytics#destroy'
 
 
 # ------------------- Learning Room Domain Entities -------------------
