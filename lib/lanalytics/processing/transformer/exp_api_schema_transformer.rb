@@ -154,6 +154,18 @@ module Lanalytics
                                     }
         end
 
+        def transform_enrollment_punit_to_create(processing_unit, load_commands)
+          Rails.logger.info processing_unit
+          transform_punit_to_create load_commands,
+                                    verb: :ENROLLED,
+                                    USER: { resource_uuid: processing_unit[:user_id] },
+                                    resource: { resource_uuid: processing_unit[:course_id] },
+                                    timestamp: processing_unit[:updated_at],
+                                    in_context: {
+                                      course_id: processing_unit[:course_id]
+                                    }
+        end
+
         def transform_punit_to_create(load_commands, attrs)
           entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:USER) do
