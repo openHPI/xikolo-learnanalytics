@@ -70,14 +70,6 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
 
   end
 
-  it 'should only transform processing unit of type :exp_event' do
-    @original_event = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
-    @processing_units = [ Lanalytics::Processing::Unit.new(:enrollment, @original_event) ]
-    @exp_api_transformer.transform(@original_event, @processing_units, @load_commands, @pipeline_ctx)
-    expect(@load_commands).to be_an(Array)
-    expect(@load_commands).to be_empty
-  end
-
   let(:transformer) { described_class.new }
   let(:load_commands) { [] }
   let(:transform_method) do
@@ -243,9 +235,19 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
     end
 
     it 'has the correct points' do
-      [:confirmation_of_participation, :record_of_achievement, :certificate].each do |key|
-        expect(subject[:in_context].value[key.to_s].value).to eq (
-          processing_unit[:certificates][key].nil? ?  false : processing_unit[:certificates][key])
+      [
+        :received_confirmation_of_participation,
+        :received_record_of_achievement,
+        :received_certificate
+      ].each do |key|
+        puts key
+        # Towards correct boolean naming received_ ...
+        value = processing_unit[:certificates][key.to_s.gsub('received_', '').to_sym]
+        puts subject[:in_context].value[key.to_s].value
+        puts value
+        expect(subject[:in_context].value[key.to_s].value).to eq(
+          value.nil? ? false : value
+        )
       end
     end
   end
