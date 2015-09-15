@@ -17,15 +17,13 @@ module Lanalytics
               Rails.logger.error(%Q{Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}
 #{original_event.inspect}
               })
-              Rails.logger.debug(e.backtrace)  
+              Rails.logger.debug(e.backtrace)
             end
           end
         end
 
         def do_create_command_for_entity(create_command)
-          
           entity = create_command.entity
-          
           indexing_hash = {}.tap do | hash |
             hash[:index] = @elastic_datasource.index
             hash[:type] = entity.entity_key
@@ -36,6 +34,7 @@ module Lanalytics
               end
             end
           end
+          puts indexing_hash
 
           @elastic_datasource.exec do | client |
             client.index indexing_hash
