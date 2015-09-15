@@ -44,7 +44,7 @@ module Lanalytics
           collaboration_type_entity = new_collaboration_type_entity(collaboration_type_id, collaboration_type_name)
 
           collaboration_entity = new_collaboration_entity(processing_unit, collaboration_type_id, collaboration_content, collaboration_parent_id)
-          
+
           return [collaboration_type_entity, collaboration_entity]
         end
 
@@ -82,12 +82,12 @@ module Lanalytics
         end
 
         # Class variable
-        @@course_cache = ActiveSupport::Cache::MemoryStore.new
+        @course_cache = ActiveSupport::Cache::MemoryStore.new
 
         def lookup_course(course_id)
 
-          return @@course_cache.fetch(course_id) do
-          
+          return @course_cache.fetch(course_id) do
+
             service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
             service_base_urls = (service_base_urls[Rails.env] || service_base_urls)['services']
             course_service_base_url = service_base_urls['course']
@@ -102,7 +102,7 @@ module Lanalytics
             end
 
             raise Error.new "No course data could be retrieved for uuid #{course_id}" unless course_data
-            
+
             course_data
           end
 
