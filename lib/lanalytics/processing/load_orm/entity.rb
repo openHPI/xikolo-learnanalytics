@@ -5,15 +5,17 @@ module Lanalytics
       class Entity
         attr_reader :entity_key, :primary_attribute, :attributes
 
+        # factory method
         def self.create(entity_key, &block)
-          entity = self.new(entity_key)
+          entity = new(entity_key)
           entity.instance_eval(&block)
-          return entity
+
+          entity
         end
+
 
         def initialize(entity_key, attributes = [])
           # Ensure not nil
-
           raise ArgumentError.new('Entity_key has to be a Symbol') unless entity_key and entity_key.is_a?(Symbol)
 
           @entity_key, @attributes = entity_key, attributes
@@ -30,7 +32,8 @@ module Lanalytics
         def all_non_nil_attributes
           all_non_nil_attributes = @attributes.select { | attr | not attr.value.nil? }
           all_non_nil_attributes.unshift(@primary_attribute) if @primary_attribute
-          return all_non_nil_attributes
+
+          all_non_nil_attributes
         end
 
         def all_attribute_names
@@ -58,7 +61,6 @@ module Lanalytics
       end
 
       class PrimaryAttribute < Attribute
-
         def initialize(name, data_type, value)
           raise ArgumentError.new("value cannot be nil or blank") if value.nil? or (value.is_a?(String) and value.empty?)
           @name, @data_type, @value = name, data_type, value
@@ -68,7 +70,6 @@ module Lanalytics
           'Primary ' + super.inspect
         end
       end
-
 
     end
   end
