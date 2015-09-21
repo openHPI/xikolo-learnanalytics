@@ -13,7 +13,6 @@ shared_examples 'an experience statement' do
 end
 
 describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
-
   before(:each) do
     @original_event = FactoryGirl.attributes_for(:amqp_exp_stmt).with_indifferent_access
     @processing_units = [Lanalytics::Processing::Unit.new(:exp_event, @original_event)]
@@ -53,7 +52,7 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
 
     timestamp_attribute = entity.attributes[3]
     expect(timestamp_attribute.name).to eq(:timestamp)
-    expect(timestamp_attribute.value).to eq("2014-10-27T14:59:08+01:00")
+    expect(timestamp_attribute.value).to eq('2014-10-27T14:59:08+01:00')
 
     with_result_attribute = entity.attributes[4]
     expect(with_result_attribute.name).to eq(:with_result)
@@ -70,7 +69,6 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
     expect(in_context_attribute.value.attributes[0].value).to eq('67.698807')
     expect(in_context_attribute.value.attributes[1].name).to eq('current_speed')
     expect(in_context_attribute.value.attributes[1].value).to eq('1')
-
   end
 
   let(:transformer) { described_class.new }
@@ -235,7 +233,7 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
       [:achieved, :maximal, :percentage].each do |key|
         points = subject[:in_context].value["points_#{key}"].value
 
-        expect(value).to eq processing_unit[:points][key]
+        expect(points).to eq processing_unit[:points][key]
       end
     end
 

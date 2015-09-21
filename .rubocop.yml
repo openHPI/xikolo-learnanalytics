@@ -8,3 +8,7 @@ Metrics/LineLength:
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 30
+
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false

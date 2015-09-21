@@ -15,7 +15,6 @@ describe Lanalytics::Processing::PipelineManager do
   describe "(Pipeline Configuration)" do
 
     it 'should ensure to only load *.prb files' do
-      
       # Raise ArgumentError.new("Wrong file format. It has to be a ruby file ending with '*.prb'.")
       expect do
         Lanalytics::Processing::PipelineManager.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/dummy_pipeline_manager.rb")
@@ -39,9 +38,7 @@ describe Lanalytics::Processing::PipelineManager do
 
 
     it 'should load pipelines from *.prb file' do
-      
       Lanalytics::Processing::PipelineManager.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/dummy_pipeline_manager.prb")
-
 
       pipeline1 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline1')
       expect(pipeline1).to_not be_nil
