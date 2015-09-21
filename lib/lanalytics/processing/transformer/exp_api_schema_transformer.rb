@@ -53,9 +53,58 @@ module Lanalytics
           load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
         end
 
+        # Method that should be called by all individual methods below
+        # Transforms everything to super-fancy object-oriented attributes / entities
+        def transform_punit_to_create(load_commands, attrs)
+          entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
+            user_entity = Lanalytics::Processing::LoadORM::Entity.create(:user) do
+              with_primary_attribute :resource_uuid, :uuid, attrs[:user][:resource_uuid]
+            end
+            with_attribute :user, :entity, user_entity
+
+            with_attribute :verb, :string, attrs[:verb]
+
+            resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource) do
+              with_primary_attribute :resource_uuid, :uuid, attrs[:resource][:resource_uuid]
+              attrs[:resource].except(:resource_uuid).each do |attribute, value|
+                with_attribute attribute.to_s.downcase, :string, value
+              end
+            end
+            with_attribute :resource, :entity, resource_entity
+
+            with_attribute :timestamp, :timestamp, attrs[:timestamp]
+
+            in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
+              attrs[:in_context].each do |attribute, value|
+                if [
+                  :points_achieved,
+                  :points_maximal,
+                  :points_percentage,
+                  :quantile
+                ].include? attribute
+                  with_attribute attribute.to_s.downcase, :float, value
+                elsif [
+                  :received_confirmation_of_participation,
+                  :received_record_of_achievement,
+                  :received_certificate
+                ].include? attribute
+                  with_attribute attribute.to_s.downcase, :bool, (value.nil? ? false : value)
+                else
+                  with_attribute attribute.to_s.downcase, :string, value
+                end
+              end
+            end
+            with_attribute :in_context, :entity, in_context_entity
+          end
+
+          load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
+        end
+
         def transform_question_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: :ASKED_QUESTION,
                                     resource: {
                                       resource_uuid: processing_unit[:id],
@@ -76,7 +125,9 @@ module Lanalytics
 
         def transform_answer_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: :ANSWERED_QUESTION,
                                     resource: {
                                       resource_uuid: processing_unit[:id],
@@ -92,7 +143,9 @@ module Lanalytics
 
         def transform_comment_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: :COMMENTED,
                                     resource: {
                                       resource_uuid: processing_unit[:id],
@@ -109,7 +162,9 @@ module Lanalytics
 
         def transform_visit_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: :VISITED,
                                     resource: {
                                       resource_uuid: processing_unit[:item_id],
@@ -123,7 +178,9 @@ module Lanalytics
 
         def transform_watch_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: :WATCHED_QUESTION,
                                     resource: {
                                       resource_uuid: processing_unit[:question_id]
@@ -137,7 +194,9 @@ module Lanalytics
         def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
           Rails.logger.info processing_unit
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: :COMPLETED_COURSE,
                                     resource: {
                                       resource_uuid: processing_unit[:course_id]
@@ -165,56 +224,38 @@ module Lanalytics
 
         def save_enrollment(processing_unit, load_commands)
           Rails.logger.info processing_unit
-          verb = if processing_unit[:deleted] then :UN_ENROLLED else :ENROLLED end
+          verb = processing_unit[:deleted] ? :UN_ENROLLED : :ENROLLED
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
                                     verb: verb,
-                                    resource: { resource_uuid: processing_unit[:course_id] },
+                                    resource: {
+                                      resource_uuid: processing_unit[:course_id]
+                                    },
                                     timestamp: processing_unit[:updated_at],
                                     in_context: {
                                       course_id: processing_unit[:course_id]
                                     }
         end
 
-        def transform_punit_to_create(load_commands, attrs)
-          entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
-            user_entity = Lanalytics::Processing::LoadORM::Entity.create(:user) do
-              with_primary_attribute :resource_uuid, :uuid, attrs[:user][:resource_uuid]
-            end
-            with_attribute :user, :entity, user_entity
-
-            with_attribute :verb, :string, attrs[:verb]
-
-            resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource) do
-              with_primary_attribute :resource_uuid, :uuid, attrs[:resource][:resource_uuid]
-              attrs[:resource].except(:resource_uuid).each do |attribute, value|
-                with_attribute attribute.to_s.downcase, :string, value
-              end
-            end
-            with_attribute :resource, :entity, resource_entity
-
-            with_attribute :timestamp, :timestamp, attrs[:timestamp]
-
-            in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
-              attrs[:in_context].each do |attribute, value|
-                if [:points_achieved, :points_maximal, :points_percentage, :quantile].include? attribute
-                  with_attribute attribute.to_s.downcase, :float, value
-                elsif [
-                  :received_confirmation_of_participation,
-                  :received_record_of_achievement,
-                  :received_certificate
-                ].include? attribute
-                  with_attribute attribute.to_s.downcase, :bool, (value.nil? ? false : value)
-                else
-                  with_attribute attribute.to_s.downcase, :string, value
-                end
-              end
-            end
-            with_attribute :in_context, :entity, in_context_entity
-          end
-
-          load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
+        def transform_user_punit_to_update(processing_unit, load_commands)
+          create_or_update_user(processing_unit, load_commands, :user_updated)
         end
+
+        def create_or_update_user(processing_unit, load_commands, verb)
+          Rails.logger.info processing_unit
+          transform_punit_to_create load_commands,
+                                    user: {
+                                      resource_uuid: processing_unit[:id]
+                                    },
+                                    verb: verb,
+                                    timestamp: processing_unit[:updated_at],
+                                    in_context: {
+                                      # TODO: ADD EVERYTHING
+                                    }
+        end
+
       end
     end
   end
