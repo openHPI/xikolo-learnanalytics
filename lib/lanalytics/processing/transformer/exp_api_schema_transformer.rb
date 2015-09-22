@@ -53,8 +53,10 @@ module Lanalytics
           load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
         end
 
+        #
         # Method that should be called by all individual methods below
         # Transforms everything to super-fancy object-oriented attributes / entities
+        #
         def transform_punit_to_create(load_commands, attrs)
           entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:user) do
@@ -65,9 +67,11 @@ module Lanalytics
             with_attribute :verb, :string, attrs[:verb]
 
             resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource) do
-              with_primary_attribute :resource_uuid, :uuid, attrs[:resource][:resource_uuid]
-              attrs[:resource].except(:resource_uuid).each do |attribute, value|
-                with_attribute attribute.to_s.downcase, :string, value
+              unless attrs[:resource].nil?
+                with_primary_attribute :resource_uuid, :uuid, attrs[:resource][:resource_uuid]
+                attrs[:resource].except(:resource_uuid).each do |attribute, value|
+                  with_attribute attribute.to_s.downcase, :string, value
+                end
               end
             end
             with_attribute :resource, :entity, resource_entity
@@ -239,8 +243,12 @@ module Lanalytics
                                     }
         end
 
+        def transform_user_punit_to_create(processing_unit, load_commands)
+          create_or_update_user(processing_unit, load_commands, :confirmed)
+        end
+
         def transform_user_punit_to_update(processing_unit, load_commands)
-          create_or_update_user(processing_unit, load_commands, :user_updated)
+          create_or_update_user(processing_unit, load_commands, :updated)
         end
 
         def create_or_update_user(processing_unit, load_commands, verb)
@@ -252,7 +260,10 @@ module Lanalytics
                                     verb: verb,
                                     timestamp: processing_unit[:updated_at],
                                     in_context: {
-                                      # TODO: ADD EVERYTHING
+                                      affiliated: processing_unit[:affiliated],
+                                      admin: processing_unit[:admin],
+                                      policy_accepted: processing_unit[:policy_accepted],
+                                      preferred_language: processing_unit[:preferred_language]
                                     }
         end
 
