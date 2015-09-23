@@ -70,7 +70,6 @@ gem 'unicorn'
 # gem 'debugger', group: [:development, :test]
 
 gem 'geoip' # Location tracking
-gem 'timezone' # Get local time zone by lat long
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
