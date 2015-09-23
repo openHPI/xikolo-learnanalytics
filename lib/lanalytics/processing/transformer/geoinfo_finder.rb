@@ -2,10 +2,10 @@ module Lanalytics
   module Processing
     module Transformer
 
-      class GeolocationFinder < TransformStep
+      class GeoinfoFinder < TransformStep
 
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
-          processing_units.each do | processing_unit |
+          processing_units.each do |processing_unit|
             next if processing_unit[:in_context].nil?
 
             user_ip = processing_unit[:in_context][:user_ip]
@@ -27,7 +27,12 @@ module Lanalytics
               processing_unit[:in_context][:user_location_country_name] = geoip_info[:country_name]
               processing_unit[:in_context][:user_location_latitude] = geoip_info[:latitude]
               processing_unit[:in_context][:user_location_longitude] = geoip_info[:longitude]
-              processing_unit[:in_context][:user_location_time_zone] = geoip_info[:timezone]
+
+              timezone = geoip_info[:timezone]
+              unless timezone.nil?
+                processing_unit[:in_context][:user_location_time_zone] = timezone
+                processing_unit[:in_context][:user_local_timestamp] = Time.now.in_time_zone(timezone).iso8601
+              end
             end
           end
         end

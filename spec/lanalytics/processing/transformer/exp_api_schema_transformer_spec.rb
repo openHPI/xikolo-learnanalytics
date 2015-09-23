@@ -243,11 +243,8 @@ describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
         :received_record_of_achievement,
         :received_certificate
       ].each do |key|
-        puts key
         # Towards correct boolean naming received_ ...
         value = processing_unit[:certificates][key.to_s.gsub('received_', '').to_sym]
-        puts subject[:in_context].value[key.to_s].value
-        puts value
         expect(subject[:in_context].value[key.to_s].value).to eq(
           value.nil? ? false : value
         )
