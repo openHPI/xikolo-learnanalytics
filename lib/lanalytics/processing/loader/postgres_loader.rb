@@ -7,16 +7,13 @@ module Lanalytics
           @postgres_datasource = datasource
         end
 
-        def load(original_event, load_commands, pipeline_ctx)
-
-          load_commands.each do | load_command |
-            self.method("do_#{load_command.class.name.demodulize.underscore}").call(load_command)
+        def load(_original_event, load_commands, _pipeline_ctx)
+          load_commands.each do |load_command|
+            method("do_#{load_command.class.name.demodulize.underscore}").call(load_command)
           end
-
         end
 
         def do_create_command(create_command)
-          
           entity = create_command.entity
 
           execute_sql(%Q{
@@ -27,7 +24,7 @@ module Lanalytics
 
         def do_merge_entity_command(merge_entity_command)
           entity = merge_entity_command.entity
-          
+
           execute_sql(%Q{
             WITH upsert as (
               UPDATE #{entity.entity_key}
@@ -66,28 +63,28 @@ module Lanalytics
         end
 
         def sql_value_of(attribute)
-          return case attribute.data_type
-            when :string
-              "'#{PGconn.escape_string(attribute.value)}'"
-            when :bool
-              (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
-            when :date, :timestamp, :uuid
-              "'#{attribute.value.to_s}'"
-            when :int, :float
-              attribute.value.to_s
-            else
-              "'#{attribute.value.to_s}'"
-            end
+          case attribute.data_type
+          when :string
+            "'#{PGconn.escape_string(attribute.value)}'"
+          when :bool
+            (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
+          when :date, :timestamp, :uuid
+            "'#{attribute.value}'"
+          when :int, :float
+            attribute.value.to_s
+          else
+            "'#{attribute.value}'"
+          end
         end
 
         def execute_sql(sql)
-          return if sql.nil? or sql.empty?
+          return if sql.nil? || sql.empty?
 
-          @postgres_datasource.exec do | conn |
-          # $postgres_connection.with do |conn|
+          @postgres_datasource.exec do |conn|
+            # $postgres_connection.with do |conn|
             begin
               conn.exec(sql)
-            rescue Exception => e
+            rescue StandardError => e
               Rails.logger.error(%Q{
                 Following error occurred when executing a SQL query on Postgres: #{e.message}
                 #{sql}
