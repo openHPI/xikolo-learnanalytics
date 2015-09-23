@@ -12,7 +12,7 @@ def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::MoocdbDataTransformer.new
-    
+
     loader Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
     # loader Lanalytics::Processing::Loader::Neo4jLoader.new(:moocdb_neo)
   end
@@ -21,7 +21,6 @@ end
 
 # MOOCdb Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
 def moocdb_pipelines_for_crud(event_domain_ns_type, event_domain_type)
-  
   moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, event_domain_ns_type, event_domain_type)
   moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, event_domain_ns_type, event_domain_type)
   moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, event_domain_ns_type, event_domain_type)
