@@ -8,8 +8,8 @@ module Lanalytics
       def initialize(type, uuid, properties = {})
         super(type)
 
-        raise ArgumentError.new("'uuid' argument cannot be nil") unless uuid
-        raise ArgumentError.new("'uuid' argument cannot be empty") if uuid.to_s.empty?
+        fail ArgumentError, "'uuid' argument cannot be nil" unless uuid
+        fail ArgumentError, "'uuid' argument cannot be empty" if uuid.to_s.empty?
         @uuid = uuid.to_s
 
         properties ||= {}
@@ -18,24 +18,23 @@ module Lanalytics
 
       def as_json
         {
-          :type => @type,
-          :uuid => @uuid
+          type: @type,
+          uuid: @uuid
         }
       end
 
       def self.new_from_json(json)
-
         if json.is_a? Hash
           json = json.with_indifferent_access
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
-        elsif not json
-          raise "'json' cannot be nil"
+        elsif !json
+          fail ArgumentError, "'json' cannot be nil"
         else
-          raise "'json' argument is not a JSON Hash or String"
+          fail ArgumentError, "'json' argument is not a JSON Hash or String"
         end
 
-        return new(json[:type], json[:uuid])
+        new(json[:type], json[:uuid])
       end
 
       # JSON Deserialization
@@ -44,23 +43,22 @@ module Lanalytics
       #    "data"         => {"type" => @type, "uuid" => @uuid }
       # }
       def self.json_create(json)
-        return new_from_json(json["data"])
+        new_from_json(json['data'])
       end
 
       # Implementing the required interface for marshalling objects, see http://ruby-doc.org/core-2.1.3/Marshal.html
-      def _dump level
-        return [@type, @uuid].join(':|stmt_resource|:')
+      def _dump(_level)
+        [@type, @uuid].join(':|stmt_resource|:')
       end
 
       def self._load(marshalled_stmt_resource)
-        return new(*marshalled_stmt_resource.split(':|stmt_resource|:'))
+        new(*marshalled_stmt_resource.split(':|stmt_resource|:'))
       end
 
-      def == (other)
-        unless other.class == self.class
-          return false
-        end
-        return (@type == other.type and @uuid == other.uuid)
+      def ==(other)
+        return false unless other.class == self.class
+
+        @type == other.type && @uuid == other.uuid
       end
       alias_method :eql?, :==
 
