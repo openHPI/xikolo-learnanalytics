@@ -23,15 +23,19 @@ module Lanalytics
           end
         end
 
+        def to_resource_props(entity)
+          Hash[
+            entity.all_non_nil_attributes.map do |attr|
+              [attr.name.to_s, attr.value.to_s]
+            end
+          ]
+        end
+
         def do_merge_entity_command_for_entity(merge_entity_command)
           entity = merge_entity_command.entity
 
           resource_type = entity.entity_key
-          resource_properties = Hash[
-            entity.all_non_nil_attributes.map do |attr|
-              [attr.name, attr.value]
-            end
-          ]
+          resource_props = to_resource_props(entity)
 
           begin
             @neo4j_datasource.exec do |session|
@@ -44,8 +48,8 @@ module Lanalytics
                                 }
                               }
                             )
-                            .on_create_set(r: resource_properties)
-                            .on_match_set(r: resource_properties)
+                            .on_create_set(r: resource_props)
+                            .on_match_set(r: resource_props)
 
               neo4j_query.exec
             end
@@ -60,11 +64,7 @@ module Lanalytics
         def do_update_command_for_entity(update_command)
           entity = update_command.entity
           resource_type = entity.entity_key
-          resource_properties = Hash[
-            entity.all_non_nil_attributes.map do |attr|
-              [attr.name, attr.value]
-            end
-          ]
+          resource_props = to_resource_props(entity)
 
           @neo4j_datasource.exec do |session|
             session
@@ -76,11 +76,11 @@ module Lanalytics
                   }
                 }
               )
-              .set_props(r: resource_properties)
+              .set_props(r: resource_props)
               .exec
           end
-          # .on_create_set(r: resource_properties)
-          # .on_match_set(r: resource_properties)
+          # .on_create_set(r: resource_props)
+          # .on_match_set(r: resource_props)
         end
 
         def do_destroy_command_for_entity(destroy_command)
@@ -112,13 +112,9 @@ module Lanalytics
           to_entity_pattribute = entity_rel.to_entity.primary_attribute
 
           rel_key = entity_rel.relationship_key
-          cypher = Neo4j::Core::Query.new.merge(
-            Hash[
-              entity_rel.all_non_nil_attributes.map do |attr|
-                [attr.name.to_s, attr.value.to_s]
-              end
-            ]
-          ).to_cypher[8..-2]
+          cypher = Neo4j::Core::Query.new
+                   .merge(to_resource_props(entity_rel))
+                   .to_cypher[8..-2]
 
           @neo4j_datasource.exec do |session|
             session
@@ -156,13 +152,9 @@ module Lanalytics
           to_entity_pattribute = entity_rel.to_entity.primary_attribute
 
           entity_rel_type = entity_rel.relationship_key
-          cypher = Neo4j::Core::Query.new.merge(
-            Hash[
-              entity_rel.all_non_nil_attributes.map do |attr|
-                [attr.name.to_s, attr.value.to_s]
-              end
-            ]
-          ).to_cypher[8..-2]
+          cypher = Neo4j::Core::Query.new
+                   .merge(to_resource_props(entity_rel))
+                   .to_cypher[8..-2]
 
           @neo4j_datasource.exec do |session|
             session
@@ -247,13 +239,13 @@ module Lanalytics
         # def merge_resource(original_resource_as_hash, resource)
         #   resource_type = resource.type
         #   resource_uuid = resource.uuid
-        #   resource_properties = resource.properties.merge({ resource_uuid: resource_uuid })
+        #   resource_props = resource.properties.merge({ resource_uuid: resource_uuid })
         #   # ::TODO This is not beautiful, but necessary for the moment; Neo4jrb is not able to deal with nil values
-        #   resource_properties.delete_if {|key, value| value.nil? }
+        #   resource_props.delete_if {|key, value| value.nil? }
         #   Neo4j::Session.query
         #     .merge(r: {resource_type => {resource_uuid: resource_uuid }})
-        #     .on_create_set(r: resource_properties)
-        #     .on_match_set(r: resource_properties)
+        #     .on_create_set(r: resource_props)
+        #     .on_match_set(r: resource_props)
         #     .exec
         # end
 
