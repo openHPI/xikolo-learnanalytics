@@ -10,7 +10,7 @@ development:
   <<: *common
   host: 'localhost'
   port: '9200'
-  index: 'lanalytics' 
+  index: 'lanalytics'
   user: 'lanalytics'
   password: 'lanalytics'
 
@@ -21,7 +21,7 @@ staging:
   <<: *common
   host: 'localhost'
   port: '10200'
-  index: 'lanalytics' 
+  index: 'lanalytics'
   user: 'lanalytics'
   password: 'lanalytics'
 

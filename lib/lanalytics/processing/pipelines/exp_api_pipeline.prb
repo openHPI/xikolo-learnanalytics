@@ -10,14 +10,18 @@ def create_exp_pipeline(route, extractor_type, processing_action)
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
+    transformer Lanalytics::Processing::Transformer::GeoinfoFinder.new
+
+    # Important to be the last transformer, since it creates Entities and Attributes
     transformer Lanalytics::Processing::Transformer::ExpApiSchemaTransformer.new
-    transformer Lanalytics::Processing::Transformer::GeolocationFinder.new
 
     loader Lanalytics::Processing::Loader::ElasticSearchLoader.new(datasource)
   end
 end
 
 create_action = Lanalytics::Processing::ProcessingAction::CREATE
+update_action = Lanalytics::Processing::ProcessingAction::UPDATE
+
 create_exp_pipeline('xikolo.web.exp_event.create', :exp_event, create_action)
 
 create_exp_pipeline('xikolo.pinboard.question.create', :question, create_action)
@@ -27,4 +31,7 @@ create_exp_pipeline('xikolo.pinboard.watch.create', :watch, create_action)
 create_exp_pipeline('xikolo.pinboard.watch.update', :watch, create_action)
 
 create_exp_pipeline('xikolo.course.visit.create', :visit, create_action)
+
+create_exp_pipeline('xikolo.course.enrollment.create', :enrollment, create_action)
+create_exp_pipeline('xikolo.course.enrollment.update', :enrollment, update_action)
 create_exp_pipeline('xikolo.course.enrollment.completed', :enrollment_completed, create_action)

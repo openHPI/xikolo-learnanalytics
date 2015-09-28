@@ -41,7 +41,6 @@ module Lanalytics
 
     config.autoload_paths << Rails.root.join('lib')
     config.eager_load_paths << Rails.root.join('lib')
-
   end
 
 
@@ -52,5 +51,5 @@ module Lanalytics
   def self.rake=(value)
     @rake = !!value
   end
-  
+
 end
