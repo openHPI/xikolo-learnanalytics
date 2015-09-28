@@ -4,7 +4,7 @@ module Lanalytics
       class UpdateCommand
         attr_reader :entity
         def self.with(entity)
-          self.new(entity)
+          new(entity)
         end
 
         def initialize(entity)

@@ -16,7 +16,9 @@ module Lanalytics
 
         def initialize(entity_key, attributes = [])
           # Ensure not nil
-          raise ArgumentError.new('Entity_key has to be a Symbol') unless entity_key && entity_key.is_a?(Symbol)
+          unless entity_key && entity_key.is_a?(Symbol)
+            fail ArgumentError, 'Entity_key has to be a Symbol'
+          end
 
           @entity_key = entity_key
           @attributes = attributes
@@ -31,7 +33,7 @@ module Lanalytics
         end
 
         def all_non_nil_attributes
-          all_non_nil_attributes = @attributes.select { |attr| not attr.value.nil? }
+          all_non_nil_attributes = @attributes.reject { |attr| attr.value.nil? }
           all_non_nil_attributes.unshift(@primary_attribute) if @primary_attribute
 
           all_non_nil_attributes
@@ -66,7 +68,7 @@ module Lanalytics
       class PrimaryAttribute < Attribute
         def initialize(name, data_type, value)
           if value.nil? || (value.is_a?(String) && value.empty?)
-            raise ArgumentError.new('value cannot be nil or blank')
+            fail ArgumentError, 'value cannot be nil or blank'
           end
 
           super(name, data_type, value)
