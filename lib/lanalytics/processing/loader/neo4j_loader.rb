@@ -12,7 +12,7 @@ module Lanalytics
         def load(processing_unit, load_commands, pipeline_ctx)
           load_commands.each do |load_command|
             command = load_command.class.name.demodulize.underscore
-            entity = load_command.entity.class.name.demodulize.underscore
+            entity  = load_command.entity.class.name.demodulize.underscore
 
             begin
               method("do_#{command}_for_#{entity}").call(load_command)
@@ -31,10 +31,16 @@ module Lanalytics
           ]
         end
 
+        # ----------------------------------
+        # HANDLING COMMANDS FOR ENTITIES (update, merge, destroy)
+        #
+        # TODO: Find out why begin and rescue is sometimes used, sometimes not.
+        # TODO: Find out if entity create is included in update
+        # ----------------------------------
         def do_merge_entity_command_for_entity(merge_entity_command)
           entity = merge_entity_command.entity
 
-          resource_type = entity.entity_key
+          resource_type  = entity.entity_key
           resource_props = to_resource_props(entity)
 
           begin
@@ -44,7 +50,7 @@ module Lanalytics
                             .merge(
                               r: {
                                 resource_type => {
-                                  klentity.primary_attribute.name => entity.primary_attribute.value
+                                  entity.primary_attribute.name => entity.primary_attribute.value
                                 }
                               }
                             )
@@ -102,98 +108,76 @@ module Lanalytics
           end
         end
 
-        # Handling commands for entity relationships
+        # ----------------------------------
+        # HANDLING COMMANDS FOR ENTITY RELATIONSHIPS
+        # ----------------------------------
         def do_create_command_for_entity_relationship(create_entity_command)
-          entity_rel = create_entity_command.entity
-
-          from_entity_key = entity_rel.from_entity.entity_key
-          from_entity_pattribute = entity_rel.from_entity.primary_attribute
-          to_entity_key = entity_rel.to_entity.entity_key
-          to_entity_pattribute = entity_rel.to_entity.primary_attribute
-
-          rel_key = entity_rel.relationship_key
-          cypher = Neo4j::Core::Query.new
-                   .merge(to_resource_props(entity_rel))
-                   .to_cypher[8..-2]
-
-          @neo4j_datasource.exec do |session|
-            session
-              .query
-              .merge(
-                r1: {
-                  from_entity_key.to_sym => {
-                    from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s
-                  }
-                }
-              )
-              .break
-              .merge(
-                r2: {
-                  to_entity_key.to_sym => {
-                    to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s
-                  }
-                }
-              )
-              .break
-              .create(
-                "(r1)-[:#{rel_key} #{cypher}]->(r2)"
-              )
-              .exec
-          end
-
+          create_update_merge_entity_relationship(create_entity_command, :create)
         end
 
         def do_merge_entity_command_for_entity_relationship(merge_entity_command)
-          entity_rel = merge_entity_command.entity
-
-          from_entity_key = entity_rel.from_entity.entity_key
-          from_entity_pattribute = entity_rel.from_entity.primary_attribute
-          to_entity_key = entity_rel.to_entity.entity_key
-          to_entity_pattribute = entity_rel.to_entity.primary_attribute
-
-          entity_rel_type = entity_rel.relationship_key
-          cypher = Neo4j::Core::Query.new
-                   .merge(to_resource_props(entity_rel))
-                   .to_cypher[8..-2]
-
-          @neo4j_datasource.exec do |session|
-            session
-              .query
-              .merge(
-                r1: {
-                  from_entity_key.to_sym => {
-                    from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s
-                  }
-                }
-              )
-              .break
-              .merge(
-                r2: {
-                  to_entity_key.to_sym => {
-                    to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s
-                  }
-                }
-              )
-              .break
-              .merge("(r1)-[:#{entity_rel_type} #{cypher}]->(r2)")
-              .exec
-          end
+          create_update_merge_entity_relationship(merge_entity_command, :merge)
         end
 
         def do_update_command_for_entity_relationship(update_command)
           do_merge_entity_command_for_entity_relationship(update_command)
         end
 
+        def create_update_merge_entity_relationship(command, type)
+          entity           = command.entity
+
+          e1_key           = entity.from_entity.entity_key.name.to_sym
+          e1_pattribute    = entity.from_entity.primary_attribute
+
+          e2_key           = entity.to_entity.entity_key.to_sym
+          e2_pattribute    = entity.to_entity.primary_attribute
+
+          rel_key          = entity_rel.relationship_key
+          props            = Neo4j::Core::Query.new
+                             .merge(to_resource_props(entity))
+                             .to_cypher[8..-2]
+
+          @neo4j_datasource.exec do |session|
+            query = session
+                    .query
+                    .merge(
+                      e1: {
+                        e1_key => {
+                          e1_pattribute.name.to_sym => e1_pattribute.value.to_s
+                        }
+                      }
+                    )
+                    .break
+                    .merge(
+                      e2: {
+                        e2_key => {
+                          e2_pattribute.name.to_sym => e2_pattribute.value.to_s
+                        }
+                      }
+                    )
+                    .break
+
+            if    type == :create
+              query = query.create("(e1)-[:#{rel_key} #{props}]->(e2)")
+            elsif type == :merge
+              query = query.merge("(e1)-[:#{rel_key} #{props}]->(e2)")
+            end
+
+            query.exec
+          end
+        end
+
         def do_destroy_command_for_entity_relationship(destroy_command)
-          entity_rel = destroy_command.entity
-          entity_rel_type = entity_rel.relationship_key
-          key = entity_rel.primary_attribute.name
-          value = entity_rel.primary_attribute.value.to_s
+          entity  = destroy_command.entity
+          rel_key = entity.relationship_key
+
+          key   = entity.primary_attribute.name
+          value = entity.primary_attribute.value.to_s
 
           @neo4j_datasource.exec do |session|
             session
               .query
-              .match("()-[r:#{entity_rel_type} {#{key}:\"#{value}\"}]->()")
+              .match("()-[r:#{rel_key} {#{key}:\"#{value}\"}]->()")
               .delete(:r)
               .exec
           end
