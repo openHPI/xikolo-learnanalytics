@@ -35,7 +35,7 @@
 
 #     it 'should create a new resource' do
 #       resource = FactoryGirl.build(:stmt_resource)
-#       @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
+#       @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::Action::CREATE })
 
 #       result = Neo4j::Session.query.match(r: {resource.type.to_sym.upcase => {resource_uuid: resource.uuid }}).pluck(:r)
 #       expect(result.length).to eq(1)
@@ -49,8 +49,8 @@
 #       resource = FactoryGirl.build(:stmt_resource)
 #       Neo4j::Node.create({ resource_uuid: resource.uuid }.merge(resource.properties), :SOMERESOURCE)
 
-#       @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::ProcessingAction::DESTROY })
-      
+#       @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::Action::DESTROY })
+
 #       result = Neo4j::Session.query.match(r: resource.type.to_sym.upcase).pluck(:r)
 #       expect(result.length).to eq(0)
 #     end
@@ -60,7 +60,7 @@
 #   describe '(dealing with ContinuousRelationship)' do
 #     it 'should create a new relationship' do
 #       # resource = FactoryGirl.build(:stmt_resource)
-#       # @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
+#       # @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::Action::CREATE })
 
 #       # result = Neo4j::Session.query.match(r: {resource.type.to_sym.upcase => {resource_uuid: resource.uuid }}).pluck(:r)
 #       # expect(result.length).to eq(1)

@@ -13,7 +13,7 @@ module Lanalytics
           fail ArgumentError, "'#{schema}' cannot be nil"
         end
 
-        if processing_action.nil? || !Lanalytics::Processing::ProcessingAction.valid(processing_action)
+        if processing_action.nil? || !Lanalytics::Processing::Action.valid(processing_action)
           fail ArgumentError, "'#{processing_action}' is not accepted; only 'ProcessingAction::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
         end
 

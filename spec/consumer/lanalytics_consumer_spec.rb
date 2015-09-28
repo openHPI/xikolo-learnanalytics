@@ -18,7 +18,7 @@ describe LanalyticsConsumer do
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::ProcessingAction::CREATE
+        Lanalytics::Processing::Action::CREATE
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
@@ -32,19 +32,19 @@ describe LanalyticsConsumer do
       dummy_pipeline1 = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::ProcessingAction::CREATE
+        Lanalytics::Processing::Action::CREATE
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline1)
       dummy_pipeline2 = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec2,
-        Lanalytics::Processing::ProcessingAction::CREATE
+        Lanalytics::Processing::Action::CREATE
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline2)
       dummy_pipeline3 = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec3,
-        Lanalytics::Processing::ProcessingAction::CREATE
+        Lanalytics::Processing::Action::CREATE
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline3)
 
@@ -69,7 +69,7 @@ describe LanalyticsConsumer do
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.update',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::ProcessingAction::UPDATE
+        Lanalytics::Processing::Action::UPDATE
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
@@ -91,7 +91,7 @@ describe LanalyticsConsumer do
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.destroy',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::ProcessingAction::DESTROY
+        Lanalytics::Processing::Action::DESTROY
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
@@ -113,7 +113,7 @@ describe LanalyticsConsumer do
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.handle_user_event',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::ProcessingAction::CREATE
+        Lanalytics::Processing::Action::CREATE
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 

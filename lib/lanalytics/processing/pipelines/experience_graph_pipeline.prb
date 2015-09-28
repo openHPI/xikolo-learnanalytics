@@ -19,9 +19,9 @@ def create_nosql_pipeline(processing_action, service, domain)
   end
 end
 
-create_action = Lanalytics::Processing::ProcessingAction::CREATE
-update_action = Lanalytics::Processing::ProcessingAction::UPDATE
-destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
+create_action = Lanalytics::Processing::Action::CREATE
+update_action = Lanalytics::Processing::Action::UPDATE
+destroy_action = Lanalytics::Processing::Action::DESTROY
 
 # NoSQL Pipelines for 'CREATE', 'UPDATE' and 'DESTROY'
 def create_nosql_pipelines_for_crud(service, domain)

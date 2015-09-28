@@ -7,11 +7,11 @@ module Lanalytics
 
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
 
-          if pipeline_ctx.processing_action == Lanalytics::Processing::ProcessingAction::CREATE
+          if pipeline_ctx.processing_action == Lanalytics::Processing::Action::CREATE
             transform_to_load_commands_for_create(processing_units, load_commands)
-          elsif pipeline_ctx.processing_action == Lanalytics::Processing::ProcessingAction::UPDATE
+          elsif pipeline_ctx.processing_action == Lanalytics::Processing::Action::UPDATE
             transform_to_load_commands_for_update(processing_units, load_commands)
-          elsif pipeline_ctx.processing_action == Lanalytics::Processing::ProcessingAction::DESTROY
+          elsif pipeline_ctx.processing_action == Lanalytics::Processing::Action::DESTROY
             transform_to_load_commands_for_destroy(processing_units, load_commands)
           end
 
@@ -19,7 +19,7 @@ module Lanalytics
 
         def transform_to_load_commands_for_create(processing_units, load_commands)
           processing_units.each do | processing_unit |
-            
+
             if processing_unit.type == :exp_event
               load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(transform_exp_event_unit(processing_unit))
               next
@@ -34,7 +34,7 @@ module Lanalytics
 
             transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
             entities = transform_method.call(processing_unit)
-            
+
             if entities.is_a?(Array)
               load_commands.push(*entities.map { |entity| Lanalytics::Processing::LoadORM::MergeEntityCommand.with(entity) })
             else
@@ -47,10 +47,10 @@ module Lanalytics
         def transform_to_load_commands_for_update(processing_units, load_commands)
 
           processing_units.each do | processing_unit |
-            
+
             transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
             entities = transform_method.call(processing_unit)
-            
+
             if entities.is_a?(Array)
               load_commands.push(*entities.map { |entity| Lanalytics::Processing::LoadORM::UpdateCommand.with(entity) })
             else
@@ -62,7 +62,7 @@ module Lanalytics
 
         def transform_to_load_commands_for_destroy(processing_units, load_commands)
           processing_units.each do | processing_unit |
-            
+
             # An exception for the enrollments
             if processing_unit.type == :enrollment
               relationship = handle_directed_relationship(processing_unit, :UN_ENROLLED, :user_id, :course_id)
@@ -143,7 +143,7 @@ module Lanalytics
 
           return [learning_room_entity, learning_room_course_rel]
         end
-        
+
         def transform_membership_unit(processing_unit)
           handle_directed_relationship(processing_unit, :JOINED, :user_id, :learning_room_id)
         end
@@ -171,7 +171,7 @@ module Lanalytics
 
 
           if processing_unit[:course_id]
-            
+
             question_course_rel = Lanalytics::Processing::LoadORM::EntityRelationship.create(:BELONGS_TO) do
 
               with_from_entity(:QUESTION) do
@@ -199,7 +199,7 @@ module Lanalytics
             end
 
             return [question_entity, user_question_rel, question_learning_room_rel]
-          
+
           else
             Rails.logger.warn 'No connection could be found to :COURSE or :LEARNING_ROOM'
           end
@@ -255,7 +255,7 @@ module Lanalytics
         end
 
         def transform_ticket_unit(processing_unit)
-          
+
           helpdesk_ticket_entity = new_entity_template(processing_unit, [:url, :language, :mail, :report, :title, :data, :created_at])
 
           result = [helpdesk_ticket_entity]
@@ -272,7 +272,7 @@ module Lanalytics
               end
 
               with_attribute :created_at, :timestamp, processing_unit[:created_at]
-            end 
+            end
           end
 
           if processing_unit[:course_id]
@@ -287,7 +287,7 @@ module Lanalytics
               end
 
               with_attribute :created_at, :timestamp, processing_unit[:created_at]
-            end 
+            end
           end
 
           return result
@@ -300,7 +300,7 @@ module Lanalytics
           exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(exp_event_unit.data)
           # TODO:: shift ExpAPIStatement to LoadORM as special class
           Lanalytics::Processing::LoadORM::EntityRelationship.create(exp_stmt.verb.type.upcase.to_sym) do
-            
+
             with_from_entity(:USER) do
               with_primary_attribute :resource_uuid, :uuid, exp_stmt.user.uuid
             end
@@ -310,7 +310,7 @@ module Lanalytics
             end
 
             with_attribute :timestamp, :datetime, exp_stmt.timestamp
-            
+
             exp_stmt.with_result.each do | attribute, value |
               with_attribute "with_result_#{attribute.underscore.downcase}", :string, value
             end
@@ -322,6 +322,6 @@ module Lanalytics
 
         end
       end
-    end    
+    end
   end
 end

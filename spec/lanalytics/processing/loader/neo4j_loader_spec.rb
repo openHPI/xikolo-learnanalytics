@@ -17,9 +17,9 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
     def dummy_pipeline_ctx
       return Lanalytics::Processing::PipelineContext.new(
         Lanalytics::Processing::Pipeline.new(
-          'xikolo.lanalytics.pipeline', 
+          'xikolo.lanalytics.pipeline',
           :pipeline_spec,
-          Lanalytics::Processing::ProcessingAction::CREATE,
+          Lanalytics::Processing::Action::CREATE,
           [],
           [],
           [@neo4j_loader]
@@ -39,7 +39,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
         result = @neo4j_datasource.exec do | session |
           session.query.match(r: {dummy_type: {dummy_uuid: '1234567890' }}).pluck(:r)
         end
-      
+
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:dummy_type)
@@ -79,7 +79,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
     # describe '(dealing with ContinuousRelationship)' do
     #   it 'should create a new relationship' do
     #     # resource = FactoryGirl.build(:stmt_resource)
-    #     # @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
+    #     # @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::Action::CREATE })
 
     #     # result = Neo4j::Session.query.match(r: {resource.type.to_sym.upcase => {resource_uuid: resource.uuid }}).pluck(:r)
     #     # expect(result.length).to eq(1)

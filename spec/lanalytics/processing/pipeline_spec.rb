@@ -4,7 +4,7 @@ describe Lanalytics::Processing::Pipeline do
 
   let(:name)               { 'xikolo.lanalytics.pipeline' }
   let(:schema)             { :pipeline_spec }
-  let(:processing_action)  { Lanalytics::Processing::ProcessingAction::CREATE }
+  let(:processing_action)  { Lanalytics::Processing::Action::CREATE }
 
   describe '(Instantiation)' do
 
@@ -13,15 +13,15 @@ describe Lanalytics::Processing::Pipeline do
 
       expect(pipeline.name).to eq 'xikolo.lanalytics.pipeline'
       expect(pipeline.schema).to eq :pipeline_spec
-      expect(pipeline.processing_action).to eq Lanalytics::Processing::ProcessingAction::CREATE
+      expect(pipeline.processing_action).to eq Lanalytics::Processing::Action::CREATE
     end
 
     it 'should only accept four processing actions (CREATE, UPDATE, DESTROY, UNDEFINED)' do
       [
-        Lanalytics::Processing::ProcessingAction::CREATE,
-        Lanalytics::Processing::ProcessingAction::UPDATE,
-        Lanalytics::Processing::ProcessingAction::DESTROY,
-        Lanalytics::Processing::ProcessingAction::UNDEFINED
+        Lanalytics::Processing::Action::CREATE,
+        Lanalytics::Processing::Action::UPDATE,
+        Lanalytics::Processing::Action::DESTROY,
+        Lanalytics::Processing::Action::UNDEFINED
       ].each do |action|
         correct_pipeline = Lanalytics::Processing::Pipeline.new(name, schema, action)
         expect(correct_pipeline.processing_action).to eq action
@@ -32,7 +32,7 @@ describe Lanalytics::Processing::Pipeline do
       }.to raise_error ArgumentError
 
       expect {
-        broken_pipeline = Lanalytics::Processing::Pipeline.new(name, schema, 'Lanalytics::Processing::ProcessingAction::MERGE')
+        broken_pipeline = Lanalytics::Processing::Pipeline.new(name, schema, 'Lanalytics::Processing::Action::MERGE')
       }.to raise_error ArgumentError
     end
 
@@ -40,7 +40,7 @@ describe Lanalytics::Processing::Pipeline do
       pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.pipeline',
         schema,
-        Lanalytics::Processing::ProcessingAction::CREATE,
+        Lanalytics::Processing::Action::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
         [Lanalytics::Processing::Loader::DummyLoadStep.new]

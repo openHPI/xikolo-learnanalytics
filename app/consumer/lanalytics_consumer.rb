@@ -1,19 +1,19 @@
 class LanalyticsConsumer < Msgr::Consumer
 
   def create
-    process_message_with(Lanalytics::Processing::ProcessingAction::CREATE)
+    process_message_with(Lanalytics::Processing::Action::CREATE)
   end
 
   def update
-    process_message_with(Lanalytics::Processing::ProcessingAction::UPDATE)
+    process_message_with(Lanalytics::Processing::Action::UPDATE)
   end
 
   def destroy
-    process_message_with(Lanalytics::Processing::ProcessingAction::DESTROY)
+    process_message_with(Lanalytics::Processing::Action::DESTROY)
   end
 
   def handle_user_event
-    process_message_with(Lanalytics::Processing::ProcessingAction::CREATE)
+    process_message_with(Lanalytics::Processing::Action::CREATE)
   end
 
   def process_message_with(processing_action)

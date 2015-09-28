@@ -38,30 +38,30 @@ describe Lanalytics::Processing::PipelineManager do
     it 'should load pipelines from *.prb file' do
       Lanalytics::Processing::PipelineManager.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/dummy_pipeline_manager.prb")
 
-      pipeline1 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline1')
+      pipeline1 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::Action::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline1')
       expect(pipeline1).to_not be_nil
       expect(pipeline1).to be_an Array
       expect(pipeline1.length).to eq 1
 
-      pipeline2 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline2')
+      pipeline2 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::Action::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline2')
       expect(pipeline2).to_not be_nil
       expect(pipeline2).to be_an Array
       expect(pipeline2.length).to eq 1
 
-      pipeline3 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline3')
+      pipeline3 = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::Action::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline3')
       expect(pipeline3).to_not be_nil
       expect(pipeline3).to be_an Array
       expect(pipeline3.length).to eq 1
     end
 
     it 'should save pipeline accordingly' do
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec, Lanalytics::Processing::Action::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
         [Lanalytics::Processing::Loader::DummyLoadStep.new])
 
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(pipeline)
-      pipelines = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE, 'xikolo.lanalytics.pipeline')
+      pipelines = Lanalytics::Processing::PipelineManager.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::Action::CREATE, 'xikolo.lanalytics.pipeline')
       expect(pipelines).to be_an Array
       expect(pipelines).to_not be_empty
       expect(pipelines.length).to eq 1
@@ -71,31 +71,31 @@ describe Lanalytics::Processing::PipelineManager do
 
   describe '(Pipeline Access)' do
     it 'should aggregate pipeline across schemas' do
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec, Lanalytics::Processing::Action::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
         [Lanalytics::Processing::Loader::DummyLoadStep.new])
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(pipeline)
 
-      pipeline1 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec1, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline1 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec1, Lanalytics::Processing::Action::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
         [Lanalytics::Processing::Loader::DummyLoadStep.new])
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(pipeline1)
 
-      pipeline2 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec2, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline2 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec2, Lanalytics::Processing::Action::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
         [Lanalytics::Processing::Loader::DummyLoadStep.new])
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(pipeline2)
 
-      pipeline3 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec3, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline3 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_manager_spec3, Lanalytics::Processing::Action::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
         [Lanalytics::Processing::Loader::DummyLoadStep.new])
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(pipeline3)
 
-      pipelines = Lanalytics::Processing::PipelineManager.instance.schema_pipelines_with(Lanalytics::Processing::ProcessingAction::CREATE, 'xikolo.lanalytics.pipeline')
+      pipelines = Lanalytics::Processing::PipelineManager.instance.schema_pipelines_with(Lanalytics::Processing::Action::CREATE, 'xikolo.lanalytics.pipeline')
       expect(pipelines).to be_an Hash
       expect(pipelines).to_not be_empty
       expect(pipelines.size).to eq 4

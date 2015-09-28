@@ -20,8 +20,8 @@ def create_exp_pipeline(route, extractor_type, processing_action)
   end
 end
 
-create_action = Lanalytics::Processing::ProcessingAction::CREATE
-update_action = Lanalytics::Processing::ProcessingAction::UPDATE
+create_action = Lanalytics::Processing::Action::CREATE
+update_action = Lanalytics::Processing::Action::UPDATE
 
 create_exp_pipeline('xikolo.web.exp_event.create', :exp_event, create_action)
 

@@ -22,14 +22,14 @@ end
 
 # MOOCdb Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
 def create_moocdb_pipelines_for_crud(service, domain)
-  create_moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, service, domain)
-  create_moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, service, domain)
-  create_moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::Action::CREATE, service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::Action::UPDATE, service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::Action::DESTROY, service, domain)
 end
 
-create_action = Lanalytics::Processing::ProcessingAction::CREATE
-update_action = Lanalytics::Processing::ProcessingAction::UPDATE
-destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
+create_action = Lanalytics::Processing::Action::CREATE
+update_action = Lanalytics::Processing::Action::UPDATE
+destroy_action = Lanalytics::Processing::Action::DESTROY
 
 
 # ------------------- Account Service -------------------

@@ -29,9 +29,9 @@ module Lanalytics
       def initialize
         @pipelines = Hash.new do |hash, key|
           hash[key] = {
-            Lanalytics::Processing::ProcessingAction::CREATE  => {},
-            Lanalytics::Processing::ProcessingAction::UPDATE  => {},
-            Lanalytics::Processing::ProcessingAction::DESTROY => {}
+            Lanalytics::Processing::Action::CREATE  => {},
+            Lanalytics::Processing::Action::UPDATE  => {},
+            Lanalytics::Processing::Action::DESTROY => {}
           }
         end
       end
