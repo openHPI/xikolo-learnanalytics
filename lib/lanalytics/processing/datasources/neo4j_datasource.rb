@@ -11,30 +11,36 @@ module Lanalytics
         end
 
         def init_with(neo4j_config)
-          
-
           # neo4j_remaining_config = neo4j_config.except(:db_type, :db_url)
-          
+
           # Register a default Neo4j::Session for this application
           # @session = Neo4j::Session.open(@db_type, @db_url, neo4j_config.except(:db_type, :db_url))
-          if @username and @password
-            @session = Neo4j::Session.open(@db_type.to_sym, @db_url, basic_auth: { username: @username, password: @password})
+          if @username && @password
+            @session = Neo4j::Session.open(
+              @db_type.to_sym,
+              @db_url,
+              basic_auth: {
+                username: @username,
+                password: @password
+              }
+            )
           else
             @session = Neo4j::Session.open(@db_type.to_sym, @db_url)
           end
 
-          raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...' unless @session
+          unless @session
+            fail 'No Neo4j::Session could be created. Plz have a look at the configuration ...'
+          end
         end
 
-        
         def exec(&block)
           return unless block_given?
           yield @session
         end
 
         def settings
-          # Return all instance variables expect the instance variable 'session' 
-          return self.instance_values.symbolize_keys.except(:session)
+          # Return all instance variables except the instance variable 'session'
+          instance_values.symbolize_keys.except(:session)
         end
 
       end

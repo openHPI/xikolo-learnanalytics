@@ -12,11 +12,13 @@ module Lanalytics
 
         def init_with(elastic_config)
           non_elasticsearch_opts = [:client, :name, :key, :description, :index]
-          config = instance_values.symbolize_keys.reject { |k, v| non_elasticsearch_opts.include? k}
+          config = instance_values.symbolize_keys.reject { |k, v| non_elasticsearch_opts.include? k }
 
           @client = Elasticsearch::Client.new config
 
-          raise 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...' unless @client
+          unless @client
+            fail 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...'
+          end
         end
 
         def exec
@@ -25,8 +27,8 @@ module Lanalytics
         end
 
         def settings
-          # Return all instance variables expect the instance variable 'client'
-          return self.instance_values.symbolize_keys.except(:client)
+          # Return all instance variables except the instance variable 'client'
+          instance_values.symbolize_keys.except(:client)
         end
       end
     end
