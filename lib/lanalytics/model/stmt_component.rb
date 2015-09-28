@@ -6,25 +6,29 @@ module Lanalytics
       attr_reader :type
 
       def initialize(type)
+        unless type.is_a?(String) || type.is_a?(Symbol)
+          fail ArgumentError, "'type' argument cannot be nil"
+        end
 
-        raise ArgumentError.new("'type' argument cannot be nil") unless type.is_a? String or type.is_a? Symbol
-        raise ArgumentError.new("'type' argument cannot be empty") if type.is_a? String and type.empty?
+        if type.is_a?(String) && type.empty?
+          fail ArgumentError, "'type' argument cannot be empty"
+        end
+
         @type = type.to_sym.upcase
       end
 
       # JSON Serialization (Marshalling)
       def to_json(*a)
         {
-            :json_class => self.class.name,
-            :data => self.as_json
+          json_class: self.class.name,
+          data: as_json
         }.to_json(*a)
       end
 
       def ==(other)
-        unless other.class == self.class
-          return false
-        end
-        return @type == other.type
+        return false unless other.class == self.class
+
+        @type == other.type
       end
       alias_method :eql?, :==
 
