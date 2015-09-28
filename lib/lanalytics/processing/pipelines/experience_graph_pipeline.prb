@@ -2,15 +2,15 @@ unless Lanalytics::Processing::DatasourceManager.datasource_exists?('exp_graph_s
   fail "Datasource 'exp_graph_schema_neo4j' is not available. Check your 'config/datasources/experience_graph_schema_neo4j.yml' or 'lib/lanalytics/processing/datasources/Neo4jDatasource.'"
 end
 
-def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
-  domain_ns     = event_domain_ns_type.downcase
-  domain_type   = event_domain_type.downcase
-  pa            = processing_action.to_s.downcase
+def nosql_pipeline(processing_action, service, domain)
+  service = service.downcase
+  domain  = domain.downcase
+  pa      = processing_action.to_s.downcase
 
-  pipeline_for("xikolo.#{domain_ns}.#{domain_type}.#{pa}", :nosql, processing_action) do
+  pipeline_for("xikolo.#{service}.#{domain}.#{pa}", :nosql, processing_action) do
     datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_graph_schema_neo4j')
 
-    extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
+    extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(domain)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::NosqlDataSchemaTransformer.new
@@ -19,38 +19,37 @@ def nosql_pipeline(processing_action, event_domain_ns_type, event_domain_type)
   end
 end
 
-# NoSQL Pipelines for 'CREATE', 'UPDATE' and 'DESTROY'
-def nosql_pipelines_for_crud(event_domain_ns_type, event_domain_type)
-  nosql_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, event_domain_ns_type, event_domain_type)
-  nosql_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, event_domain_ns_type, event_domain_type)
-  nosql_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, event_domain_ns_type, event_domain_type)
-end
-
 create_action = Lanalytics::Processing::ProcessingAction::CREATE
 update_action = Lanalytics::Processing::ProcessingAction::UPDATE
 destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
 
+# NoSQL Pipelines for 'CREATE', 'UPDATE' and 'DESTROY'
+def nosql_pipelines_for_crud(service, domain)
+  nosql_pipeline(create_action, service, domain)
+  nosql_pipeline(update_action, service, domain)
+  nosql_pipeline(destroy_action, service, domain)
+end
 
-# ------------------- User Domain Entities -------------------
+
+# ------------------- Account Service -------------------
 nosql_pipelines_for_crud(:account, :user)
 
-# ------------------- Course Domain Entities -------------------
+# ------------------- Course Service -------------------
 nosql_pipelines_for_crud(:course, :course)
 nosql_pipelines_for_crud(:course, :item)
 nosql_pipeline(create_action, :course, :enrollment)
 nosql_pipeline(destroy_action, :course, :enrollment)
 nosql_pipeline(create_action, :course, :visit)
 
-
-# ------------------- Learning Room Domain Entities -------------------
+# ------------------- Learning Room Service -------------------
 nosql_pipelines_for_crud(:learning_room, :learning_room)
 nosql_pipeline(create_action, :learning_room, :membership)
 nosql_pipeline(destroy_action, :learning_room, :membership)
 
-# ------------------- Submission Domain Entities -------------------
+# ------------------- Submission Service -------------------
 nosql_pipeline(create_action, :submission, :submission)
 
-# ------------------- Pinboard Domain Entities -------------------
+# ------------------- Pinboard Service -------------------
 nosql_pipeline(create_action, :pinboard, :question)
 nosql_pipeline(update_action, :pinboard, :question)
 nosql_pipeline(create_action, :pinboard, :subscription)
@@ -60,8 +59,9 @@ nosql_pipeline(update_action, :pinboard, :answer)
 nosql_pipeline(create_action, :pinboard, :comment)
 nosql_pipeline(update_action, :pinboard, :comment)
 
-# ------------------- Helpdesk Domain Entities -------------------
+# ------------------- Helpdesk Service -------------------
 nosql_pipeline(create_action, :helpdesk, :ticket)
 
 
+# ------------------- Web Service -------------------
 nosql_pipeline(create_action, :web, :exp_event)

@@ -2,15 +2,15 @@ unless Lanalytics::Processing::DatasourceManager.datasource_exists?('moocdb_post
   fail "Datasource 'moocdb_postgresql' is not available."
 end
 
-def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
-  domain_ns     = event_domain_ns_type.downcase
-  domain_type   = event_domain_type.downcase
-  pa            = processing_action.to_s.downcase
+def moocdb_pipeline(processing_action, service, domain)
+  service = service.downcase
+  domain  = domain.downcase
+  pa      = processing_action.to_s.downcase
 
-  pipeline_for("xikolo.#{domain_ns}.#{domain_type}.#{pa}", :mooc_db, processing_action) do
+  pipeline_for("xikolo.#{service}.#{domain}.#{pa}", :mooc_db, processing_action) do
     datasource = Lanalytics::Processing::DatasourceManager.get_datasource('moocdb_postgresql')
 
-    extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)
+    extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(domain)
 
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     transformer Lanalytics::Processing::Transformer::MoocdbDataTransformer.new
@@ -18,14 +18,13 @@ def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
     loader Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
     # loader Lanalytics::Processing::Loader::Neo4jLoader.new(:moocdb_neo)
   end
-
 end
 
 # MOOCdb Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
-def moocdb_pipelines_for_crud(event_domain_ns_type, event_domain_type)
-  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, event_domain_ns_type, event_domain_type)
-  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, event_domain_ns_type, event_domain_type)
-  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, event_domain_ns_type, event_domain_type)
+def moocdb_pipelines_for_crud(service, domain)
+  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, service, domain)
+  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, service, domain)
+  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, service, domain)
 end
 
 create_action = Lanalytics::Processing::ProcessingAction::CREATE
@@ -33,25 +32,25 @@ update_action = Lanalytics::Processing::ProcessingAction::UPDATE
 destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
 
 
-# ------------------- User Domain Entities -------------------
+# ------------------- Account Service -------------------
 moocdb_pipelines_for_crud(:account, :user)
 
-# ------------------- Course Domain Entities -------------------
+# ------------------- Course Service -------------------
 moocdb_pipelines_for_crud(:course, :course)
 moocdb_pipelines_for_crud(:course, :item)
 moocdb_pipeline(create_action, :course, :enrollment)
 moocdb_pipeline(destroy_action, :course, :enrollment)
 
 
-# ------------------- Submission Domain Entities -------------------
+# ------------------- Submission Service -------------------
 moocdb_pipeline(create_action, :submission, :submission)
 
-# ------------------- Learning Room Domain Entities -------------------
+# ------------------- Learning Room Service -------------------
 # moocdb_pipelines_for_crud(:learning_room, :learning_room)
 # moocdb_pipeline(create_action, :learning_room, :membership)
 # moocdb_pipeline(destroy_action, :learning_room, :membership)
 
-# ------------------- Pinboard Domain Entities -------------------
+# ------------------- Pinboard Service -------------------
 moocdb_pipeline(create_action, :pinboard, :question)
 moocdb_pipeline(update_action, :pinboard, :question)
 # moocdb_pipeline(create_action, :pinboard, :subscription)
@@ -61,5 +60,5 @@ moocdb_pipeline(update_action, :pinboard, :answer)
 moocdb_pipeline(create_action, :pinboard, :comment)
 moocdb_pipeline(update_action, :pinboard, :comment)
 
-
+# ------------------- Web Service -------------------
 moocdb_pipeline(create_action, :web, :exp_event)
