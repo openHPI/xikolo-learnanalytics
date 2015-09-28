@@ -2,7 +2,7 @@ unless Lanalytics::Processing::DatasourceManager.datasource_exists?('moocdb_post
   fail "Datasource 'moocdb_postgresql' is not available."
 end
 
-def moocdb_pipeline(processing_action, service, domain)
+def create_moocdb_pipeline(processing_action, service, domain)
   service = service.downcase
   domain  = domain.downcase
   pa      = processing_action.to_s.downcase
@@ -21,10 +21,10 @@ def moocdb_pipeline(processing_action, service, domain)
 end
 
 # MOOCdb Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
-def moocdb_pipelines_for_crud(service, domain)
-  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, service, domain)
-  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, service, domain)
-  moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, service, domain)
+def create_moocdb_pipelines_for_crud(service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::ProcessingAction::CREATE, service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::ProcessingAction::UPDATE, service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::ProcessingAction::DESTROY, service, domain)
 end
 
 create_action = Lanalytics::Processing::ProcessingAction::CREATE
@@ -33,32 +33,32 @@ destroy_action = Lanalytics::Processing::ProcessingAction::DESTROY
 
 
 # ------------------- Account Service -------------------
-moocdb_pipelines_for_crud(:account, :user)
+create_moocdb_pipelines_for_crud(:account, :user)
 
 # ------------------- Course Service -------------------
-moocdb_pipelines_for_crud(:course, :course)
-moocdb_pipelines_for_crud(:course, :item)
-moocdb_pipeline(create_action, :course, :enrollment)
-moocdb_pipeline(destroy_action, :course, :enrollment)
+create_moocdb_pipelines_for_crud(:course, :course)
+create_moocdb_pipelines_for_crud(:course, :item)
+create_moocdb_pipeline(create_action, :course, :enrollment)
+create_moocdb_pipeline(destroy_action, :course, :enrollment)
 
 
 # ------------------- Submission Service -------------------
-moocdb_pipeline(create_action, :submission, :submission)
+create_moocdb_pipeline(create_action, :submission, :submission)
 
 # ------------------- Learning Room Service -------------------
-# moocdb_pipelines_for_crud(:learning_room, :learning_room)
-# moocdb_pipeline(create_action, :learning_room, :membership)
-# moocdb_pipeline(destroy_action, :learning_room, :membership)
+# create_moocdb_pipelines_for_crud(:learning_room, :learning_room)
+# create_moocdb_pipeline(create_action, :learning_room, :membership)
+# create_moocdb_pipeline(destroy_action, :learning_room, :membership)
 
 # ------------------- Pinboard Service -------------------
-moocdb_pipeline(create_action, :pinboard, :question)
-moocdb_pipeline(update_action, :pinboard, :question)
-# moocdb_pipeline(create_action, :pinboard, :subscription)
-# moocdb_pipeline(destroy_action, :pinboard, :subscription)
-moocdb_pipeline(create_action, :pinboard, :answer)
-moocdb_pipeline(update_action, :pinboard, :answer)
-moocdb_pipeline(create_action, :pinboard, :comment)
-moocdb_pipeline(update_action, :pinboard, :comment)
+create_moocdb_pipeline(create_action, :pinboard, :question)
+create_moocdb_pipeline(update_action, :pinboard, :question)
+# create_moocdb_pipeline(create_action, :pinboard, :subscription)
+# create_moocdb_pipeline(destroy_action, :pinboard, :subscription)
+create_moocdb_pipeline(create_action, :pinboard, :answer)
+create_moocdb_pipeline(update_action, :pinboard, :answer)
+create_moocdb_pipeline(create_action, :pinboard, :comment)
+create_moocdb_pipeline(update_action, :pinboard, :comment)
 
 # ------------------- Web Service -------------------
-moocdb_pipeline(create_action, :web, :exp_event)
+create_moocdb_pipeline(create_action, :web, :exp_event)
