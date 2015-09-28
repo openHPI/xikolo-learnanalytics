@@ -1,11 +1,13 @@
-
 unless Lanalytics::Processing::DatasourceManager.datasource_exists?('moocdb_postgresql')
-  raise "Datasource 'moocdb_postgresql' is not available."
+  fail "Datasource 'moocdb_postgresql' is not available."
 end
 
 def moocdb_pipeline(processing_action, event_domain_ns_type, event_domain_type)
-  pipeline_for("xikolo.#{event_domain_ns_type.downcase}.#{event_domain_type.downcase}.#{processing_action.to_s.downcase}", :mooc_db, processing_action) do
+  domain_ns     = event_domain_ns_type.downcase
+  domain_type   = event_domain_type.downcase
+  pa            = processing_action.to_s.downcase
 
+  pipeline_for("xikolo.#{domain_ns}.#{domain_type}.#{pa}", :mooc_db, processing_action) do
     datasource = Lanalytics::Processing::DatasourceManager.get_datasource('moocdb_postgresql')
 
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(event_domain_type)

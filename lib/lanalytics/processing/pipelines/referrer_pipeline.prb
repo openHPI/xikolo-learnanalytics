@@ -3,12 +3,11 @@
 # end
 
 pipeline_for("xikolo.web.referrer", :webanalytics, Lanalytics::Processing::ProcessingAction::CREATE) do
-    
   datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_api_elastic')
 
   extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new
 
   transformer Lanalytics::Processing::Transformer::WebAnalyticsDataSchemaTransformer.new
-  
+
   loader Lanalytics::Processing::Loader::ElasticSearchLoader.new(datasource)
 end
