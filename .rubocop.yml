@@ -9,9 +9,11 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Max: 30
 
-
 Style/EmptyLinesAroundClassBody:
   Enabled: false
 
 Style/EmptyLines:
+  Enabled: false
+
+Style/Documentation:
   Enabled: false
