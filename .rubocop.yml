@@ -12,3 +12,6 @@ Metrics/MethodLength:
 
 Style/EmptyLinesAroundClassBody:
   Enabled: false
+
+Style/EmptyLines:
+  Enabled: false
