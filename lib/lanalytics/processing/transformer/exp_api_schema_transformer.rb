@@ -135,7 +135,6 @@ module Lanalytics
         end
 
         def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
-          Rails.logger.info processing_unit
           transform_punit_to_create load_commands,
                                     user: { resource_uuid: processing_unit[:user_id] },
                                     verb: :COMPLETED_COURSE,
@@ -164,7 +163,6 @@ module Lanalytics
         end
 
         def save_enrollment(processing_unit, load_commands)
-          Rails.logger.info processing_unit
           verb = if processing_unit[:deleted] then :UN_ENROLLED else :ENROLLED end
           transform_punit_to_create load_commands,
                                     user: { resource_uuid: processing_unit[:user_id] },
