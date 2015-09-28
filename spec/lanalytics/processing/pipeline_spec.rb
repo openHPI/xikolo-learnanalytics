@@ -2,11 +2,14 @@ require 'rails_helper'
 
 describe Lanalytics::Processing::Pipeline do
 
-  describe "(Instantiation)" do
+  let(:name)               { 'xikolo.lanalytics.pipeline' }
+  let(:schema)             { :pipeline_spec }
+  let(:processing_action)  { Lanalytics::Processing::ProcessingAction::CREATE }
+
+  describe '(Instantiation)' do
 
     it 'should initialize correctly with mandatory params (name, schema, processing_action)' do
-
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE)
+      pipeline = Lanalytics::Processing::Pipeline.new(name, schema, processing_action)
 
       expect(pipeline.name).to eq 'xikolo.lanalytics.pipeline'
       expect(pipeline.schema).to eq :pipeline_spec
@@ -14,30 +17,34 @@ describe Lanalytics::Processing::Pipeline do
     end
 
     it 'should only accept four processing actions (CREATE, UPDATE, DESTROY, UNDEFINED)' do
-
-      [Lanalytics::Processing::ProcessingAction::CREATE,
+      [
+        Lanalytics::Processing::ProcessingAction::CREATE,
         Lanalytics::Processing::ProcessingAction::UPDATE,
         Lanalytics::Processing::ProcessingAction::DESTROY,
-        Lanalytics::Processing::ProcessingAction::UNDEFINED].each do | processing_action |
-        correct_pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, processing_action)
-        expect(correct_pipeline.processing_action).to eq processing_action
+        Lanalytics::Processing::ProcessingAction::UNDEFINED
+      ].each do |action|
+        correct_pipeline = Lanalytics::Processing::Pipeline.new(name, schema, action)
+        expect(correct_pipeline.processing_action).to eq action
       end
 
       expect {
-        broken_pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, :MERGE)
+        broken_pipeline = Lanalytics::Processing::Pipeline.new(name, schema, :MERGE)
       }.to raise_error ArgumentError
 
       expect {
-        broken_pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, 'Lanalytics::Processing::ProcessingAction::MERGE')
+        broken_pipeline = Lanalytics::Processing::Pipeline.new(name, schema, 'Lanalytics::Processing::ProcessingAction::MERGE')
       }.to raise_error ArgumentError
     end
 
     it 'should initialize correctly with ExtractSteps, TransformSteps and LoadSteps' do
-
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline = Lanalytics::Processing::Pipeline.new(
+        'xikolo.lanalytics.pipeline',
+        schema,
+        Lanalytics::Processing::ProcessingAction::CREATE,
         [Lanalytics::Processing::Extractor::ExtractStep.new],
         [Lanalytics::Processing::Transformer::TransformStep.new],
-        [Lanalytics::Processing::Loader::DummyLoadStep.new])
+        [Lanalytics::Processing::Loader::DummyLoadStep.new]
+      )
 
       extractors = pipeline.instance_variable_get(:@extractors)
       expect(extractors).to be_a Array
@@ -55,42 +62,61 @@ describe Lanalytics::Processing::Pipeline do
       expect(loaders.length).to eq 1
     end
 
-    it "should initialize an empty pipeline" do
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+    it 'should initialize an empty pipeline' do
+      pipeline = Lanalytics::Processing::Pipeline.new(
+        name,
+        schema,
+        processing_action,
         [],
         [],
-        [])
+        []
+      )
       expect(pipeline.instance_variable_get(:@extractors)).to be_empty
       expect(pipeline.instance_variable_get(:@transformers)).to be_empty
       expect(pipeline.instance_variable_get(:@loaders)).to be_empty
 
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE)
+      pipeline = Lanalytics::Processing::Pipeline.new(
+        name,
+        schema,
+        processing_action
+      )
       expect(pipeline.instance_variable_get(:@extractors)).to be_empty
       expect(pipeline.instance_variable_get(:@transformers)).to be_empty
       expect(pipeline.instance_variable_get(:@loaders)).to be_empty
     end
 
     it 'should fail when not initialized with proper processing steps' do
-
       expect do
-        pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
-        ['Lanalytics::Processing::Extractor::ExtractStep.new'], # Inject another type
-        [Lanalytics::Processing::Transformer::TransformStep.new],
-        [Lanalytics::Processing::Loader::DummyLoadStep.new])
+        Lanalytics::Processing::Pipeline.new(
+          name,
+          schema,
+          processing_action,
+          ['Lanalytics::Processing::Extractor::ExtractStep.new'], # Inject another type
+          [Lanalytics::Processing::Transformer::TransformStep.new],
+          [Lanalytics::Processing::Loader::DummyLoadStep.new]
+        )
       end.to raise_error ArgumentError
 
       expect do
-        pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
-        [Lanalytics::Processing::Extractor::ExtractStep.new],
-        ['Lanalytics::Processing::Transformer::TransformStep.new'],
-        [Lanalytics::Processing::Loader::DummyLoadStep.new])
+        Lanalytics::Processing::Pipeline.new(
+          name,
+          schema,
+          processing_action,
+          [Lanalytics::Processing::Extractor::ExtractStep.new],
+          ['Lanalytics::Processing::Transformer::TransformStep.new'],
+          [Lanalytics::Processing::Loader::DummyLoadStep.new]
+        )
       end.to raise_error ArgumentError
 
       expect do
-        pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
-        [Lanalytics::Processing::Extractor::ExtractStep.new],
-        [Lanalytics::Processing::Transformer::TransformStep.new],
-        ['Lanalytics::Processing::Loader::DummyLoadStep.new'])
+        Lanalytics::Processing::Pipeline.new(
+          name,
+          schema,
+          processing_action,
+          [Lanalytics::Processing::Extractor::ExtractStep.new],
+          [Lanalytics::Processing::Transformer::TransformStep.new],
+          ['Lanalytics::Processing::Loader::DummyLoadStep.new']
+        )
       end.to raise_error ArgumentError
     end
   end
@@ -102,36 +128,45 @@ describe Lanalytics::Processing::Pipeline do
 
       extract_step = Lanalytics::Processing::Extractor::ExtractStep.new
       expect(extract_step).to receive(:extract).with(event_data, [], kind_of(Lanalytics::Processing::PipelineContext))
+
       transform_step = Lanalytics::Processing::Transformer::TransformStep.new
       expect(transform_step).to receive(:transform).with(event_data, [], [], kind_of(Lanalytics::Processing::PipelineContext))
+
       load_step = Lanalytics::Processing::Loader::DummyLoadStep.new
       expect(load_step).to receive(:load).with(event_data, [], kind_of(Lanalytics::Processing::PipelineContext))
-      
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+
+      pipeline = Lanalytics::Processing::Pipeline.new(
+        name,
+        schema,
+        processing_action,
         [extract_step],
         [transform_step],
-        [load_step])
+        [load_step]
+      )
       pipeline.process(event_data)
     end
 
     it 'should execute Pipeline without steps' do
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE)
+      pipeline = Lanalytics::Processing::Pipeline.new(name, schema, processing_action)
       pipeline.process({dummy_prop: 'dummy_value'})
     end
 
     it 'should stop when data is nil' do
-
       extract_step = Lanalytics::Processing::Extractor::ExtractStep.new
       expect(extract_step).to_not receive(:extract)
       transform_step = Lanalytics::Processing::Transformer::TransformStep.new
       expect(transform_step).to_not receive(:transform)
       load_step = Lanalytics::Processing::Loader::DummyLoadStep.new
       expect(load_step).to_not receive(:load)
-      
-      pipeline = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+
+      pipeline = Lanalytics::Processing::Pipeline.new(
+        name,
+        schema,
+        processing_action,
         [extract_step],
         [transform_step],
-        [load_step])
+        [load_step]
+      )
 
       pipeline.process(nil)
     end
