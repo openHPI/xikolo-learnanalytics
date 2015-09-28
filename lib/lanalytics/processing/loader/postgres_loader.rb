@@ -33,7 +33,8 @@ module Lanalytics
               RETURNING #{entity.primary_attribute.name}
             )
             INSERT INTO #{entity.entity_key} (#{entity.all_attribute_names.join(', ')})
-            SELECT #{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')} WHERE NOT EXISTS (SELECT 1 FROM upsert);
+            SELECT #{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')}
+            WHERE NOT EXISTS (SELECT 1 FROM upsert);
           })
         end
 

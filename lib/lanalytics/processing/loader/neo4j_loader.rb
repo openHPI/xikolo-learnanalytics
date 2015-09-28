@@ -4,81 +4,106 @@ module Lanalytics
       # TODO::Check naming of some variables in this class
 
       class Neo4jLoader < LoadStep
-        
+
         def initialize(datasource = nil)
           @neo4j_datasource = datasource
         end
 
         def load(processing_unit, load_commands, pipeline_ctx)
+          load_commands.each do |load_command|
+            command = load_command.class.name.demodulize.underscore
+            entity = load_command.entity.class.name.demodulize.underscore
 
-          load_commands.each do | load_command |
             begin
-              # TODO Comments
-              self.method("do_#{load_command.class.name.demodulize.underscore}_for_#{load_command.entity.class.name.demodulize.underscore}").call(load_command)
-            rescue Exception => e
-              Rails.logger.error(%Q{Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for processing_unit: #{e.message}
-#{processing_unit.inspect}
-              })  
+              method("do_#{command}_for_#{entity}").call(load_command)
+            rescue StandardError => e
+              Rails.logger.error { "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for processing_unit: #{e.message}" }
+              Rails.logger.error { processing_unit.inspect }
             end
           end
-
         end
 
         def do_merge_entity_command_for_entity(merge_entity_command)
           entity = merge_entity_command.entity
 
           resource_type = entity.entity_key
-          resource_properties = Hash[entity.all_non_nil_attributes.map { | attr | [attr.name, attr.value] }]
+          resource_properties = Hash[
+            entity.all_non_nil_attributes.map do |attr|
+              [attr.name, attr.value]
+            end
+          ]
 
           begin
-            @neo4j_datasource.exec do | session |
-              neo4j_query = session.query
-                .merge(r: {resource_type => {entity.primary_attribute.name => entity.primary_attribute.value }})
-                .on_create_set(r: resource_properties)
-                .on_match_set(r: resource_properties)
+            @neo4j_datasource.exec do |session|
+              neo4j_query = session
+                            .query
+                            .merge(
+                              r: {
+                                resource_type => {
+                                  klentity.primary_attribute.name => entity.primary_attribute.value
+                                }
+                              }
+                            )
+                            .on_create_set(r: resource_properties)
+                            .on_match_set(r: resource_properties)
 
               neo4j_query.exec
             end
-          rescue Exception => e
-            Rails.logger.error(%Q{
-Following error occurred when executing a Cypher query on Neo4j: #{e.message}
-#{neo4j_query.to_cypher}
-            })
+          rescue StandardError => e
+            Rails.logger.error { "Following error occurred when executing a Cypher query on Neo4j: #{e.message}" }
+            Rails.logger.error { "#{neo4j_query.to_cypher}" }
+
             throw e
           end
         end
 
         def do_update_command_for_entity(update_command)
-            entity = update_command.entity
-            resource_type = entity.entity_key
-            resource_properties = Hash[entity.all_non_nil_attributes.map { | attr | [attr.name, attr.value] }]
-
-            @neo4j_datasource.exec do | session |
-              session.query
-                .match(r: {resource_type => {entity.primary_attribute.name => entity.primary_attribute.value }})
-                .set_props(r: resource_properties)
-                .exec
+          entity = update_command.entity
+          resource_type = entity.entity_key
+          resource_properties = Hash[
+            entity.all_non_nil_attributes.map do |attr|
+              [attr.name, attr.value]
             end
-            # .on_create_set(r: resource_properties)
-            # .on_match_set(r: resource_properties)
+          ]
+
+          @neo4j_datasource.exec do |session|
+            session
+              .query
+              .match(
+                r: {
+                  resource_type => {
+                    entity.primary_attribute.name => entity.primary_attribute.value
+                  }
+                }
+              )
+              .set_props(r: resource_properties)
+              .exec
+          end
+          # .on_create_set(r: resource_properties)
+          # .on_match_set(r: resource_properties)
         end
-        
+
         def do_destroy_command_for_entity(destroy_command)
           entity = destroy_command.entity
           enitity_type = entity.entity_key
 
-          @neo4j_datasource.exec do | session |
-            session.query
-              .match(e: {enitity_type => {entity.primary_attribute.name => entity.primary_attribute.value }})
+          @neo4j_datasource.exec do |session|
+            session
+              .query
+              .match(
+                e: {
+                  enitity_type => {
+                    entity.primary_attribute.name => entity.primary_attribute.value
+                  }
+                }
+              )
               .delete(:e)
               .exec
           end
         end
 
-
         # Handling commands for entity relationships
         def do_create_command_for_entity_relationship(create_entity_command)
-
           entity_rel = create_entity_command.entity
 
           from_entity_key = entity_rel.from_entity.entity_key
@@ -86,18 +111,43 @@ Following error occurred when executing a Cypher query on Neo4j: #{e.message}
           to_entity_key = entity_rel.to_entity.entity_key
           to_entity_pattribute = entity_rel.to_entity.primary_attribute
 
-          @neo4j_datasource.exec do | session |
-            session.query
-              .merge(r1: {from_entity_key.to_sym => {from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s }}).break
-              .merge(r2: {to_entity_key.to_sym => {to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s }}).break
-              .create("(r1)-[:#{entity_rel.relationship_key} #{Neo4j::Core::Query.new.merge(Hash[entity_rel.all_non_nil_attributes.map { |attr| [attr.name.to_s, attr.value.to_s] }]).to_cypher[8..-2]}]->(r2)")
+          rel_key = entity_rel.relationship_key
+          cypher = Neo4j::Core::Query.new.merge(
+            Hash[
+              entity_rel.all_non_nil_attributes.map do |attr|
+                [attr.name.to_s, attr.value.to_s]
+              end
+            ]
+          ).to_cypher[8..-2]
+
+          @neo4j_datasource.exec do |session|
+            session
+              .query
+              .merge(
+                r1: {
+                  from_entity_key.to_sym => {
+                    from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s
+                  }
+                }
+              )
+              .break
+              .merge(
+                r2: {
+                  to_entity_key.to_sym => {
+                    to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s
+                  }
+                }
+              )
+              .break
+              .create(
+                "(r1)-[:#{rel_key} #{cypher}]->(r2)"
+              )
               .exec
           end
 
         end
 
         def do_merge_entity_command_for_entity_relationship(merge_entity_command)
-
           entity_rel = merge_entity_command.entity
 
           from_entity_key = entity_rel.from_entity.entity_key
@@ -105,11 +155,35 @@ Following error occurred when executing a Cypher query on Neo4j: #{e.message}
           to_entity_key = entity_rel.to_entity.entity_key
           to_entity_pattribute = entity_rel.to_entity.primary_attribute
 
-          @neo4j_datasource.exec do | session |
-            session.query
-              .merge(r1: {from_entity_key.to_sym => {from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s }}).break
-              .merge(r2: {to_entity_key.to_sym => {to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s }}).break
-              .merge("(r1)-[:#{entity_rel.relationship_key} #{Neo4j::Core::Query.new.merge(Hash[entity_rel.all_non_nil_attributes.map { |attr| [attr.name.to_s, attr.value.to_s] }]).to_cypher[8..-2]}]->(r2)")
+          entity_rel_type = entity_rel.relationship_key
+          cypher = Neo4j::Core::Query.new.merge(
+            Hash[
+              entity_rel.all_non_nil_attributes.map do |attr|
+                [attr.name.to_s, attr.value.to_s]
+              end
+            ]
+          ).to_cypher[8..-2]
+
+          @neo4j_datasource.exec do |session|
+            session
+              .query
+              .merge(
+                r1: {
+                  from_entity_key.to_sym => {
+                    from_entity_pattribute.name.to_sym => from_entity_pattribute.value.to_s
+                  }
+                }
+              )
+              .break
+              .merge(
+                r2: {
+                  to_entity_key.to_sym => {
+                    to_entity_pattribute.name.to_sym => to_entity_pattribute.value.to_s
+                  }
+                }
+              )
+              .break
+              .merge("(r1)-[:#{entity_rel_type} #{cypher}]->(r2)")
               .exec
           end
         end
@@ -119,23 +193,22 @@ Following error occurred when executing a Cypher query on Neo4j: #{e.message}
         end
 
         def do_destroy_command_for_entity_relationship(destroy_command)
-
           entity_rel = destroy_command.entity
           entity_rel_type = entity_rel.relationship_key
-          entity_rel_primary_attribue_name = entity_rel.primary_attribute.name
-          entity_rel_primary_attribue_value = entity_rel.primary_attribute.value.to_s
-          
-          @neo4j_datasource.exec do | session |
-            session.query
-              .match("()-[r:#{entity_rel_type} {#{entity_rel_primary_attribue_name}:\"#{entity_rel_primary_attribue_value}\"}]->()")
+          key = entity_rel.primary_attribute.name
+          value = entity_rel.primary_attribute.value.to_s
+
+          @neo4j_datasource.exec do |session|
+            session
+              .query
+              .match("()-[r:#{entity_rel_type} {#{key}:\"#{value}\"}]->()")
               .delete(:r)
               .exec
           end
         end
 
-
         # def load(processing_unit, load_commands, pipeline_ctx)
-          
+
         #   if processed_resources.nil? or processed_resources.empty?
         #     puts "'processed_resources' cannot be nil or empty"
         #     return
