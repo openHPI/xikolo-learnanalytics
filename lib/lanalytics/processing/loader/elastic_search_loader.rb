@@ -37,6 +37,9 @@ module Lanalytics
             end
           end
 
+          # Log what will be written to lanalytics
+          Rails.logger.debug { indexing_hash }
+
           @elastic_datasource.exec do | client |
             client.index indexing_hash
           end
