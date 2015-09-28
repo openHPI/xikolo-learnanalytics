@@ -9,31 +9,48 @@ module Lanalytics
 
         def load(_original_event, load_commands, _pipeline_ctx)
           load_commands.each do |load_command|
-            method("do_#{load_command.class.name.demodulize.underscore}").call(load_command)
+            command = load_command.class.name.demodulize.underscore
+
+            method("do_#{command}").call(load_command)
           end
         end
 
         def do_create_command(create_command)
-          entity = create_command.entity
+          entity  = create_command.entity
+
+          table   = entity.entity_key
+          columns = entity.all_attribute_names.join(', ')
+          values  = entity.all_non_nil_attributes.map{ |attr| sql_value_of(attr) }.join(', ')
 
           execute_sql(%Q{
-            INSERT INTO #{entity.entity_key} (#{entity.all_attribute_names.join(', ')})
-            VALUES (#{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')});
+            INSERT INTO #{table} (#{columns})
+            VALUES (#{values});
           })
         end
 
         def do_merge_entity_command(merge_entity_command)
-          entity = merge_entity_command.entity
+          entity  = merge_entity_command.entity
+
+          table   = entity.entity_key
+          column  = entity.primary_attribute.name
+          value   = sql_value_of(entity.primary_attribute)
+
+          columns = entity.all_attribute_names.join(', ')
+          values  = entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')
+
+          set_statements = entity.all_non_nil_attributes.collect{ |attr|
+            attr.name.to_s + ' = ' + sql_value_of(attr)
+          }.join(', ')
 
           execute_sql(%Q{
             WITH upsert as (
-              UPDATE #{entity.entity_key}
-              SET #{entity.all_non_nil_attributes.collect { | attr | attr.name.to_s + ' = ' + sql_value_of(attr)}.join(', ')}
-              WHERE #{entity.primary_attribute.name} = #{sql_value_of(entity.primary_attribute)}
-              RETURNING #{entity.primary_attribute.name}
+              UPDATE #{table}
+              SET #{set_statements}
+              WHERE #{column} = #{value}
+              RETURNING #{column}
             )
-            INSERT INTO #{entity.entity_key} (#{entity.all_attribute_names.join(', ')})
-            SELECT #{entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')}
+            INSERT INTO #{table} (#{columns})
+            SELECT #{values}
             WHERE NOT EXISTS (SELECT 1 FROM upsert);
           })
         end
@@ -41,19 +58,31 @@ module Lanalytics
         def do_update_command(update_command)
           entity = update_command.entity
 
+          table  = entity.entity_key
+          column = entity.primary_attribute.name
+          value  = sql_value_of(entity.primary_attribute)
+
+          set_statements = entity.all_non_nil_attributes.collect{ |attr|
+            attr.name.to_s + ' = ' + sql_value_of(attr)
+          }.join(', ')
+
           execute_sql(%Q{
-            UPDATE #{entity.entity_key}
-            SET #{entity.all_non_nil_attributes.collect { | attr | attr.name.to_s + ' = ' + sql_value_of(attr)}.join(', ')}
-            WHERE #{entity.primary_attribute.name} = #{sql_value_of(entity.primary_attribute)}
+            UPDATE #{table}
+            SET #{set_statements}
+            WHERE #{column} = #{value}
           })
         end
 
         def do_destroy_command(destroy_command)
           entity = destroy_command.entity
 
+          table  = entity.entity_key
+          column = entity.primary_attribute.name
+          value  = sql_value_of(entity.primary_attribute)
+
           execute_sql(%Q{
-            DELETE FROM #{entity.entity_key}
-            WHERE #{entity.primary_attribute.name} = #{sql_value_of(entity.primary_attribute)}
+            DELETE FROM #{table}
+            WHERE #{column} = #{value}
           })
         end
 
