@@ -4,20 +4,16 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :require_login
-  
+
   before_action :set_new_user_for_registration
 
   skip_before_action :require_login, only: [:welcome]
+
   def welcome
-    
-    if current_user
-      redirect_to research_cases_path
-      return
-    end
+    return unless current_user
 
+    redirect_to research_cases_path
   end
-
-
 
   private
 
