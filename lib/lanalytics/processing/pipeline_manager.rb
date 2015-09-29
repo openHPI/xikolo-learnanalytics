@@ -18,7 +18,7 @@ module Lanalytics
 
         begin
           instance.instance_eval(File.read(pipelines_setup_file))
-        rescue StandardError => error
+        rescue SyntaxError => error
           fail "The following error occurred when registering pipeline #{pipelines_setup_file}: #{error.message}"
         end
 
