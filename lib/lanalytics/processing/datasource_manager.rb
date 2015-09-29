@@ -17,7 +17,7 @@ module Lanalytics
         instance.add_datasource(datasource)
       end
 
-      def self.get_datasource(datasource_key)
+      def self.datasource(datasource_key)
         instance.datasources[datasource_key]
       end
 

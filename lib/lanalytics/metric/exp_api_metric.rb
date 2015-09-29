@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class ExpApiMetric
       def self.datasource
-        Lanalytics::Processing::DatasourceManager.get_datasource(datasource_name)
+        Lanalytics::Processing::DatasourceManager.datasource(datasource_name)
       end
 
       def self.datasource_name

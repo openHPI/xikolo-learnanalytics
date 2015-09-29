@@ -18,8 +18,7 @@ RSpec.describe Api::QueryController, type: :controller do
     end
 
     let(:client) do
-      Lanalytics::Processing::DatasourceManager
-        .get_datasource('exp_api_elastic').client
+      Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
     let(:action) { -> { post :show, params } }

@@ -8,7 +8,7 @@ def create_moocdb_pipeline(processing_action, service, domain)
   pa      = processing_action.to_s.downcase
 
   pipeline_for("xikolo.#{service}.#{domain}.#{pa}", :mooc_db, processing_action) do
-    datasource = Lanalytics::Processing::DatasourceManager.get_datasource('moocdb_postgresql')
+    datasource = Lanalytics::Processing::DatasourceManager.datasource('moocdb_postgresql')
 
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(domain)
 

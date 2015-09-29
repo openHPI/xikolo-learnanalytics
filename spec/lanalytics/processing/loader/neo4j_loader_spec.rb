@@ -4,7 +4,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
   if Lanalytics::Processing::DatasourceManager.datasource_exists?('exp_graph_schema_neo4j')
 
     before(:each) do
-      @neo4j_datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_graph_schema_neo4j')
+      @neo4j_datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_graph_schema_neo4j')
       @neo4j_loader = Lanalytics::Processing::Loader::Neo4jLoader.new(@neo4j_datasource)
       @original_hash = double('original_hash')
       # expect(@original_hash).to_not receive()

@@ -5,8 +5,8 @@ end
 
 def create_exp_pipeline(route, extractor_type, processing_action)
   pipeline_for(route, :exp_api, processing_action) do
-    datasource_elastic = Lanalytics::Processing::DatasourceManager.get_datasource('exp_api_elastic')
-    # datasource_postgres = Lanalytics::Processing::DatasourceManager.get_datasource('exp_api_postgresql')
+    datasource_elastic = Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic')
+    # datasource_postgres = Lanalytics::Processing::DatasourceManager.datasource('exp_api_postgresql')
 
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 

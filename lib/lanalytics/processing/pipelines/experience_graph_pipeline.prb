@@ -8,7 +8,7 @@ def create_nosql_pipeline(processing_action, service, domain)
   pa      = processing_action.to_s.downcase
 
   pipeline_for("xikolo.#{service}.#{domain}.#{pa}", :nosql, processing_action) do
-    datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_graph_schema_neo4j')
+    datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_graph_schema_neo4j')
 
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(domain)
 

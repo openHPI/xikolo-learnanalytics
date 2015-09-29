@@ -3,7 +3,7 @@
 # end
 
 pipeline_for("xikolo.web.referrer", :webanalytics, Lanalytics::Processing::Action::CREATE) do
-  datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_api_elastic')
+  datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic')
 
   extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new
 
