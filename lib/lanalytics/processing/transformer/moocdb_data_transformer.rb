@@ -272,7 +272,7 @@ module Lanalytics
             with_primary_attribute :submission_id,      :uuid,      processing_unit[:id]
             with_attribute :user_id,                    :uuid,      processing_unit[:user_id]
             with_attribute :problem_id,                 :uuid,      processing_unit[:item_id]
-            with_attribute :submission_timestamp,       :timestamp, (processing_unit[:quiz_submission_time] or processing_unit[:created_at])
+            with_attribute :submission_timestamp,       :timestamp, (processing_unit[:quiz_submission_time] || processing_unit[:created_at])
             with_attribute :submission_attempt_number,  :int,       nil
             with_attribute :submission_answer,          :string,    nil
             with_attribute :submission_is_submitted,    :bool,      processing_unit[:submitted]

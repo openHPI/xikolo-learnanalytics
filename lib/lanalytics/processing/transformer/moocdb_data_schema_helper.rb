@@ -90,9 +90,9 @@ module Lanalytics
 
         def collaboration_type(processing_unit)
           case processing_unit.type.downcase
-          when :question  then [1, 'forum_question']
-          when :answer    then [2, 'forum_answer']
-          when :comment   then [3, 'forum_comment']
+            when :question  then [1, 'forum_question']
+            when :answer    then [2, 'forum_answer']
+            when :comment   then [3, 'forum_comment']
           end
         end
 
