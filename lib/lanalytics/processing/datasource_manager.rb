@@ -43,6 +43,24 @@ module Lanalytics
         datasource
       end
 
+      def self.setup_datasource(filename)
+        datasource_config = YAML.load_file(filename).with_indifferent_access
+        datasource_config = datasource_config[Rails.env] || datasource_config
+
+        datasource_adapter = datasource_config[:datasource_adapter]
+
+        unless datasource_adapter
+          Rails.logger.warn "The datasource config '#{filename}' does not contain the required key 'datasource_adapter'"
+          return
+        end
+
+        datasource_class = "Lanalytics::Processing::Datasources::#{datasource_adapter}".constantize
+        datasource = datasource_class.new(datasource_config)
+
+        Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
+        Rails.logger.info "The datasource config '#{filename}' loaded into DatasourceManager"
+      end
+
     end
   end
 end

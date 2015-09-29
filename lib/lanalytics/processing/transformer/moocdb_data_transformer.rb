@@ -9,7 +9,7 @@ module Lanalytics
 
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
 
-          return if pipeline_ctx.processing_action == ProcessingAction::UNDEFINED
+          return if pipeline_ctx.processing_action == Action::UNDEFINED
 
           processing_action = pipeline_ctx.processing_action.to_s.downcase
 
@@ -37,7 +37,7 @@ module Lanalytics
           transform_method = self.method("transform_#{processing_unit.type.downcase}_unit")
           entities = transform_method.call(processing_unit)
           load_commands.push(*wrap_in_destroy_commands(entities))
-        end        
+        end
 
         # --------------- Alias for Create Events  --------------------
         alias_method :transform_user_punit_to_create_load_commands, :transform_to_create_load_commands
@@ -72,7 +72,7 @@ module Lanalytics
           load_commands << Lanalytics::Processing::LoadORM::CustomLoadCommand.sql_for(:postgres, %Q{
             UPDATE observed_events
             SET observed_event_duration = 60
-            WHERE 
+            WHERE
               user_id = '#{exp_stmt.user.uuid}'
               AND observed_event_duration IS NULL
               AND (current_timestamp - observed_event_timestamp) > ('60 min'::interval);
@@ -119,7 +119,7 @@ module Lanalytics
             with_primary_attribute :username, :string, Digest::SHA256.hexdigest(processing_unit.data[:id].to_s)
             with_attribute :global_user_id, :uuid, processing_unit.data[:id]
             with_attribute :gender, :string, nil
-            with_attribute :birthday, :date, (processing_unit[:born_at] ? Date.parse(processing_unit.data[:born_at]).iso8601 : nil) 
+            with_attribute :birthday, :date, (processing_unit[:born_at] ? Date.parse(processing_unit.data[:born_at]).iso8601 : nil)
             with_attribute :ip, :string, nil
             with_attribute :country, :string # You can also omit the value parameter
             with_attribute :timezone_offset, :int, nil
@@ -136,9 +136,9 @@ module Lanalytics
         end
 
         def transform_item_unit(processing_unit)
-          
+
           course = lookup_course(processing_unit.data[:course_id])
-          
+
           type_content, type_medium = case processing_unit.data[:content_type]
             when 'video'    then ['lecture', 'video']
             when 'richtext' then ['lecture', 'text']
@@ -151,7 +151,7 @@ module Lanalytics
             with_attribute :resource_type_content, :string, type_content
             with_attribute :resource_type_medium, :string, type_medium
           end
-          
+
           resource_uri = "/courses/#{course[:course_code]}/item/#{UUID(processing_unit[:id]).to_short_string}"
 
           resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resources) do
@@ -181,7 +181,7 @@ module Lanalytics
           result = [url_type_entity, resource_url_entity, resource_entity, resource_type_entity]
 
           if processing_unit.data[:content_type] == 'quiz'
-            
+
             problem_type_id, problem_type_name = case processing_unit.data[:exercise_type]
               when 'selftest' then [1, 'Homework']
               when 'main'     then [2, 'Final exam']
@@ -232,7 +232,7 @@ module Lanalytics
           course_user_entity = Lanalytics::Processing::LoadORM::Entity.create(:course_user) do
             with_primary_attribute :course_user_id, :int, course_user_id
             with_attribute :course_id, :uuid, processing_unit.data[:course_id]
-            
+
             with_attribute :observing_user_id, :int, observing_user_id
             with_attribute :submitting_user_id, :int, submitting_user_id
             with_attribute :collaborating_user_id, :int, collaborating_user_id
@@ -253,7 +253,7 @@ module Lanalytics
             with_attribute :problem_id,                 :uuid,      processing_unit[:item_id]
             with_attribute :submission_timestamp,       :timestamp, (processing_unit[:quiz_submission_time] or processing_unit[:created_at])
             with_attribute :submission_attempt_number,  :int,       nil
-            with_attribute :submission_answer,          :string,    nil 
+            with_attribute :submission_answer,          :string,    nil
             with_attribute :submission_is_submitted,    :bool,      processing_unit[:submitted]
             with_attribute :submission_ip,              :string,    nil
             with_attribute :submission_os,              :int,       nil
@@ -285,9 +285,9 @@ Title: #{processing_unit[:title]}
 
           # # We cannot link the learning_room in this schema, which is why we are not inlcuding the learning_rooms in the resources table
           # return collaboration_entities if processing_unit[:learning_room_id]
-          
+
           # course = lookup_course(processing_unit.data[:course_id])
-          
+
           # type_content, type_medium = ['forum', 'text']
 
           # resource_type_entity = Lanalytics::Processing::LoadORM::Entity.create(:resource_types) do
@@ -295,7 +295,7 @@ Title: #{processing_unit[:title]}
           #   with_attribute :resource_type_content, :string, type_content
           #   with_attribute :resource_type_medium, :string, type_medium
           # end
-          
+
           # resource_uri = "/courses/#{course[:course_code]}/item/#{UUID(processing_unit[:id]).to_short_string}"
 
           # resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resources) do
@@ -334,6 +334,6 @@ Title: #{processing_unit[:title]}
         end
 
       end
-    end    
+    end
   end
 end

@@ -14,7 +14,7 @@ module Lanalytics
         end
 
         if processing_action.nil? || !Lanalytics::Processing::Action.valid(processing_action)
-          fail ArgumentError, "'#{processing_action}' is not accepted; only 'ProcessingAction::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
+          fail ArgumentError, "'#{processing_action}' is not accepted; only 'Action::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
         end
 
         extractors ||= []
