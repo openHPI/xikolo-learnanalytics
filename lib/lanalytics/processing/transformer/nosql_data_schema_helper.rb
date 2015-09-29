@@ -60,7 +60,7 @@ module Lanalytics
           if entity_key_match.nil? ||
              entity_key_match[:entity_key].nil? ||
              entity_key_match[:entity_key].empty?
-            fail ArgumentError, "Cannot find resource type in 'property_key' = #{property_key}"
+            raise ArgumentError.new "Cannot find resource type in 'property_key' = #{property_key}"
           end
 
           entity_key_match[:entity_key]

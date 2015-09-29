@@ -115,7 +115,7 @@ module Lanalytics
             end
 
             unless course_data
-              fail "No course data could be retrieved for uuid #{course_id}"
+              raise "No course data could be retrieved for uuid #{course_id}"
             end
 
             course_data

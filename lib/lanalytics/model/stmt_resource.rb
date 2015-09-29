@@ -8,8 +8,8 @@ module Lanalytics
       def initialize(type, uuid, properties = {})
         super(type)
 
-        fail ArgumentError, "'uuid' argument cannot be nil" unless uuid
-        fail ArgumentError, "'uuid' argument cannot be empty" if uuid.to_s.empty?
+        raise ArgumentError.new "'uuid' argument cannot be nil" unless uuid
+        raise ArgumentError.new "'uuid' argument cannot be empty" if uuid.to_s.empty?
         @uuid = uuid.to_s
 
         properties ||= {}
@@ -29,9 +29,9 @@ module Lanalytics
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
         elsif !json
-          fail ArgumentError, "'json' cannot be nil"
+          raise ArgumentError.new "'json' cannot be nil"
         else
-          fail ArgumentError, "'json' argument is not a JSON Hash or String"
+          raise ArgumentError.new "'json' argument is not a JSON Hash or String"
         end
 
         new(json[:type], json[:uuid])

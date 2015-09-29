@@ -7,11 +7,11 @@ module Lanalytics
 
       def initialize(type)
         unless type.is_a?(String) || type.is_a?(Symbol)
-          fail ArgumentError, "'type' argument cannot be nil"
+          raise ArgumentError.new "'type' argument cannot be nil"
         end
 
         if type.is_a?(String) && type.empty?
-          fail ArgumentError, "'type' argument cannot be empty"
+          raise ArgumentError.new "'type' argument cannot be empty"
         end
 
         @type = type.to_sym.upcase

@@ -1,5 +1,5 @@
 unless Lanalytics::Processing::DatasourceManager.datasource_exists?('moocdb_postgresql')
-  fail "Datasource 'moocdb_postgresql' is not available."
+  raise "Datasource 'moocdb_postgresql' is not available."
 end
 
 def create_moocdb_pipeline(processing_action, service, domain)

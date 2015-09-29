@@ -9,7 +9,7 @@ module Lanalytics
         end
 
         def initialize(loader_type, query)
-          fail ArgmuentError, 'Loader type cannot be nil.' unless loader_type
+          raise ArgumentError.new 'Loader type cannot be nil.' unless loader_type
 
           @loader_type = loader_type.to_sym.downcase
           @query       = query.to_s

@@ -6,35 +6,35 @@ module Lanalytics
       def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &block)
         # Check mandatory fields
         if name.nil? || name.empty?
-          fail ArgumentError, "'#{name}' cannot be nil or empty"
+          raise ArgumentError.new "'#{name}' cannot be nil or empty"
         end
 
         if schema.nil? || schema.empty?
-          fail ArgumentError, "'#{schema}' cannot be nil"
+          raise ArgumentError.new "'#{schema}' cannot be nil"
         end
 
         if processing_action.nil? || !Lanalytics::Processing::Action.valid(processing_action)
-          fail ArgumentError, "'#{processing_action}' is not accepted; only 'Action::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
+          raise ArgumentError.new "'#{processing_action}' is not accepted; only 'Action::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
         end
 
         extractors ||= []
         extractors.each_with_index do |extract_step, i|
           unless extract_step.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
-            fail ArgumentError, "Element #{i} in extractors is a '#{extract_step.class.name}', but needs to be a 'Lanalytics::Processing::Extractor::ExtractStep'"
+            raise ArgumentError.new "Element #{i} in extractors is a '#{extract_step.class.name}', but needs to be a 'Lanalytics::Processing::Extractor::ExtractStep'"
           end
         end
 
         transformers ||= []
         transformers.each_with_index do |transform_step, i|
           unless transform_step.is_a?(Lanalytics::Processing::Transformer::TransformStep)
-            fail ArgumentError, "Element #{i} in transformers is a '#{transform_step.class.name}', but needs to be a 'Lanalytics::Processing::Transformer::TransformStep'"
+            raise ArgumentError.new "Element #{i} in transformers is a '#{transform_step.class.name}', but needs to be a 'Lanalytics::Processing::Transformer::TransformStep'"
           end
         end
 
         loaders ||= []
         loaders.each_with_index do |load_step, i|
           unless load_step.is_a?(Lanalytics::Processing::Loader::LoadStep)
-            fail ArgumentError, "Element #{i} in loaders is a '#{load_step.class.name}', but needs to be a 'Lanalytics::Processing::Loader::LoadStep'"
+            raise ArgumentError.new "Element #{i} in loaders is a '#{load_step.class.name}', but needs to be a 'Lanalytics::Processing::Loader::LoadStep'"
           end
         end
 
@@ -53,7 +53,7 @@ module Lanalytics
       # These methods are used inside the block when block is initialized ...
       def extractor(extractor)
         unless extractor && extractor.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
-          fail ArgumentError, 'Needs to be of type \'ExtractStep\'.'
+          raise ArgumentError.new 'Needs to be of type \'ExtractStep\'.'
         end
 
         @extractors << extractor
@@ -61,7 +61,7 @@ module Lanalytics
 
       def transformer(transformer)
         unless transformer && transformer.is_a?(Lanalytics::Processing::Transformer::TransformStep)
-          fail ArgumentError, 'Needs to be of type \'TransformerStep\'.'
+          raise ArgumentError.new 'Needs to be of type \'TransformerStep\'.'
         end
 
         @transformers << transformer
@@ -69,7 +69,7 @@ module Lanalytics
 
       def loader(loader)
         unless loader && loader.is_a?(Lanalytics::Processing::Loader::LoadStep)
-          fail ArgumentError, 'Needs to be of type \'LoadStep\'.'
+          raise ArgumentError.new 'Needs to be of type \'LoadStep\'.'
         end
 
         @loaders << loader

@@ -7,7 +7,7 @@ module Lanalytics
 
       def initialize(type, data)
         unless data.is_a?(Hash)
-          fail ArgumentError, 'Wrong type of data; Needs to be Hash'
+          raise ArgumentError.new 'Wrong type of data; Needs to be Hash'
         end
 
         @type = type

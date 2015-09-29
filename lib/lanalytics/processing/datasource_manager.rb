@@ -31,11 +31,11 @@ module Lanalytics
         datasource = yield
 
         unless datasource.is_a?(Lanalytics::Processing::Datasources::Datasource)
-          fail ArgumentError, 'The block has to return a Datasource ...'
+          raise ArgumentError.new 'The block has to return a Datasource ...'
         end
 
         unless datasource.key
-          fail ArgumentError, 'The returned Datasource has to contain a key'
+          raise ArgumentError.new 'The returned Datasource has to contain a key'
         end
 
         instance.add_datasource(datasource)

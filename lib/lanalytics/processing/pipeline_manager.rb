@@ -5,21 +5,21 @@ module Lanalytics
 
       def self.setup_pipelines(pipelines_setup_file)
         unless pipelines_setup_file
-          fail ArgumentError, 'Given pipelines_setup_file cannot be nil!'
+          raise ArgumentError.new 'Given pipelines_setup_file cannot be nil!'
         end
 
         unless File.exist?(pipelines_setup_file)
-          fail ArgumentError, "File '#{pipelines_setup_file}' does not exist."
+          raise ArgumentError.new "File '#{pipelines_setup_file}' does not exist."
         end
 
         unless File.extname(pipelines_setup_file) == '.prb'
-          fail ArgumentError, "File '#{pipelines_setup_file}' has to end with 'prb'."
+          raise ArgumentError.new "File '#{pipelines_setup_file}' has to end with 'prb'."
         end
 
         begin
           instance.instance_eval(File.read(pipelines_setup_file))
         rescue SyntaxError => error
-          fail "The following error occurred when registering pipeline #{pipelines_setup_file}: #{error.message}"
+          raise "The following error occurred when registering pipeline #{pipelines_setup_file}: #{error.message}"
         end
 
         instance

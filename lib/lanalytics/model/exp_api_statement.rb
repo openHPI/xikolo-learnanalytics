@@ -7,23 +7,23 @@ module Lanalytics
 
       def initialize(user, verb, resource, timestamp = DateTime.now, with_result = {}, in_context = {})
         unless user.is_a? Lanalytics::Model::StmtUser
-          fail ArgumentError, "'user' argument cannot be nil and should be Lanalytics::Model::StmtUser"
+          raise ArgumentError.new "'user' argument cannot be nil and should be Lanalytics::Model::StmtUser"
         end
         @user = user
 
         unless verb.is_a? Lanalytics::Model::StmtVerb
-          fail ArgumentError, "'verb' argument cannot be nil and should be Lanalytics::Model::StmtVerb"
+          raise ArgumentError.new "'verb' argument cannot be nil and should be Lanalytics::Model::StmtVerb"
         end
         @verb = verb
 
         unless resource.is_a? Lanalytics::Model::StmtResource
-          fail ArgumentError, "'resource' argument cannot be nil and should be Lanalytics::Model::StmtResource"
+          raise ArgumentError.new "'resource' argument cannot be nil and should be Lanalytics::Model::StmtResource"
         end
         @resource = resource
 
         timestamp ||= DateTime.now
         unless timestamp.is_a?(DateTime) || timestamp.is_a?(String)
-          fail ArgumentError, "'timestamp' argument should be DateTime or String"
+          raise ArgumentError.new "'timestamp' argument should be DateTime or String"
         end
         timestamp = DateTime.parse(timestamp) if timestamp.is_a? String
         @timestamp = timestamp
@@ -60,9 +60,9 @@ module Lanalytics
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
         elsif json.nil?
-          fail ArgumentError, "'json' cannot be nil"
+          raise ArgumentError.new "'json' cannot be nil"
         else
-          fail ArgumentError, "'json' argument is not a JSON Hash or String"
+          raise ArgumentError.new "'json' argument is not a JSON Hash or String"
         end
 
         new(

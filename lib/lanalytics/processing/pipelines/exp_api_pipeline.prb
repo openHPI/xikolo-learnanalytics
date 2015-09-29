@@ -1,6 +1,6 @@
 
 unless Lanalytics::Processing::DatasourceManager.datasource_exists?('exp_api_elastic')
-  fail "Datasource 'exp_api_elastic' is not available."
+  raise "Datasource 'exp_api_elastic' is not available."
 end
 
 def create_exp_pipeline(route, extractor_type, processing_action)

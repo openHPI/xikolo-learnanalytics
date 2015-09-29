@@ -50,7 +50,7 @@ module Lanalytics
           end
 
           rest_response_data.each do |resource_hash|
-            @pipelines.each { |p| p.process(resource_hash, rest_url: @url) }
+            @pipelines.each {|p| p.process(resource_hash, rest_url: @url)}
             progress_bar.increment unless progress_bar.finished?
           end
 

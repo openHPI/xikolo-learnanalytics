@@ -9,7 +9,7 @@ module Lanalytics
           relationship.instance_eval(&block)
 
           unless relationship.from_entity && relationship.to_entity
-            fail 'Relationship needs a from_entity and a to_entity'
+            raise 'Relationship needs a from_entity and a to_entity'
           end
 
           relationship

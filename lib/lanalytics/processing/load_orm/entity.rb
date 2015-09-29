@@ -17,7 +17,7 @@ module Lanalytics
         def initialize(entity_key, attributes = [])
           # Ensure not nil
           unless entity_key && entity_key.is_a?(Symbol)
-            fail ArgumentError, 'Entity_key has to be a Symbol'
+            raise ArgumentError.new 'Entity_key has to be a Symbol'
           end
 
           @entity_key = entity_key
@@ -68,7 +68,7 @@ module Lanalytics
       class PrimaryAttribute < Attribute
         def initialize(name, data_type, value)
           if value.nil? || (value.is_a?(String) && value.empty?)
-            fail ArgumentError, 'value cannot be nil or blank'
+            raise ArgumentError.new 'value cannot be nil or blank'
           end
 
           super(name, data_type, value)

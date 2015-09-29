@@ -29,7 +29,7 @@ module Lanalytics
           end
 
           unless @session
-            fail 'No Neo4j::Session could be created. Plz have a look at the configuration ...'
+            raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...'
           end
         end
 

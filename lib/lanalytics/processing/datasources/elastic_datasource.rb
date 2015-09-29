@@ -17,7 +17,7 @@ module Lanalytics
           @client = Elasticsearch::Client.new config
 
           unless @client
-            fail 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...'
+            raise 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...'
           end
         end
 

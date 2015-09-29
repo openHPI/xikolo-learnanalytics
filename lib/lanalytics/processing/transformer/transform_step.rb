@@ -4,7 +4,7 @@ module Lanalytics
 
       class TransformStep
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
-          fail NotImplementedError, 'This method has to be implemented in the subclass!'
+          raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
       end
 

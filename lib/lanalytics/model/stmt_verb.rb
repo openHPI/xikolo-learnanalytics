@@ -20,9 +20,9 @@ module Lanalytics
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
         elsif json.nil?
-          fail ArgumentError, "'json' cannot be nil"
+          raise ArgumentError.new "'json' cannot be nil"
         else
-          fail ArgumentError, "'json' argument is not a JSON Hash or String"
+          raise ArgumentError.new "'json' argument is not a JSON Hash or String"
         end
 
         new(json[:type])
