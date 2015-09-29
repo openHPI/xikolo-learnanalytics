@@ -1,8 +1,6 @@
-# Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
   Max: 100
 
-# Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 30
 
