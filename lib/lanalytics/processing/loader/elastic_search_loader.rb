@@ -13,7 +13,7 @@ module Lanalytics
           load_commands.each do | load_command |
             begin
               self.method("do_#{load_command.class.name.demodulize.underscore}_for_#{load_command.entity.class.name.demodulize.underscore}").call(load_command)
-            rescue Exception => e
+            rescue StandardError => e
               Rails.logger.error(%Q{Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}
 #{original_event.inspect}
               })
@@ -23,7 +23,6 @@ module Lanalytics
         end
 
         def do_create_command_for_entity(create_command)
-
           entity = create_command.entity
 
           indexing_hash = {}.tap do | hash |

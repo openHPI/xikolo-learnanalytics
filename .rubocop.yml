@@ -1,0 +1,14 @@
+
+# Offense count: 1073
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 100
+
+# Offense count: 40
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 30
+
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false

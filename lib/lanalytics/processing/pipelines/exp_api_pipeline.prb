@@ -24,6 +24,9 @@ update_action = Lanalytics::Processing::ProcessingAction::UPDATE
 
 create_exp_pipeline('xikolo.web.exp_event.create', :exp_event, create_action)
 
+create_exp_pipeline('xikolo.account.user.confirmed', :user, create_action)
+create_exp_pipeline('xikolo.account.user.update', :user, update_action)
+
 create_exp_pipeline('xikolo.pinboard.question.create', :question, create_action)
 create_exp_pipeline('xikolo.pinboard.answer.create', :answer, create_action)
 create_exp_pipeline('xikolo.pinboard.comment.create', :comment, create_action)
