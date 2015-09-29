@@ -3,29 +3,19 @@ module Lanalytics
     module Transformer
       class AnonymousDataFilter < TransformStep
 
-        def transform(original_event, processing_units, load_commands, pipeline_ctx)
-
-          processing_units.each do | processing_unit |
-            processing_unit.data.delete_if do |key, value| symbol_anonymous?(key)
-            end
+        def transform(_original_event, processing_units, _load_commands, _pipeline_ctx)
+          processing_units.each do |processing_unit|
+            processing_unit.data.delete_if { |key, _value| symbol_anonymous?(key) }
           end
-
         end
 
         private
+
         def symbol_anonymous?(symbol)
-
-          return true if symbol[/(mail)|(email)|(name)|(password)/]
-
-          return false
-          # %w(mail email name password).each do | dangerous_keyword |
-          #   return true if symbol.to_s.include?(dangerous_keyword)
-          # end
-          # return false
+          symbol[/(mail)|(email)|(name)|(password)/].present?
         end
 
       end
-
     end
   end
 end
