@@ -94,16 +94,16 @@ module Lanalytics
 
         def sql_value_of(attribute)
           case attribute.data_type
-          when :string
-            "'#{PGconn.escape_string(attribute.value)}'"
-          when :bool
-            (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
-          when :date, :timestamp, :uuid
-            "'#{attribute.value}'"
-          when :int, :float
-            attribute.value.to_s
-          else
-            "'#{attribute.value}'"
+            when :string
+              "'#{PGconn.escape_string(attribute.value)}'"
+            when :bool
+              (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
+            when :date, :timestamp, :uuid
+              "'#{attribute.value}'"
+            when :int, :float
+              attribute.value.to_s
+            else
+              "'#{attribute.value}'"
           end
         end
 

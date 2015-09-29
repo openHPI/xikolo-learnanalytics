@@ -47,23 +47,23 @@ module Lanalytics
 
         def json_value_of(attribute)
           case attribute.data_type
-          when :bool
-            (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
-          when :string, :date, :timestamp, :uuid
-            attribute.value.to_s
-          when :int
-            attribute.value.to_i
-          when :float
-            attribute.value.to_f
-          when :entity
-            {}.tap do |hash|
-              attribute.value
-              attribute.value.all_non_nil_attributes.each do |attr|
-                hash[attr.name.to_sym] = json_value_of(attr)
+            when :bool
+              (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
+            when :string, :date, :timestamp, :uuid
+              attribute.value.to_s
+            when :int
+              attribute.value.to_i
+            when :float
+              attribute.value.to_f
+            when :entity
+              {}.tap do |hash|
+                attribute.value
+                attribute.value.all_non_nil_attributes.each do |attr|
+                  hash[attr.name.to_sym] = json_value_of(attr)
+                end
               end
-            end
-          else
-            "'#{attribute.value}'"
+            else
+              "'#{attribute.value}'"
           end
         end
       end
