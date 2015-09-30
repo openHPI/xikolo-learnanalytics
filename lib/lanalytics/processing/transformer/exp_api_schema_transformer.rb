@@ -55,7 +55,7 @@ module Lanalytics
 
         def transform_question_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: :ASKED_QUESTION,
                                     resource: {
                                       resource_uuid: processing_unit[:id],
@@ -76,7 +76,7 @@ module Lanalytics
 
         def transform_answer_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: :ANSWERED_QUESTION,
                                     resource: {
                                       resource_uuid: processing_unit[:id],
@@ -92,7 +92,7 @@ module Lanalytics
 
         def transform_comment_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: :COMMENTED,
                                     resource: {
                                       resource_uuid: processing_unit[:id],
@@ -109,7 +109,7 @@ module Lanalytics
 
         def transform_visit_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: :VISITED,
                                     resource: {
                                       resource_uuid: processing_unit[:item_id],
@@ -123,7 +123,7 @@ module Lanalytics
 
         def transform_watch_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: :WATCHED_QUESTION,
                                     resource: {
                                       resource_uuid: processing_unit[:question_id]
@@ -136,7 +136,7 @@ module Lanalytics
 
         def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: :COMPLETED_COURSE,
                                     resource: {
                                       resource_uuid: processing_unit[:course_id]
@@ -165,9 +165,9 @@ module Lanalytics
         def save_enrollment(processing_unit, load_commands)
           verb = if processing_unit[:deleted] then :UN_ENROLLED else :ENROLLED end
           transform_punit_to_create load_commands,
-                                    user: { resource_uuid: processing_unit[:user_id] },
+                                    user: {resource_uuid: processing_unit[:user_id]},
                                     verb: verb,
-                                    resource: { resource_uuid: processing_unit[:course_id] },
+                                    resource: {resource_uuid: processing_unit[:course_id]},
                                     timestamp: processing_unit[:updated_at],
                                     in_context: {
                                       course_id: processing_unit[:course_id]

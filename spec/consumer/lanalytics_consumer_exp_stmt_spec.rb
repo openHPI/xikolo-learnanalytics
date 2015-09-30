@@ -21,13 +21,13 @@ describe LanalyticsConsumer do
       it "should create a new enrollment relationship between newly created USER and COURSE nodes" do
         @consumer.handle_user_event
 
-        result = Neo4j::Session.query.match(i: {ITEM: {resource_uuid: @amqp_exp_stmt_data[:resource][:uuid] }}).pluck(:i)
+        result = Neo4j::Session.query.match(i: {ITEM: {resource_uuid: @amqp_exp_stmt_data[:resource][:uuid]}}).pluck(:i)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node[:resource_uuid]).to eq(@amqp_exp_stmt_data[:resource][:uuid])
         expect(expected_node.labels).to include(:ITEM)
 
-        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_exp_stmt_data[:user][:uuid] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_exp_stmt_data[:user][:uuid]}}).pluck(:u)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node[:resource_uuid]).to eq(@amqp_exp_stmt_data[:user][:uuid])

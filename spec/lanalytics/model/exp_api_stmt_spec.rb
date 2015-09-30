@@ -10,8 +10,8 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       @stmt_verb = FactoryGirl.build(:stmt_verb)
       @stmt_resource = FactoryGirl.build(:stmt_resource)
       @stmt_timestamp = DateTime.parse('8 May 1989 05:00:00')
-      @stmt_result = { result: 1000 }
-      @stmt_context = { location: 'Potsdam' }
+      @stmt_result = {result: 1000}
+      @stmt_context = {location: 'Potsdam'}
     end
 
     it "initializes correctly" do
@@ -29,8 +29,8 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       expect(stmt).to respond_to(:properties)
       expect(stmt.properties).to be_a(Hash)
       expect(stmt.properties).to include(timestamp: @stmt_timestamp.rfc3339)
-      expect(stmt.properties).to include(with_result: { result: 1000 })
-      expect(stmt.properties).to include(in_context: { location: 'Potsdam' })
+      expect(stmt.properties).to include(with_result: {result: 1000})
+      expect(stmt.properties).to include(in_context: {location: 'Potsdam'})
     end
 
     it "should initialize even when context and result missing" do

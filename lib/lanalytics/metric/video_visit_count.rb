@@ -6,7 +6,7 @@ module Lanalytics
       end
 
       def self.filters
-        [{ match_phrase: { 'resource.content_type' => 'video' } }]
+        [{match_phrase: {'resource.content_type' => 'video'}}]
       end
     end
   end

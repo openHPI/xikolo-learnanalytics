@@ -10,8 +10,8 @@ module Lanalytics
       end
 
       def self.all_filters(course_id = nil, user_id = nil)
-        filters_ = course_id.nil? ? [] : [{ match_phrase: { 'in_context.course_id' => course_id } }]
-        filters_ += user_id.nil? ? [] : [{ match_phrase: { 'user.resource_uuid' => user_id } }]
+        filters_ = course_id.nil? ? [] : [{match_phrase: {'in_context.course_id' => course_id}}]
+        filters_ += user_id.nil? ? [] : [{match_phrase: {'user.resource_uuid' => user_id}}]
         filters_ + filters
       end
 

@@ -4,7 +4,7 @@ module Lanalytics
       def self.query(user_id, course_id, start_time, end_date)
         results = query_dependent(user_id, course_id, start_time, end_date)
 
-        { count: results.values.sum }
+        {count: results.values.sum}
       end
 
       def self.query_dependent(user_id, course_id, start_time, end_date)

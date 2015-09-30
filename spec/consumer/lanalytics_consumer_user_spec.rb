@@ -21,7 +21,7 @@ describe LanalyticsConsumer do
       it "should create a new USER node" do
         @consumer.create
 
-        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_user_event_data[:id] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_user_event_data[:id]}}).pluck(:u)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:USER)
@@ -36,7 +36,7 @@ describe LanalyticsConsumer do
 
         @consumer.create
 
-        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_user_event_data[:id] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_user_event_data[:id]}}).pluck(:u)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:USER)
@@ -63,7 +63,7 @@ describe LanalyticsConsumer do
         prepare_rabbitmq_stubs(updated_amqp_user_event_data, 'xikolo.account.user.update')
         @consumer.update
 
-        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: updated_amqp_user_event_data[:id] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: updated_amqp_user_event_data[:id]}}).pluck(:u)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:USER)
@@ -87,7 +87,7 @@ describe LanalyticsConsumer do
         prepare_rabbitmq_stubs(@amqp_user_event_data,'xikolo.account.user.destroy')
         @consumer.destroy
 
-        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_user_event_data[:id] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_user_event_data[:id]}}).pluck(:u)
         expect(result).to be_empty
       end
     end

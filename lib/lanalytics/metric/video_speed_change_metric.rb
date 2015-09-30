@@ -8,7 +8,7 @@ module Lanalytics
               filtered: {
                 query: {
                   bool: {
-                    must: { match: { verb: 'VIDEO_CHANGE_SPEED' } }
+                    must: {match: {verb: 'VIDEO_CHANGE_SPEED'}}
                   }
                 }
               }
@@ -16,7 +16,7 @@ module Lanalytics
           }
         end
 
-        { count: result['count'] }
+        {count: result['count']}
       end
     end
   end

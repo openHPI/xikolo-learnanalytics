@@ -37,7 +37,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
         @neo4j_loader.load(punit, [merge_command], pipeline_ctx)
 
         result = @neo4j_datasource.exec do |session|
-          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890' }}).pluck(:r)
+          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890'}}).pluck(:r)
         end
 
         expect(result.length).to eq(1)
@@ -55,7 +55,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
       it 'should destroy a resource' do
         # Create the node that should be deleted in this test
         @neo4j_datasource.exec do |session|
-          session.query.create(r: {dummy_type: {dummy_uuid: '1234567890' }}).exec
+          session.query.create(r: {dummy_type: {dummy_uuid: '1234567890'}}).exec
         end
 
         punit = FactoryGirl.build(:dummy_punit)
@@ -69,7 +69,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
         @neo4j_loader.load(punit, [destroy_command], pipeline_ctx)
 
         result = @neo4j_datasource.exec do |session|
-          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890' }}).pluck(:r)
+          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890'}}).pluck(:r)
         end
         expect(result.length).to eq(0)
       end

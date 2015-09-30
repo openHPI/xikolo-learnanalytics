@@ -9,8 +9,8 @@ module Lanalytics
                 query: {
                   bool: {
                     must: [
-                      { match_phrase: { 'user.resource_uuid' => user_id } },
-                      { match: { verb: 'COMPLETED_COURSE' } }
+                      {match_phrase: {'user.resource_uuid' => user_id}},
+                      {match: {verb: 'COMPLETED_COURSE'}}
                     ] + (all_filters(course_id))
                   }
                 },
@@ -27,9 +27,9 @@ module Lanalytics
           }
         end['hits']['hits']
 
-        return { points: nil } if completed_statements.empty?
+        return {points: nil} if completed_statements.empty?
 
-        { points: completed_statements.first['_source']['in_context']['points_achieved'] }
+        {points: completed_statements.first['_source']['in_context']['points_achieved']}
       end
     end
   end

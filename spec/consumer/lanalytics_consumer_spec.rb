@@ -9,7 +9,7 @@ describe LanalyticsConsumer do
 
   describe "(:create)" do
     before(:each) do
-      @dummy_event_data = { dummy_property: 'dummy_value' }
+      @dummy_event_data = {dummy_property: 'dummy_value'}
       prepare_rabbitmq_stubs(@dummy_event_data, 'xikolo.lanalytics.test_event.create')
     end
 
@@ -60,7 +60,7 @@ describe LanalyticsConsumer do
 
   describe "(:update)" do
     before(:each) do
-      @dummy_event_data = { dummy_property: 'dummy_value' }
+      @dummy_event_data = {dummy_property: 'dummy_value'}
       prepare_rabbitmq_stubs(@dummy_event_data, 'xikolo.lanalytics.test_event.update')
     end
 
@@ -82,7 +82,7 @@ describe LanalyticsConsumer do
 
   describe "(:destroy)" do
     before(:each) do
-      @dummy_event_data = { dummy_property: 'dummy_value' }
+      @dummy_event_data = {dummy_property: 'dummy_value'}
       prepare_rabbitmq_stubs(@dummy_event_data, 'xikolo.lanalytics.test_event.destroy')
     end
 
@@ -104,7 +104,7 @@ describe LanalyticsConsumer do
 
   describe "(:handle_user_event)" do
     before(:each) do
-      @dummy_event_data = { dummy_property: 'dummy_value' }
+      @dummy_event_data = {dummy_property: 'dummy_value'}
       prepare_rabbitmq_stubs(@dummy_event_data, 'xikolo.lanalytics.test_event.handle_user_event')
     end
 
