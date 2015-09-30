@@ -2,15 +2,13 @@
 # See in http://stackoverflow.com/questions/7508170/rails-3-1-how-to-run-an-initializer-only-for-the-web-app-rails-server-unicorn
 # And see in http://stackoverflow.com/questions/13506690/how-to-determine-if-rails-is-running-from-cli-console-or-as-server
 
-if defined?(Rails::Server) and not Lanalytics.rake?
-
+if defined?(Rails::Server) && !Lanalytics.rake?
   Rails.application.config.after_initialize do
-
     # Delete all datasources
     Datasource.delete_all
 
     datasources = Lanalytics::Processing::DatasourceManager.instance.datasources
-    datasources.values.each do | datasource |
+    datasources.values.each do |datasource|
       datasource_settings = datasource.settings.except(:key, :name, :description)
 
       datasource_class_name = datasource.class.name.demodulize
