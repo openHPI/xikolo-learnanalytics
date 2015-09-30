@@ -6,31 +6,31 @@ if defined?(Rails::Server) and not Lanalytics.rake?
 
   Rails.application.config.after_initialize do
 
-    # Delete all datasources 
+    # Delete all datasources
     Datasource.delete_all
 
-    datasources = Lanalytics::Processing::DatasourceManager.instance.get_datasources
+    datasources = Lanalytics::Processing::DatasourceManager.instance.datasources
     datasources.values.each do | datasource |
       datasource_settings = datasource.settings.except(:key, :name, :description)
-      
+
       datasource_class_name = datasource.class.name.demodulize
-      
+
       # If it is defined as an Active-Record Class ...
       if Object.const_defined?(datasource_class_name)
         datasource_activerecord_class = Object.const_get(datasource_class_name)
         datasource_ar_entity = datasource_activerecord_class.create(
-          key: datasource.key, 
-          name: datasource.name, 
-          description: datasource.description, 
+          key: datasource.key,
+          name: datasource.name,
+          description: datasource.description,
           settings: datasource_settings
         )
         next
       end
 
       Datasource.create(
-        key: datasource.key, 
-        name: datasource.name, 
-        description: datasource.description, 
+        key: datasource.key,
+        name: datasource.name,
+        description: datasource.description,
         settings: datasource_settings,
         type: datasource_class_name
       )

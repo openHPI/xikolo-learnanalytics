@@ -6,18 +6,25 @@ module Lanalytics
       attr_reader :user, :verb, :resource, :timestamp, :with_result, :in_context
 
       def initialize(user, verb, resource, timestamp = DateTime.now, with_result = {}, in_context = {})
-
-        raise ArgumentError.new("'user' argument cannot be nil and should be Lanalytics::Model::StmtUser") unless user.is_a? Lanalytics::Model::StmtUser
+        unless user.is_a? Lanalytics::Model::StmtUser
+          raise ArgumentError.new "'user' argument cannot be nil and should be Lanalytics::Model::StmtUser"
+        end
         @user = user
 
-        raise ArgumentError.new("'verb' argument cannot be nil and should be Lanalytics::Model::StmtVerb") unless verb.is_a? Lanalytics::Model::StmtVerb
+        unless verb.is_a? Lanalytics::Model::StmtVerb
+          raise ArgumentError.new "'verb' argument cannot be nil and should be Lanalytics::Model::StmtVerb"
+        end
         @verb = verb
 
-        raise ArgumentError.new("'resource' argument cannot be nil and should be Lanalytics::Model::StmtResource") unless resource.is_a? Lanalytics::Model::StmtResource
+        unless resource.is_a? Lanalytics::Model::StmtResource
+          raise ArgumentError.new "'resource' argument cannot be nil and should be Lanalytics::Model::StmtResource"
+        end
         @resource = resource
 
         timestamp ||= DateTime.now
-        raise ArgumentError.new("'timestamp' argument should be DateTime or String") unless timestamp.is_a? DateTime or timestamp.is_a? String
+        unless timestamp.is_a?(DateTime) || timestamp.is_a?(String)
+          raise ArgumentError.new "'timestamp' argument should be DateTime or String"
+        end
         timestamp = DateTime.parse(timestamp) if timestamp.is_a? String
         @timestamp = timestamp
 
@@ -29,8 +36,8 @@ module Lanalytics
       end
 
       def properties
-        return {
-          timestamp: @timestamp.to_s, 
+        {
+          timestamp: @timestamp.to_s,
           with_result: @with_result.symbolize_keys,
           in_context: @in_context.symbolize_keys
         }
@@ -38,65 +45,70 @@ module Lanalytics
 
       def as_json
         {
-          :user => @user.as_json,
-          :verb => @verb.as_json,
-          :resource => @resource.as_json,
-          :timestamp => @timestamp,
-          :with_result => @with_result,
-          :in_context => @in_context
+          user:         @user.as_json,
+          verb:         @verb.as_json,
+          resource:     @resource.as_json,
+          timestamp:    @timestamp,
+          with_result:  @with_result,
+          in_context:   @in_context
         }
       end
 
       def self.new_from_json(json)
-
         if json.is_a? Hash
           json = json.with_indifferent_access
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
-        elsif not json.nil?
-          raise ArgumentError.new("'json' cannot be nil")
+        elsif json.nil?
+          raise ArgumentError.new "'json' cannot be nil"
         else
-          raise ArgumentError.new("'json' argument is not a JSON Hash or String")
+          raise ArgumentError.new "'json' argument is not a JSON Hash or String"
         end
 
-        return new(
-            Lanalytics::Model::StmtUser.new_from_json(json[:user]),
-            Lanalytics::Model::StmtVerb.new_from_json(json[:verb]),
-            Lanalytics::Model::StmtResource.new_from_json(json[:resource]),
-            json[:timestamp],
-            json[:with_result],
-            json[:in_context]
+        new(
+          Lanalytics::Model::StmtUser.new_from_json(json[:user]),
+          Lanalytics::Model::StmtVerb.new_from_json(json[:verb]),
+          Lanalytics::Model::StmtResource.new_from_json(json[:resource]),
+          json[:timestamp],
+          json[:with_result],
+          json[:in_context]
         )
       end
 
       def to_json(*a)
         {
-            :json_class => self.class.name,
-            :data => self.as_json
+          json_class: self.class.name,
+          data: as_json
         }.to_json(*a)
       end
 
       def self.json_create(json_hash)
-        self.new_from_json(json_hash['data'])
+        new_from_json(json_hash['data'])
       end
 
       # Implementing the required interface for marshalling objects, see http://ruby-doc.org/core-2.1.3/Marshal.html
-      def _dump level
-        [@user, @verb, @resource, @timestamp, @with_result, @in_context].map do | attribute |
+      def _dump(_level)
+        [@user, @verb, @resource, @timestamp, @with_result, @in_context].map do |attribute|
           Marshal.dump(attribute)
         end.join(':|exp_api_stmt|:')
       end
 
       def self._load(serialized_stmt_array)
-        new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! { | arg | Marshal.load(arg) })
+        new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! { |arg| Marshal.load(arg) })
       end
 
       # Implementing the equals method
       def ==(other)
-        unless other.class == self.class
-          return false
-        end
-        return (@user == other.user and @verb == other.verb and @resource == other.resource and @timestamp == other.timestamp and @with_result == other.with_result and @in_context == other.in_context)
+        return false unless other.class == self.class
+
+        (
+          @user == other.user &&
+          @verb == other.verb &&
+          @resource == other.resource &&
+          @timestamp == other.timestamp &&
+          @with_result == other.with_result &&
+          @in_context == other.in_context
+        )
       end
       alias_method :eql?, :==
     end

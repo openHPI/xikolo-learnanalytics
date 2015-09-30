@@ -3,7 +3,6 @@ module Lanalytics
     module Transformer
 
       class GeoinfoFinder < TransformStep
-
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
           processing_units.each do |processing_unit|
             next if processing_unit[:in_context].nil? || processing_unit[:in_context][:user_ip].nil?
@@ -39,7 +38,6 @@ module Lanalytics
             timezone: 'Europe/Berlin'
           }
         end
-
       end
 
     end

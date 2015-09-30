@@ -2,6 +2,7 @@ module Lanalytics
   module Processing
     module Transformer
       class ExpApiSchemaTransformer < TransformStep
+
         def transform(_original_event, processing_units, load_commands, pipeline_ctx)
           processing_action = pipeline_ctx.processing_action.to_s.downcase
 

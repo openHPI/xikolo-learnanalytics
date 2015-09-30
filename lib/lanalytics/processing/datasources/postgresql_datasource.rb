@@ -14,7 +14,6 @@ module Lanalytics
         end
 
         def init_with(postgres_config)
-
           # unless File.exists?(postgresdb_config_yml)
           #   raise ArgumentError.new("The settings file for this datasource not found under '#{postgresdb_config_yml}'")
           # end
@@ -32,7 +31,6 @@ module Lanalytics
             PG.connect(opts)
           end
 
-
           # This would be an alternative of initializing the connection
           # begin
           #   @conn = PG.connect(postgres_database_config)
@@ -40,20 +38,19 @@ module Lanalytics
           #   Rails.logger.error "No Postgres connection could be created for database #{postgres_database_config[:db_name]} with following error message #{any_error.message}."
           #   # raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...' unless session
           # end
-
         end
 
         def exec(&block)
           return unless block_given?
 
-          @connection_pool.with do | conn |
+          @connection_pool.with do |conn|
             yield conn
           end
         end
 
         def settings
-          # Return all instance variables expect the instance variable 'connection_pool'
-          return self.instance_values.symbolize_keys.except(:connection_pool)
+          # Return all instance variables except the instance variable 'connection_pool'
+          instance_values.symbolize_keys.except(:connection_pool)
         end
 
       end

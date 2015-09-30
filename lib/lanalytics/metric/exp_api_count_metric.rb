@@ -9,7 +9,7 @@ module Lanalytics
                 query: {
                   bool: {
                     must: [
-                      {match: {verb: verbs.join(' OR ')}}
+                      { match: { verb: verbs.join(' OR ') } }
                     ] + (all_filters(course_id, user_id))
                   }
                 },
@@ -21,9 +21,11 @@ module Lanalytics
                     }
                   }
                 }
-              }}}
+              }
+            }
+          }
         end
-        {count: result['count']}
+        { count: result['count'] }
       end
 
       def self.verbs

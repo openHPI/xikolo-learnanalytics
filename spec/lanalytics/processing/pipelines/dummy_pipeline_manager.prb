@@ -1,19 +1,16 @@
-
-
-pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline1', :pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE) do
+pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline1', :pipeline_manager_spec, Lanalytics::Processing::Action::CREATE) do
   extractor Lanalytics::Processing::Extractor::ExtractStep.new
   transformer Lanalytics::Processing::Transformer::TransformStep.new
   loader Lanalytics::Processing::Loader::DummyLoadStep.new
 end
 
-
-pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline2', :pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE) do
+pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline2', :pipeline_manager_spec, Lanalytics::Processing::Action::CREATE) do
   extractor Lanalytics::Processing::Extractor::ExtractStep.new
   transformer Lanalytics::Processing::Transformer::TransformStep.new
   loader Lanalytics::Processing::Loader::DummyLoadStep.new
 end
 
-pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline3', :pipeline_manager_spec, Lanalytics::Processing::ProcessingAction::CREATE) do
+pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline3', :pipeline_manager_spec, Lanalytics::Processing::Action::CREATE) do
   extractor Lanalytics::Processing::Extractor::ExtractStep.new
   transformer Lanalytics::Processing::Transformer::TransformStep.new
   loader Lanalytics::Processing::Loader::DummyLoadStep.new

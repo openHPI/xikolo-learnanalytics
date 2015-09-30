@@ -9,7 +9,7 @@ module Lanalytics
                 query: {
                   bool: {
                     must: [
-                      {match: {verb: 'ANSWERED_QUESTION'}}
+                      { match: { verb: 'ANSWERED_QUESTION' } }
                     ] + (all_filters(course_id, user_id))
                   }
                 },
@@ -25,7 +25,8 @@ module Lanalytics
             }
           }
         end['hits']['hits']
-        {average: calculate_average(answer_statements)}
+
+        { average: calculate_average(answer_statements) }
       end
 
       def self.calculate_average(answer_statements)
@@ -38,8 +39,8 @@ module Lanalytics
               query: {
                 bool: {
                   must: [
-                    {match_phrase: {'resource.resource_uuid' => question_id}},
-                    {match: {verb: 'ASKED_QUESTION'}}
+                    { match_phrase: { 'resource.resource_uuid' => question_id } },
+                    { match: { verb: 'ASKED_QUESTION' } }
                   ]
                 }
               }
@@ -51,11 +52,10 @@ module Lanalytics
           answer_time = Time.parse(answer['timestamp'])
           response_times << answer_time - question_time
         end
-        if response_times.empty?
-          nil
-        else
-          response_times.sum.to_f / response_times.size
-        end
+
+        return nil if response_times.empty?
+
+        response_times.sum.to_f / response_times.size
       end
     end
   end

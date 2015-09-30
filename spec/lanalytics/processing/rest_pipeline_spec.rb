@@ -8,11 +8,11 @@ describe Lanalytics::Processing::RestPipeline do
       expect { rest_pipeline = Lanalytics::Processing::RestPipeline.new('http://localhost:3000/data.json') }.not_to raise_error
 
 
-      pipeline1 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline1 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::Action::CREATE,
           [Lanalytics::Processing::Extractor::ExtractStep.new],
           [Lanalytics::Processing::Transformer::TransformStep.new],
           [Lanalytics::Processing::Loader::DummyLoadStep.new])
-      pipeline2 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+      pipeline2 = Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::Action::CREATE,
           [Lanalytics::Processing::Extractor::ExtractStep.new],
           [Lanalytics::Processing::Transformer::TransformStep.new],
           [Lanalytics::Processing::Loader::DummyLoadStep.new])
@@ -30,7 +30,7 @@ describe Lanalytics::Processing::RestPipeline do
       {id: '3', property: 'C'},
       {id: '4', property: 'D'},
       {id: '5', property: 'E'}]
-    
+
     stub_request(:get, 'http://localhost:3000/data.json').to_return(status: 200,
       headers: { 'link' => '<http://localhost:3000/data.json?page=1>; rel="first", <http://localhost:3000/data.json?page=1>; rel="last"' },
       body: [
@@ -92,7 +92,7 @@ describe Lanalytics::Processing::RestPipeline do
 
 
   def new_test_pipeline
-    return Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::ProcessingAction::CREATE,
+    return Lanalytics::Processing::Pipeline.new('xikolo.lanalytics.pipeline', :pipeline_spec, Lanalytics::Processing::Action::CREATE,
       [Lanalytics::Processing::Extractor::ExtractStep.new],
       [Lanalytics::Processing::Transformer::TransformStep.new],
       [Lanalytics::Processing::Loader::DummyLoadStep.new])
