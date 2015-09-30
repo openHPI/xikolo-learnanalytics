@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "ResearchCases", :type => :request, pending: true do
+RSpec.describe "ResearchCases", type: :request, pending: true do
   describe "GET /research_cases" do
     it "works! (now write some real specs)" do
       get research_cases_path

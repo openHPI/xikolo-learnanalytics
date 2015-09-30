@@ -89,8 +89,8 @@ require 'ruby-prof'
 
         query_execution_time = Time.now
         session.query
-          .merge(r1: {:USER => {resource_uuid: "00000001-3100-4444-9999-%012d" % i }}).break
-          .merge(r2: {:COURSE => {resource_uuid: "00000001-3300-4444-9999-%012d" % j }}).break
+          .merge(r1: {USER: {resource_uuid: "00000001-3100-4444-9999-%012d" % i }}).break
+          .merge(r2: {COURSE: {resource_uuid: "00000001-3300-4444-9999-%012d" % j }}).break
           .merge("(r1)-[:ENROLLED]->(r2)")
           .exec
         total_query_execution_time += (Time.now - query_execution_time)

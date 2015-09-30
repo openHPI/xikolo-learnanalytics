@@ -33,7 +33,7 @@ CONN = ActiveRecord::Base.connection
 TIMES = 10000
 
 def do_inserts
-    TIMES.times { User.create(:user_id => 'a593fdde-e172-4546-8e7a-123456789012', :node_id => 2, :score => 3) }
+    TIMES.times { User.create(user_id: 'a593fdde-e172-4546-8e7a-123456789012', node_id: 2, score: 3) }
 end
 
 def raw_sql
@@ -56,7 +56,7 @@ def activerecord_extensions_mass_insert(validate = true)
         values.push [3, 2, 'a593fdde-e172-4546-8e7a-123456789012']
     end
 
-    User.import columns, values, :validate => validate
+    User.import columns, values, validate: validate
 end
 
 puts "Testing various insert methods for #{TIMES} inserts\n"

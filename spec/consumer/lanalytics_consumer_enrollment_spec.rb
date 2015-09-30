@@ -20,13 +20,13 @@ describe LanalyticsConsumer do
       it "should create a new enrollment relationship between newly created USER and COURSE nodes" do
         @consumer.create
 
-        result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: @amqp_enrollment_event_data[:course_id] }}).pluck(:c)
+        result = Neo4j::Session.query.match(c: {COURSE: {resource_uuid: @amqp_enrollment_event_data[:course_id] }}).pluck(:c)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node[:resource_uuid]).to eq(@amqp_enrollment_event_data[:course_id])
         expect(expected_node.labels).to include(:COURSE)
 
-        result = Neo4j::Session.query.match(u: {:USER => {resource_uuid: @amqp_enrollment_event_data[:user_id] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_enrollment_event_data[:user_id] }}).pluck(:u)
 
         expect(result.length).to eq(1)
         expected_node = result.first
@@ -50,12 +50,12 @@ describe LanalyticsConsumer do
 
         @consumer.create
 
-        result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: @amqp_enrollment_event_data[:course_id] }}).pluck(:c)
+        result = Neo4j::Session.query.match(c: {COURSE: {resource_uuid: @amqp_enrollment_event_data[:course_id] }}).pluck(:c)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node[:other_prop]).to_not be_nil
 
-        result = Neo4j::Session.query.match(u: {:USER => {resource_uuid: @amqp_enrollment_event_data[:user_id] }}).pluck(:u)
+        result = Neo4j::Session.query.match(u: {USER: {resource_uuid: @amqp_enrollment_event_data[:user_id] }}).pluck(:u)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node[:other_prop]).to_not be_nil
