@@ -58,7 +58,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
         stmt_user = (i&1) > 0 ? @stmt_user : nil
         stmt_verb = (i&2) > 0 ? @stmt_verb : nil
         stmt_resource = (i&4) > 0 ? @stmt_resource : nil
-        failure_message =  "stmt_user:#{stmt_user ? 'not nil' : 'nil'}, stmt_verb: #{stmt_verb ? 'not nil' : 'nil'}, stmt_resource: #{stmt_resource ? 'not nil' : 'nil'}"
+        failure_message = "stmt_user:#{stmt_user ? 'not nil' : 'nil'}, stmt_verb: #{stmt_verb ? 'not nil' : 'nil'}, stmt_resource: #{stmt_resource ? 'not nil' : 'nil'}"
         expect do
           stmt = Lanalytics::Model::ExpApiStatement.new(stmt_user, stmt_verb, stmt_resource)
         end.to raise_error(ArgumentError), failure_message

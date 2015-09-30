@@ -166,7 +166,7 @@ module Lanalytics
             with_primary_attribute :resource_id, :uuid, processing_unit.data[:id]
             with_attribute :resource_name, :string, processing_unit.data[:title]
             with_attribute :resource_uri, :string, resource_uri
-            with_attribute :resource_type_id, :int,  resource_type_id
+            with_attribute :resource_type_id, :int, resource_type_id
             with_attribute :resource_parent_id, :string, processing_unit[:course_id]
             with_attribute :resource_child_number, :string, nil
             with_attribute :resource_relevant_start_date, :date, processing_unit[:start_date]

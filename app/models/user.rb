@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :research_cases
   has_many :datasource_accesses
-  has_many :accessed_datasources, through: :datasource_accesses,  source: :datasource
+  has_many :accessed_datasources, through: :datasource_accesses, source: :datasource
 
   validates :password, length: { minimum: 3 }
   validates :password, confirmation: true

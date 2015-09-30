@@ -8,11 +8,11 @@ RSpec.describe Lanalytics::Metric::CoursePoints do
   let(:question_id) { SecureRandom.uuid }
   let(:body) {
     {
-      'hits' =>                   {
-        'hits' =>                       [
+      'hits' => {
+        'hits' => [
           {
             '_index' => 'lanalytics', '_type' => 'EXP_STATEMENT', '_id' => 'AU1rhfRl36o_qzg4AgtU',
-            '_source' =>                             {
+            '_source' => {
               'user' => {'resource_uuid' => '00000001-3100-4444-9999-000000000002'},
               'verb' => 'COMPLETED_COURSE',
               'resource' => {

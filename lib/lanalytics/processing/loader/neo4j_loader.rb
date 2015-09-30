@@ -157,7 +157,7 @@ module Lanalytics
                     )
                     .break
 
-            if    type == :create
+            if type == :create
               query = query.create("(e1)-[:#{rel_key} #{props}]->(e2)")
             elsif type == :merge
               query = query.merge("(e1)-[:#{rel_key} #{props}]->(e2)")

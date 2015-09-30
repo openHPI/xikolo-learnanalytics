@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SystemInfoController, type: :controller do
-  subject    { JSON[response.body].with_indifferent_access }
+  subject { JSON[response.body].with_indifferent_access }
   let(:params)  { {} }
 
   describe 'GET show' do

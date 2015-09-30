@@ -3,7 +3,7 @@ class ResearchCase < ActiveRecord::Base
 
   has_and_belongs_to_many :users
   has_many :datasource_accesses
-  has_many :accessed_datasources, through: :datasource_accesses,  source: :datasource
+  has_many :accessed_datasources, through: :datasource_accesses, source: :datasource
 
   alias :contributers :users
   

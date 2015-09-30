@@ -85,7 +85,7 @@ puts bench = Benchmark.measure { activerecord_extensions_mass_insert }
 puts sprintf("  %2.2fx faster than base", base.real / bench.real)
 
 puts "ActiveRecord::Extensions mass insert without validations:"
-puts bench = Benchmark.measure { activerecord_extensions_mass_insert(true)  }
+puts bench = Benchmark.measure { activerecord_extensions_mass_insert(true) }
 puts sprintf("  %2.2fx faster than base", base.real / bench.real)
 
 # DataMapper.setup(:default, 'postgres://user:password@localhost/lanalytics-perf-test')
