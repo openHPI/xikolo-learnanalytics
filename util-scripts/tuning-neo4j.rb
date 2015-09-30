@@ -17,7 +17,7 @@ require 'ruby-prof'
 
     time = Time.now
     total_query_execution_time = 0
-    10000.times do | i |
+    10000.times do |i|
 
       resource =
         Lanalytics::Model::StmtResource.new(
@@ -53,7 +53,7 @@ require 'ruby-prof'
     time = Time.now
 
     total_query_execution_time = 0
-    10.times do | i |
+    10.times do |i|
 
       resource =
         Lanalytics::Model::StmtResource.new(
@@ -83,7 +83,7 @@ require 'ruby-prof'
     time = Time.now
 
     total_query_execution_time = 0
-    10000.times do | i |
+    10000.times do |i|
 
       5.times do |j|
 

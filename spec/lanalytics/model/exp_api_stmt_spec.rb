@@ -90,7 +90,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     before(:each) do
       @stmt = FactoryGirl.build(:stmt)
       # ::TODO This is ugly and needs to go to the factory
-      @stmt_hash = FactoryGirl.attributes_for(:stmt) do | stmt_hash |
+      @stmt_hash = FactoryGirl.attributes_for(:stmt) do |stmt_hash|
         stmt_hash[:user] = FactoryGirl.attributes_for(:stmt_user)
         stmt_hash[:verb] = FactoryGirl.attributes_for(:stmt_verb)
         stmt_hash[:resource] = FactoryGirl.attributes_for(:stmt_resource)
