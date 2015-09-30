@@ -117,7 +117,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       stmt_json_str = JSON.dump(stmt)
       expect(stmt_json_str).to be_a(String)
       stmt_json_hash = JSON.parse(stmt_json_str)
-      expect(stmt_json_hash).to include({ 'json_class' => stmt.class.name })
+      expect(stmt_json_hash).to include('json_class' => stmt.class.name)
       expect(stmt_json_hash['data'].keys).to include('user', 'verb', 'resource', 'timestamp', 'with_result', 'in_context')
       #expect(stmt_json_hash).to include({
       #  'data' => {

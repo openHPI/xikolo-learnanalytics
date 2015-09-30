@@ -56,7 +56,7 @@ def activerecord_extensions_mass_insert(validate = true)
         values.push [3, 2, 'a593fdde-e172-4546-8e7a-123456789012']
     end
 
-    User.import columns, values, {:validate => validate}
+    User.import columns, values, :validate => validate
 end
 
 puts "Testing various insert methods for #{TIMES} inserts\n"

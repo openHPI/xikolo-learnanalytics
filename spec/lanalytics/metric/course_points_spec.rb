@@ -32,11 +32,9 @@ RSpec.describe Lanalytics::Metric::CoursePoints do
   describe '#query' do
     before do
       stub_request(:get, 'http://localhost:9200/_search')
-        .to_return({
-              status: 200,
-              body: body.to_json,
-              headers: {'Content-Type' => 'application/json; charset=UTF-8'}
-            }
+        .to_return(status: 200,
+                   body: body.to_json,
+                   headers: {'Content-Type' => 'application/json; charset=UTF-8'}
         )
     end
 

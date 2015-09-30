@@ -2,11 +2,9 @@ FactoryGirl.define do
 
   factory :dummy_punit, class: Lanalytics::Processing::Unit do
     type(:dummy_type)
-    data({
-      dummy_prop1: 'dummy_value1',
-      dummy_prop2: 'dummy_value2',
-      dummy_prop3: 'dummy_value3'
-    })
+    data(dummy_prop1: 'dummy_value1',
+         dummy_prop2: 'dummy_value2',
+         dummy_prop3: 'dummy_value3')
 
     initialize_with { new(type, data) }
 

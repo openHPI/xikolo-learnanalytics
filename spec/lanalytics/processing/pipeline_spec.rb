@@ -148,7 +148,7 @@ describe Lanalytics::Processing::Pipeline do
 
     it 'should execute Pipeline without steps' do
       pipeline = Lanalytics::Processing::Pipeline.new(name, schema, processing_action)
-      pipeline.process({dummy_prop: 'dummy_value'})
+      pipeline.process(dummy_prop: 'dummy_value')
     end
 
     it 'should stop when data is nil' do
