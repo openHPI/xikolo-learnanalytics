@@ -108,7 +108,7 @@ module Lanalytics
           end
         end
 
-        alias_method :transform_user_unit :new_entity_template
+        alias_method :transform_user_unit, :new_entity_template
 
         def transform_course_unit(processing_unit)
           new_entity_template(processing_unit, [:title, :course_code, :start_date, :end_date])
