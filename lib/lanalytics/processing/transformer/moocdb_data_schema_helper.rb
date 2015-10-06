@@ -81,11 +81,12 @@ module Lanalytics
           end
         end
 
-        # Class variable
-        @course_cache = ActiveSupport::Cache::MemoryStore.new
 
         def lookup_course(course_id)
-
+          if @course_cache.nil?
+            # Class variable
+            @course_cache = ActiveSupport::Cache::MemoryStore.new
+          end
           return @course_cache.fetch(course_id) do
 
             service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
