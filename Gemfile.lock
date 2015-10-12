@@ -358,6 +358,3 @@ DEPENDENCIES
   validates_email_format_of
   webmock
   youyouaidi
-
-BUNDLED WITH
-   1.10.6
