@@ -11,6 +11,7 @@
 #
 # ------------------- User Domain Entities -------------------
 route 'xikolo.account.user.create', to: 'Lanalytics#create'
+route 'xikolo.account.user.confirmed', to: 'Lanalytics#create'
 route 'xikolo.account.user.update', to: 'Lanalytics#update'
 route 'xikolo.account.user.destroy', to: 'Lanalytics#destroy'
 
