@@ -1,3 +1,7 @@
+# Instead of constantly modifying this file and not checking it in,
+# let's have every branch commit its own development settings
+# and keep production seperate from that.
+
 common: &common
   datasources:
     - moocdb_postgresql.yml
