@@ -110,6 +110,9 @@ module Lanalytics
         def execute_sql(sql)
           return if sql.nil? || sql.empty?
 
+          # Log what will be written to postgres
+          Rails.logger.info { "[POSTGRES SQL EXEC] - #{sql}" }
+
           @postgres_datasource.exec do |conn|
             # $postgres_connection.with do |conn|
             begin
