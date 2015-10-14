@@ -25,6 +25,7 @@ module Lanalytics
             }
           }
         end['hits']['hits']
+
         {average: calculate_average(answer_statements)}
       end
 
@@ -51,11 +52,10 @@ module Lanalytics
           answer_time = Time.parse(answer['timestamp'])
           response_times << answer_time - question_time
         end
-        if response_times.empty?
-          nil
-        else
-          response_times.sum.to_f / response_times.size
-        end
+
+        return nil if response_times.empty?
+
+        response_times.sum.to_f / response_times.size
       end
     end
   end

@@ -14,7 +14,7 @@
 #     neo4j_index_processor = Lanalytics::Processing::Processor::Neo4jIndexProcessor.new
 #     @original_hash = double('original_hash')
 #     resource = FactoryGirl.build(:stmt_resource)
-#     neo4j_index_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
+#     neo4j_index_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::Action::CREATE })
 
 #     expect(neo4j_index_processor.available_indexed_node_types).to be_an(Array)
 #     expect(neo4j_index_processor.available_indexed_node_types.length).to eq(3)

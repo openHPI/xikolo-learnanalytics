@@ -4,7 +4,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
   if Lanalytics::Processing::DatasourceManager.datasource_exists?('exp_graph_schema_neo4j')
 
     before(:each) do
-      @neo4j_datasource = Lanalytics::Processing::DatasourceManager.get_datasource('exp_graph_schema_neo4j')
+      @neo4j_datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_graph_schema_neo4j')
       @neo4j_loader = Lanalytics::Processing::Loader::Neo4jLoader.new(@neo4j_datasource)
       @original_hash = double('original_hash')
       # expect(@original_hash).to_not receive()
@@ -17,9 +17,9 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
     def dummy_pipeline_ctx
       return Lanalytics::Processing::PipelineContext.new(
         Lanalytics::Processing::Pipeline.new(
-          'xikolo.lanalytics.pipeline', 
+          'xikolo.lanalytics.pipeline',
           :pipeline_spec,
-          Lanalytics::Processing::ProcessingAction::CREATE,
+          Lanalytics::Processing::Action::CREATE,
           [],
           [],
           [@neo4j_loader]
@@ -36,10 +36,10 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
 
         @neo4j_loader.load(punit, [merge_command], pipeline_ctx)
 
-        result = @neo4j_datasource.exec do | session |
-          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890' }}).pluck(:r)
+        result = @neo4j_datasource.exec do |session|
+          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890'}}).pluck(:r)
         end
-      
+
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:dummy_type)
@@ -54,8 +54,8 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
 
       it 'should destroy a resource' do
         # Create the node that should be deleted in this test
-        @neo4j_datasource.exec do | session |
-          session.query.create(r: {dummy_type: {dummy_uuid: '1234567890' }}).exec
+        @neo4j_datasource.exec do |session|
+          session.query.create(r: {dummy_type: {dummy_uuid: '1234567890'}}).exec
         end
 
         punit = FactoryGirl.build(:dummy_punit)
@@ -68,8 +68,8 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
 
         @neo4j_loader.load(punit, [destroy_command], pipeline_ctx)
 
-        result = @neo4j_datasource.exec do | session |
-          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890' }}).pluck(:r)
+        result = @neo4j_datasource.exec do |session|
+          session.query.match(r: {dummy_type: {dummy_uuid: '1234567890'}}).pluck(:r)
         end
         expect(result.length).to eq(0)
       end
@@ -79,7 +79,7 @@ describe Lanalytics::Processing::Loader::Neo4jLoader do
     # describe '(dealing with ContinuousRelationship)' do
     #   it 'should create a new relationship' do
     #     # resource = FactoryGirl.build(:stmt_resource)
-    #     # @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::ProcessingAction::CREATE })
+    #     # @neo4j_processor.process(@original_hash, [resource], { processing_action: Lanalytics::Processing::Action::CREATE })
 
     #     # result = Neo4j::Session.query.match(r: {resource.type.to_sym.upcase => {resource_uuid: resource.uuid }}).pluck(:r)
     #     # expect(result.length).to eq(1)

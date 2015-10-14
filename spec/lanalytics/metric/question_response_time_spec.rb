@@ -15,11 +15,11 @@ RSpec.describe Lanalytics::Metric::QuestionResponseTime do
             {
               status: 200,
               body: {
-                'hits' =>                   {
-                  'hits' =>                       [
+                'hits' => {
+                  'hits' => [
                     {
                       '_index' => 'lanalytics', '_type' => 'EXP_STATEMENT', '_id' => 'AU1rhfRl36o_qzg4AgtU',
-                      '_source' =>                             {
+                      '_source' => {
                         'user' => {'resource_uuid' => '00000001-3100-4444-9999-000000000002'},
                         'verb' => 'ANSWERED_QUESTION',
                         'resource' => {
@@ -45,8 +45,7 @@ RSpec.describe Lanalytics::Metric::QuestionResponseTime do
     end
 
     let(:client) do
-      Lanalytics::Processing::DatasourceManager
-        .get_datasource('exp_api_elastic').client
+      Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
     subject { described_class.query user_id, course_id, start_time, end_time }

@@ -1,3 +1,4 @@
+# What is this used for? -Kai
 
 forum_elastic_datasource = Lanalytics::Processing::DatasourceManager.new_datasource do
   Lanalytics::Processing::Datasources::ElasticDatasource.new(

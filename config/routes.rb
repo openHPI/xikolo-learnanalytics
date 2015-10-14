@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'login' => 'user_sessions#new', :as => :login
   post 'logout' => 'user_sessions#destroy', :as => :logout
 
-  resources :research_cases, :defaults => { :format => 'html' } do
+  resources :research_cases, defaults: {format: 'html'} do
     member do
 
       post '/add_contributer', to: 'research_cases#add_contributer'

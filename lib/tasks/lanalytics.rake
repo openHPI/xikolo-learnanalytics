@@ -1,19 +1,19 @@
 require 'link_header'
 
 namespace :lanalytics do
-  
+
   desc "Loads all lanalytics data initially"
   task :sync, [:schema, :allowed_pipeline_names] => [:environment] do | task, args |
-    
+
     # Making sure that the Msgr.Client is shutdown
     Msgr.client.stop if Msgr.client.running?
 
 
     Rails.logger.info "Performing lanalytics:sync"
-    
+
     # Process inputs params
     args.with_defaults(:schema => nil, :allowed_pipeline_names => nil)
-    
+
     schema = args.schema
     if schema
       schema = schema.strip
@@ -32,9 +32,9 @@ namespace :lanalytics do
 
     processings = YAML.load_file("#{Rails.root}/config/lanalytics_sync.yml")
 
-    
+
     processings.each do | pipeline_name, entity_json_route |
-      
+
       # If processing keys are given, then we look if the current processing should be handled
       next if allowed_pipeline_names and not allowed_pipeline_names.include?(pipeline_name)
       # Find out the base url for the service
@@ -47,7 +47,7 @@ namespace :lanalytics do
       service_base_url = service_urls[service_name]
       json_url = "#{service_base_url}#{entity_json_route}"
 
-      create_action = Lanalytics::Processing::ProcessingAction::CREATE
+      create_action = Lanalytics::Processing::Action::CREATE
       schema_pipelines = Lanalytics::Processing::PipelineManager.instance
         .find_piplines(schema, create_action, pipeline_name)
       if schema_pipelines.empty?

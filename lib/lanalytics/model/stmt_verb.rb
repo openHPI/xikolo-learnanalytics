@@ -10,7 +10,7 @@ module Lanalytics
 
       def as_json
         {
-          :type => @type,
+          type: @type
         }
       end
 
@@ -19,13 +19,13 @@ module Lanalytics
           json = json.with_indifferent_access
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
-        elsif not json
-          raise ArgumentError.new("'json' cannot be nil")
+        elsif json.nil?
+          raise ArgumentError.new "'json' cannot be nil"
         else
-          raise ArgumentError.new("'json' argument is not a JSON Hash or String")
+          raise ArgumentError.new "'json' argument is not a JSON Hash or String"
         end
 
-        return new(json[:type])
+        new(json[:type])
       end
 
     end

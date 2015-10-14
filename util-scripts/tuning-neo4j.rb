@@ -17,29 +17,29 @@ require 'ruby-prof'
 
     time = Time.now
     total_query_execution_time = 0
-    10000.times do | i |
+    10000.times do |i|
 
       resource =
         Lanalytics::Model::StmtResource.new(
           :USER,
-          "00000001-3100-4444-9999-%012d" % i, {
-            admin: false,
-            language: 'en',
-            archived: false,
-            created_at: '2014-10-20T19:56:34Z',
-            confirmed: true,
-            affiliated: false,
-            updated_at: '2014-10-20T19:56:34Z'
-          })
+          "00000001-3100-4444-9999-%012d" % i,
+          admin: false,
+          language: 'en',
+          archived: false,
+          created_at: '2014-10-20T19:56:34Z',
+          confirmed: true,
+          affiliated: false,
+          updated_at: '2014-10-20T19:56:34Z'
+        )
 
       resource_type = resource.type
       resource_uuid = resource.uuid
-      resource_properties = resource.properties.merge({ resource_uuid: resource_uuid })
+      resource_properties = resource.properties.merge(resource_uuid: resource_uuid)
 
-      
+
       query_execution_time = Time.now
       session.query
-                  .merge(r: {resource_type => {resource_uuid: resource_uuid }})
+                  .merge(r: {resource_type => {resource_uuid: resource_uuid}})
                   .on_create_set(r: resource_properties)
                   .on_match_set(r: resource_properties)
                   .exec
@@ -53,27 +53,25 @@ require 'ruby-prof'
     time = Time.now
 
     total_query_execution_time = 0
-    10.times do | i |
+    10.times do |i|
 
       resource =
         Lanalytics::Model::StmtResource.new(
           :COURSE,
           "00000001-3300-4444-9999-%012d" % i,
-          { 
-            title: "Hidden Course #{i}",
-            start_date: "2016-06-23T00:00:00Z",
-            display_start_date: "2016-06-23T00:00:00Z",
-            end_date: "2016-08-24T00:00:00Z",
-            abstract: "This course is hidden."
-          })
+          title: "Hidden Course #{i}",
+          start_date: "2016-06-23T00:00:00Z",
+          display_start_date: "2016-06-23T00:00:00Z",
+          end_date: "2016-08-24T00:00:00Z",
+          abstract: "This course is hidden.")
 
       resource_type = resource.type
       resource_uuid = resource.uuid
-      resource_properties = resource.properties.merge({ resource_uuid: resource_uuid })
+      resource_properties = resource.properties.merge(resource_uuid: resource_uuid)
 
       query_execution_time = Time.now
       session.query
-                  .merge(r: {resource_type => {resource_uuid: resource_uuid }})
+                  .merge(r: {resource_type => {resource_uuid: resource_uuid}})
                   .on_create_set(r: resource_properties)
                   .on_match_set(r: resource_properties)
                   .exec
@@ -85,14 +83,14 @@ require 'ruby-prof'
     time = Time.now
 
     total_query_execution_time = 0
-    10000.times do | i |
+    10000.times do |i|
 
       5.times do |j|
 
         query_execution_time = Time.now
         session.query
-          .merge(r1: {:USER => {resource_uuid: "00000001-3100-4444-9999-%012d" % i }}).break
-          .merge(r2: {:COURSE => {resource_uuid: "00000001-3300-4444-9999-%012d" % j }}).break
+          .merge(r1: {USER: {resource_uuid: "00000001-3100-4444-9999-%012d" % i}}).break
+          .merge(r2: {COURSE: {resource_uuid: "00000001-3300-4444-9999-%012d" % j}}).break
           .merge("(r1)-[:ENROLLED]->(r2)")
           .exec
         total_query_execution_time += (Time.now - query_execution_time)

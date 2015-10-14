@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class  PinboardWatchCount < ExpApiCountMetric
+    class PinboardWatchCount < ExpApiCountMetric
       def self.verbs
         @verbs ||= %w(WATCHED_QUESTION)
       end

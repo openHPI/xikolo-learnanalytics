@@ -21,7 +21,9 @@ module Lanalytics
                     }
                   }
                 }
-              }}}
+              }
+            }
+          }
         end
         {count: result['count']}
       end

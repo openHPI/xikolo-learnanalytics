@@ -13,21 +13,21 @@ module Lanalytics
           json = json.with_indifferent_access
         elsif json.is_a? String
           json = JSON.parse(json, symbolize_names: true) if json.is_a? String
-        elsif not json
-          raise ArgumentError.new("'json' cannot be nil")
+        elsif json.nil?
+          raise ArgumentError.new "'json' cannot be nil"
         else
-          raise ArgumentError.new("'json' argument is not a JSON Hash or String")
+          raise ArgumentError.new "'json' argument is not a JSON Hash or String"
         end
 
-        return new(json[:uuid])
+        new(json[:uuid])
       end
 
-      def _dump(level)
-        return @uuid.to_s
+      def _dump(_level)
+        @uuid.to_s
       end
 
       def self._load(marshalled_stmt_user)
-        return new(marshalled_stmt_user)
+        new(marshalled_stmt_user)
       end
 
     end

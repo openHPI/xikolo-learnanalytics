@@ -1,35 +1,38 @@
 class LanalyticsConsumer < Msgr::Consumer
 
   def create
-    process_message_with(Lanalytics::Processing::ProcessingAction::CREATE)
+    process_message_with(Lanalytics::Processing::Action::CREATE)
   end
 
   def update
-    process_message_with(Lanalytics::Processing::ProcessingAction::UPDATE)
+    process_message_with(Lanalytics::Processing::Action::UPDATE)
   end
 
   def destroy
-    process_message_with(Lanalytics::Processing::ProcessingAction::DESTROY)
+    process_message_with(Lanalytics::Processing::Action::DESTROY)
   end
 
   def handle_user_event
-    process_message_with(Lanalytics::Processing::ProcessingAction::CREATE)
+    process_message_with(Lanalytics::Processing::Action::CREATE)
   end
 
   def process_message_with(processing_action)
     pipeline_name = message.delivery_info[:routing_key] # e.g. "xikolo.course.enrollment.update"
 
-    pipeline_manager.schema_pipelines_with(processing_action, pipeline_name).each do | schema, schema_pipeline |
+    pipeline_manager.schema_pipelines_with(
+      processing_action,
+      pipeline_name
+    ).each do |_schema, schema_pipeline|
       schema_pipeline.process(payload, processing_opts(message))
     end
   end
 
   def pipeline_manager
-    return Lanalytics::Processing::PipelineManager.instance
+    Lanalytics::Processing::PipelineManager.instance
   end
 
   def processing_opts(message)
-    return {
+    {
       amqp_message: message
     }
   end

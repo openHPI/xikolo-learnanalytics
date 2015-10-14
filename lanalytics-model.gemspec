@@ -6,7 +6,7 @@ require "lanalytics/model/version"
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "lanalytics-model"
-  s.version     =  Lanalytics::Model::VERSION
+  s.version     = Lanalytics::Model::VERSION
   s.authors     = ['Open HPI Dev Team']
   s.email       = ['xikolo-dev@hpi.uni-potsdam.de']
   s.homepage    = "http://lanalytics.openhpi.de"

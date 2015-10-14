@@ -15,8 +15,7 @@ RSpec.describe Lanalytics::Metric::VideoVisitCount do
     end
 
     let(:client) do
-      Lanalytics::Processing::DatasourceManager
-        .get_datasource('exp_api_elastic').client
+      Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
     subject { described_class.query user_id, course_id, start_time, end_time }

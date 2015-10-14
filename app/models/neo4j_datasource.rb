@@ -17,7 +17,7 @@ class Neo4jDatasource < Datasource
     new_user_post_url = URI.join(self.neo4j_server_url, '/auth/add-user-ro')
     new_user_post_url.user= self.username if self.username
     new_user_post_url.password= self.password if self.password
-    RestClient.post(new_user_post_url.to_s, { :user => "#{user.username}:{user.crypted_password}" })
+    RestClient.post(new_user_post_url.to_s, user: "#{user.username}:{user.crypted_password}")
   end
 
   def setup_channels(current_user)

@@ -20,6 +20,7 @@ class Api::QueryController < ApplicationController
 
   def metric
     return unless metric_names.include? params[:metric]
+
     "Lanalytics::Metric::#{params[:metric]}".constantize
   end
 
