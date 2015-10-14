@@ -10,7 +10,7 @@ module Lanalytics
         end
 
         def pool_size
-          @connection_pool.size || 1
+          @pool.to_i  # comes from postgres_config file
         end
 
         def init_with(postgres_config)
