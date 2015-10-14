@@ -21,7 +21,7 @@ module Lanalytics
             dbname: database,
             user: user, password: password,
             connect_timeout: timeout
-          }.reject { |k, v| v.nil? }
+          }.reject{ |k, v| v.nil? }
 
           @connection_pool = ConnectionPool.new(size: pool_size) do
             PG.connect(opts)

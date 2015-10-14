@@ -7,6 +7,14 @@ module Lanalytics
           @postgres_datasource = datasource
         end
 
+        def tableColumnValueFromEntity(entity)
+          table  = entity.entity_key
+          column = entity.primary_attribute.name
+          value  = sql_value_of(entity.primary_attribute)
+
+          [table, column, value]
+        end
+
         def load(_original_event, load_commands, _pipeline_ctx)
           load_commands.each do |load_command|
             command = load_command.class.name.demodulize.underscore
@@ -29,11 +37,8 @@ module Lanalytics
         end
 
         def do_merge_entity_command(merge_entity_command)
-          entity  = merge_entity_command.entity
-
-          table   = entity.entity_key
-          column  = entity.primary_attribute.name
-          value   = sql_value_of(entity.primary_attribute)
+          entity = merge_entity_command.entity
+          table, column, value = tableColumnValueFromEntity(entity)
 
           columns = entity.all_attribute_names.join(', ')
           values  = entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')
@@ -57,10 +62,7 @@ module Lanalytics
 
         def do_update_command(update_command)
           entity = update_command.entity
-
-          table  = entity.entity_key
-          column = entity.primary_attribute.name
-          value  = sql_value_of(entity.primary_attribute)
+          table, column, value = tableColumnValueFromEntity(entity)
 
           set_statements = entity.all_non_nil_attributes.collect{ |attr|
             attr.name.to_s + ' = ' + sql_value_of(attr)
@@ -75,10 +77,7 @@ module Lanalytics
 
         def do_destroy_command(destroy_command)
           entity = destroy_command.entity
-
-          table  = entity.entity_key
-          column = entity.primary_attribute.name
-          value  = sql_value_of(entity.primary_attribute)
+          table, column, value = tableColumnValueFromEntity(entity)
 
           execute_sql(%Q{
             DELETE FROM #{table}
