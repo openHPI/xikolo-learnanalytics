@@ -28,7 +28,7 @@ class Api::QueryController < ApplicationController
     %w(PinboardActivity PinboardPostingActivity PinboardWatchCount
        UnenrollmentCount VideoVisitCount VisitCount QuestionResponseTime
        VideoSpeedChangeMetric CourseActivity CourseActivityTimebased
-       CoursePoints VideoPlayerAdvancedCount)
+       CoursePoints VideoPlayerAdvancedCount GeoActivity)
   end
 
   def query_params
