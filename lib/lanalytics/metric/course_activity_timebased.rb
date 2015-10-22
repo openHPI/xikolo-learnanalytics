@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class CourseActivityTimebased < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time)
+      def self.query(user_id, course_id, start_time, end_time, ressource_id)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
