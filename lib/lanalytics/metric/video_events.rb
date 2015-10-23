@@ -9,29 +9,32 @@ module Lanalytics
         seek = get_data('VIDEO_SEEK', ressource_id)
         fullscreen = get_data('VIDEO_FULLSCREEN', ressource_id)
         result = {}
+
         pause.each do |item|
           result[item['key']] = {} unless result[item['key']].present?
+          result[item['key']]['time'] = item['key']  unless result[item['key']].present?
+          result[item['key']]['total'] = item['doc_count']
           result[item['key']]['pause'] = item['doc_count']
         end
         play.each do |item|
-          result[item['key']] = {} unless result[item['key']].present?
           result[item['key']]['play'] = item['doc_count']
+          result[item['key']]['total'] = item['doc_count']
         end
         change_speed.each do |item|
-          result[item['key']] = {} unless result[item['key']].present?
           result[item['key']]['change_speed'] = item['doc_count']
+          result[item['key']]['total'] += item['doc_count']
         end
         stop.each do |item|
-          result[item['key']] = {} unless result[item['key']].present?
           result[item['key']]['stop'] = item['doc_count']
+          result[item['key']]['total'] += item['doc_count']
         end
         seek.each do |item|
-          result[item['key']] = {} unless result[item['key']].present?
           result[item['key']]['seek'] = item['doc_count']
+          result[item['key']]['total'] += item['doc_count']
         end
         fullscreen.each do |item|
-          result[item['key']] = {} unless result[item['key']].present?
           result[item['key']]['fullscreen'] = item['doc_count']
+          result[item['key']]['total'] += item['doc_count']
         end
         result
       end
@@ -53,7 +56,8 @@ module Lanalytics
                                                        timestamps: {
                                                            histogram: {
                                                                field: 'in_context.current_time',
-                                                               interval: '5'
+                                                               interval: '15',
+                                                               min_doc_count: '0'
                                                            }
                                                        }
                                                    }
