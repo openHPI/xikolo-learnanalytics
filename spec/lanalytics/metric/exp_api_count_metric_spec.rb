@@ -13,7 +13,7 @@ RSpec.describe Lanalytics::Metric::ExpApiCountMetric do
                    body: '{"count":0,"_shards":{"total":5,"successful":5,"failed":0}}',
                    headers: {'Content-Type' => 'application/json; charset=UTF-8'})
     end
-    subject { described_class.query user_id, course_id, start_time, end_time }
+    subject { described_class.query user_id, course_id, start_time, end_time, nil }
 
     it { is_expected.to eq(count: 0) }
   end

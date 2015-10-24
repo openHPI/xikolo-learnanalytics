@@ -48,7 +48,7 @@ RSpec.describe Lanalytics::Metric::QuestionResponseTime do
       Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
-    subject { described_class.query user_id, course_id, start_time, end_time }
+    subject { described_class.query user_id, course_id, start_time, end_time, nil }
 
     it { is_expected.to eq(average: 600) }
 
