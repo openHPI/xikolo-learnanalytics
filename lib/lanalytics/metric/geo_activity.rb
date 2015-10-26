@@ -4,7 +4,7 @@ module Lanalytics
       def self.query(user_id, course_id, start_time, end_time, ressource_id)
         #defaults
         course_id =nil unless course_id.present? #handle empty state
-        start_time =  start_time.present? ?  DateTime.parse(start_time) : (DateTime.now - 1.hour)
+        start_time =  start_time.present? ?  DateTime.parse(start_time) : (DateTime.now - 1.minute)
         end_time =  end_time.present? ?  DateTime.parse(end_time) : (DateTime.now)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
