@@ -3,7 +3,7 @@ module Lanalytics
     class GeoActivity < ExpApiMetric
       def self.query(user_id, course_id, start_time, end_time, ressource_id)
         #defaults
-        start_time =  start_time.present? ?  DateTime.parse(start_time) : (DateTime.now - 1.houreidel)
+        start_time =  start_time.present? ?  DateTime.parse(start_time) : (DateTime.now - 1.hour)
         end_time =  end_time.present? ?  DateTime.parse(end_time) : (DateTime.now)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
