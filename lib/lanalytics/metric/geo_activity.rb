@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class GeoActivity < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time)
+      def self.query(user_id, course_id, start_time, end_time, ressource_id)
         #defaults
         start_time =  start_time.present? ?  DateTime.parse(start_time) : (DateTime.now - 1.houreidel)
         end_time =  end_time.present? ?  DateTime.parse(end_time) : (DateTime.now)
