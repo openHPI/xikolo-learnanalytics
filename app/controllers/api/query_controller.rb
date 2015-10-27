@@ -4,8 +4,8 @@ class Api::QueryController < ApplicationController
   # TODO: secure controller when researcher interface is published
   skip_before_action :require_login, only: [:show]
 
-  rfc6570_params show: [:metric, :user_id, :course_id, :start_time, :end_time, :ressource_id]
-  #course_id may be used as ressource id as well depending on the query
+  rfc6570_params show: [:metric, :user_id, :course_id, :start_time, :end_time, :resource_id]
+  #course_id may be used as resource id as well depending on the query
   def show
     if metric.nil?
       metric_error
@@ -15,7 +15,7 @@ class Api::QueryController < ApplicationController
                               query_params[:course_id],
                               query_params[:start_time],
                               query_params[:end_time],
-                              query_params[:ressource_id]
+                              query_params[:resource_id]
            )
   end
 
@@ -35,7 +35,7 @@ class Api::QueryController < ApplicationController
   end
 
   def query_params
-    params.permit :user_id, :course_id, :start_time, :end_time, :ressource_id
+    params.permit :user_id, :course_id, :start_time, :end_time, :resource_id
   end
 
   def metric_error

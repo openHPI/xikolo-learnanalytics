@@ -1,43 +1,52 @@
 module Lanalytics
   module Metric
     class GeoActivity < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time, ressource_id)
-        #defaults
-        course_id =nil unless course_id.present? #handle empty state
-        start_time =  start_time.present? ?  DateTime.parse(start_time) : (DateTime.now - 1.minute)
-        end_time =  end_time.present? ?  DateTime.parse(end_time) : (DateTime.now)
+      def self.query(user_id, course_id, start_time, end_time, resource_id)
+        course_id = nil unless course_id.present? # handle empty state
+        start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.minute)
+        end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
+
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 10000,
             query: {
               filtered: {
                 query: {
-                    bool: {
-                        must: [
-                            {match: {verb: verbs.join(' OR ')}}
-                        ]+ (all_filters(course_id))
-                    }
+                  bool: {
+                    must: [
+                      {
+                        match: {
+                          verb: verbs.join(' OR ')
+                        }
+                      }
+                    ] + (all_filters(course_id))
+                  }
                 },
                 filter: {
-                  and: [{
-                    range: {
-                      timestamp: {
-                        gte: start_time.iso8601,
-                        lte: end_time.iso8601
+                  and: [
+                    {
+                      range: {
+                        timestamp: {
+                          gte: start_time.iso8601,
+                          lte: end_time.iso8601
+                        }
+                      }
+                    },
+                    {
+                      exists: {
+                        field: 'in_context.user_location_longitude'
                       }
                     }
-                  },
-                  {exists:{ field: 'in_context.user_location_longitude' }}]
-
+                  ]
                 }
               }
             }
           }
         end
+
         processed_result = {}
         #process result
         result['hits']['hits'].each do |item|
-
           item = item['_source']['in_context']
           key = item['user_location_longitude'] + item['user_location_latitude']
           if processed_result[key]
@@ -49,7 +58,6 @@ module Lanalytics
         #we dont need the keys in our return value
         processed_result.values
       end
-
 
       def self.verbs
        %w(VIEWED_PAGE)
