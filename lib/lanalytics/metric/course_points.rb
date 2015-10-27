@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class CoursePoints < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_date, ressource_id)
+      def self.query(user_id, course_id, start_time, end_date, resource_id)
         completed_statements = datasource.exec do |client|
           client.search index: datasource.index, body: {
             query: {
