@@ -52,6 +52,7 @@ module Lanalytics
         alias_method :transform_user_punit_to_update_load_commands,       :transform_to_update_load_commands
         alias_method :transform_course_punit_to_update_load_commands,     :transform_to_update_load_commands
         alias_method :transform_item_punit_to_update_load_commands,       :transform_to_update_load_commands
+        alias_method :transform_enrollment_punit_to_update_load_commands, :transform_to_update_load_commands
         alias_method :transform_question_punit_to_update_load_commands,   :transform_to_update_load_commands
         alias_method :transform_answer_punit_to_update_load_commands,     :transform_to_update_load_commands
         alias_method :transform_comment_punit_to_update_load_commands,    :transform_to_update_load_commands
