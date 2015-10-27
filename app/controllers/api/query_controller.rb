@@ -4,7 +4,8 @@ class Api::QueryController < ApplicationController
   # TODO: secure controller when researcher interface is published
   skip_before_action :require_login, only: [:show]
 
-  rfc6570_params show: [:metric, :user_id, :course_id, :start_time, :end_time]
+  rfc6570_params show: [:metric, :user_id, :course_id, :start_time, :end_time, :resource_id]
+  #course_id may be used as resource id as well depending on the query
   def show
     if metric.nil?
       metric_error
@@ -13,7 +14,9 @@ class Api::QueryController < ApplicationController
     render json: metric.query(query_params[:user_id],
                               query_params[:course_id],
                               query_params[:start_time],
-                              query_params[:end_time])
+                              query_params[:end_time],
+                              query_params[:resource_id]
+           )
   end
 
   private
@@ -28,11 +31,11 @@ class Api::QueryController < ApplicationController
     %w(PinboardActivity PinboardPostingActivity PinboardWatchCount
        UnenrollmentCount VideoVisitCount VisitCount QuestionResponseTime
        VideoSpeedChangeMetric CourseActivity CourseActivityTimebased
-       CoursePoints VideoPlayerAdvancedCount)
+       CoursePoints VideoPlayerAdvancedCount GeoActivity VideoEvents)
   end
 
   def query_params
-    params.permit :user_id, :course_id, :start_time, :end_time
+    params.permit :user_id, :course_id, :start_time, :end_time, :resource_id
   end
 
   def metric_error

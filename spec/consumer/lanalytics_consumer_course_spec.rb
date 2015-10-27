@@ -20,7 +20,7 @@ describe LanalyticsConsumer do
       it "should create a new COURSE node" do
         @consumer.create
 
-        result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: @amqp_course_event_data[:id] }}).pluck(:c)
+        result = Neo4j::Session.query.match(c: {COURSE: {resource_uuid: @amqp_course_event_data[:id]}}).pluck(:c)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:COURSE)
@@ -35,7 +35,7 @@ describe LanalyticsConsumer do
 
         @consumer.create
 
-        result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: @amqp_course_event_data[:id] }}).pluck(:c)
+        result = Neo4j::Session.query.match(c: {COURSE: {resource_uuid: @amqp_course_event_data[:id]}}).pluck(:c)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:COURSE)
@@ -61,7 +61,7 @@ describe LanalyticsConsumer do
         
         @consumer.update
 
-        result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: updated_amqp_course_event_data[:id] }}).pluck(:c)
+        result = Neo4j::Session.query.match(c: {COURSE: {resource_uuid: updated_amqp_course_event_data[:id]}}).pluck(:c)
         expect(result.length).to eq(1)
         expected_node = result.first
         expect(expected_node.labels).to include(:COURSE)
@@ -84,7 +84,7 @@ describe LanalyticsConsumer do
         prepare_rabbitmq_stubs(@amqp_course_event_data, 'xikolo.course.course.destroy')
         @consumer.destroy
 
-        result = Neo4j::Session.query.match(c: {:COURSE => {resource_uuid: @amqp_course_event_data[:id] }}).pluck(:c)
+        result = Neo4j::Session.query.match(c: {COURSE: {resource_uuid: @amqp_course_event_data[:id]}}).pluck(:c)
         expect(result).to be_empty
       end
     end

@@ -4,7 +4,7 @@ LoadORM    = Processing::LoadORM
 module Lanalytics
   module Processing
     module Transformer
-      # TODO:: Rename to Lanalytics::Processing::Transformer::ExperienceGraphSchemaTransformer
+      # TODO: : Rename to Lanalytics::Processing::Transformer::ExperienceGraphSchemaTransformer
       class NosqlDataSchemaTransformer < TransformStep
         include Processing::Transformer::NosqlDataSchemaHelper
 
@@ -108,7 +108,7 @@ module Lanalytics
           end
         end
 
-        alias_method :transform_user_unit :new_entity_template
+        alias_method :transform_user_unit, :new_entity_template
 
         def transform_course_unit(processing_unit)
           new_entity_template(processing_unit, [:title, :course_code, :start_date, :end_date])
@@ -325,7 +325,7 @@ module Lanalytics
 
         def transform_exp_event_unit(exp_event_unit)
           exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(exp_event_unit.data)
-          # TODO:: shift ExpAPIStatement to LoadORM as special class
+          # TODO: : shift ExpAPIStatement to LoadORM as special class
           LoadORM::EntityRelationship.create(exp_stmt.verb.type.upcase.to_sym) do
             with_from_entity(:USER) do
               with_primary_attribute :resource_uuid, :uuid, exp_stmt.user.uuid
@@ -345,7 +345,6 @@ module Lanalytics
               with_attribute "in_context_#{attribute.underscore.downcase}", :string, value
             end
           end
-
         end
       end
     end

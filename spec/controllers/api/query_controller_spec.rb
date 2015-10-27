@@ -27,7 +27,7 @@ RSpec.describe Api::QueryController, type: :controller do
       it 'queries the metric' do
         expect(Lanalytics::Metric::PinboardActivity)
           .to receive(:query)
-          .with(user_id, course_id, start_date, end_date)
+          .with(user_id, course_id, start_date, end_date, nil)
         action.call
       end
     end

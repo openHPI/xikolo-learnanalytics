@@ -18,7 +18,7 @@ require 'rails_helper'
 # Message expectations are only used when there is no simpler way to specify
 # that an instance is receiving a specific message.
 
-RSpec.describe ResearchCasesController, :type => :controller do
+RSpec.describe ResearchCasesController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
   # ResearchCase. As you add validations to ResearchCase, be sure to
@@ -47,7 +47,7 @@ RSpec.describe ResearchCasesController, :type => :controller do
   describe "GET show" do
     it "assigns the requested research_case as @research_case" do
       research_case = ResearchCase.create! valid_attributes
-      get :show, {:id => research_case.to_param}, valid_session
+      get :show, {id: research_case.to_param}, valid_session
       expect(assigns(:research_case)).to eq(research_case)
     end
   end
@@ -62,7 +62,7 @@ RSpec.describe ResearchCasesController, :type => :controller do
   describe "GET edit" do
     it "assigns the requested research_case as @research_case" do
       research_case = ResearchCase.create! valid_attributes
-      get :edit, {:id => research_case.to_param}, valid_session
+      get :edit, {id: research_case.to_param}, valid_session
       expect(assigns(:research_case)).to eq(research_case)
     end
   end
@@ -71,30 +71,30 @@ RSpec.describe ResearchCasesController, :type => :controller do
     describe "with valid params" do
       it "creates a new ResearchCase" do
         expect {
-          post :create, {:research_case => valid_attributes}, valid_session
+          post :create, {research_case: valid_attributes}, valid_session
         }.to change(ResearchCase, :count).by(1)
       end
 
       it "assigns a newly created research_case as @research_case" do
-        post :create, {:research_case => valid_attributes}, valid_session
+        post :create, {research_case: valid_attributes}, valid_session
         expect(assigns(:research_case)).to be_a(ResearchCase)
         expect(assigns(:research_case)).to be_persisted
       end
 
       it "redirects to the created research_case" do
-        post :create, {:research_case => valid_attributes}, valid_session
+        post :create, {research_case: valid_attributes}, valid_session
         expect(response).to redirect_to(ResearchCase.last)
       end
     end
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved research_case as @research_case" do
-        post :create, {:research_case => invalid_attributes}, valid_session
+        post :create, {research_case: invalid_attributes}, valid_session
         expect(assigns(:research_case)).to be_a_new(ResearchCase)
       end
 
       it "re-renders the 'new' template" do
-        post :create, {:research_case => invalid_attributes}, valid_session
+        post :create, {research_case: invalid_attributes}, valid_session
         expect(response).to render_template("new")
       end
     end
@@ -108,20 +108,20 @@ RSpec.describe ResearchCasesController, :type => :controller do
 
       it "updates the requested research_case" do
         research_case = ResearchCase.create! valid_attributes
-        put :update, {:id => research_case.to_param, :research_case => new_attributes}, valid_session
+        put :update, {id: research_case.to_param, research_case: new_attributes}, valid_session
         research_case.reload
         skip("Add assertions for updated state")
       end
 
       it "assigns the requested research_case as @research_case" do
         research_case = ResearchCase.create! valid_attributes
-        put :update, {:id => research_case.to_param, :research_case => valid_attributes}, valid_session
+        put :update, {id: research_case.to_param, research_case: valid_attributes}, valid_session
         expect(assigns(:research_case)).to eq(research_case)
       end
 
       it "redirects to the research_case" do
         research_case = ResearchCase.create! valid_attributes
-        put :update, {:id => research_case.to_param, :research_case => valid_attributes}, valid_session
+        put :update, {id: research_case.to_param, research_case: valid_attributes}, valid_session
         expect(response).to redirect_to(research_case)
       end
     end
@@ -129,13 +129,13 @@ RSpec.describe ResearchCasesController, :type => :controller do
     describe "with invalid params" do
       it "assigns the research_case as @research_case" do
         research_case = ResearchCase.create! valid_attributes
-        put :update, {:id => research_case.to_param, :research_case => invalid_attributes}, valid_session
+        put :update, {id: research_case.to_param, research_case: invalid_attributes}, valid_session
         expect(assigns(:research_case)).to eq(research_case)
       end
 
       it "re-renders the 'edit' template" do
         research_case = ResearchCase.create! valid_attributes
-        put :update, {:id => research_case.to_param, :research_case => invalid_attributes}, valid_session
+        put :update, {id: research_case.to_param, research_case: invalid_attributes}, valid_session
         expect(response).to render_template("edit")
       end
     end
@@ -145,13 +145,13 @@ RSpec.describe ResearchCasesController, :type => :controller do
     it "destroys the requested research_case" do
       research_case = ResearchCase.create! valid_attributes
       expect {
-        delete :destroy, {:id => research_case.to_param}, valid_session
+        delete :destroy, {id: research_case.to_param}, valid_session
       }.to change(ResearchCase, :count).by(-1)
     end
 
     it "redirects to the research_cases list" do
       research_case = ResearchCase.create! valid_attributes
-      delete :destroy, {:id => research_case.to_param}, valid_session
+      delete :destroy, {id: research_case.to_param}, valid_session
       expect(response).to redirect_to(research_cases_url)
     end
   end

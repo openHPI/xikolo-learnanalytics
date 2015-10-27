@@ -10,8 +10,8 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       @stmt_verb = FactoryGirl.build(:stmt_verb)
       @stmt_resource = FactoryGirl.build(:stmt_resource)
       @stmt_timestamp = DateTime.parse('8 May 1989 05:00:00')
-      @stmt_result = { result: 1000 }
-      @stmt_context = { location: 'Potsdam' }
+      @stmt_result = {result: 1000}
+      @stmt_context = {location: 'Potsdam'}
     end
 
     it "initializes correctly" do
@@ -29,8 +29,8 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       expect(stmt).to respond_to(:properties)
       expect(stmt.properties).to be_a(Hash)
       expect(stmt.properties).to include(timestamp: @stmt_timestamp.rfc3339)
-      expect(stmt.properties).to include(with_result: { result: 1000 })
-      expect(stmt.properties).to include(in_context: { location: 'Potsdam' })
+      expect(stmt.properties).to include(with_result: {result: 1000})
+      expect(stmt.properties).to include(in_context: {location: 'Potsdam'})
     end
 
     it "should initialize even when context and result missing" do
@@ -58,7 +58,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
         stmt_user = (i&1) > 0 ? @stmt_user : nil
         stmt_verb = (i&2) > 0 ? @stmt_verb : nil
         stmt_resource = (i&4) > 0 ? @stmt_resource : nil
-        failure_message =  "stmt_user:#{stmt_user ? 'not nil' : 'nil'}, stmt_verb: #{stmt_verb ? 'not nil' : 'nil'}, stmt_resource: #{stmt_resource ? 'not nil' : 'nil'}"
+        failure_message = "stmt_user:#{stmt_user ? 'not nil' : 'nil'}, stmt_verb: #{stmt_verb ? 'not nil' : 'nil'}, stmt_resource: #{stmt_resource ? 'not nil' : 'nil'}"
         expect do
           stmt = Lanalytics::Model::ExpApiStatement.new(stmt_user, stmt_verb, stmt_resource)
         end.to raise_error(ArgumentError), failure_message
@@ -90,7 +90,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     before(:each) do
       @stmt = FactoryGirl.build(:stmt)
       # ::TODO This is ugly and needs to go to the factory
-      @stmt_hash = FactoryGirl.attributes_for(:stmt) do | stmt_hash |
+      @stmt_hash = FactoryGirl.attributes_for(:stmt) do |stmt_hash|
         stmt_hash[:user] = FactoryGirl.attributes_for(:stmt_user)
         stmt_hash[:verb] = FactoryGirl.attributes_for(:stmt_verb)
         stmt_hash[:resource] = FactoryGirl.attributes_for(:stmt_resource)
@@ -117,7 +117,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
       stmt_json_str = JSON.dump(stmt)
       expect(stmt_json_str).to be_a(String)
       stmt_json_hash = JSON.parse(stmt_json_str)
-      expect(stmt_json_hash).to include({ 'json_class' => stmt.class.name })
+      expect(stmt_json_hash).to include('json_class' => stmt.class.name)
       expect(stmt_json_hash['data'].keys).to include('user', 'verb', 'resource', 'timestamp', 'with_result', 'in_context')
       #expect(stmt_json_hash).to include({
       #  'data' => {

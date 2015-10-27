@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe "research_cases/show", :type => :view, pending: true do
+RSpec.describe "research_cases/show", type: :view, pending: true do
   before(:each) do
     @research_case = assign(:research_case, ResearchCase.create!(
-      :title => "Title"
+      title: "Title"
     ))
   end
 

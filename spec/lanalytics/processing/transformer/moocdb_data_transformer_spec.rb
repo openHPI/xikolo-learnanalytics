@@ -37,7 +37,7 @@ describe Lanalytics::Processing::Transformer::MoocdbDataTransformer do
     expect(user_entity.entity_key).to eq(:user_pii)
     expect(user_entity.primary_attribute.name).to eq(:username)
     expect(user_entity.primary_attribute.value).to_not eq(@original_event[:id]) # Because the value should be hashed
-    expect(user_entity.attributes.map { | attr | attr.name }).to include(:global_user_id, :gender, :birthday, :ip, :country, :timezone_offset)
+    expect(user_entity.attributes.map { |attr| attr.name }).to include(:global_user_id, :gender, :birthday, :ip, :country, :timezone_offset)
   end
 
   it "should transform processing unit of type 'course'" do
@@ -54,7 +54,7 @@ describe Lanalytics::Processing::Transformer::MoocdbDataTransformer do
     expect(course_entity.entity_key).to eq(:course)
     expect(course_entity.primary_attribute.name).to eq(:course_id)
     expect(course_entity.primary_attribute.value).to eq(@original_event[:id]) # Because the value should be hashed
-    expect(course_entity.attributes.map { | attr | attr.name }).to include(:course_name, :course_start_date, :course_end_date)
+    expect(course_entity.attributes.map { |attr| attr.name }).to include(:course_name, :course_start_date, :course_end_date)
   end
 
 

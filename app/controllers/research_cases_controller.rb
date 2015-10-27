@@ -56,7 +56,7 @@ class ResearchCasesController < ApplicationController
     contributer_email = params[:email]
     new_contributer = User.find_by(email: contributer_email)
     if new_contributer.nil?
-      redirect_to research_cases_url, :flash => { danger: "Contributer with email '#{contributer_email}' is not available in the system and thus could not be added to Research Case ##{@research_case.id}." }
+      redirect_to research_cases_url, flash: {danger: "Contributer with email '#{contributer_email}' is not available in the system and thus could not be added to Research Case ##{@research_case.id}."}
       return
     end
 
@@ -96,7 +96,7 @@ class ResearchCasesController < ApplicationController
       channel: @channel
     )
 
-    render json: { status: 'ok' }
+    render json: {status: 'ok'}
   end
 
   private

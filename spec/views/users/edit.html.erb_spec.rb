@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe "users/edit", :type => :view, pending: true do
+RSpec.describe "users/edit", type: :view, pending: true do
   before(:each) do
     @user = assign(:user, User.create!(
-      :email => "MyString",
-      :crypted_password => "MyString",
-      :salt => "MyString"
+      email: "MyString",
+      crypted_password: "MyString",
+      salt: "MyString"
     ))
   end
 

@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class QuestionResponseTime < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_date)
+      def self.query(user_id, course_id, start_time, end_date, resource_id)
         answer_statements = datasource.exec do |client|
           client.search index: datasource.index, body: {
             query: {
@@ -9,7 +9,7 @@ module Lanalytics
                 query: {
                   bool: {
                     must: [
-                      { match: { verb: 'ANSWERED_QUESTION' } }
+                      {match: {verb: 'ANSWERED_QUESTION'}}
                     ] + (all_filters(course_id, user_id))
                   }
                 },
@@ -26,7 +26,7 @@ module Lanalytics
           }
         end['hits']['hits']
 
-        { average: calculate_average(answer_statements) }
+        {average: calculate_average(answer_statements)}
       end
 
       def self.calculate_average(answer_statements)
@@ -39,8 +39,8 @@ module Lanalytics
               query: {
                 bool: {
                   must: [
-                    { match_phrase: { 'resource.resource_uuid' => question_id } },
-                    { match: { verb: 'ASKED_QUESTION' } }
+                    {match_phrase: {'resource.resource_uuid' => question_id}},
+                    {match: {verb: 'ASKED_QUESTION'}}
                   ]
                 }
               }

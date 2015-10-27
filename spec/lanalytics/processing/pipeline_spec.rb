@@ -124,7 +124,7 @@ describe Lanalytics::Processing::Pipeline do
   describe '(Processing)' do
 
     it 'should call the ExtractStep' do
-      event_data = { dummy_prop: 'dummy_value' }
+      event_data = {dummy_prop: 'dummy_value'}
 
       extract_step = Lanalytics::Processing::Extractor::ExtractStep.new
       expect(extract_step).to receive(:extract).with(event_data, [], kind_of(Lanalytics::Processing::PipelineContext))
@@ -148,7 +148,7 @@ describe Lanalytics::Processing::Pipeline do
 
     it 'should execute Pipeline without steps' do
       pipeline = Lanalytics::Processing::Pipeline.new(name, schema, processing_action)
-      pipeline.process({dummy_prop: 'dummy_value'})
+      pipeline.process(dummy_prop: 'dummy_value')
     end
 
     it 'should stop when data is nil' do
