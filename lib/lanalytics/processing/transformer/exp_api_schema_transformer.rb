@@ -242,19 +242,11 @@ module Lanalytics
         end
 
         def transform_user_punit_to_create(processing_unit, load_commands)
-          create_or_update_user(processing_unit, load_commands, :confirmed)
-        end
-
-        def transform_user_punit_to_update(processing_unit, load_commands)
-          create_or_update_user(processing_unit, load_commands, :updated)
-        end
-
-        def create_or_update_user(processing_unit, load_commands, verb)
           transform_punit_to_create load_commands,
                                     user: {
                                       resource_uuid: processing_unit[:id]
                                     },
-                                    verb: verb,
+                                    verb: :confirmed,
                                     timestamp: processing_unit[:updated_at],
                                     in_context: {
                                       affiliated: processing_unit[:affiliated],
