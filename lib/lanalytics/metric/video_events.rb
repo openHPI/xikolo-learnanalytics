@@ -38,7 +38,7 @@ module Lanalytics
           result[item['key']]['total'] += item['doc_count']
         end
         fullscreen_off.each do |item|
-          result[item['key']]['fullscreen'] = item['doc_count']
+          result[item['key']]['fullscreen_off'] = item['doc_count']
           result[item['key']]['total'] += item['doc_count']
         end
         result
