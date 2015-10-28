@@ -1,0 +1,31 @@
+# Postgres Database Configuration
+# Make sure that gem 'pg' is in your Gemfile
+
+common: &common
+  datasource_adapter: 'PostgresqlDatasource'
+  adapter: postgresql
+  key: 'exp_api_native'
+  name: 'Exp API on PostgreSQL'
+  description: 'Simply storing exp api events in a relational database.'
+
+development:
+  <<: *common
+  host: localhost
+  port: 5432
+  database: xikolo-learnanalytics-development
+
+test:
+  <<: *common
+  host: localhost
+  port: 5432
+  database: xikolo-learnanalytics-test
+
+staging:
+  <<: *common
+  host: lanalytics.openhpi.de
+  port: 5432
+  database: db/staging.sqlite3
+
+production:
+  <<: *common
+  database: db/production.sqlite3
