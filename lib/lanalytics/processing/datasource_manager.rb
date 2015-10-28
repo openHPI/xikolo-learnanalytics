@@ -5,12 +5,22 @@ module Lanalytics
 
       attr_reader :datasources
 
-      def initialize
-        @datasources = {}
-      end
+      def self.setup_datasource(filename)
+        datasource_config = YAML.load_file(filename).with_indifferent_access
+        datasource_config = datasource_config[Rails.env] || datasource_config
 
-      def add_datasource(datasource)
-        @datasources[datasource.key] = datasource
+        datasource_adapter = datasource_config[:datasource_adapter]
+
+        unless datasource_adapter
+          Rails.logger.warn "The datasource config '#{filename}' does not contain the required key 'datasource_adapter'"
+          return
+        end
+
+        datasource_class = "Lanalytics::Processing::Datasources::#{datasource_adapter}".constantize
+        datasource = datasource_class.new(datasource_config)
+
+        Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
+        Rails.logger.info "The datasource config '#{filename}' loaded into DatasourceManager"
       end
 
       def self.add_datasource(datasource)
@@ -43,22 +53,13 @@ module Lanalytics
         datasource
       end
 
-      def self.setup_datasource(filename)
-        datasource_config = YAML.load_file(filename).with_indifferent_access
-        datasource_config = datasource_config[Rails.env] || datasource_config
+      # ---------
+      def initialize
+        @datasources = {}
+      end
 
-        datasource_adapter = datasource_config[:datasource_adapter]
-
-        unless datasource_adapter
-          Rails.logger.warn "The datasource config '#{filename}' does not contain the required key 'datasource_adapter'"
-          return
-        end
-
-        datasource_class = "Lanalytics::Processing::Datasources::#{datasource_adapter}".constantize
-        datasource = datasource_class.new(datasource_config)
-
-        Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
-        Rails.logger.info "The datasource config '#{filename}' loaded into DatasourceManager"
+      def add_datasource(datasource)
+        @datasources[datasource.key] = datasource
       end
 
     end

@@ -52,6 +52,7 @@ module Lanalytics
         alias_method :transform_user_punit_to_update_load_commands,       :transform_to_update_load_commands
         alias_method :transform_course_punit_to_update_load_commands,     :transform_to_update_load_commands
         alias_method :transform_item_punit_to_update_load_commands,       :transform_to_update_load_commands
+        alias_method :transform_enrollment_punit_to_update_load_commands, :transform_to_update_load_commands
         alias_method :transform_question_punit_to_update_load_commands,   :transform_to_update_load_commands
         alias_method :transform_answer_punit_to_update_load_commands,     :transform_to_update_load_commands
         alias_method :transform_comment_punit_to_update_load_commands,    :transform_to_update_load_commands
@@ -104,13 +105,13 @@ module Lanalytics
 
           new_exp_event_entity = Lanalytics::Processing::LoadORM::Entity.create(:observed_events) do
             # with_primary_attribute :observed_event_id,          :uuid,      processing_unit[:id]
-            with_attribute :user_id, :uuid, exp_stmt.user.uuid
-            with_attribute :url_id, :int, hash
+            with_attribute :user_id,                  :uuid,      exp_stmt.user.uuid
+            with_attribute :url_id,                   :int,       hash
             with_attribute :observed_event_timestamp, :timestamp, exp_stmt.timestamp
-            with_attribute :observed_event_duration,  :float, nil
-            with_attribute :observed_event_ip, :string, exp_stmt.in_context[:user_ip]
-            with_attribute :observed_event_os, :int, exp_stmt.in_context[:user_os]
-            with_attribute :observed_event_agent, :int, exp_stmt.in_context[:user_agent]
+            with_attribute :observed_event_duration,  :float,     nil
+            with_attribute :observed_event_ip,        :string,    exp_stmt.in_context[:user_ip]
+            with_attribute :observed_event_os,        :int,       exp_stmt.in_context[:user_os]
+            with_attribute :observed_event_agent,     :int,       exp_stmt.in_context[:user_agent]
           end
 
           load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(new_exp_event_entity)

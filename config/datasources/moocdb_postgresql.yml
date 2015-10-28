@@ -6,6 +6,7 @@ common: &common
   key: 'moocdb_postgresql'
   name: 'MOOCdb on PostgreSQL'
   description: 'The MOOCdb project aims to brings together education researchers, computer science researchers, machine learning researchers, technologists, database and big data experts to advance MOOC data science. The openHPI Team wants to contribute to this project by providing their data in the proposed schema.'
+  pool: 5
 
 development:
   <<: *common

@@ -4,28 +4,22 @@ module Lanalytics
       class PostgresqlDatasource < Datasource
         attr_reader :database, :host, :port, :user, :password, :timeout
 
-        def pool_size
-          @pool.to_i || 1
-        end
-
         def initialize(postgres_config)
           super(postgres_config)
           init_with(postgres_config)
         end
 
-        def init_with(postgres_config)
-          # unless File.exists?(postgresdb_config_yml)
-          #   raise ArgumentError.new("The settings file for this datasource not found under '#{postgresdb_config_yml}'")
-          # end
+        def pool_size
+          @pool.to_i  # comes from postgres_config file
+        end
 
-          # postgresdb_config = YAML.load_file(postgresdb_config_yml).with_indifferent_access
-          # postgresdb_config = postgresdb_config[Rails.env] || postgresdb_config
+        def init_with(postgres_config)
           opts = {
             host: host, port: port,
             dbname: database,
             user: user, password: password,
             connect_timeout: timeout
-          }.reject { |k, v| v.nil? }
+          }.reject{ |k, v| v.nil? }
 
           @connection_pool = ConnectionPool.new(size: pool_size) do
             PG.connect(opts)
