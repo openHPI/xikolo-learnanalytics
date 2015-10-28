@@ -14,8 +14,6 @@ module Lanalytics
         end
 
         def init_with(postgres_config)
-          pool_size = 1
-
           opts = {
             host: host, port: port,
             dbname: database,
