@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20151027175136) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2015-10-28 12:12:11', null: false
+    t.datetime "accessed_at",      default: '2015-10-28 14:21:41', null: false
   end
 
   create_table "datasources", id: false, force: true do |t|
@@ -35,9 +35,9 @@ ActiveRecord::Schema.define(version: 20151027175136) do
   add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true, using: :btree
 
   create_table "events", force: true do |t|
-    t.integer  "user_uuid"
-    t.string   "verb_id"
-    t.string   "resource_id"
+    t.string   "user_uuid"
+    t.integer  "verb_id"
+    t.integer  "resource_id"
     t.json     "in_context"
     t.json     "with_result"
     t.datetime "created_at"
@@ -59,8 +59,8 @@ ActiveRecord::Schema.define(version: 20151027175136) do
   add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id", using: :btree
 
   create_table "resources", force: true do |t|
-    t.string   "resource_uuid"
-    t.string   "type"
+    t.string   "uuid"
+    t.string   "resource_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
