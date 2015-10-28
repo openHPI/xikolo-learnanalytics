@@ -7,6 +7,7 @@ common: &common
   key: 'exp_api_native'
   name: 'Exp API on PostgreSQL'
   description: 'Simply storing exp api events in a relational database.'
+  pool: 5
 
 development:
   <<: *common
