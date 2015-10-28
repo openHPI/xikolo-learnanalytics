@@ -4,8 +4,8 @@ class AddNativePostgresDatasource < ActiveRecord::Migration
       t.integer :user_uuid
       t.string :verb_id
       t.string :resource_id
-      t.string :in_context
-      t.string :with_result
+      t.json :in_context
+      t.json :with_result
       t.timestamps
     end
 

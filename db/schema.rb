@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20151027175136) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2015-10-28 10:35:08', null: false
+    t.datetime "accessed_at",      default: '2015-10-28 12:12:11', null: false
   end
 
   create_table "datasources", id: false, force: true do |t|
@@ -38,8 +38,8 @@ ActiveRecord::Schema.define(version: 20151027175136) do
     t.integer  "user_uuid"
     t.string   "verb_id"
     t.string   "resource_id"
-    t.string   "in_context"
-    t.string   "with_result"
+    t.json     "in_context"
+    t.json     "with_result"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
