@@ -11,39 +11,34 @@ module Lanalytics
         fullscreen_off = get_data('VIDEO_FULLSCREEN', resource_id,  {match_phrase: { 'in_context.new_state' => 'player'}})
         result = {}
 
-        pause.each do |item|
-          result[item['key']] = {} unless result[item['key']].present?
-          result[item['key']]['time'] = item['key'] unless result[item['key']].present?
-          result[item['key']]['total'] = item['doc_count']
-          result[item['key']]['pause'] = item['doc_count']
-        end
-        play.each do |item|
-          result[item['key']]['play'] = item['doc_count']
-          result[item['key']]['total'] = item['doc_count']
-        end
-        change_speed.each do |item|
-          result[item['key']]['change_speed'] = item['doc_count']
-          result[item['key']]['total'] += item['doc_count']
-        end
-        stop.each do |item|
-          result[item['key']]['stop'] = item['doc_count']
-          result[item['key']]['total'] += item['doc_count']
-        end
-        seek.each do |item|
-          result[item['key']]['seek'] = item['doc_count']
-          result[item['key']]['total'] += item['doc_count']
-        end
-        fullscreen.each do |item|
-          result[item['key']]['fullscreen'] = item['doc_count']
-          result[item['key']]['total'] += item['doc_count']
-        end
-        fullscreen_off.each do |item|
-          result[item['key']]['fullscreen_off'] = item['doc_count']
-          result[item['key']]['total'] += item['doc_count']
-        end
+        result = add_to_total(result, pause, 'pause')
+        result = add_to_total(result, play, 'play')
+        result = add_to_total(result, change_speed, 'change_speed')
+        result = add_to_total(result, stop, 'stop')
+        result = add_to_total(result, seek, 'seek')
+        result = add_to_total(result, fullscreen, 'fullscreen')
+        result = add_to_total(result, fullscreen_off, 'fullscreen_off')
+
         result
       end
 
+      def self.add_to_total(result, collection, key)
+        collection.each do |item|
+          unless result[item['key']].present?
+            result[item['key']] = {}
+            result[item['key']]['time'] = item['key']
+          end
+
+          if result[item['key']]['total'].blank?
+            result[item['key']]['total'] = 0
+          end
+          result[item['key']]['total'] += item['doc_count']
+
+          result[item['key']][key] = item['doc_count']
+        end
+
+        result
+      end
 
       def self.get_data verb, resource_id, add_filter = nil
         conditions = [
