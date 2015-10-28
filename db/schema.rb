@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150107135440) do
+ActiveRecord::Schema.define(version: 20151027175136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20150107135440) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2015-02-19 10:59:16', null: false
+    t.datetime "accessed_at",      default: '2015-10-28 10:35:08', null: false
   end
 
   create_table "datasources", id: false, force: true do |t|
@@ -33,6 +33,16 @@ ActiveRecord::Schema.define(version: 20150107135440) do
   end
 
   add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true, using: :btree
+
+  create_table "events", force: true do |t|
+    t.integer  "user_uuid"
+    t.string   "verb_id"
+    t.string   "resource_id"
+    t.string   "in_context"
+    t.string   "with_result"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "research_cases", force: true do |t|
     t.string   "title"
@@ -48,6 +58,13 @@ ActiveRecord::Schema.define(version: 20150107135440) do
 
   add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id", using: :btree
 
+  create_table "resources", force: true do |t|
+    t.string   "resource_uuid"
+    t.string   "type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "users", force: true do |t|
     t.string   "email",            null: false
     t.string   "crypted_password", null: false
@@ -58,5 +75,11 @@ ActiveRecord::Schema.define(version: 20150107135440) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+
+  create_table "verbs", force: true do |t|
+    t.string   "verb"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
