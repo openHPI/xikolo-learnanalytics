@@ -21,31 +21,24 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
     exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
 
     entity = Entity.create(:events) do
-      with_attribute :user_uuid, :entity, exp_stmt.user.uuid
+      with_attribute :user_uuid,       :entity, exp_stmt.user.uuid
+      with_attribute :verb,            :string, exp_stmt.verb.type.upcase.to_sym
 
-      verb =
-      with_attribute :verb, :string, exp_stmt.verb.type.upcase.to_sym
-
-
-      with_attribute :resource_uuid, :uuid, exp_stmt.resource.uuid
-
-      with_attribute :resource, :entity, resource_entity
-
-      with_attribute :timestamp, :timestamp, exp_stmt.timestamp
-
-      with_result_entity = Entity.create(:WITH_RESULT) do
-        exp_stmt.with_result.each do |attribute, value|
-          with_attribute attribute.underscore.downcase, :string, value
-        end
+      verb_entity = Entity.create(:verbs) do
+        with_attribute :verb, :string, exp_stmt.verb.type.downcase.to_sym
       end
-      with_attribute :with_result, :entity, with_result_entity
+      with_attribute :verb_id, :int, verb_entity.id
 
-      in_context_entity = Entity.create(:IN_CONTEXT) do
-        exp_stmt.in_context.each do |attribute, value|
-          with_attribute attribute.underscore.downcase, :string, value
-        end
+      resource_entity = Entity.create(:resources) do
+        with_attribute :resource_uuid, :uuid,   exp_stmt.resource.uuid
+        # TODO: Find type
+        with_attribute :type,          :string, exp_stmt.resource.uuid
       end
-      with_attribute :in_context, :entity, in_context_entity
+      with_attribute :resource_id, :entity,    resource_entity.id
+
+      with_attribute :in_context,  :json,      exp_stmt.in_context
+      with_attribute :with_result, :json,      exp_stmt.with_result
+      with_attribute :timestamp,   :timestamp, exp_stmt.timestamp
     end
 
     load_commands << CreateCommand.with(entity)
