@@ -21,17 +21,14 @@ module Lanalytics
         end
         @resource = resource
 
-        timestamp ||= DateTime.now
         unless timestamp.is_a?(DateTime) || timestamp.is_a?(String)
           raise ArgumentError.new "'timestamp' argument should be DateTime or String"
         end
         timestamp = DateTime.parse(timestamp) if timestamp.is_a? String
         @timestamp = timestamp
 
-        with_result ||= {}
         @with_result = with_result.to_hash
 
-        in_context ||= {}
         @in_context = in_context.to_hash
       end
 
