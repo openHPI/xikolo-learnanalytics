@@ -16,7 +16,7 @@ class AddNativePostgresDatasource < ActiveRecord::Migration
 
     create_table :resources do |t|
       t.string :uuid
-      t.string :resource_type
+      t.string :resource_type # can't call the column 'type', because that's a special keyword
       t.timestamps
     end
   end
