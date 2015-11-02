@@ -35,8 +35,8 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
         with_attribute :resource_id, :int, resource.id
       end
 
-      with_attribute :in_context,  :json,      exp_stmt.in_context.to_json
-      with_attribute :with_result, :json,      exp_stmt.with_result.to_json
+      with_attribute :in_context,  :json,      exp_stmt.in_context.presence.to_json
+      with_attribute :with_result, :json,      exp_stmt.with_result.presence.to_json
       with_attribute :created_at,  :timestamp, exp_stmt.timestamp
       with_attribute :updated_at,  :timestamp, exp_stmt.timestamp
     end
