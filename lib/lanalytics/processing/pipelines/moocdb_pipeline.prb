@@ -22,15 +22,14 @@ end
 
 # MOOCdb Pipelines for 'CREATE', 'UPDATE' und 'DESTROY'
 def create_moocdb_pipelines_for_crud(service, domain)
-  create_moocdb_pipeline(Lanalytics::Processing::Action::CREATE, service, domain)
-  create_moocdb_pipeline(Lanalytics::Processing::Action::UPDATE, service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::Action::CREATE,  service, domain)
+  create_moocdb_pipeline(Lanalytics::Processing::Action::UPDATE,  service, domain)
   create_moocdb_pipeline(Lanalytics::Processing::Action::DESTROY, service, domain)
 end
 
-create_action = Lanalytics::Processing::Action::CREATE
-update_action = Lanalytics::Processing::Action::UPDATE
+create_action  = Lanalytics::Processing::Action::CREATE
+update_action  = Lanalytics::Processing::Action::UPDATE
 destroy_action = Lanalytics::Processing::Action::DESTROY
-
 
 # ------------------- Account Service -------------------
 create_moocdb_pipelines_for_crud(:account, :user)
@@ -38,9 +37,7 @@ create_moocdb_pipelines_for_crud(:account, :user)
 # ------------------- Course Service -------------------
 create_moocdb_pipelines_for_crud(:course, :course)
 create_moocdb_pipelines_for_crud(:course, :item)
-create_moocdb_pipeline(create_action, :course, :enrollment)
-create_moocdb_pipeline(destroy_action, :course, :enrollment)
-
+create_moocdb_pipelines_for_crud(:course, :enrollment)
 
 # ------------------- Submission Service -------------------
 create_moocdb_pipeline(create_action, :submission, :submission)
