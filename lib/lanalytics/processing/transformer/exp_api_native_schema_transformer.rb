@@ -169,7 +169,7 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
                               user_uuid: processing_unit[:user_id],
                               verb: verb,
                               resource: {
-                                resource_uuid: processing_unit[:course_id],
+                                uuid: processing_unit[:course_id],
                                 type: :course
                               },
                               timestamp: processing_unit[:updated_at],
