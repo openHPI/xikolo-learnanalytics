@@ -36,6 +36,8 @@ module Lanalytics
             with_attribute :timestamp, :timestamp, exp_stmt.timestamp
 
             with_result_entity = Lanalytics::Processing::LoadORM::Entity.create(:WITH_RESULT) do
+              # TODO: Refactor the underscore.downcase conversion to support
+              # nested json in the future
               exp_stmt.with_result.each do |attribute, value|
                 with_attribute attribute.underscore.downcase, :string, value
               end
@@ -43,6 +45,8 @@ module Lanalytics
             with_attribute :with_result, :entity, with_result_entity
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
+              # TODO: Refactor the underscore.downcase conversion to support
+              # nested json in the future
               exp_stmt.in_context.each do |attribute, value|
                 with_attribute attribute.underscore.downcase, :string, value
               end
