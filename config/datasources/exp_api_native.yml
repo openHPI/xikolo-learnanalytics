@@ -11,14 +11,10 @@ common: &common
 
 development:
   <<: *common
-  host: localhost
-  port: 5432
   database: xikolo-learnanalytics-development
 
 test:
   <<: *common
-  host: localhost
-  port: 5432
   database: xikolo-learnanalytics-test
 
 staging:
