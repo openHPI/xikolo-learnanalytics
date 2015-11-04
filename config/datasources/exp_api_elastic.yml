@@ -8,9 +8,9 @@ common: &common
 
 development:
   <<: *common
-  host: '10.210.0.30'
+  host: 'localhost'
   port: '9200'
-  index: 'opensap'
+  index: 'lanalytics'
   user: 'lanalytics'
   password: 'lanalytics'
 
