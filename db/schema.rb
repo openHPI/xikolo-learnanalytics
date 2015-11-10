@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20151027175136) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2015-10-28 14:21:41', null: false
+    t.datetime "accessed_at",      default: '2015-11-10 12:28:42', null: false
   end
 
   create_table "datasources", id: false, force: true do |t|
@@ -33,16 +33,6 @@ ActiveRecord::Schema.define(version: 20151027175136) do
   end
 
   add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true, using: :btree
-
-  create_table "events", force: true do |t|
-    t.string   "user_uuid"
-    t.integer  "verb_id"
-    t.integer  "resource_id"
-    t.json     "in_context"
-    t.json     "with_result"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "research_cases", force: true do |t|
     t.string   "title"
@@ -58,13 +48,6 @@ ActiveRecord::Schema.define(version: 20151027175136) do
 
   add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id", using: :btree
 
-  create_table "resources", force: true do |t|
-    t.string   "uuid"
-    t.string   "resource_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "users", force: true do |t|
     t.string   "email",            null: false
     t.string   "crypted_password", null: false
@@ -75,11 +58,5 @@ ActiveRecord::Schema.define(version: 20151027175136) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-
-  create_table "verbs", force: true do |t|
-    t.string   "verb"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
 end
