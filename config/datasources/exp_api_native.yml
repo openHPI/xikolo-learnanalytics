@@ -19,8 +19,6 @@ test:
 
 staging:
   <<: *common
-  host: lanalytics.openhpi.de
-  port: 5432
   database: db/staging.sqlite3
 
 production:
