@@ -3,6 +3,8 @@ module Lanalytics
     module LoadORM
 
       class Entity
+        include Lanalytics::Helper::HashHelper
+
         attr_reader :entity_key, :primary_attribute, :attributes
 
         # factory method

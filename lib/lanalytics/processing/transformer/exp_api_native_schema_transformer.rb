@@ -1,6 +1,7 @@
-Transformer   = Lanalytics::Processing::Transformer
-CreateCommand = Lanalytics::Processing::LoadORM::CreateCommand
-Entity        = Lanalytics::Processing::LoadORM::Entity
+Transformer     = Lanalytics::Processing::Transformer
+CreateCommand   = Lanalytics::Processing::LoadORM::CreateCommand
+Entity          = Lanalytics::Processing::LoadORM::Entity
+ExpApiStatement = Lanalytics::Model::ExpApiStatement
 
 class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
   def transform(_original_event, processing_units, load_commands, pipeline_ctx)
@@ -19,7 +20,7 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
 
   # Transform events coming from Javascript through the web service.
   def transform_exp_event_punit_to_create(processing_unit, load_commands)
-    exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
+    exp_stmt = ExpApiStatement.new_from_json(processing_unit.data)
 
     entity = Entity.create(:events) do
       with_attribute :user_uuid, :string, exp_stmt.user.uuid
@@ -35,8 +36,11 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
         with_attribute :resource_id, :int, resource.id
       end
 
-      with_attribute :in_context,  :json,      exp_stmt.in_context.presence.to_json
-      with_attribute :with_result, :json,      exp_stmt.with_result.presence.to_json
+      in_context  = hash_keys_to_underscore(exp_stmt.in_context.presence)
+      with_result = hash_keys_to_underscore(exp_stmt.with_result.presence)
+
+      with_attribute :in_context,  :json,      in_context.to_json
+      with_attribute :with_result, :json,      with_result.to_json
       with_attribute :created_at,  :timestamp, exp_stmt.timestamp
       with_attribute :updated_at,  :timestamp, exp_stmt.timestamp
     end
