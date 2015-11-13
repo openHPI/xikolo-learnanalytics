@@ -21,6 +21,7 @@ module Lanalytics
         end
         @resource = resource
 
+        timestamp = DateTime.now if timestamp.nil?
         unless timestamp.is_a?(DateTime) || timestamp.is_a?(String)
           raise ArgumentError.new "'timestamp' argument should be DateTime or String"
         end
