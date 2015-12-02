@@ -101,6 +101,12 @@ module Lanalytics
               "'#{attribute.value}'"
             when :int, :float
               attribute.value.to_s
+            when :json
+              attribute.value.each do |key, val|
+                attribute.value[key] = PGconn.escape_string(val) if val.is_a? String
+              end
+
+              "'#{attribute.value.to_json}'"
             else
               "'#{attribute.value}'"
           end
