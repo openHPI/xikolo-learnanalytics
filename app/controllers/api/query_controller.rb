@@ -32,7 +32,7 @@ class Api::QueryController < ApplicationController
        UnenrollmentCount VideoVisitCount VisitCount QuestionResponseTime
        VideoSpeedChangeMetric CourseActivity CourseActivityTimebased
        CoursePoints VideoPlayerAdvancedCount GeoActivity VideoEvents
-        ActiveUserCount)
+        ActiveUserCount CourseActivityList)
   end
 
   def query_params
