@@ -3,7 +3,7 @@ module Lanalytics
     class ActiveUserCount < ExpApiMetric
       def self.query(user_id, course_id, start_time, end_time, resource_id)
         #default 15 min
-        start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 15.minutes)
+        start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 30.minutes)
         end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -23,7 +23,7 @@ module Lanalytics
              aggs: {
                  distinct_user_count: {
                      cardinality: {
-                         field: 'in_context.user_id'
+                         field: 'user.resource_uuid"'
                      }
                  }
              }
