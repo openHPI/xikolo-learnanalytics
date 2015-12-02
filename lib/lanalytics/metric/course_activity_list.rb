@@ -48,6 +48,7 @@ module Lanalytics
           #add new verbs here if needed
 
           result[bucket.with_indifferent_access[:key]] = {
+              course_id: bucket.with_indifferent_access[:key],
               visited: get_agg_value(buckets, 'visited'),
               watched_question: get_agg_value(buckets, 'watched_question'),
               asked_question: get_agg_value(buckets, 'asked_question'),
