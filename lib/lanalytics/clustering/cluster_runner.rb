@@ -6,7 +6,7 @@ class Lanalytics::Clustering::ClusterRunner
   def self.cluster(num_centers, verb1, verb2, course_uuid)
     r = Rserve::Connection.new
 
-    data = aggregate_two_verbs(verb1, verb2, course_uuid).values.map do |row|
+    data = aggregate_two_verbs_for_course(verb1, verb2, course_uuid).values.map do |row|
       # convert last two columns to float
       [row[0], row[1].to_f, row[2].to_f]
     end
@@ -14,7 +14,7 @@ class Lanalytics::Clustering::ClusterRunner
     # Important to make sure we set the correct data types in R
     # since error messages returned by the Rserve client gem will only be
     # 'undefined method/variable', which doesn't help much.
-    r.assign('lol',     Rserve::REXP::Wrapper.wrap(data)) # (lol) list of lists
+    r.assign('lol',      Rserve::REXP::Wrapper.wrap(data)) # (lol: list of lists)
     r.assign('ncenters', num_centers.to_i)
 
     # Data frame may contain different data types, matrix just the same type
