@@ -39,8 +39,8 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
       in_context  = hash_keys_to_underscore(exp_stmt.in_context.presence)
       with_result = hash_keys_to_underscore(exp_stmt.with_result.presence)
 
-      with_attribute :in_context,  :json,      in_context.to_json
-      with_attribute :with_result, :json,      with_result.to_json
+      with_attribute :in_context,  :json,      in_context
+      with_attribute :with_result, :json,      with_result
       with_attribute :created_at,  :timestamp, exp_stmt.timestamp
       with_attribute :updated_at,  :timestamp, exp_stmt.timestamp
     end
@@ -65,8 +65,8 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
         with_attribute :resource_id, :int, resource.id
       end
 
-      with_attribute :in_context,  :json,      attrs[:in_context].to_json
-      with_attribute :with_result, :json,      attrs[:with_result].to_json
+      with_attribute :in_context,  :json,      attrs[:in_context]
+      with_attribute :with_result, :json,      attrs[:with_result]
       with_attribute :created_at,  :timestamp, attrs[:timestamp]
       with_attribute :updated_at,  :timestamp, attrs[:timestamp]
     end
