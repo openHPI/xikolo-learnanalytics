@@ -18,7 +18,7 @@ RSpec.describe Lanalytics::Metric::PinboardWatchCount do
       Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
-    subject { described_class.query user_id, course_id, start_time, end_date, nil }
+    subject { described_class.query user_id, course_id, start_time, end_date, nil, nil, nil }
 
     it { is_expected.to eq(count: 15) }
 

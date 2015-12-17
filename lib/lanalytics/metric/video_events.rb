@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class VideoEvents < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id)
+      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         pause = get_data('VIDEO_PAUSE', resource_id, nil)
         play = get_data('VIDEO_PLAY', resource_id, nil)
         change_speed = get_data('VIDEO_CHANGE_SPEED', resource_id, nil)

@@ -7,7 +7,7 @@ RSpec.describe Lanalytics::Metric::PinboardActivity do
   let(:end_time) { Time.now.to_s }
 
   describe '#query' do
-    subject { described_class.query user_id, course_id, start_time, end_time, nil }
+    subject { described_class.query user_id, course_id, start_time, end_time, nil, nil, nil }
 
     it 'sums the two metrics' do
       expect(Lanalytics::Metric::PinboardPostingActivity).to receive(:query).and_return(count: 10)
