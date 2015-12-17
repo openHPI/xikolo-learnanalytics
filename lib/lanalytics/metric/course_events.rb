@@ -1,7 +1,11 @@
 module Lanalytics
   module Metric
     class CourseEvents < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time, resource_id=nil, page=1, per_page=100)
+      def self.query(user_id, course_id, start_time, end_time, resource_id=nil, page, per_page)
+        page = 1 if page == nil
+        per_page = 100 if per_page == nil
+        from = (page.to_i-1)*per_page
+
         course_id = nil unless course_id.present? # handle empty state
         start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day)
         end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
@@ -9,7 +13,7 @@ module Lanalytics
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
               size: per_page,
-              from: page*per_page,
+              from: from,
               query: {
                   filtered: {
                       query: {
@@ -52,7 +56,7 @@ module Lanalytics
 
         processed_result
         #first alpha pagination support
-        current_last = result['hits']['hits'].count + (page-1)*per_page
+        current_last = result['hits']['hits'].count + (page.to_i-1)*per_page
         result = {data:processed_result, next: current_last < result['hits']['total'] }
 
       end
