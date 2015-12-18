@@ -11,6 +11,14 @@ class Lanalytics::Clustering::ClusterRunner
     'watched_question'
   ].sort
 
+  # This fixes the situation when only one dimension is clustered,
+  # the un-scaling of the centers leads to a row, instead of a column
+  def self.normalize_centers(centers, verb_length)
+    return centers.to_a.flatten.map{ |center| [center] } if verb_length == 1
+
+    centers
+  end
+
   def self.cluster(num_centers, course_uuid, verbs)
     r = Rserve::Connection.new
 
@@ -50,7 +58,9 @@ class Lanalytics::Clustering::ClusterRunner
     r.void_eval('clustering <- kmeans(scaled_mat, center=ncenters)')
     r.void_eval("frame[,#{verbs.length + 2}] <- clustering$cluster")
 
-    # To read the cluster centers, un-apply the normalization
+    # To read the cluster centers as a human, un-apply the normalization
+    # Note: When cluster centers are one-dimensional (one verb as input)
+    #       row and col will be switched, which means we need to normalize
     r.void_eval('centers <- t(apply(' \
                   'clustering$centers, ' \
                   '1, ' \
@@ -63,7 +73,7 @@ class Lanalytics::Clustering::ClusterRunner
       clustered_data: r.eval('frame').to_ruby,
       clusters: {
         sizes:     r.eval('clustering$size').to_ruby,
-        centers:   r.eval('centers').to_ruby,
+        centers:   normalize_centers(r.eval('centers').to_ruby, verbs.length),
         totss:     r.eval('clustering$totss').to_ruby,
         betweenss: r.eval('clustering$betweenss').to_ruby,
         withinss:  r.eval('clustering$withinss').to_ruby,
@@ -94,7 +104,8 @@ class Lanalytics::Clustering::ClusterRunner
         group by e.user_uuid
       ) q#{i}"
     end
-    subqueries_joined = "#{subqueries.first} FULL OUTER JOIN "
+    full_outer_join = verbs.length > 1 ? "FULL OUTER JOIN" : ''
+    subqueries_joined = "#{subqueries.first} #{full_outer_join} "
     subqueries.each_with_index do |query, i|
       next if i == 0
       join = " on q#{i - 1}.user_uuid = q#{i}.user_uuid"
