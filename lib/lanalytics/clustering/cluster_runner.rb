@@ -37,17 +37,33 @@ class Lanalytics::Clustering::ClusterRunner
       r.void_eval("frame[,#{num}] <- as.numeric(frame[,#{num}])")
     end
     cluster_data_dimensions = (2..verbs.length + 1).to_a.join(',')
+
     # Convert everything but the user_uuid to a matrix for clustering
     r.void_eval("mat <- data.matrix(frame[,c(#{cluster_data_dimensions})])")
+
+    # Normalize the values, since e.g.
+    # the difference of 1 or 2 questions answered
+    # is more significant than the difference of 1 or 2 page views.
+    r.void_eval('scaled_mat <- scale(mat)')
+
     # Cluster and append results to the data frame
-    r.void_eval('clustering <- kmeans(scale(mat), center=ncenters)')
+    r.void_eval('clustering <- kmeans(scaled_mat, center=ncenters)')
     r.void_eval("frame[,#{verbs.length + 2}] <- clustering$cluster")
+
+    # To read the cluster centers, un-apply the normalization
+    r.void_eval('centers <- t(apply(' \
+                  'clustering$centers, ' \
+                  '1, ' \
+                  'function(r) ' \
+                    "r * attr(scaled_mat, 'scaled:scale') + " \
+                    "attr(scaled_mat, 'scaled:center')" \
+                '))')
 
     {
       clustered_data: r.eval('frame').to_ruby,
       clusters: {
         sizes:     r.eval('clustering$size').to_ruby,
-        centers:   r.eval('clustering$centers').to_ruby,
+        centers:   r.eval('centers').to_ruby,
         totss:     r.eval('clustering$totss').to_ruby,
         betweenss: r.eval('clustering$betweenss').to_ruby,
         withinss:  r.eval('clustering$withinss').to_ruby,
