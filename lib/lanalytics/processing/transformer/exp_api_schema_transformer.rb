@@ -221,6 +221,22 @@ module Lanalytics
                                     }
         end
 
+        def transform_answer_accepted_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
+                                    user: {
+                                        resource_uuid: processing_unit[:user_id]
+                                    },
+                                    verb: :ANSWER_ACCEPTED,
+                                    resource: {
+                                        resource_uuid: processing_unit[:id]
+                                    },
+                                    timestamp: processing_unit[:timestamp],
+                                    in_context: {
+                                        course_id: processing_unit[:course_id],
+                                        question_id: processing_unit[:question_id]
+                                    }
+        end
+
         def transform_enrollment_punit_to_create(processing_unit, load_commands)
           save_enrollment(processing_unit, load_commands)
         end
