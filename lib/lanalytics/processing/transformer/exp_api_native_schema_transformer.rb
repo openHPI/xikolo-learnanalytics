@@ -167,7 +167,7 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
                                   uuid: processing_unit[:id],
                                   type: :answer
                               },
-                              timestamp: processing_unit[:timestamp],
+                              timestamp: processing_unit[:created_at],
                               in_context: {
                                   course_id: processing_unit[:course_id],
                                   question_id: processing_unit[:question_id]
