@@ -33,7 +33,7 @@ create_exp_pipeline('xikolo.account.user.confirmed', :user, create_action)
 
 create_exp_pipeline('xikolo.pinboard.question.create', :question, create_action)
 create_exp_pipeline('xikolo.pinboard.answer.create', :answer, create_action)
-create_exp_pipeline('xikolo.pinboard.answer.accept', :answer, create_action)
+create_exp_pipeline('xikolo.pinboard.answer.accept', :answer_accepted, create_action)
 create_exp_pipeline('xikolo.pinboard.comment.create', :comment, create_action)
 create_exp_pipeline('xikolo.pinboard.watch.create', :watch, create_action)
 create_exp_pipeline('xikolo.pinboard.watch.update', :watch, create_action)
