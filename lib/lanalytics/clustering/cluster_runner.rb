@@ -40,8 +40,14 @@ class Lanalytics::Clustering::ClusterRunner
   def self.set_centers(r, num_centers)
     if num_centers == 'auto'
       # Work on a sample, because it tages ages otherwise
-      r.void_eval('sampled_mat <- sample(scaled_mat, min(1000, length(scaled_mat)))')
-      r.void_eval('pamk.best <- pamk(scaled_mat)')
+      r.void_eval('sampled_mat <- scaled_mat[' \
+                    'sample(' \
+                      'nrow(scaled_mat),' \
+                      'size=min(800,nrow(scaled_mat)),' \
+                      'replace=FALSE' \
+                    '),' \
+                  ']')
+      r.void_eval('pamk.best <- pamk(sampled_mat)')
       r.void_eval('num_centers <- pamk.best$nc')
     else
       r.assign('num_centers', num_centers.to_i)
