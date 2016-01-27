@@ -364,7 +364,7 @@ DEPENDENCIES
   os
   pg
   pry-byebug
-  rails (~> 4.2.5.1)
+  rails (~> 4.2.5)
   rails-rfc6570 (~> 0.3)
   rest-client
   restify
