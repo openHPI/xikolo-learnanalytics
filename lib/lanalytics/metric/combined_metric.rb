@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class CombinedMetric
-      def self.query(user_id, course_id, start_time, end_date, resource_id)
+      def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
         results = query_dependent(user_id, course_id, start_time, end_date, resource_id)
 
         {count: results.values.sum}
@@ -14,7 +14,9 @@ module Lanalytics
             course_id,
             start_time,
             end_date,
-            resource_id)[:count] * (metric[:weight] || 1)
+            resource_id,
+            nil,
+            nil)[:count] * (metric[:weight] || 1)
         end
       end
 

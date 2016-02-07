@@ -18,7 +18,9 @@ class Api::QueryController < ApplicationController
       query_params[:course_id],
       query_params[:start_time],
       query_params[:end_time],
-      query_params[:resource_id]
+      query_params[:resource_id],
+      query_params[:page], # only used for lists
+      query_params[:per_page] # only used for lists
     )
   end
 
@@ -43,11 +45,11 @@ class Api::QueryController < ApplicationController
        UnenrollmentCount VideoVisitCount VisitCount QuestionResponseTime
        VideoSpeedChangeMetric CourseActivity CourseActivityTimebased
        CoursePoints VideoPlayerAdvancedCount GeoActivity VideoEvents
-       ActiveUserCount CourseActivityList)
+       ActiveUserCount CourseActivityList UserActivityCount CourseEvents)
   end
 
   def query_params
-    params.permit :user_id, :course_id, :start_time, :end_time, :resource_id
+    params.permit :user_id, :course_id, :start_time, :end_time, :resource_id, :page
   end
 
   def cluster_params

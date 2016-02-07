@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class ExpApiCountMetric < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_date, resource_id)
+      def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
         result = datasource.exec do |client|
           client.count index: datasource.index, body: {
             query: {
