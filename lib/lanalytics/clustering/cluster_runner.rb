@@ -27,7 +27,6 @@ class Lanalytics::Clustering::ClusterRunner
   end
 
   def self.get_data_for_clustering(course_uuid, verbs)
-    course_uuid = 'c5600abf-5abf-460b-ba6f-1d030053fd79' # fake
     verbs = ALLOWED_VERBS & verbs
 
     return [] if verbs.length == 0
