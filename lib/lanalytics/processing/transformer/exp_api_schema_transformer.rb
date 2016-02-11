@@ -230,7 +230,7 @@ module Lanalytics
                                     resource: {
                                         resource_uuid: processing_unit[:id]
                                     },
-                                    timestamp: processing_unit[:timestamp],
+                                    timestamp: processing_unit[:created_at],
                                     in_context: {
                                         course_id: processing_unit[:course_id],
                                         question_id: processing_unit[:question_id]
@@ -273,6 +273,27 @@ module Lanalytics
                                       admin: processing_unit[:admin],
                                       policy_accepted: processing_unit[:policy_accepted],
                                       preferred_language: processing_unit[:preferred_language]
+                                    }
+        end
+
+        def transform_submission_punit_to_create(processing_unit, load_commands)
+          transform_punit_to_create load_commands,
+                                    user: {
+                                      resource_uuid: processing_unit[:user_id]
+                                    },
+                                    verb: :submitted_quiz,
+                                    resource: {
+                                      resource_uuid: processing_unit[:quiz_id]
+                                    },
+                                    timestamp: processing_unit[:quiz_submission_time] || DateTime.now.to_s,
+                                    in_context: {
+                                      course_id: processing_unit[:course_id],
+                                      item_id: processing_unit[:item_id],
+                                      quiz_access_time: processing_unit[:quiz_access_time],
+                                      quiz_submission_time: processing_unit[:quiz_submission_time],
+                                      quiz_version_at: processing_unit[:quiz_version_at],
+                                      quiz_type: processing_unit[:quiz_type],
+                                      points: processing_unit[:points]
                                     }
         end
 
