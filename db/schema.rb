@@ -11,20 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151027175136) do
+ActiveRecord::Schema.define(version: 20160211162854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "datasource_accesses", force: true do |t|
+  create_table "cluster_groups", force: :cascade do |t|
+    t.string   "name"
+    t.string   "user_uuids"
+    t.jsonb    "cluster_results"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "datasource_accesses", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2015-11-10 12:28:42', null: false
+    t.datetime "accessed_at",      default: '2016-02-11 16:34:02', null: false
   end
 
-  create_table "datasources", id: false, force: true do |t|
+  create_table "datasources", id: false, force: :cascade do |t|
     t.string "key",         null: false
     t.string "name"
     t.text   "description"
@@ -34,21 +42,38 @@ ActiveRecord::Schema.define(version: 20151027175136) do
 
   add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true, using: :btree
 
-  create_table "research_cases", force: true do |t|
+  create_table "events", force: :cascade do |t|
+    t.string   "user_uuid"
+    t.integer  "verb_id"
+    t.integer  "resource_id"
+    t.jsonb    "in_context"
+    t.jsonb    "with_result"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "research_cases", force: :cascade do |t|
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "description"
   end
 
-  create_table "research_cases_users", id: false, force: true do |t|
+  create_table "research_cases_users", id: false, force: :cascade do |t|
     t.integer "research_case_id"
     t.integer "user_id"
   end
 
   add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id", using: :btree
 
-  create_table "users", force: true do |t|
+  create_table "resources", force: :cascade do |t|
+    t.string   "uuid"
+    t.string   "resource_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "users", force: :cascade do |t|
     t.string   "email",            null: false
     t.string   "crypted_password", null: false
     t.string   "salt",             null: false
@@ -58,5 +83,11 @@ ActiveRecord::Schema.define(version: 20151027175136) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+
+  create_table "verbs", force: :cascade do |t|
+    t.string   "verb"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
