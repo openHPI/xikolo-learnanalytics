@@ -226,7 +226,9 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
                                 quiz_submission_time: processing_unit[:quiz_submission_time],
                                 quiz_version_at: processing_unit[:quiz_version_at],
                                 quiz_type: processing_unit[:quiz_type],
-                                points: processing_unit[:points]
+                                attempt: processing_unit[:attempt],
+                                points: processing_unit[:points],
+                                max_points: processing_unit[:max_points]
                               }
   end
 
