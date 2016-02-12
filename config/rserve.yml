@@ -7,12 +7,3 @@ development:
 
 test:
   <<: *default
-
-staging:
-  <<: *default
-  hostname: '10.210.0.43'
-
-production:
-  <<: *default
-  hostname: '10.210.0.43'
-
