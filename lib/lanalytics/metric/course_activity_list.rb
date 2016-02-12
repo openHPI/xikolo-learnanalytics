@@ -42,7 +42,6 @@ module Lanalytics
 
         end
         result = {}
-        puts expresult
         expresult.with_indifferent_access[:aggregations][:group_by_field][:buckets].each do |bucket|
           buckets = bucket.with_indifferent_access[:group_by_field][:buckets]
           #add new verbs here if needed

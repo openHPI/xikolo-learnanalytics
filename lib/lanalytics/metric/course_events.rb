@@ -63,7 +63,10 @@ module Lanalytics
 
       # this is the list of events we would like, all must have the course id
       def self.verbs
-        %w(VIEWED_PAGE, WATCHED_QUESTION, VISITED)
+        %w( VIEWED_PAGE, WATCHED_QUESTION, VISITED, VIDEO_PLAY, VIDEO_PAUSE,
+            VIDEO_SEEK, VIDEO_FULLSCREEN, VIDEO_CHANGE_SPEED, VIDEO_CHANGE_SIZE,
+            ANSWERED_QUESTION, ASKED_QUESTION, ANSWER_ACCEPT, WATCHED_QUESTION,
+            COMMENTED)
       end
     end
   end
