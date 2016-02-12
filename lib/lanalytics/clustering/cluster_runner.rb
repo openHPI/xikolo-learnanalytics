@@ -15,7 +15,7 @@ class Lanalytics::Clustering::ClusterRunner
     data = get_data_for_clustering(course_uuid, verbs)
     return [] if data.empty?
 
-    clusterWithData(data, verbs.length, num_centers)
+    cluster_with_data(data, verbs.length, num_centers)
   end
 
   # This fixes the situation when only one dimension is clustered,
@@ -47,7 +47,7 @@ class Lanalytics::Clustering::ClusterRunner
     end
   end
 
-  def self.clusterWithData(data, num_verbs, num_centers = 'auto')
+  def self.cluster_with_data(data, num_verbs, num_centers = 'auto')
     r = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
     # Important to make sure we assign the correct data types in R
     # since error messages returned by the Rserve client gem will only be
