@@ -48,7 +48,7 @@ class Lanalytics::Clustering::ClusterRunner
   end
 
   def self.clusterWithData(data, num_verbs, num_centers = 'auto')
-    r = Rserve::Connection.new
+    r = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
     # Important to make sure we assign the correct data types in R
     # since error messages returned by the Rserve client gem will only be
     # 'undefined method/variable', which doesn't help much.

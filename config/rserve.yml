@@ -1,0 +1,18 @@
+default: &default
+  hostname: '127.0.0.1'
+  port_number: 6311
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+staging:
+  <<: *default
+  hostname: '10.210.0.43'
+
+production:
+  <<: *default
+  hostname: '10.210.0.43'
+
