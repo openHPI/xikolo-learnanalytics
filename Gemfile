@@ -71,6 +71,8 @@ gem 'unicorn'
 
 gem 'geoip' # Location tracking
 
+gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
+
 gem 'responders'
 
 group :development, :test do

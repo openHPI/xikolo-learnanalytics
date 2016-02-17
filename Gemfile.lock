@@ -252,6 +252,7 @@ GEM
       multi_json
       obligation (~> 0.1)
       rack
+    rserve-client (0.3.1)
     rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.4)
@@ -371,6 +372,7 @@ DEPENDENCIES
   responders
   rest-client
   restify
+  rserve-client (~> 0.3.1)
   rspec-its
   rspec-rails (~> 3.0.0)
   ruby-prof

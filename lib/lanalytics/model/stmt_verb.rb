@@ -18,7 +18,7 @@ module Lanalytics
         if json.is_a? Hash
           json = json.with_indifferent_access
         elsif json.is_a? String
-          json = JSON.parse(json, symbolize_names: true) if json.is_a? String
+          json = JSON.parse(json, symbolize_names: true)
         elsif json.nil?
           raise ArgumentError.new "'json' cannot be nil"
         else
