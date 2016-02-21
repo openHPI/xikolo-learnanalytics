@@ -11,11 +11,21 @@ class Lanalytics::Clustering::ClusterRunner
     'watched_question'
   ].sort
 
-  def self.cluster(num_centers, course_uuid, verbs)
-    data = get_data_for_clustering(course_uuid, verbs)
-    return [] if data.empty?
 
-    cluster_with_data(data, verbs.length, num_centers)
+  STRATEGY = :kmeans
+
+  # Currently takes too long: avg O(n log n), worst case O(n^2)
+  # So this currently produces a timeout (locally), but worth trying
+  # again because it will likely produce better results
+  # STRATEGY = :dbscan
+
+
+  def self.cluster(num_centers, course_uuid, verbs)
+    metrics = get_metrics_for_clustering(course_uuid, verbs)
+
+    return [] if metrics.empty?
+
+    cluster_with_metrics(metrics, verbs.length, num_centers)
   end
 
   # This fixes the situation when only one dimension is clustered,
@@ -26,14 +36,12 @@ class Lanalytics::Clustering::ClusterRunner
     centers
   end
 
-  def self.get_data_for_clustering(course_uuid, verbs)
+  def self.get_metrics_for_clustering(course_uuid, verbs)
     verbs = ALLOWED_VERBS & verbs
 
     return [] if verbs.length == 0
 
-    aggregate_verbs_for_course(course_uuid, verbs).map do |row|
-      [row[0]].concat(row[1, row.length].map(&:to_f))
-    end
+    aggregate_metrics_for_course(course_uuid, verbs)
   end
 
   def self.set_centers(r, num_centers)
@@ -47,30 +55,7 @@ class Lanalytics::Clustering::ClusterRunner
     end
   end
 
-  def self.cluster_with_data(data, num_verbs, num_centers = 'auto')
-    r = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
-    # Important to make sure we assign the correct data types in R
-    # since error messages returned by the Rserve client gem will only be
-    # 'undefined method/variable', which doesn't help much.
-    r.assign('lol',      Rserve::REXP::Wrapper.wrap(data)) # lol: list of lists
-
-    # Data frame may contain different data types, matrix just the same type
-    # So lets store a data frame here, because we also have the course_uuid
-    r.void_eval('frame <- do.call(rbind.data.frame, lol)')
-    (2..num_verbs + 1).each do |num| # R indices start with 1
-      r.void_eval("frame[,#{num}] <- as.numeric(frame[,#{num}])")
-    end
-
-    cluster_data_dimensions = (2..num_verbs + 1).to_a.join(',')
-
-    # Convert everything but the user_uuid to a matrix for clustering
-    r.void_eval("mat <- data.matrix(frame[,c(#{cluster_data_dimensions})])")
-
-    # Normalize the values, since e.g.
-    # the difference of 1 or 2 questions answered
-    # is more significant than the difference of 1 or 2 page views.
-    r.void_eval('scaled_mat <- scale(mat)')
-
+  def self.cluster_kmeans(r, num_verbs, num_centers)
     # Possibly find centers automatically
     set_centers(r, num_centers)
 
@@ -101,7 +86,55 @@ class Lanalytics::Clustering::ClusterRunner
     }
   end
 
-  def self.aggregate_verbs_for_course(course_uuid, verbs)
+  def self.cluster_dbscan(r, num_verbs)
+    #
+    # TODO: This produces a TimeoutError, but will likely return better clustering results.
+    #
+    r.void_eval('clustering <- dbscan(scaled_mat, 0.1)')
+    r.void_eval("frame[,#{num_verbs + 2}] <- clustering$cluster")
+
+    r.void_eval('sizes <- as.matrix(table(clustering$cluster))')
+
+    {
+      clustered_data: r.eval('frame').to_ruby,
+      clusters: {
+        sizes:   r.eval('sizes').to_ruby.to_a.flatten,
+      }
+    }
+  end
+
+  def self.cluster_with_metrics(metrics, num_verbs, num_centers = 'auto')
+    r = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
+    # Important to make sure we assign the correct data types in R
+    # since error messages returned by the Rserve client gem will only be
+    # 'undefined method/variable', which doesn't help much.
+    r.assign('lol',      Rserve::REXP::Wrapper.wrap(metrics)) # lol: list of lists
+
+    # Data frame may contain different data types, matrix just the same type
+    # So lets store a data frame here, because we also have the user_uuids
+    r.void_eval('frame <- do.call(rbind.data.frame, lol)')
+    (2..num_verbs + 1).each do |num| # R indices start with 1
+      r.void_eval("frame[,#{num}] <- as.numeric(frame[,#{num}])")
+    end
+
+    cluster_data_dimensions = (2..num_verbs + 1).to_a.join(',')
+
+    # Convert everything but the user_uuid to a matrix for clustering
+    r.void_eval("mat <- data.matrix(frame[,c(#{cluster_data_dimensions})])")
+
+    # Normalize the values, since e.g.
+    # the difference of 1 or 2 questions answered
+    # is more significant than the difference of 1 or 2 page views.
+    r.void_eval('scaled_mat <- scale(mat)')
+
+    if STRATEGY == :kmeans
+      cluster_kmeans(r, num_verbs, num_centers)
+    elsif STRATEGY == :dbscan
+      cluster_dbscan(r, num_verbs)
+    end
+  end
+
+  def self.aggregate_metrics_for_course(course_uuid, verbs)
     loader = Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
 
     # Escaping
@@ -110,9 +143,9 @@ class Lanalytics::Clustering::ClusterRunner
       PGconn.escape_string(verb)
     end
 
-    user_uuids       = verbs.each_with_index.map{ |_verb, i| "query#{i}.user_uuid" }
-    metrics          = verbs.each_with_index.map{ |_verb, i| "metric#{i}" }
-    coalesce_metrics = verbs.each_with_index.map{ |verb, i| "coalesce(metric#{i}, 0) as #{verb}" }
+    user_uuids       = verbs.each_with_index.map{ |_verb, i| "query#{i}.user_uuid" }.join(', ')
+    coalesce_metrics = verbs.each_with_index.map{ |verb, i| "coalesce(metric#{i}, 0) as #{verb}" }.join(', ')
+    metrics_not_zero = verbs.each_with_index.map{ |verb, i| "metric#{i} != 0" }.join(' or ')
     # Every subquery aggregates one metric per user
     subqueries       = verbs.each_with_index.map do |verb, i|
       "(select e.user_uuid, count(*) as metric#{i}
@@ -133,19 +166,13 @@ class Lanalytics::Clustering::ClusterRunner
       subqueries_joined += next_join unless i == subqueries.length - 1
     end
 
-    # Include all users, no matter if they have a count on a metric or not
-    results = loader.execute_sql("
-      select users.user_uuid, #{coalesce_metrics.join(', ')}
-      from (
-        select DISTINCT(user_uuid)
-        from events
-        where in_context->>'course_id' = '#{course_uuid}'
-      ) users FULL OUTER JOIN (
-         select coalesce(#{user_uuids.join(', ')}) user_uuid, #{metrics.join(', ')}
-         from #{subqueries_joined}
-      ) metrics on metrics.user_uuid = users.user_uuid;")
-
-    results.values
+    loader.execute_sql("
+      select coalesce(#{user_uuids}) user_uuid, #{coalesce_metrics}
+      from #{subqueries_joined}
+      where #{metrics_not_zero}
+    ").values.map do |row|
+      [row[0]].concat(row[1, row.length].map(&:to_f))
+    end
   end
 
   def self.datasource
