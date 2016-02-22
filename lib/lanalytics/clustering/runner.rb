@@ -10,14 +10,14 @@ class Lanalytics::Clustering::Runner
   # again because it will likely produce better clustering results
 
 
-  def self.cluster(num_centers, course_uuid, verbs)
-    metrics = Lanalytics::Clustering::Metrics.metrics(course_uuid, verbs)
+  def self.cluster(num_centers, course_uuid, dimensions)
+    metrics = Lanalytics::Clustering::Metrics.metrics(course_uuid, dimensions)
     return [] if metrics.empty?
 
-    cluster_with_metrics(metrics, verbs.length, num_centers)
+    cluster_with_metrics(metrics, dimensions.length, num_centers)
   end
 
-  def self.cluster_with_metrics(metrics, num_verbs, num_centers = 'auto')
+  def self.cluster_with_metrics(metrics, num_dimensions, num_centers = 'auto')
     r = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
     # Important to make sure we assign the correct data types in R
     # since error messages returned by the Rserve client gem will only be
@@ -27,11 +27,11 @@ class Lanalytics::Clustering::Runner
     # Data frame may contain different data types, matrix just the same type
     # So lets store a data frame here, because we also have the user_uuids
     r.void_eval('frame <- do.call(rbind.data.frame, lol)')
-    (2..num_verbs + 1).each do |num| # R indices start with 1
+    (2..num_dimensions + 1).each do |num| # R indices start with 1
       r.void_eval("frame[,#{num}] <- as.numeric(frame[,#{num}])")
     end
 
-    cluster_data_dimensions = (2..num_verbs + 1).to_a.join(',')
+    cluster_data_dimensions = (2..num_dimensions + 1).to_a.join(',')
 
     # Convert everything but the user_uuid to a matrix for clustering
     r.void_eval("mat <- data.matrix(frame[,c(#{cluster_data_dimensions})])")
@@ -42,9 +42,9 @@ class Lanalytics::Clustering::Runner
     r.void_eval('scaled_mat <- scale(mat)')
 
     if STRATEGY == :kmeans
-      cluster_kmeans(r, num_verbs, num_centers)
+      cluster_kmeans(r, num_dimensions, num_centers)
     elsif STRATEGY == :dbscan
-      cluster_dbscan(r, num_verbs)
+      cluster_dbscan(r, num_dimensions)
     end
   end
 
@@ -55,8 +55,8 @@ class Lanalytics::Clustering::Runner
 
   # This fixes the situation when only one dimension is clustered,
   # the un-scaling of the centers leads to a row, instead of a column
-  def self.normalize_centers(centers, verb_length)
-    return centers.to_a.flatten.map{ |center| [center] } if verb_length == 1
+  def self.normalize_centers(centers, num_dimensions)
+    return centers.to_a.flatten.map{ |center| [center] } if num_dimensions == 1
 
     centers
   end
@@ -72,16 +72,16 @@ class Lanalytics::Clustering::Runner
     end
   end
 
-  def self.cluster_kmeans(r, num_verbs, num_centers)
+  def self.cluster_kmeans(r, num_dimensions, num_centers)
     # Possibly find centers automatically
     set_centers(r, num_centers)
 
     # Cluster and append results to the data frame
     r.void_eval('clustering <- kmeans(scaled_mat, center=num_centers)')
-    r.void_eval("frame[,#{num_verbs + 2}] <- clustering$cluster")
+    r.void_eval("frame[,#{num_dimensions + 2}] <- clustering$cluster")
 
     # To read the cluster centers as a human, un-apply the normalization
-    # Note: When cluster centers are one-dimensional (one verb as input)
+    # Note: When cluster centers are one-dimensional (one dimension as input)
     #       row and col will be switched, which means we need to normalize
     r.void_eval('centers <- t(apply(' \
                   'clustering$centers, ' \
@@ -95,7 +95,7 @@ class Lanalytics::Clustering::Runner
       clustered_data: r.eval('frame').to_ruby,
       clusters: {
         sizes:     r.eval('clustering$size').to_ruby,
-        centers:   normalize_centers(r.eval('centers').to_ruby, num_verbs),
+        centers:   normalize_centers(r.eval('centers').to_ruby, num_dimensions),
         totss:     r.eval('clustering$totss').to_ruby,
         betweenss: r.eval('clustering$betweenss').to_ruby,
         withinss:  r.eval('clustering$withinss').to_ruby
@@ -106,12 +106,12 @@ class Lanalytics::Clustering::Runner
   # -----------------------
   # SPECIFIC STRATEGY: DBSCAN
   # -----------------------
-  def self.cluster_dbscan(r, num_verbs)
+  def self.cluster_dbscan(r, num_dimensions)
     #
     # TODO: This produces a TimeoutError, but will likely return better clustering results.
     #
     r.void_eval('clustering <- dbscan(scaled_mat, 0.1)')
-    r.void_eval("frame[,#{num_verbs + 2}] <- clustering$cluster")
+    r.void_eval("frame[,#{num_dimensions + 2}] <- clustering$cluster")
 
     r.void_eval('sizes <- as.matrix(table(clustering$cluster))')
 
