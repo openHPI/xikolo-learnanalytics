@@ -25,7 +25,7 @@ class Api::QueryController < ApplicationController
   end
 
   def cluster
-    render json: Lanalytics::Clustering::ClusterRunner.cluster(
+    render json: Lanalytics::Clustering::Runner.cluster(
       cluster_params[:num_centers],
       cluster_params[:course_id],
       cluster_params[:verbs].split('/').sort
