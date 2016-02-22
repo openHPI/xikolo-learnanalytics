@@ -49,6 +49,12 @@ class Lanalytics::Clustering::Metrics
     Lanalytics::Processing::DatasourceManager.datasource('exp_api_native')
   end
 
+  def self.perform_query(query)
+    loader = Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
+
+    loader.execute_sql(query).values
+  end
+
   def self.aggregate_metrics_for_course(queries, dimensions)
     user_uuids       = (0..dimensions.length - 1).map{ |i|
       "query#{i}.user_uuid"
@@ -78,12 +84,13 @@ class Lanalytics::Clustering::Metrics
       subqueries_joined += next_join unless i == subqueries.length - 1
     end
 
-    loader = Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
-    loader.execute_sql("
+    final_query = "
       select coalesce(#{user_uuids}) user_uuid, #{coalesce_metrics}
       from #{subqueries_joined}
       where #{metrics_not_zero}
-    ").values
+    "
+
+    perform_query(final_query)
   end
 
   def self.build_verb_query(verb, course_uuid)
