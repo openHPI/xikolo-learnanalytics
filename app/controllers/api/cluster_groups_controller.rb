@@ -11,7 +11,9 @@ class Api::ClusterGroupsController < ApplicationController
   end
 
   def index
-    groups = ClusterGroup.pluck(:id, :name, :cluster_results).map do |group|
+    groups = ClusterGroup.where(course_id: cluster_group_params[:course_id])
+                         .pluck(:id, :name, :cluster_results)
+                         .map do |group|
       {
         id: group[0],
         name: group[1],
@@ -40,6 +42,18 @@ class Api::ClusterGroupsController < ApplicationController
     group.destroy!
 
     head :no_content
+  end
+
+  def recompute
+    group = find_cluster_group
+
+    metrics = Lanalytics::Clustering::Metrics.metrics(
+      group.course_id,
+      group.cluster_results.each_key.map(&:to_s).sort,
+      JSON.parse(group.user_uuids)
+    ).entries[0]
+
+    render json: metrics
   end
 
   private

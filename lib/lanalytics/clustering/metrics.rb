@@ -25,12 +25,13 @@ class Lanalytics::Clustering::Metrics
     'forum_observation',
     'sessions',
     'item_discovery',
+    'video_discovery',
     'quiz_discovery',
     'quiz_performance',
   ].sort
 
 
-  def self.metrics(course_uuid, dimensions)
+  def self.metrics(course_uuid, dimensions, cluster_group_user_uuids=nil)
     verbs      = ALLOWED_VERBS & dimensions
     metrics    = ALLOWED_METRICS & dimensions
     dimensions = verbs + metrics
@@ -42,7 +43,7 @@ class Lanalytics::Clustering::Metrics
 
     queries = verb_queries + metric_queries
 
-    aggregate_metrics_for_course(queries, dimensions)
+    aggregate_metrics_for_course(queries, dimensions, cluster_group_user_uuids)
   end
 
   def self.datasource
@@ -52,11 +53,11 @@ class Lanalytics::Clustering::Metrics
   def self.perform_query(query)
     loader = Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
 
-    loader.execute_sql(query).values
+    loader.execute_sql(query)
   end
 
-  def self.aggregate_metrics_for_course(queries, dimensions)
-    user_uuids       = (0..dimensions.length - 1).map{ |i|
+  def self.aggregate_metrics_for_course(queries, dimensions, cluster_group_user_uuids)
+    user_uuids = (0..dimensions.length - 1).map{ |i|
       "query#{i}.user_uuid"
     }.join(', ')
 
@@ -89,6 +90,19 @@ class Lanalytics::Clustering::Metrics
       from #{subqueries_joined}
       where #{metrics_not_zero}
     "
+
+    if cluster_group_user_uuids.present?
+      dimension_selection = dimensions.map{ |dimension|
+        "avg(subq.#{dimension}) as #{dimension}"
+      }.join(', ')
+      cluster_group_filter = cluster_group_user_uuids.map{|uuid| "'#{uuid}'" }.join(', ')
+
+      final_query = "
+        select #{dimension_selection}
+        from (#{final_query}) subq
+        where subq.user_uuid in (#{cluster_group_filter})
+      "
+    end
 
     perform_query(final_query)
   end
@@ -179,6 +193,17 @@ class Lanalytics::Clustering::Metrics
      where e.verb_id = v.id
      and e.resource_id = r.id
      and e.in_context->>'course_id' = '#{course_uuid}'
+     and v.verb = 'visited'
+     group by e.user_uuid"
+  end
+
+  def self.video_discovery(course_uuid)
+    "select e.user_uuid, count(distinct(r.uuid)) as video_discovery_metric
+     from events as e, verbs as v, resources as r
+     where e.verb_id = v.id
+     and e.resource_id = r.id
+     and e.in_context->>'course_id' = '#{course_uuid}'
+     and r.resource_type = 'video'
      and v.verb = 'visited'
      group by e.user_uuid"
   end

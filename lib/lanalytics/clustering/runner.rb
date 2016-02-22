@@ -9,9 +9,8 @@ class Lanalytics::Clustering::Runner
   # So this produces a timeout locally with > 100k events, but worth trying
   # again because it will likely produce better clustering results
 
-
   def self.cluster(num_centers, course_uuid, dimensions)
-    metrics = Lanalytics::Clustering::Metrics.metrics(course_uuid, dimensions)
+    metrics = Lanalytics::Clustering::Metrics.metrics(course_uuid, dimensions).values
     return [] if metrics.empty?
 
     cluster_with_metrics(metrics, dimensions.length, num_centers)
@@ -28,7 +27,7 @@ class Lanalytics::Clustering::Runner
     # So lets store a data frame here, because we also have the user_uuids
     r.void_eval('frame <- do.call(rbind.data.frame, lol)')
     (2..num_dimensions + 1).each do |num| # R indices start with 1
-      r.void_eval("frame[,#{num}] <- as.numeric(frame[,#{num}])")
+      r.void_eval("frame[,#{num}] <- as.numeric(as.character(frame[,#{num}]))")
     end
 
     cluster_data_dimensions = (2..num_dimensions + 1).to_a.join(',')
@@ -91,11 +90,13 @@ class Lanalytics::Clustering::Runner
                     "attr(scaled_mat, 'scaled:center')" \
                 '))')
 
+    centers = r.eval('centers').to_ruby
+
     {
       clustered_data: r.eval('frame').to_ruby,
       clusters: {
         sizes:     r.eval('clustering$size').to_ruby,
-        centers:   normalize_centers(r.eval('centers').to_ruby, num_dimensions),
+        centers:   normalize_centers(centers, num_dimensions),
         totss:     r.eval('clustering$totss').to_ruby,
         betweenss: r.eval('clustering$betweenss').to_ruby,
         withinss:  r.eval('clustering$withinss').to_ruby
