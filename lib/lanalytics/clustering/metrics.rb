@@ -152,8 +152,12 @@ class Lanalytics::Clustering::Metrics
 
   def self.forum_observation(course_uuid)
     # TODO: Get course_code and add visited_page where page id = /courses/<course_code>/pinboard
-
-    self.build_verb_query('watched_question', course_uuid)
+    "select e.user_uuid, count(*) as forum_observation_metric
+     from events as e, verbs as v
+     where in_context->>'course_id' = '#{course_uuid}'
+     and e.verb_id = v.id
+     and v.verb = 'watched_question'
+     group by e.user_uuid"
   end
 
   def self.sessions(course_uuid)
