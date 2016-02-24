@@ -25,10 +25,10 @@ class Api::QueryController < ApplicationController
   end
 
   def cluster
-    render json: Lanalytics::Clustering::ClusterRunner.cluster(
+    render json: Lanalytics::Clustering::Runner.cluster(
       cluster_params[:num_centers],
       cluster_params[:course_id],
-      cluster_params[:verbs].split('/').sort
+      cluster_params[:dimensions].split('/').sort
     )
   end
 
@@ -55,7 +55,7 @@ class Api::QueryController < ApplicationController
   end
 
   def cluster_params
-    params.permit :num_centers, :course_id, :verbs
+    params.permit :num_centers, :course_id, :dimensions
   end
 
   def metric_error

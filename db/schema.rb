@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160211162854) do
+ActiveRecord::Schema.define(version: 20160215094458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20160211162854) do
     t.jsonb    "cluster_results"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "course_id"
   end
 
   create_table "datasource_accesses", force: :cascade do |t|

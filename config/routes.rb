@@ -27,6 +27,13 @@ Rails.application.routes.draw do
       root to: 'api#index'
       get 'query', to: 'query#show', as: :query
       get 'query/cluster', to: 'query#cluster', as: :cluster
+
+      resources :cluster_groups do
+        member do
+          get 'recompute'
+        end
+      end
+
     end
   end
 end
