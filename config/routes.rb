@@ -30,7 +30,7 @@ Rails.application.routes.draw do
 
       resources :cluster_groups do
         member do
-          get 'recompute'
+          post 'recompute'
         end
       end
 
