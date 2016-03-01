@@ -9,6 +9,16 @@ class Lanalytics::Clustering::Runner
   # So this produces a timeout locally with > 100k events, but worth trying
   # again because it will likely produce better clustering results
 
+  def self.connection
+    conn = Rserve::Connection.class_eval('@@connected_object')
+
+    if conn.nil?
+      conn = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
+    end
+
+    conn
+  end
+
   def self.cluster(num_centers, course_uuid, dimensions)
     metrics = Lanalytics::Clustering::Metrics.metrics(course_uuid, dimensions).values
     return [] if metrics.empty?
@@ -17,7 +27,7 @@ class Lanalytics::Clustering::Runner
   end
 
   def self.cluster_with_metrics(metrics, num_dimensions, num_centers = 'auto')
-    r = Rserve::Connection.new(Lanalytics::RSERVE_CONFIG)
+    r = connection
     # Important to make sure we assign the correct data types in R
     # since error messages returned by the Rserve client gem will only be
     # 'undefined method/variable', which doesn't help much.
