@@ -50,7 +50,7 @@ class Api::ClusterGroupsController < ApplicationController
     metrics = Lanalytics::Clustering::Metrics.metrics(
       group.course_id,
       group.cluster_results.each_key.map(&:to_s).sort,
-      JSON.parse(group.user_uuids)
+      group.user_uuids
     ).entries[0]
 
     render json: metrics
@@ -64,8 +64,10 @@ class Api::ClusterGroupsController < ApplicationController
 
   def cluster_group_params
     params.permit(:id, :name, :course_id)
-          .merge({ user_uuids: params[:user_uuids] })
-          .merge({ cluster_results: params[:cluster_results] })
+          .merge(
+            user_uuids: params[:user_uuids],
+            cluster_results: params[:cluster_results]
+          )
           .reject{|k,v| v.blank?}
   end
 end

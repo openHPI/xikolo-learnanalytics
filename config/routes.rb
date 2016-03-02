@@ -31,6 +31,8 @@ Rails.application.routes.draw do
       resources :cluster_groups do
         member do
           post 'recompute'
+
+          resources :teacher_actions, only: [:show, :index, :create]
         end
       end
 
