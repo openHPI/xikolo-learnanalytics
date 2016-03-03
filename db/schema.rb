@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 20160302173527) do
     t.datetime "action_performed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "half_group"
+    t.boolean  "half_group",          default: false, null: false
   end
 
   create_table "users", force: :cascade do |t|
