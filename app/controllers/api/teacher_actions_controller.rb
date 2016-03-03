@@ -79,10 +79,12 @@ class Api::TeacherActionsController < ApplicationController
   end
 
   def teacher_action_params
-    params.permit(:author_id, :richtext_id, subject: [:en, :de, :fr, :cn])
-          .merge(
-            cluster_group_id: params[:cluster_group_id]
-          )
+    params.permit(
+      :author_id,
+      :richtext_id,
+      :cluster_group_id,
+      subject: [:en, :de, :fr, :cn]
+    )
   end
 
   def teacher_action_params_with_users(target_users)
