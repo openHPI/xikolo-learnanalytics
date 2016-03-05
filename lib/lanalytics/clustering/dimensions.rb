@@ -1,4 +1,4 @@
-class Lanalytics::Clustering::Metrics
+class Lanalytics::Clustering::Dimensions
 
   ALLOWED_VERBS = [
     'asked_question',
@@ -30,8 +30,9 @@ class Lanalytics::Clustering::Metrics
     'quiz_performance',
   ].sort
 
+  def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
+    course_uuid = '9116a19d-7cba-4412-b35a-6d6dabc29c9a' # fake
 
-  def self.metrics(course_uuid, dimensions, cluster_group_user_uuids=nil)
     verbs      = ALLOWED_VERBS & dimensions
     metrics    = ALLOWED_METRICS & dimensions
     dimensions = (verbs + metrics).sort
@@ -43,7 +44,7 @@ class Lanalytics::Clustering::Metrics
 
     queries = verb_queries + metric_queries
 
-    aggregate_metrics_for_course(queries, dimensions, cluster_group_user_uuids)
+    aggregate_dimensions_data(queries, dimensions, cluster_group_user_uuids)
   end
 
   def self.datasource
@@ -56,7 +57,7 @@ class Lanalytics::Clustering::Metrics
     loader.execute_sql(query)
   end
 
-  def self.aggregate_metrics_for_course(queries, dimensions, cluster_group_user_uuids)
+  def self.aggregate_dimensions_data(queries, dimensions, cluster_group_user_uuids)
     user_uuids = (0..dimensions.length - 1).map{ |i|
       "query#{i}.user_uuid"
     }.join(', ')

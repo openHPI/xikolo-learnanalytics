@@ -20,18 +20,21 @@ class Lanalytics::Clustering::Runner
   end
 
   def self.cluster(num_centers, course_uuid, dimensions)
-    metrics = Lanalytics::Clustering::Metrics.metrics(course_uuid, dimensions).values
-    return [] if metrics.empty?
+    dimensions_data = Lanalytics::Clustering::Dimensions
+      .query(course_uuid, dimensions)
+      .values
 
-    cluster_with_metrics(metrics, dimensions.length, num_centers)
+    return [] if dimensions_data.empty?
+
+    cluster_with_dimensions_data(dimensions_data, dimensions.length, num_centers)
   end
 
-  def self.cluster_with_metrics(metrics, num_dimensions, num_centers = 'auto')
+  def self.cluster_with_dimensions_data(dimensions_data, num_dimensions, num_centers = 'auto')
     r = connection
     # Important to make sure we assign the correct data types in R
     # since error messages returned by the Rserve client gem will only be
     # 'undefined method/variable', which doesn't help much.
-    r.assign('lol',      Rserve::REXP::Wrapper.wrap(metrics)) # lol: list of lists
+    r.assign('lol',      Rserve::REXP::Wrapper.wrap(dimensions_data)) # lol: list of lists
 
     # Data frame may contain different data types, matrix just the same type
     # So lets store a data frame here, because we also have the user_uuids

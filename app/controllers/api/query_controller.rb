@@ -2,7 +2,7 @@ class Api::QueryController < ApplicationController
   protect_from_forgery with: :null_session
 
   # TODO: secure controller when researcher interface is published
-  skip_before_action :require_login, only: [:show, :cluster]
+  skip_before_action :require_login, only: [:show, :cluster, :available_cluster_dimensions]
 
   rfc6570_params show: [:metric, :user_id, :course_id, :start_time, :end_time, :resource_id]
 
@@ -30,6 +30,13 @@ class Api::QueryController < ApplicationController
       cluster_params[:course_id],
       cluster_params[:dimensions].split('/').sort
     )
+  end
+
+  def available_cluster_dimensions
+    verbs   = Lanalytics::Clustering::Dimensions::ALLOWED_VERBS
+    metrics = Lanalytics::Clustering::Dimensions::ALLOWED_METRICS
+
+    render json: (verbs + metrics).sort
   end
 
   private

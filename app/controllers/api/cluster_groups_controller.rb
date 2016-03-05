@@ -47,13 +47,13 @@ class Api::ClusterGroupsController < ApplicationController
   def recompute
     group = find_cluster_group
 
-    metrics = Lanalytics::Clustering::Metrics.metrics(
+    dimensions_data = Lanalytics::Clustering::Dimensions.query(
       group.course_id,
       group.cluster_results.each_key.map(&:to_s).sort,
       group.user_uuids
     ).entries[0]
 
-    render json: metrics
+    render json: dimensions_data
   end
 
   private

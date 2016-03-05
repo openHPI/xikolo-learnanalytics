@@ -54,12 +54,12 @@ class Api::TeacherActionsController < ApplicationController
       return
     end
 
-    metrics = {
+    dimensions_data = {
       control_group: recompute_group(course_id, dimensions, control_users),
       intervention_group: recompute_group(course_id, dimensions, action_users)
     }
 
-    render json: metrics
+    render json: dimensions_data
   end
 
   private
@@ -73,8 +73,8 @@ class Api::TeacherActionsController < ApplicationController
   end
 
   def recompute_group(course_id, dimensions, user_uuids)
-    Lanalytics::Clustering::Metrics
-      .metrics(course_id, dimensions, user_uuids)
+    Lanalytics::Clustering::Dimensions
+      .query(course_id, dimensions, user_uuids)
       .entries[0]
   end
 

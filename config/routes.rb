@@ -26,7 +26,8 @@ Rails.application.routes.draw do
     namespace :api do
       root to: 'api#index'
       get 'query', to: 'query#show', as: :query
-      get 'query/cluster', to: 'query#cluster', as: :cluster
+      get 'query/cluster', as: :cluster
+      get 'query/available_cluster_dimensions', as: :available_cluster_dimensions
 
       resources :cluster_groups do
         member do
