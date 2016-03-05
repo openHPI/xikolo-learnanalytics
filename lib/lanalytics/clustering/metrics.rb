@@ -34,7 +34,7 @@ class Lanalytics::Clustering::Metrics
   def self.metrics(course_uuid, dimensions, cluster_group_user_uuids=nil)
     verbs      = ALLOWED_VERBS & dimensions
     metrics    = ALLOWED_METRICS & dimensions
-    dimensions = verbs + metrics
+    dimensions = (verbs + metrics).sort
 
     return [] if verbs.length == 0 && metrics.length == 0
 
