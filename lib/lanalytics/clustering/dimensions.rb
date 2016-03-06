@@ -31,8 +31,6 @@ class Lanalytics::Clustering::Dimensions
   ].sort
 
   def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
-    course_uuid = '9116a19d-7cba-4412-b35a-6d6dabc29c9a' # fake
-
     verbs      = ALLOWED_VERBS & dimensions
     metrics    = ALLOWED_METRICS & dimensions
     dimensions = (verbs + metrics).sort

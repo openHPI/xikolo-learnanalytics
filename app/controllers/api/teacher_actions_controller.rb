@@ -40,7 +40,7 @@ class Api::TeacherActionsController < ApplicationController
     render json: teacher_action
   end
 
-  def recompute
+  def start_recomputing
     action = find_teacher_action
     group  = action.cluster_group
 
@@ -54,12 +54,17 @@ class Api::TeacherActionsController < ApplicationController
       return
     end
 
-    dimensions_data = {
-      control_group: recompute_group(course_id, dimensions, control_users),
-      intervention_group: recompute_group(course_id, dimensions, action_users)
-    }
+    job_id = SecureRandom.uuid
 
-    render json: dimensions_data
+    TeacherActionRecomputeWorker.perform_async(
+      job_id,
+      course_id,
+      dimensions,
+      control_users,
+      action_users
+    )
+
+    render json: { job_id: job_id }
   end
 
   private

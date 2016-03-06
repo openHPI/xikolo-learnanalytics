@@ -1,6 +1,3 @@
-require 'rserve'
-require 'matrix'
-
 class Lanalytics::Clustering::Runner
   STRATEGY = :kmeans
 

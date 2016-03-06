@@ -44,16 +44,17 @@ class Api::ClusterGroupsController < ApplicationController
     head :no_content
   end
 
-  def recompute
+  def start_recomputing
     group = find_cluster_group
 
-    dimensions_data = Lanalytics::Clustering::Dimensions.query(
-      group.course_id,
-      group.cluster_results.each_key.map(&:to_s).sort,
-      group.user_uuids
-    ).entries[0]
+    job_id = SecureRandom.uuid
+    course_id = group.course_id
+    dimensions = group.cluster_results.each_key.map(&:to_s).sort
+    user_uuids = group.user_uuids
 
-    render json: dimensions_data
+    ClusterGroupRecomputeWorker.perform_async(job_id, course_id, dimensions, user_uuids)
+
+    render json: { job_id: job_id }
   end
 
   private
