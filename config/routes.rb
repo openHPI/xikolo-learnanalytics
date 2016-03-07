@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     namespace :api do
       root to: 'api#index'
       get 'query', to: 'query#show', as: :query
-      get 'query/fetch_job',  to: 'query#fetch_job', as: :fetch_job
+      get 'query/job_results',  to: 'query#job_results', as: :job_results
 
       get 'query/available_cluster_dimensions', as: :available_cluster_dimensions
       post 'query/clustering', to: 'query#start_clustering', as: :start_clustering

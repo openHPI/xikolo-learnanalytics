@@ -39,7 +39,7 @@ class Api::QueryController < ApplicationController
     }
   end
 
-  def fetch_job
+  def job_results
     render json: Lanalytics::RedisStore.store.read(params[:job_id])
   end
 
