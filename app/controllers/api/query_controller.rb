@@ -24,7 +24,7 @@ class Api::QueryController < ApplicationController
     )
   end
 
-  def start_clustering
+  def clustering_job
     job_id = SecureRandom.uuid
 
     ClusterWorker.perform_async(

@@ -44,8 +44,8 @@ class Api::ClusterGroupsController < ApplicationController
     head :no_content
   end
 
-  def start_recomputing
-    group = find_cluster_group
+  def recomputing_job
+    group = ClusterGroup.find(params[:cluster_group_id])
 
     job_id = SecureRandom.uuid
     course_id = group.course_id

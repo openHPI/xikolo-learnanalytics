@@ -40,7 +40,7 @@ class Api::TeacherActionsController < ApplicationController
     render json: teacher_action
   end
 
-  def start_recomputing
+  def recomputing_job
     action = find_teacher_action
     group  = action.cluster_group
 
@@ -70,7 +70,7 @@ class Api::TeacherActionsController < ApplicationController
   private
 
   def find_teacher_action
-    TeacherAction.find(params[:id])
+    TeacherAction.find(params[:teacher_action_id])
   end
 
   def find_cluster_group
