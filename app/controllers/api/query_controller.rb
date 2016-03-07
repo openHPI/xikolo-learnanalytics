@@ -46,8 +46,8 @@ class Api::QueryController < ApplicationController
        VideoSpeedChangeMetric CourseActivity CourseActivityTimebased
        CoursePoints VideoPlayerAdvancedCount GeoActivity VideoEvents
        ActiveUserCount CourseActivityList UserActivityCount CourseEvents
-       ItemVisits
-      )
+       ItemVisits QuizPerformance)
+
   end
 
   def query_params
