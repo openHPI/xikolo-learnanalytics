@@ -24,6 +24,7 @@ class Lanalytics::Clustering::Dimensions
     'textual_forum_contribution',
     'forum_observation',
     'sessions',
+    'average_session_duration',
     'item_discovery',
     'video_discovery',
     'quiz_discovery',
@@ -221,4 +222,47 @@ class Lanalytics::Clustering::Dimensions
      and e.in_context->>'quiz_type' = 'selftest'
      group by e.user_uuid"
   end
+
+  def self.average_session_duration(course_uuid)
+    "select
+      session_duration.user_uuid,
+      round(
+        extract(
+          epoch from (session_duration.duration / session_count.count)
+        )
+      ) as average_session_duration_metric
+    from (
+      select user_uuid, min(diffsum) as duration
+      from (
+        select qq.user_uuid, sum(qq.diff) over (partition by qq.user_uuid) as diffsum
+        from(
+          select *, (q.created_at - q.created_at_next) as diff
+          from (
+            select
+              user_uuid,
+              created_at,
+              lead(created_at, 1) over (partition by user_uuid order by created_at desc) as created_at_next
+            from events
+            where in_context->>'course_id' = '#{course_uuid}'
+          ) as q
+        ) as qq
+        where extract(epoch from (qq.diff)) < 1800
+      ) as qqq
+      group by user_uuid
+    ) as session_duration, (
+      select q.user_uuid, count(*) as count
+      from (
+        select
+          user_uuid,
+          created_at,
+          lead(created_at, 1) over (partition by user_uuid order by created_at desc) as created_at_next
+        from events
+        where in_context->>'course_id' = '#{course_uuid}'
+      ) as q
+      where extract(epoch from (q.created_at - q.created_at_next)) > 1800
+      group by q.user_uuid
+    ) as session_count
+    where session_duration.user_uuid = session_count.user_uuid"
+  end
+
 end
