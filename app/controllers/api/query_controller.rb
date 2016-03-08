@@ -1,8 +1,8 @@
 class Api::QueryController < ApplicationController
   protect_from_forgery with: :null_session
 
-  # TODO: secure controller when researcher interface is published
-  skip_before_action :require_login, only: [:show, :cluster]
+  # TODO: secure controller
+  skip_before_action :require_login
 
   rfc6570_params show: [:metric, :user_id, :course_id, :start_time, :end_time, :resource_id]
 
@@ -24,12 +24,30 @@ class Api::QueryController < ApplicationController
     )
   end
 
-  def cluster
-    render json: Lanalytics::Clustering::Runner.cluster(
+  def clustering_job
+    job_id = SecureRandom.uuid
+
+    ClusterWorker.perform_async(
+      job_id,
       cluster_params[:num_centers],
       cluster_params[:course_id],
-      cluster_params[:dimensions].split('/').sort
+      cluster_params[:dimensions].sort
     )
+
+    render json: {
+      job_id: job_id
+    }
+  end
+
+  def job_results
+    render json: Lanalytics::RedisStore.store.read(params[:job_id])
+  end
+
+  def available_cluster_dimensions
+    verbs   = Lanalytics::Clustering::Dimensions::ALLOWED_VERBS
+    metrics = Lanalytics::Clustering::Dimensions::ALLOWED_METRICS
+
+    render json: (verbs + metrics).sort
   end
 
   private
@@ -55,7 +73,7 @@ class Api::QueryController < ApplicationController
   end
 
   def cluster_params
-    params.permit :num_centers, :course_id, :dimensions
+    params.permit :num_centers, :course_id, dimensions: []
   end
 
   def metric_error

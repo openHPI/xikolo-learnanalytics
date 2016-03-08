@@ -40,7 +40,7 @@ class Api::TeacherActionsController < ApplicationController
     render json: teacher_action
   end
 
-  def recompute
+  def recomputing_job
     action = find_teacher_action
     group  = action.cluster_group
 
@@ -54,18 +54,23 @@ class Api::TeacherActionsController < ApplicationController
       return
     end
 
-    metrics = {
-      control_group: recompute_group(course_id, dimensions, control_users),
-      intervention_group: recompute_group(course_id, dimensions, action_users)
-    }
+    job_id = SecureRandom.uuid
 
-    render json: metrics
+    TeacherActionRecomputeWorker.perform_async(
+      job_id,
+      course_id,
+      dimensions,
+      control_users,
+      action_users
+    )
+
+    render json: { job_id: job_id }
   end
 
   private
 
   def find_teacher_action
-    TeacherAction.find(params[:id])
+    TeacherAction.find(params[:teacher_action_id])
   end
 
   def find_cluster_group
@@ -73,8 +78,8 @@ class Api::TeacherActionsController < ApplicationController
   end
 
   def recompute_group(course_id, dimensions, user_uuids)
-    Lanalytics::Clustering::Metrics
-      .metrics(course_id, dimensions, user_uuids)
+    Lanalytics::Clustering::Dimensions
+      .query(course_id, dimensions, user_uuids)
       .entries[0]
   end
 

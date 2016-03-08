@@ -49,10 +49,8 @@ gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master
 gem 'pg'
 gem 'elasticsearch'
 
-
 gem 'rest-client'
 gem 'multi_json'
-
 
 gem 'ruby-progressbar'
 gem 'link_header'
@@ -74,6 +72,10 @@ gem 'geoip' # Location tracking
 gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 
 gem 'responders'
+
+# Asynchronous execution + cache in redis
+gem 'sidekiq'
+gem 'redis-activesupport'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.0.0'
