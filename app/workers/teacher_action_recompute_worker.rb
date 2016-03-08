@@ -7,7 +7,7 @@ class TeacherActionRecomputeWorker
       intervention_group: recompute(course_id, dimensions, intervention_group)
     }
 
-    Lanalytics::RedisStore.store.write(job_id, results: results)
+    Rails.cache.write(job_id, results: results)
   end
 
   def recompute(course_id, dimensions, user_uuids)

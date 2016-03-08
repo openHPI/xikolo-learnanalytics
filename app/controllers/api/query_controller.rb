@@ -40,7 +40,7 @@ class Api::QueryController < ApplicationController
   end
 
   def job_results
-    render json: Lanalytics::RedisStore.store.read(params[:job_id])
+    render json: Rails.cache.fetch(params[:job_id])
   end
 
   def available_cluster_dimensions

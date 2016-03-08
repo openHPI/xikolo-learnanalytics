@@ -6,6 +6,6 @@ class ClusterGroupRecomputeWorker
                 .query(course_id, dimensions, user_uuids)
                 .entries[0]
 
-    Lanalytics::RedisStore.store.write(job_id, results: results)
+    Rails.cache.write(job_id, results: results)
   end
 end

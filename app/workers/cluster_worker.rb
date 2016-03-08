@@ -8,6 +8,6 @@ class ClusterWorker
       dimensions
     )
 
-    Lanalytics::RedisStore.store.write(job_id, results: results)
+    Rails.cache.write(job_id, results: results)
   end
 end
