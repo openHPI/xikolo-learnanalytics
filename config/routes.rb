@@ -29,7 +29,7 @@ Rails.application.routes.draw do
       get 'query/job_results',  to: 'query#job_results', as: :job_results
 
       get 'query/available_cluster_dimensions', as: :available_cluster_dimensions
-      post 'query/clustering', to: 'query#clustering_job', as: :clustering_job
+      post 'query/clustering_job', to: 'query#clustering_job', as: :clustering_job
 
       resources :cluster_groups do
         resource :recomputing_job, to: 'cluster_groups#recomputing_job', only: [:create]
