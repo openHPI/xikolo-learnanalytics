@@ -51,10 +51,14 @@ class Lanalytics::Clustering::Runner
     r.void_eval('scaled_mat <- scale(mat)')
 
     if STRATEGY == :kmeans
-      cluster_kmeans(r, num_dimensions, num_centers)
+      results = cluster_kmeans(r, num_dimensions, num_centers)
     elsif STRATEGY == :dbscan
-      cluster_dbscan(r, num_dimensions)
+      results = cluster_dbscan(r, num_dimensions)
     end
+
+    # Add corellation matrix for info
+    correlations = r.eval('cor(mat)').to_ruby.to_a
+    results.merge(correlations: correlations)
   end
 
 
