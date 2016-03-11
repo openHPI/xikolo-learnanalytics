@@ -39,10 +39,14 @@ class Lanalytics::Clustering::Dimensions
     'video_discovery',
     'quiz_discovery',
     'quiz_performance',
-    'assignment_performance',
+    'main_quiz_performance',
+    'bonus_quiz_performance',
+    'graded_quiz_performance',
+    'ungraded_quiz_performance',
     'download_activity',
     'video_player_activity',
     'forum_activity',
+    'survey_submissions',
   ].sort
 
   def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
@@ -236,28 +240,40 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.quiz_performance(course_uuid)
-    quiz_assignment_performance(course_uuid, 'quiz', 'selftest')
+    quiz_type_performance(course_uuid, 'quiz', ['main', 'bonus', 'selftest'])
   end
 
-  def self.assignment_performance(course_uuid)
-    quiz_assignment_performance(course_uuid, 'assignment', 'main')
+  def self.graded_quiz_performance(course_uuid)
+    quiz_type_performance(course_uuid, 'graded_quiz', ['main', 'bonus'])
   end
 
-  def self.quiz_assignment_performance(course_uuid, metric_name, quiz_type)
-    # Measures average quiz performance in percentage
+  def self.ungraded_quiz_performance(course_uuid)
+    quiz_type_performance(course_uuid, 'ungraded_quiz', ['selftest'])
+  end
+
+  def self.main_quiz_performance(course_uuid)
+    quiz_type_performance(course_uuid, 'main_quiz', ['main'])
+  end
+
+  def self.bonus_quiz_performance(course_uuid)
+    quiz_type_performance(course_uuid, 'bonus_quiz', ['bonus'])
+  end
+
+  def self.quiz_type_performance(course_uuid, metric, types)
+    type_query = types.map{ |type| "e.in_context->>'quiz_type' = '#{type}'" }
+                      .join(' or ')
 
     "select e.user_uuid, round(
         avg(
           (e.in_context->>'points')::float /
           (e.in_context->>'max_points')::float
         )::numeric
-      ,3) as #{metric_name}_performance_metric
-     from events as e, verbs as v, resources as r
+      ,3) as #{metric}_performance_metric
+     from events as e, verbs as v
      where e.verb_id = v.id
-     and e.resource_id = r.id
      and e.in_context->>'course_id' = '#{course_uuid}'
      and v.verb = 'submitted_quiz'
-     and e.in_context->>'quiz_type' = '#{quiz_type}'
+     and (#{type_query})
      and (e.in_context->>'max_points') is not null
      group by e.user_uuid"
   end
@@ -340,6 +356,16 @@ class Lanalytics::Clustering::Dimensions
           v.verb = 'commented' or
           v.verb = 'watched_question' or
           v.verb = 'toggled_subscription')
+     group by e.user_uuid"
+  end
+
+  def self.survey_submissions(course_uuid)
+    "select e.user_uuid, count(*) as survey_submissions_metric
+     from events as e, verbs as v
+     where in_context->>'course_id' = '#{course_uuid}'
+     and e.verb_id = v.id
+     and v.verb = 'submitted_quiz'
+     and in_context->>'quiz_type' = 'survey'
      group by e.user_uuid"
   end
 end
