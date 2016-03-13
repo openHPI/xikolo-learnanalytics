@@ -29,24 +29,25 @@ class Lanalytics::Clustering::Dimensions
   #   3) make sure the function returns
   #      - the user uuid
   #      - the aggregated metric, named: foo_metric
+  #   Indentation indicates metric hierarchy (some metrics are abstractions / aggregations of others)
   ALLOWED_METRICS = [
-    'platform_exploration',
-    'textual_forum_contribution',
-    'forum_observation',
     'sessions',
     'average_session_duration',
-    'item_discovery',
-    'video_discovery',
-    'quiz_discovery',
-    'quiz_performance',
-    'main_quiz_performance',
-    'bonus_quiz_performance',
-    'graded_quiz_performance',
-    'ungraded_quiz_performance',
+    'platform_exploration',
+    'survey_submissions',
     'download_activity',
     'video_player_activity',
     'forum_activity',
-    'survey_submissions',
+      'textual_forum_contribution',
+      'forum_observation',
+    'item_discovery',
+      'video_discovery',
+      'quiz_discovery',
+    'quiz_performance',
+      'ungraded_quiz_performance',
+      'graded_quiz_performance',
+        'main_quiz_performance',
+        'bonus_quiz_performance',
   ].sort
 
   def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
