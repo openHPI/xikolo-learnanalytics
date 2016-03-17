@@ -23,7 +23,14 @@ class Lanalytics::Clustering::Runner
 
     return [] if dimensions_data.empty?
 
-    cluster_with_dimensions_data(dimensions_data, dimensions.length, num_centers)
+    start_time = Time.now
+    results = cluster_with_dimensions_data(dimensions_data, dimensions.length, num_centers)
+    end_time = Time.now
+
+    Sidekiq.logger.info { "[Performance] - Clustering took: #{end_time - start_time} seconds" }
+    Rails.logger.info { "[Performance] - Clustering took: #{end_time - start_time} seconds" }
+
+    results
   end
 
   def self.cluster_with_dimensions_data(dimensions_data, num_dimensions, num_centers = 'auto')
@@ -57,8 +64,7 @@ class Lanalytics::Clustering::Runner
     end
 
     # Add corellation matrix for info
-    correlations = r.eval('cor(mat)').to_ruby.to_a
-    results.merge(correlations: correlations)
+    results.merge(correlations: r.eval('cor(mat)').to_ruby.to_a)
   end
 
 

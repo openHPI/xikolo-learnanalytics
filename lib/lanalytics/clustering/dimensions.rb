@@ -72,7 +72,14 @@ class Lanalytics::Clustering::Dimensions
   def self.perform_query(query)
     loader = Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
 
-    loader.execute_sql(query)
+    start_time = Time.now
+    result = loader.execute_sql(query)
+    end_time = Time.now
+
+    Sidekiq.logger.info { "[Performance] - Data extraction took: #{end_time - start_time}" }
+    Rails.logger.info { "[Performance] - Data extraction took: #{end_time - start_time}" }
+
+    result
   end
 
   # -----------------------
