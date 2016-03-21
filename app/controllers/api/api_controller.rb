@@ -5,6 +5,12 @@ class Api::ApiController < ApplicationController
   skip_before_action :require_login, only: [:index]
 
   def index
-    render json: rfc6570_routes.select{|r| r =~ /api/}.map{|n,r| ["#{n.to_s.gsub('api_', '')}_url", r]}.to_h
+    # Display all routes
+    render json: rfc6570_routes.select { |route|
+      route =~ /api/
+    }.map { |name, route|
+      route_name = name.to_s.gsub('api_', '')
+      ["#{route_name}_url", route]
+    }.to_h
   end
 end

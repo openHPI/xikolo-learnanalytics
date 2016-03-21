@@ -11,15 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160211162854) do
+ActiveRecord::Schema.define(version: 20160302173527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "cluster_groups", force: :cascade do |t|
+  create_table "cluster_groups", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
     t.string   "name"
-    t.string   "user_uuids"
+    t.jsonb    "user_uuids"
     t.jsonb    "cluster_results"
+    t.uuid     "course_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -71,6 +73,18 @@ ActiveRecord::Schema.define(version: 20160211162854) do
     t.string   "resource_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "teacher_actions", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.uuid     "cluster_group_id"
+    t.uuid     "author_id"
+    t.uuid     "richtext_id"
+    t.jsonb    "subject"
+    t.jsonb    "user_uuids"
+    t.datetime "action_performed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "half_group",          default: false, null: false
   end
 
   create_table "users", force: :cascade do |t|

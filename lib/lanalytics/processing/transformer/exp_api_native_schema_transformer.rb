@@ -74,6 +74,27 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
     load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
   end
 
+  def transform_question_punit_to_create(processing_unit, load_commands)
+    transform_punit_to_create load_commands,
+                              user_uuid: processing_unit[:user_id],
+                              verb: :asked_question,
+                              resource: {
+                                uuid: processing_unit[:id],
+                                type: :question
+                              },
+                              timestamp: processing_unit[:created_at],
+                              in_context: {
+                                text: processing_unit[:text],
+                                course_id: processing_unit[:course_id],
+                                video_id: processing_unit[:video_id],
+                                video_timestamp: processing_unit[:video_timestamp],
+                                learning_room_id: processing_unit[:learning_room_id],
+                                implicit_tags: processing_unit[:implicit_tags],
+                                user_tags: processing_unit[:user_tags],
+                                technical: processing_unit[:technical]
+                              }
+  end
+
 
   def transform_answer_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,

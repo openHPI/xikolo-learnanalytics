@@ -16,6 +16,7 @@ Cany::Specification.new do
     compile_assets false
   end
   use :unicorn
+  use :sidekiq
 
   prepare do
     version = `dpkg-parsechangelog | grep Version: | cut -d: -f2`.strip
