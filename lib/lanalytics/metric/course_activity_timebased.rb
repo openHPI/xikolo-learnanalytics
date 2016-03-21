@@ -4,30 +4,31 @@ module Lanalytics
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
-              size: 0,
-              query: {
-                  bool:{
-                      must: term: {'in_context.course_id'=> course_id }
-          },
-              filter: {
-              and: [{
-                        range: {
-                            timestamp: {
-                                gte: DateTime.parse(start_time).iso8601,
-                                lte: DateTime.parse(end_time).iso8601
-                            }
-                        }
-                    }]
-          }
-          },
-              aggs: {
-              timestamps: {
-                  date_histogram: {
-                      field: 'timestamp',
-                      interval: 'hour'
+            size: 0,
+            query: {
+              bool: {
+                must: {
+                  term: { 'in_context.course_id' => course_id }
+                },
+                filter: {
+                  range: {
+                    timestamp: {
+                      gte: DateTime.parse(start_time).iso8601,
+                      lte: DateTime.parse(end_time).iso8601
+                    }
                   }
+                }
               }
-          }
+            },
+            aggs: {
+              timestamps: {
+                date_histogram: {
+                  field: 'timestamp',
+                  interval: 'hour'
+                }
+              }
+            }
+
           }
         end
         convert_to_timestamps(result.with_indifferent_access[:aggregations][:timestamps][:buckets])
