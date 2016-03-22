@@ -8,7 +8,7 @@ module Lanalytics
             query: {
               bool: {
                 must: {
-                  term: { 'in_context.course_id' => course_id }
+                  term: { "in_context.course_id" => course_id }
                 },
                 filter: {
                   range: {
@@ -40,7 +40,7 @@ module Lanalytics
         Hash[
             buckets.map do |bucket|
               [
-                  DateTime.parse(bucket[:key_as_string]).to_i,
+                  bucket[:key_as_string].to_s[0..-4],
                   bucket[:doc_count]
               ]
             end
