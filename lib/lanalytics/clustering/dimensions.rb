@@ -270,8 +270,15 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.sessions(course_uuid)
-    # count(*) + 1 since we count the GAPs
-    "select user_uuid, count(*) + 1 as sessions_metric
+    # working_time is null for the first lag
+    # -> users with any event in this course will have at least 1 session
+    # sessions will never be 0
+
+    "select
+      user_uuid,
+      count(CASE WHEN working_time is null or extract(epoch from working_time) > #{MIN_SESSION_GAP_SECONDS}
+            THEN 1
+            ELSE null END) as sessions_metric
      from (
        select
          user_uuid,
@@ -280,7 +287,6 @@ class Lanalytics::Clustering::Dimensions
        from events
        where in_context->>'course_id' = '#{course_uuid}'
      ) as q
-     where extract(epoch from working_time) > #{MIN_SESSION_GAP_SECONDS}
      group by user_uuid"
   end
 
@@ -299,11 +305,17 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.average_session_duration(course_uuid)
-    # count(*) + 1 since we count the GAPs
+    # working_time is null for the first lag
+    # -> users with any event in this course will have at least 1 session
+
     "select user_uuid,
       round(
-        sum(CASE WHEN working_time < #{MIN_SESSION_GAP_SECONDS} THEN working_time ELSE 0 END) /
-        (count(CASE WHEN working_time >= #{MIN_SESSION_GAP_SECONDS} THEN 1 ELSE null END) + 1)
+        sum(CASE WHEN working_time < #{MIN_SESSION_GAP_SECONDS}
+            THEN working_time
+            ELSE 0 END) /
+        count(CASE WHEN working_time is null or working_time >= #{MIN_SESSION_GAP_SECONDS}
+               THEN 1
+               ELSE null END)
       ) as average_session_duration_metric
     from (
       select
