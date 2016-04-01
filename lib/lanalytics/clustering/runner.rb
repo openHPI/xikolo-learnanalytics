@@ -1,10 +1,20 @@
 class Lanalytics::Clustering::Runner
+  # [performance] local 2GHz, 8GB RAM: ~5 sec. for 15000 students along 3 metrics
   STRATEGY = :kmeans
 
-  # STRATEGY = :dbscan
   # Currently takes too long: avg O(n log n), worst case O(n^2)
-  # So this produces a timeout locally with > 100k events, but worth trying
-  # again because it will likely produce better clustering results
+  # [performance] local 2GHz, 8GB RAM: ~100 sec. for 15000 students along 3 metrics
+  #
+  # STRATEGY = :dbscan
+
+
+  # Quicker than dbscan, but slower than kmeans.
+  # [performance] local 2GHz, 8GB RAM: ~16 sec. for 15000 students along 3 metrics
+  # BUT takes a LOT - O(n^2) space to compute a distance matrix.
+  # => not sure if feasible on a production system.
+  #
+  # STRATEGY = :hclust
+
 
   def self.connection
     conn = Rserve::Connection.class_eval('@@connected_object')
@@ -38,7 +48,7 @@ class Lanalytics::Clustering::Runner
     # Important to make sure we assign the correct data types in R
     # since error messages returned by the Rserve client gem will only be
     # 'undefined method/variable', which doesn't help much.
-    r.assign('lol',      Rserve::REXP::Wrapper.wrap(dimensions_data)) # lol: list of lists
+    r.assign('lol', Rserve::REXP::Wrapper.wrap(dimensions_data)) # lol: list of lists
 
     # Data frame may contain different data types, matrix just the same type
     # So lets store a data frame here, because we also have the user_uuids
@@ -55,16 +65,27 @@ class Lanalytics::Clustering::Runner
     # Normalize the values, since e.g.
     # the difference of 1 or 2 questions answered
     # is more significant than the difference of 1 or 2 page views.
-    r.void_eval('scaled_mat <- scale(mat)')
+    r.void_eval('scaled_matrix <- scale(mat)')
 
     if STRATEGY == :kmeans
       results = cluster_kmeans(r, num_dimensions, num_centers)
     elsif STRATEGY == :dbscan
       results = cluster_dbscan(r, num_dimensions)
+    elsif STRATEGY == :hclust
+      results = cluster_hclust(r, num_dimensions, num_centers)
     end
 
     # Add corellation matrix for info
     results.merge(correlations: r.eval('cor(mat)').to_ruby.to_a)
+  end
+
+  def self.centers(r)
+    r.void_eval('centers <- as.matrix(aggregate(frame,list(frame[,ncol(frame)]), FUN=mean))')
+
+    r.eval('centers').to_ruby.to_a.map do |row|
+      # First and last are grouped cluster assignments, row[1] is user_uuid
+      row[2..row.length-2]
+    end
   end
 
 
@@ -84,7 +105,7 @@ class Lanalytics::Clustering::Runner
     if num_centers == 'auto'
       # Options as recommended for large data sets
       # See https://cran.r-project.org/web/packages/fpc/fpc.pdf
-      r.void_eval('pamk.best <- pamk(scaled_mat, usepam=FALSE, criterion="asw")')
+      r.void_eval('pamk.best <- pamk(scaled_matrix, usepam=FALSE, criterion="asw")')
       r.void_eval('num_centers <- pamk.best$nc')
     else
       r.assign('num_centers', num_centers.to_i)
@@ -96,7 +117,7 @@ class Lanalytics::Clustering::Runner
     set_centers(r, num_centers)
 
     # Cluster and append results to the data frame
-    r.void_eval('clustering <- kmeans(scaled_mat, center=num_centers)')
+    r.void_eval('clustering <- kmeans(scaled_matrix, center=num_centers)')
     r.void_eval("frame[,#{num_dimensions + 2}] <- clustering$cluster")
 
     # To read the cluster centers as a human, un-apply the normalization
@@ -106,8 +127,8 @@ class Lanalytics::Clustering::Runner
                   'clustering$centers, ' \
                   '1, ' \
                   'function(r) ' \
-                    "r * attr(scaled_mat, 'scaled:scale') + " \
-                    "attr(scaled_mat, 'scaled:center')" \
+                    "r * attr(scaled_matrix, 'scaled:scale') + " \
+                    "attr(scaled_matrix, 'scaled:center')" \
                 '))')
 
     centers = r.eval('centers').to_ruby
@@ -128,18 +149,42 @@ class Lanalytics::Clustering::Runner
   # SPECIFIC STRATEGY: DBSCAN
   # -----------------------
   def self.cluster_dbscan(r, num_dimensions)
-    #
-    # TODO: This produces a TimeoutError, but will likely return better clustering results.
-    #
-    r.void_eval('clustering <- dbscan(scaled_mat, 0.1)')
+    # density-reachability of 0.1 is arbitrarily chosen for testing
+    # -> likely not ideal yet
+    r.void_eval('clustering <- dbscan(scaled_matrix, 0.1)')
     r.void_eval("frame[,#{num_dimensions + 2}] <- clustering$cluster")
 
     r.void_eval('sizes <- as.matrix(table(clustering$cluster))')
+    r.void_eval('centers <- as.matrix(aggregate(frame,list(frame[,ncol(frame)]), FUN=mean))')
 
     {
       clustered_data: r.eval('frame').to_ruby,
       clusters: {
         sizes:   r.eval('sizes').to_ruby.to_a.flatten,
+        centers: centers(r)
+      }
+    }
+  end
+
+  # -----------------------
+  # SPECIFIC STRATEGY: HCLUST
+  # -----------------------
+  def self.cluster_hclust(r, num_dimensions, num_centers)
+    # Possibly find centers automatically
+    set_centers(r, num_centers)
+
+    r.void_eval('dist <- dist(scaled_matrix)')
+    r.void_eval('clustering <- hclust(dist)')
+    r.void_eval('clusters <- cutree(clustering, k=num_centers)')
+    r.void_eval("frame[,#{num_dimensions + 2}] <- clusters")
+
+    r.void_eval('sizes <- as.matrix(table(clusters))')
+
+    {
+      clustered_data: r.eval('frame').to_ruby,
+      clusters: {
+        sizes:   r.eval('sizes').to_ruby.to_a.flatten,
+        centers: centers(r)
       }
     }
   end
