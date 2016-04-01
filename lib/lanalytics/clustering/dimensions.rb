@@ -32,6 +32,7 @@ class Lanalytics::Clustering::Dimensions
   #   Indentation indicates metric hierarchy (some metrics are abstractions / aggregations of others)
   ALLOWED_METRICS = [
     'sessions',
+    'total_session_duration',
     'average_session_duration',
     'platform_exploration',
     'survey_submissions',
@@ -49,6 +50,8 @@ class Lanalytics::Clustering::Dimensions
         'main_quiz_performance',
         'bonus_quiz_performance',
   ].sort
+
+  MIN_SESSION_GAP_SECONDS = 1800
 
   def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
     verbs      = ALLOWED_VERBS & dimensions
@@ -189,26 +192,6 @@ class Lanalytics::Clustering::Dimensions
      group by e.user_uuid"
   end
 
-  def self.sessions(course_uuid)
-    # Counts number of sessions where one sessions = events within <= 30 minutes gap
-
-    "select q.user_uuid, count(*) as sessions_metric
-     from (
-       select
-         user_uuid,
-         created_at,
-         lead(created_at, 1) over (partition by user_uuid order by created_at desc) as created_at_next
-       from events
-       where user_uuid in (
-         select distinct(user_uuid)
-         from events
-         where in_context->>'course_id' = '#{course_uuid}'
-       )
-     ) as q
-     where extract(epoch from (q.created_at - q.created_at_next)) > 1800
-     group by q.user_uuid"
-  end
-
   def self.quiz_discovery(course_uuid)
     # Counts number of distinct quizzes visited
 
@@ -286,46 +269,65 @@ class Lanalytics::Clustering::Dimensions
      group by e.user_uuid"
   end
 
-  def self.average_session_duration(course_uuid)
+  def self.sessions(course_uuid)
+    # working_time is null for the first lag
+    # -> users with any event in this course will have at least 1 session
+    # sessions will never be 0
+
     "select
-      session_duration.user_uuid,
+      user_uuid,
+      count(CASE WHEN working_time is null or extract(epoch from working_time) > #{MIN_SESSION_GAP_SECONDS}
+            THEN 1
+            ELSE null END) as sessions_metric
+     from (
+       select
+         user_uuid,
+         created_at - lag(created_at) over (partition by user_uuid
+                                            order by created_at) as working_time
+       from events
+       where in_context->>'course_id' = '#{course_uuid}'
+     ) as q
+     group by user_uuid"
+  end
+
+  def self.total_session_duration(course_uuid)
+    "select user_uuid, extract(epoch from sum(working_time)) as total_session_duration_metric
+    from(
+      select
+        user_uuid,
+        created_at - lag(created_at) over (partition by user_uuid
+                                           order by created_at) as working_time
+      from events
+      where in_context->>'course_id' = '#{course_uuid}'
+    ) q
+    where extract(epoch from (working_time)) <= #{MIN_SESSION_GAP_SECONDS}
+    group by user_uuid"
+  end
+
+  def self.average_session_duration(course_uuid)
+    # working_time is null for the first lag
+    # -> users with any event in this course will have at least 1 session
+
+    "select user_uuid,
       round(
-        extract(
-          epoch from (session_duration.duration / session_count.count)
-        )
+        sum(CASE WHEN working_time < #{MIN_SESSION_GAP_SECONDS}
+            THEN working_time
+            ELSE 0 END) /
+        count(CASE WHEN working_time is null or working_time >= #{MIN_SESSION_GAP_SECONDS}
+               THEN 1
+               ELSE null END)
       ) as average_session_duration_metric
     from (
-      select user_uuid, min(diffsum) as duration
-      from (
-        select qq.user_uuid, sum(qq.diff) over (partition by qq.user_uuid) as diffsum
-        from(
-          select *, (q.created_at - q.created_at_next) as diff
-          from (
-            select
-              user_uuid,
-              created_at,
-              lead(created_at, 1) over (partition by user_uuid order by created_at desc) as created_at_next
-            from events
-            where in_context->>'course_id' = '#{course_uuid}'
-          ) as q
-        ) as qq
-        where extract(epoch from (qq.diff)) < 1800
-      ) as qqq
-      group by user_uuid
-    ) as session_duration, (
-      select q.user_uuid, count(*) as count
-      from (
-        select
-          user_uuid,
-          created_at,
-          lead(created_at, 1) over (partition by user_uuid order by created_at desc) as created_at_next
-        from events
-        where in_context->>'course_id' = '#{course_uuid}'
-      ) as q
-      where extract(epoch from (q.created_at - q.created_at_next)) > 1800
-      group by q.user_uuid
-    ) as session_count
-    where session_duration.user_uuid = session_count.user_uuid"
+      select
+        user_uuid,
+        extract(epoch from
+          created_at - lag(created_at) over (partition by user_uuid
+                                             order by created_at)
+        ) as working_time
+      from events
+      where in_context->>'course_id' = '#{course_uuid}'
+    ) as q
+    group by user_uuid"
   end
 
   def self.download_activity(course_uuid)
