@@ -160,15 +160,15 @@ class Lanalytics::Clustering::Dimensions
 
     # Some verbs don't have a course_id. This is why we only allow
     # users who have at least one other event in this course
-
-    "select user_uuid, count(distinct(verb_id)) as platform_exploration_metric
+    "select user_uuid, count(verb_id) as platform_exploration_metric
      from events
      where user_uuid in (
-       select distinct(user_uuid)
+       select user_uuid
        from events
        where in_context->>'course_id' = '#{course_uuid}'
+       group by user_uuid
      )
-     group by user_uuid"
+     group by user_uuid, verb_id"
   end
 
   def self.textual_forum_contribution(course_uuid)
