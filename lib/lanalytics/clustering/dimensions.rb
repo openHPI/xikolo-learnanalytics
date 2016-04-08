@@ -93,13 +93,17 @@ class Lanalytics::Clustering::Dimensions
       "query#{i}.user_uuid"
     }.join(', ')
 
-    coalesce_metrics = dimensions.each_with_index.map{ |dimension, i|
+    coalesce_dimensions = dimensions.each_with_index.map{ |dimension, i|
       "cast(coalesce(#{dimension}_metric, 0) as float) as #{dimension}"
     }.join(', ')
 
-    metrics_not_zero = dimensions.each_with_index.map{ |dimension, i|
+    dimensions_not_zero = dimensions.map{ |dimension|
       "#{dimension}_metric != 0"
     }.join(' or ')
+
+    max_dimensions = dimensions.map{ |dimension|
+      "max(#{dimension}) as #{dimension}"
+    }.join(', ')
 
     # Every subquery aggregates one metric per user
     subqueries = queries.each_with_index.map do |query, i|
@@ -118,9 +122,13 @@ class Lanalytics::Clustering::Dimensions
     end
 
     final_query = "
-      select coalesce(#{user_uuids}) user_uuid, #{coalesce_metrics}
-      from #{subqueries_joined}
-      where #{metrics_not_zero}
+      select user_uuid, #{max_dimensions}
+      from (
+        select coalesce(#{user_uuids}) user_uuid, #{coalesce_dimensions}
+        from #{subqueries_joined}
+        where #{dimensions_not_zero}
+      ) fin
+      group by user_uuid
     "
 
     if cluster_group_user_uuids.present?
@@ -160,7 +168,7 @@ class Lanalytics::Clustering::Dimensions
 
     # Some verbs don't have a course_id. This is why we only allow
     # users who have at least one other event in this course
-    "select user_uuid, count(verb_id) as platform_exploration_metric
+    "select user_uuid, count(distinct(verb_id)) as platform_exploration_metric
      from events
      where user_uuid in (
        select user_uuid
@@ -168,7 +176,7 @@ class Lanalytics::Clustering::Dimensions
        where in_context->>'course_id' = '#{course_uuid}'
        group by user_uuid
      )
-     group by user_uuid, verb_id"
+     group by user_uuid"
   end
 
   def self.textual_forum_contribution(course_uuid)
