@@ -49,6 +49,7 @@ class Lanalytics::Clustering::Dimensions
       'graded_quiz_performance',
         'main_quiz_performance',
         'bonus_quiz_performance',
+    'course_performance'
   ].sort
 
   MIN_SESSION_GAP_SECONDS = 1800
@@ -385,5 +386,17 @@ class Lanalytics::Clustering::Dimensions
      and v.verb = 'submitted_quiz'
      and in_context->>'quiz_type' = 'survey'
      group by e.user_uuid"
+  end
+
+  def self.course_performance(course_uuid)
+    "select user_uuid, max(
+      (in_context->>'points_achieved')::float /
+      (in_context->>'points_maximal')::float
+    ) as course_performance_metric
+     from events e, verbs v
+     where in_context->>'course_id' = '#{course_uuid}'
+     and e.verb_id = v.id
+     and v.verb = 'completed_course'
+     group by user_uuid"
   end
 end
