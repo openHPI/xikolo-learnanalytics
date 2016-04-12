@@ -8,10 +8,11 @@ common: &common
 
 development:
   <<: *common
-  host: '10.210.0.32'
+  host: 'localhost'
   port: '9200'
-  index: 'dev2'
-
+  index: 'lanalytics'
+  user: 'lanalytics'
+  password: 'lanalytics'
 
 test:
   <<: *common
