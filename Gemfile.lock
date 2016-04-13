@@ -373,6 +373,8 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
+    xikolo-config (1.37)
+      activesupport
     youyouaidi (0.1.2)
 
 PLATFORMS
@@ -425,6 +427,7 @@ DEPENDENCIES
   unicorn
   validates_email_format_of
   webmock
+  xikolo-config (~> 1.37)
   youyouaidi
 
 BUNDLED WITH

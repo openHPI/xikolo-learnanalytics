@@ -8,8 +8,7 @@ module Lanalytics
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
-            size: 2,
-            from: 5,
+            size: 10000,
             query: {
               filtered: {
                 query: {

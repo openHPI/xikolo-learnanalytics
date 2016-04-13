@@ -102,3 +102,5 @@ group :test do
   gem 'webmock'
   gem 'simplecov'
 end
+
+gem 'xikolo-config', '~> 1.37'

@@ -12,7 +12,7 @@ common: &common
     - moocdb_pipeline.prb
     - exp_api_pipeline.prb
     # - experience_graph_pipeline.prb
-    # - referrer_pipeline.prb
+    - referrer_pipeline.prb
 
 development:
   datasources:
@@ -24,7 +24,7 @@ development:
     - moocdb_pipeline.prb
     - exp_api_pipeline.prb
     # - experience_graph_pipeline.prb
-    # - referrer_pipeline.prb
+    - referrer_pipeline.prb
 
 test:
   <<: *common
