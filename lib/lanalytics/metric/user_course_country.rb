@@ -38,7 +38,7 @@ module Lanalytics
         if result['aggregations']['countries']['buckets'][0].present?
           return result['aggregations']['countries']['buckets'][0]['key']
         else
-          return []
+          return ''
         end
       end
     end
