@@ -54,7 +54,7 @@ class Lanalytics::Clustering::Dimensions
 
   MIN_SESSION_GAP_SECONDS = 1800
 
-  def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
+  def self.query(course_uuid=nil, dimensions, cluster_group_user_uuids=nil)
     verbs      = ALLOWED_VERBS & dimensions
     metrics    = ALLOWED_METRICS & dimensions
     dimensions = (verbs + metrics).sort
@@ -148,12 +148,12 @@ class Lanalytics::Clustering::Dimensions
     perform_query(final_query)
   end
 
-  def self.build_verb_query(verb, course_uuid)
+  def self.build_verb_query(verb, course_uuid = nil)
     "select e.user_uuid, count(*) as #{verb}_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and v.verb = '#{verb}'
+     where e.verb_id = v.id " +
+     course_uuid.present? ? "and in_context->>'course_id' = '#{course_uuid}'" : "" +
+     " and v.verb = '#{verb}'
      group by e.user_uuid"
   end
 
@@ -173,9 +173,9 @@ class Lanalytics::Clustering::Dimensions
      from events
      where user_uuid in (
        select user_uuid
-       from events
-       where in_context->>'course_id' = '#{course_uuid}'
-       group by user_uuid
+       from events "+
+       course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}'" : "" +
+       " group by user_uuid
      )
      group by user_uuid"
   end
@@ -185,9 +185,9 @@ class Lanalytics::Clustering::Dimensions
 
     "select e.user_uuid, count(*) as textual_forum_contribution_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and (v.verb = 'asked_question' or v.verb = 'answered_question' or v.verb = 'commented')
+     where e.verb_id = v.id " +
+     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and (v.verb = 'asked_question' or v.verb = 'answered_question' or v.verb = 'commented')
      group by e.user_uuid"
   end
 
@@ -195,21 +195,20 @@ class Lanalytics::Clustering::Dimensions
     # TODO: Get course_code and add visited_page where page id = /courses/<course_code>/pinboard
     "select e.user_uuid, count(*) as forum_observation_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and (v.verb = 'watched_question' or v.verb = 'toggled_subscription')
+     where e.verb_id = v.id "+
+     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and (v.verb = 'watched_question' or v.verb = 'toggled_subscription')
      group by e.user_uuid"
   end
 
   def self.quiz_discovery(course_uuid)
     # Counts number of distinct quizzes visited
-
     "select e.user_uuid, count(distinct(r.uuid)) as quiz_discovery_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
-     and e.resource_id = r.id
-     and e.in_context->>'course_id' = '#{course_uuid}'
-     and r.resource_type = 'quiz'
+     and e.resource_id = r.id " +
+     course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and r.resource_type = 'quiz'
      and v.verb = 'visited'
      group by e.user_uuid"
   end
@@ -220,9 +219,9 @@ class Lanalytics::Clustering::Dimensions
     "select e.user_uuid, count(distinct(r.uuid)) as item_discovery_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
-     and e.resource_id = r.id
-     and e.in_context->>'course_id' = '#{course_uuid}'
-     and v.verb = 'visited'
+     and e.resource_id = r.id " +
+     course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and v.verb = 'visited'
      group by e.user_uuid"
   end
 
@@ -232,9 +231,9 @@ class Lanalytics::Clustering::Dimensions
     "select e.user_uuid, count(distinct(r.uuid)) as video_discovery_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
-     and e.resource_id = r.id
-     and e.in_context->>'course_id' = '#{course_uuid}'
-     and r.resource_type = 'video'
+     and e.resource_id = r.id " +
+     course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and r.resource_type = 'video'
      and v.verb = 'visited'
      group by e.user_uuid"
   end
@@ -270,9 +269,9 @@ class Lanalytics::Clustering::Dimensions
         )::numeric
       ,3) as #{metric}_performance_metric
      from events as e, verbs as v
-     where e.verb_id = v.id
-     and e.in_context->>'course_id' = '#{course_uuid}'
-     and v.verb = 'submitted_quiz'
+     where e.verb_id = v.id " +
+     course_uuid.present? ?  " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and v.verb = 'submitted_quiz'
      and (#{type_query})
      and (e.in_context->>'max_points') is not null
      group by e.user_uuid"
@@ -293,9 +292,9 @@ class Lanalytics::Clustering::Dimensions
          user_uuid,
          created_at - lag(created_at) over (partition by user_uuid
                                             order by created_at) as working_time
-       from events
-       where in_context->>'course_id' = '#{course_uuid}'
-     ) as q
+       from events " +
+        course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : "" +
+        " ) as q
      group by user_uuid"
   end
 
@@ -306,9 +305,9 @@ class Lanalytics::Clustering::Dimensions
         user_uuid,
         created_at - lag(created_at) over (partition by user_uuid
                                            order by created_at) as working_time
-      from events
-      where in_context->>'course_id' = '#{course_uuid}'
-    ) q
+      from events " +
+        course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : "" +
+    " ) q
     where extract(epoch from (working_time)) <= #{MIN_SESSION_GAP_SECONDS}
     group by user_uuid"
   end
@@ -333,30 +332,30 @@ class Lanalytics::Clustering::Dimensions
           created_at - lag(created_at) over (partition by user_uuid
                                              order by created_at)
         ) as working_time
-      from events
-      where in_context->>'course_id' = '#{course_uuid}'
-    ) as q
+      from events " +
+        course_uuid.present? ?  " where in_context->>'course_id' = '#{course_uuid}' " : "" +
+    " ) as q
     group by user_uuid"
   end
 
   def self.download_activity(course_uuid)
     "select e.user_uuid, count(*) as download_activity_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
      and e.verb_id = v.id
-     and (v.verb = 'downloaded_slides' or
+     where (v.verb = 'downloaded_slides' or
           v.verb = 'downloaded_sd_video' or
           v.verb = 'downloaded_hd_video' or
-          v.verb = 'downloaded_audio')
-     group by e.user_uuid"
+          v.verb = 'downloaded_audio') " +
+     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " group by e.user_uuid"
   end
 
   def self.video_player_activity(course_uuid)
     "select e.user_uuid, count(*) as video_player_activity_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and (v.verb = 'video_play' or
+     where e.verb_id = v.id " +
+     course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and (v.verb = 'video_play' or
           v.verb = 'video_pause' or
           v.verb = 'video_fullscreen' or
           v.verb = 'video_change_speed' or
@@ -368,9 +367,9 @@ class Lanalytics::Clustering::Dimensions
   def self.forum_activity(course_uuid)
     "select e.user_uuid, count(*) as forum_activity_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and (v.verb = 'asked_question' or
+     where e.verb_id = v.id " +
+     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and (v.verb = 'asked_question' or
           v.verb = 'answered_question' or
           v.verb = 'commented' or
           v.verb = 'watched_question' or
@@ -381,9 +380,9 @@ class Lanalytics::Clustering::Dimensions
   def self.survey_submissions(course_uuid)
     "select e.user_uuid, count(*) as survey_submissions_metric
      from events as e, verbs as v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and v.verb = 'submitted_quiz'
+     where e.verb_id = v.id " +
+     course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     " and v.verb = 'submitted_quiz'
      and in_context->>'quiz_type' = 'survey'
      group by e.user_uuid"
   end
@@ -394,9 +393,9 @@ class Lanalytics::Clustering::Dimensions
       (in_context->>'points_maximal')::float
     ) as course_performance_metric
      from events e, verbs v
-     where in_context->>'course_id' = '#{course_uuid}'
-     and e.verb_id = v.id
-     and v.verb = 'completed_course'
+     where e.verb_id = v.id" +
+     course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : "" +
+     "  and v.verb = 'completed_course'
      group by user_uuid"
   end
 end
