@@ -149,12 +149,13 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.build_verb_query(verb, course_uuid = nil)
-    "select e.user_uuid, count(*) as #{verb}_metric
+    s1 = "select e.user_uuid, count(*) as #{verb}_metric
      from events as e, verbs as v
-     where e.verb_id = v.id " +
-     course_uuid.present? ? "and in_context->>'course_id' = '#{course_uuid}'" : "" +
-     " and v.verb = '#{verb}'
+     where e.verb_id = v.id "
+    s2 = course_uuid.present? ? "and in_context->>'course_id' = '#{course_uuid}'" : ""
+    s3 =  " and v.verb = '#{verb}'
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.build_metric_query(metric, course_uuid)
@@ -169,73 +170,78 @@ class Lanalytics::Clustering::Dimensions
 
     # Some verbs don't have a course_id. This is why we only allow
     # users who have at least one other event in this course
-    "select user_uuid, count(distinct(verb_id)) as platform_exploration_metric
+    s1 ="select user_uuid, count(distinct(verb_id)) as platform_exploration_metric
      from events
      where user_uuid in (
        select user_uuid
-       from events "+
-       course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}'" : "" +
-       " group by user_uuid
+       from events "
+    s2 = course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}'" : ""
+    s3 = " group by user_uuid
      )
      group by user_uuid"
+    s1 + s2 + s3
   end
 
   def self.textual_forum_contribution(course_uuid)
     # Counts the sum of answered_question, commented, asked_question
-
-    "select e.user_uuid, count(*) as textual_forum_contribution_metric
+    s1 = "select e.user_uuid, count(*) as textual_forum_contribution_metric
      from events as e, verbs as v
-     where e.verb_id = v.id " +
-     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and (v.verb = 'asked_question' or v.verb = 'answered_question' or v.verb = 'commented')
+     where e.verb_id = v.id "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and (v.verb = 'asked_question' or v.verb = 'answered_question' or v.verb = 'commented')
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.forum_observation(course_uuid)
     # TODO: Get course_code and add visited_page where page id = /courses/<course_code>/pinboard
-    "select e.user_uuid, count(*) as forum_observation_metric
+    s1 = "select e.user_uuid, count(*) as forum_observation_metric
      from events as e, verbs as v
-     where e.verb_id = v.id "+
-     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and (v.verb = 'watched_question' or v.verb = 'toggled_subscription')
+     where e.verb_id = v.id "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and (v.verb = 'watched_question' or v.verb = 'toggled_subscription')
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.quiz_discovery(course_uuid)
     # Counts number of distinct quizzes visited
-    "select e.user_uuid, count(distinct(r.uuid)) as quiz_discovery_metric
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as quiz_discovery_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
-     and e.resource_id = r.id " +
-     course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and r.resource_type = 'quiz'
+     and e.resource_id = r.id "
+    s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and r.resource_type = 'quiz'
      and v.verb = 'visited'
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.item_discovery(course_uuid)
     # Counts number of distinct items visited
 
-    "select e.user_uuid, count(distinct(r.uuid)) as item_discovery_metric
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as item_discovery_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
-     and e.resource_id = r.id " +
-     course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and v.verb = 'visited'
+     and e.resource_id = r.id "
+    s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and v.verb = 'visited'
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.video_discovery(course_uuid)
     # Counts number of distinct videos visited
 
-    "select e.user_uuid, count(distinct(r.uuid)) as video_discovery_metric
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as video_discovery_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
-     and e.resource_id = r.id " +
-     course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and r.resource_type = 'video'
+     and e.resource_id = r.id "
+    s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and r.resource_type = 'video'
      and v.verb = 'visited'
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.quiz_performance(course_uuid)
@@ -262,19 +268,20 @@ class Lanalytics::Clustering::Dimensions
     type_query = types.map{ |type| "e.in_context->>'quiz_type' = '#{type}'" }
                       .join(' or ')
 
-    "select e.user_uuid, round(
+    s1 = "select e.user_uuid, round(
         avg(
           (e.in_context->>'points')::float /
           (e.in_context->>'max_points')::float
         )::numeric
       ,3) as #{metric}_performance_metric
      from events as e, verbs as v
-     where e.verb_id = v.id " +
-     course_uuid.present? ?  " and e.in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and v.verb = 'submitted_quiz'
+     where e.verb_id = v.id "
+    s2 = course_uuid.present? ?  " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and v.verb = 'submitted_quiz'
      and (#{type_query})
      and (e.in_context->>'max_points') is not null
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.sessions(course_uuid)
@@ -282,7 +289,7 @@ class Lanalytics::Clustering::Dimensions
     # -> users with any event in this course will have at least 1 session
     # sessions will never be 0
 
-    "select
+    s1 = "select
       user_uuid,
       count(CASE WHEN working_time is null or extract(epoch from working_time) > #{MIN_SESSION_GAP_SECONDS}
             THEN 1
@@ -292,31 +299,33 @@ class Lanalytics::Clustering::Dimensions
          user_uuid,
          created_at - lag(created_at) over (partition by user_uuid
                                             order by created_at) as working_time
-       from events " +
-        course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : "" +
-        " ) as q
+       from events "
+      s2 =  course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : ""
+      s3 =  " ) as q
      group by user_uuid"
+    s1 + s2 + s3
   end
 
   def self.total_session_duration(course_uuid)
-    "select user_uuid, extract(epoch from sum(working_time)) as total_session_duration_metric
+    s1 = "select user_uuid, extract(epoch from sum(working_time)) as total_session_duration_metric
     from(
       select
         user_uuid,
         created_at - lag(created_at) over (partition by user_uuid
                                            order by created_at) as working_time
-      from events " +
-        course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : "" +
-    " ) q
+      from events "
+    s2 =  course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " ) q
     where extract(epoch from (working_time)) <= #{MIN_SESSION_GAP_SECONDS}
     group by user_uuid"
+    s1 + s2 + s3
   end
 
   def self.average_session_duration(course_uuid)
     # working_time is null for the first lag
     # -> users with any event in this course will have at least 1 session
 
-    "select user_uuid,
+    s1 ="select user_uuid,
       round(
         sum(CASE WHEN working_time < #{MIN_SESSION_GAP_SECONDS}
             THEN working_time
@@ -332,70 +341,76 @@ class Lanalytics::Clustering::Dimensions
           created_at - lag(created_at) over (partition by user_uuid
                                              order by created_at)
         ) as working_time
-      from events " +
-        course_uuid.present? ?  " where in_context->>'course_id' = '#{course_uuid}' " : "" +
-    " ) as q
+      from events "
+    s2 = course_uuid.present? ?  " where in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " ) as q
     group by user_uuid"
+    s1 + s2 + s3
   end
 
   def self.download_activity(course_uuid)
-    "select e.user_uuid, count(*) as download_activity_metric
+    s1 ="select e.user_uuid, count(*) as download_activity_metric
      from events as e, verbs as v
      and e.verb_id = v.id
      where (v.verb = 'downloaded_slides' or
           v.verb = 'downloaded_sd_video' or
           v.verb = 'downloaded_hd_video' or
-          v.verb = 'downloaded_audio') " +
-     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " group by e.user_uuid"
+          v.verb = 'downloaded_audio') "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.video_player_activity(course_uuid)
-    "select e.user_uuid, count(*) as video_player_activity_metric
+    s1 = "select e.user_uuid, count(*) as video_player_activity_metric
      from events as e, verbs as v
-     where e.verb_id = v.id " +
-     course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and (v.verb = 'video_play' or
+     where e.verb_id = v.id "
+    s2 = course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and (v.verb = 'video_play' or
           v.verb = 'video_pause' or
           v.verb = 'video_fullscreen' or
           v.verb = 'video_change_speed' or
           v.verb = 'video_change_size' or
           v.verb = 'video_seek')
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.forum_activity(course_uuid)
-    "select e.user_uuid, count(*) as forum_activity_metric
-     from events as e, verbs as v
-     where e.verb_id = v.id " +
-     course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and (v.verb = 'asked_question' or
+    s1 = "select e.user_uuid, count(*) as forum_activity_metric
+      from events as e, verbs as v
+      where e.verb_id = v.id "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and (v.verb = 'asked_question' or
           v.verb = 'answered_question' or
           v.verb = 'commented' or
           v.verb = 'watched_question' or
           v.verb = 'toggled_subscription')
      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.survey_submissions(course_uuid)
-    "select e.user_uuid, count(*) as survey_submissions_metric
-     from events as e, verbs as v
-     where e.verb_id = v.id " +
-     course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     " and v.verb = 'submitted_quiz'
-     and in_context->>'quiz_type' = 'survey'
-     group by e.user_uuid"
+    s1 = "select e.user_uuid, count(*) as survey_submissions_metric
+      from events as e, verbs as v
+      where e.verb_id = v.id "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = " and v.verb = 'submitted_quiz'
+      and in_context->>'quiz_type' = 'survey'
+      group by e.user_uuid"
+    s1 + s2 + s3
   end
 
   def self.course_performance(course_uuid)
-    "select user_uuid, max(
+    s1 = "select user_uuid, max(
       (in_context->>'points_achieved')::float /
       (in_context->>'points_maximal')::float
-    ) as course_performance_metric
+      ) as course_performance_metric
      from events e, verbs v
-     where e.verb_id = v.id" +
-     course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : "" +
-     "  and v.verb = 'completed_course'
+     where e.verb_id = v.id "
+    s2 = course_uuid.present? ?  " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = "  and v.verb = 'completed_course'
      group by user_uuid"
+    s1 + s2 + s3
   end
 end
