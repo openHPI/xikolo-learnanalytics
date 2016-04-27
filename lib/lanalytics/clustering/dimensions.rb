@@ -54,7 +54,7 @@ class Lanalytics::Clustering::Dimensions
 
   MIN_SESSION_GAP_SECONDS = 1800
 
-  def self.query(course_uuid=nil, dimensions, cluster_group_user_uuids=nil)
+  def self.query(course_uuid, dimensions, cluster_group_user_uuids=nil)
     verbs      = ALLOWED_VERBS & dimensions
     metrics    = ALLOWED_METRICS & dimensions
     dimensions = (verbs + metrics).sort
@@ -78,10 +78,10 @@ class Lanalytics::Clustering::Dimensions
 
     start_time = Time.now
     result = loader.execute_sql(query)
-    end_time = Time.now
+    duration = Time.now - start_time
 
-    Sidekiq.logger.info { "[Performance] - Data extraction took: #{end_time - start_time}" }
-    Rails.logger.info { "[Performance] - Data extraction took: #{end_time - start_time}" }
+    Sidekiq.logger.info { "[Performance] - Data extraction took: #{duration}" }
+    Rails.logger.info { "[Performance] - Data extraction took: #{duration}" }
 
     result
   end
@@ -300,8 +300,8 @@ class Lanalytics::Clustering::Dimensions
          created_at - lag(created_at) over (partition by user_uuid
                                             order by created_at) as working_time
        from events "
-      s2 =  course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : ""
-      s3 =  " ) as q
+    s2 =  course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 =  " ) as q
      group by user_uuid"
     s1 + s2 + s3
   end
@@ -325,7 +325,7 @@ class Lanalytics::Clustering::Dimensions
     # working_time is null for the first lag
     # -> users with any event in this course will have at least 1 session
 
-    s1 ="select user_uuid,
+    s1 = "select user_uuid,
       round(
         sum(CASE WHEN working_time < #{MIN_SESSION_GAP_SECONDS}
             THEN working_time
