@@ -69,6 +69,8 @@ gem 'unicorn'
 
 gem 'geoip' # Location tracking
 
+gem 'browser' # Browser info
+
 gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 
 gem 'responders'
