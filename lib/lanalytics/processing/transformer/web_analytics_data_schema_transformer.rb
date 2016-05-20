@@ -6,7 +6,7 @@ module Lanalytics
           processing_units.each do |punit|
             #From mails we get/support:  tracking-user, tracking-type, tracking-campaign tracking-id
             entity = Lanalytics::Processing::LoadORM::Entity.create(:referral) do
-              with_attribute :referrer, :string, punit[:referrer_url] if punit[:referrer_url].present?
+              with_attribute :referrer, :string, punit[:referrer] if punit[:referrer].present?
               with_attribute :referrer_page, :string, punit[:referrer_page] if punit[:referrer_page].present?
               with_attribute :course_id, :uuid, punit[:course_id] if punit[:course_id].present?
               with_attribute :user_id, :uuid, punit[:user_id] if punit[:user_id].present?
