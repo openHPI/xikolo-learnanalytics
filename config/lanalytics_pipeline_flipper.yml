@@ -17,6 +17,7 @@ common: &common
 development:
   datasources:
     - moocdb_postgresql.yml
+    - referral.yml
     - exp_api_elastic.yml   # uses exp_api pipeline
     - exp_api_native.yml    # uses exp_api pipeline
     # - experience_graph_schema_neo4j_datasource.yml
