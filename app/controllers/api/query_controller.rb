@@ -65,7 +65,7 @@ class Api::QueryController < ApplicationController
        CoursePoints VideoPlayerAdvancedCount GeoActivity VideoEvents
        ActiveUserCount CourseActivityList UserActivityCount CourseEvents
        ItemVisits QuizPerformance TopCountries UserCourseCountry Sessions
-       AvgSessionDuration TotalSessionDuration ReferrerCount)
+       AvgSessionDuration TotalSessionDuration ReferrerCount DeviceUsage)
   end
 
   def query_params
