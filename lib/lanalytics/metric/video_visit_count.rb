@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class VideoVisitCount < ExpApiCountMetric
       def self.verbs
-        @verbs ||= %w(VISITED)
+        @verbs ||= %w(VISITED_ITEM)
       end
 
       def self.filters
