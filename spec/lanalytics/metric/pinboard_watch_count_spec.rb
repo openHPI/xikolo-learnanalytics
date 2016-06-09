@@ -26,7 +26,7 @@ RSpec.describe Lanalytics::Metric::PinboardWatchCount do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
           .first[:match][:verb]).to eq(
-            'WATCHED_QUESTION')
+            'VISITED_PINBOARD OR VISITED_QUESTION')
       end.and_return('{}')
       subject
     end
