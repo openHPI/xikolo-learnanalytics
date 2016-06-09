@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class PinboardWatchCount < ExpApiCountMetric
       def self.verbs
-        @verbs ||= %w(WATCHED_QUESTION)
+        @verbs ||= %w(VISITED_PINBOARD VISITED_QUESTION)
       end
     end
   end

@@ -22,11 +22,13 @@ RSpec.describe Lanalytics::Metric::VisitCount do
 
     it { is_expected.to eq(count: 15) }
 
+    verbs = %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
+                VISITED_ANNOUNCEMENTS VISITED_RECAP VISITED_ITEM VISITED_PINBOARD)
+
     it 'queries the correct verbs' do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .first[:match][:verb]).to eq(
-            'VISITED')
+          .first[:match][:verb]).to eq(verbs.join(' OR '))
       end.and_return('{}')
       subject
     end

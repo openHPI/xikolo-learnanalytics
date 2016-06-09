@@ -23,7 +23,7 @@ module Lanalytics
             },
             {
                 match: {
-                    verb: 'VISITED'
+                    verb: verbs.join(' OR ')
                 }
             }
         ]
@@ -63,6 +63,11 @@ module Lanalytics
           client.search index: datasource.index, body: query
         end
         result.with_indifferent_access
+      end
+
+      def self.verbs
+        %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
+            VISITED_ANNOUNCEMENTS VISITED_RECAP VISITED_ITEM VISITED_PINBOARD)
       end
 
     end

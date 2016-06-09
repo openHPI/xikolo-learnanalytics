@@ -3,7 +3,7 @@ module Lanalytics
     class QuestionResponseTime < ExpApiMetric
       def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
         answer_statements = datasource.exec do |client|
-          client.search index: datasource.index, body: {
+          query = {
             query: {
               filtered: {
                 query: {
@@ -12,18 +12,20 @@ module Lanalytics
                       {match: {verb: 'ANSWERED_QUESTION'}}
                     ] + (all_filters(course_id, user_id))
                   }
-                },
-                filter: {
-                  range: {
-                    timestamp: {
-                      gte: DateTime.parse(start_time).iso8601,
-                      lte: DateTime.parse(end_date).iso8601
-                    }
-                  }
                 }
               }
             }
           }
+          query[:query][:filtered][:filter] = {
+              range: {
+                  timestamp: {
+                      gte: DateTime.parse(start_time).iso8601,
+                      lte: DateTime.parse(end_date).iso8601
+                  }
+              }
+          } if start_time.present? and end_date.present?
+
+          client.search index: datasource.index, body: query
         end['hits']['hits']
 
         {average: calculate_average(answer_statements)}

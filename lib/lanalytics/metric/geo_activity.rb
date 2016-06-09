@@ -60,7 +60,8 @@ module Lanalytics
       end
 
       def self.verbs
-       %w(VIEWED_PAGE)
+        %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
+            VISITED_ANNOUNCEMENTS VISITED_RECAP VISITED_ITEM VISITED_PINBOARD)
       end
     end
   end

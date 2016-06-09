@@ -29,14 +29,14 @@ module Lanalytics
                   countries: {
                       terms: {
                           field: "in_context.user_location_country_code",
-                          size:1
+                          size: 0
                       },
                   }
               }
           }
         end
         if result['aggregations']['countries']['buckets'][0].present?
-          return result['aggregations']['countries']['buckets'][0]['key']
+          return result['aggregations']['countries']['buckets'][0]['key'].to_json
         else
           return ''
         end

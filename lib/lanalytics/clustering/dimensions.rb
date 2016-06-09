@@ -199,7 +199,8 @@ class Lanalytics::Clustering::Dimensions
      from events as e, verbs as v
      where e.verb_id = v.id "
     s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
-    s3 = " and (v.verb = 'watched_question' or v.verb = 'toggled_subscription')
+    s3 = " and (v.verb = 'visited_question' or v.verb = 'toggled_subscription'
+     or v.verb = 'visited_pinboard')
      group by e.user_uuid"
     s1 + s2 + s3
   end
@@ -212,7 +213,7 @@ class Lanalytics::Clustering::Dimensions
      and e.resource_id = r.id "
     s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
     s3 = " and r.resource_type = 'quiz'
-     and v.verb = 'visited'
+     and v.verb = 'visited_item'
      group by e.user_uuid"
     s1 + s2 + s3
   end
@@ -225,7 +226,7 @@ class Lanalytics::Clustering::Dimensions
      where e.verb_id = v.id
      and e.resource_id = r.id "
     s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
-    s3 = " and v.verb = 'visited'
+    s3 = " and v.verb = 'visited_item'
      group by e.user_uuid"
     s1 + s2 + s3
   end
@@ -239,7 +240,7 @@ class Lanalytics::Clustering::Dimensions
      and e.resource_id = r.id "
     s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
     s3 = " and r.resource_type = 'video'
-     and v.verb = 'visited'
+     and v.verb = 'visited_item'
      group by e.user_uuid"
     s1 + s2 + s3
   end
@@ -351,8 +352,8 @@ class Lanalytics::Clustering::Dimensions
   def self.download_activity(course_uuid)
     s1 ="select e.user_uuid, count(*) as download_activity_metric
      from events as e, verbs as v
-     and e.verb_id = v.id
-     where (v.verb = 'downloaded_slides' or
+     where e.verb_id = v.id
+     and (v.verb = 'downloaded_slides' or
           v.verb = 'downloaded_sd_video' or
           v.verb = 'downloaded_hd_video' or
           v.verb = 'downloaded_audio') "
@@ -384,7 +385,8 @@ class Lanalytics::Clustering::Dimensions
     s3 = " and (v.verb = 'asked_question' or
           v.verb = 'answered_question' or
           v.verb = 'commented' or
-          v.verb = 'watched_question' or
+          v.verb = 'visited_pinboard' or
+          v.verb = 'visited_question' or
           v.verb = 'toggled_subscription')
      group by e.user_uuid"
     s1 + s2 + s3
