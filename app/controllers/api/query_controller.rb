@@ -70,7 +70,7 @@ class Api::QueryController < ApplicationController
        ItemDiscovery VideoDiscovery QuizDiscovery
        VideoPlayerActivity DownloadActivity CoursePerformance
        QuizPerformance UngradedQuizPerformance GradedQuizPerformance
-       MainQuizPerformance BonusQuizPerformance)
+       MainQuizPerformance BonusQuizPerformance CourseExportCollection)
   end
 
   def query_params
