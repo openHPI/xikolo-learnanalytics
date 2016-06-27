@@ -5,7 +5,7 @@ require File.expand_path('../config/application', __FILE__)
 
 Rails.application.load_tasks
 
-Lanalytics.rake = true
+Xikolo::Lanalytics.rake = true
 
 if Rails.env.development?
   require 'geminabox/rake'
