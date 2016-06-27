@@ -22,34 +22,31 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Lanalytics
-  class Application < Rails::Application
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
+module Xikolo
+  module Lanalytics
+    class Application < Rails::Application
+      # Settings in config/environments/* take precedence over those specified here.
+      # Application configuration should go into files in config/initializers
+      # -- all .rb files in that directory are automatically loaded.
+      config.active_job.queue_adapter = :sidekiq
+      # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
+      # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
+      # config.time_zone = 'Central Time (US & Canada)'
 
-    # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
+      # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
+      # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+      # config.i18n.default_locale = :de
+      # Load FileUploader
+      config.autoload_paths += %W(#{config.root}/lib)
+      config.services = Hash.new
+    end
 
-    # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
+    def self.rake?
+      !!@rake
+    end
 
-    #config.neo4j.session_type = :server_db
-    #config.neo4j.session_path = ENV['GRAPHENEDB_URL'] || 'http://localhost:7474'
-
-    config.autoload_paths << Rails.root.join('lib')
-    config.eager_load_paths << Rails.root.join('lib')
+    def self.rake=(value)
+      @rake = !!value
+    end
   end
-
-
-  def self.rake?
-    !!@rake
-  end
-
-  def self.rake=(value)
-    @rake = !!value
-  end
-
 end

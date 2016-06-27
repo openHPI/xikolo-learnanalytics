@@ -3,7 +3,7 @@ require 'restify'
 class API
   class << self
     def services
-      Xikolo::Reporting::Application.config.services ||= Hash.new
+      Xikolo::Lanalytics::Application.config.services ||= Hash.new
     end
 
     def [](key)

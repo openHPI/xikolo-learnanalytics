@@ -107,7 +107,6 @@ gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 gem 'responders'
 
 # Asynchronous execution + cache in redis
-gem 'sidekiq'
 gem 'redis-activesupport'
 
 group :development, :test do
