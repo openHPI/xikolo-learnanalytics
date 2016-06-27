@@ -152,10 +152,11 @@ class Lanalytics::Clustering::Dimensions
     s1 = "select e.user_uuid, count(*) as #{verb}_metric
      from events as e, verbs as v
      where e.verb_id = v.id "
-    s2 = course_uuid.present? ? "and in_context->>'course_id' = '#{course_uuid}'" : ""
-    s3 =  " and v.verb = '#{verb}'
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}'" : ""
+    s3 = user_uuids.present? ? userfilter_query(user_uuids, true) : ""
+    s4 = " and v.verb = '#{verb}'
      group by e.user_uuid"
-    s1 + s2 + s3
+    s1 + s2 + s3 + s4
   end
 
   def self.build_metric_query(metric, course_uuid, user_uuids = nil)
