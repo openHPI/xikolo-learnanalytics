@@ -3,7 +3,7 @@ module Lanalytics
     class CourseExportCollection
       # No support fo start and endtime yet
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        clusering_metrics = [
+        clustering_metrics = [
             'sessions',
               'average_session_duration',
               'total_session_duration',
@@ -23,7 +23,7 @@ module Lanalytics
               'bonus_quiz_performance'
         ]
 
-        result = Lanalytics::Clustering::Dimensions.query(course_id, clusering_metrics, [user_id]).first
+        result = Lanalytics::Clustering::Dimensions.query(course_id, clustering_metrics, [user_id]).first
         result[:course_activity] = Lanalytics::Metric::CourseActivity.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)[:count].to_s
         result[:question_response_time] = Lanalytics::Metric::QuestionResponseTime.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)[:average].to_s
         result[:user_course_country] = Lanalytics::Metric::UserCourseCountry.unescaped_query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
@@ -34,8 +34,8 @@ module Lanalytics
         device_usage[:behavior][:usage].each do |usage|
           device_usage_filtered[usage[:category].to_sym] = usage[:total_activity].to_s
         end
-        device_usage_filtered[:mobile] = "0" unless result.key? :mobile
-        device_usage_filtered[:web] = "0" unless result.key? :web
+        device_usage_filtered[:mobile] = "0" unless device_usage_filtered.key? :mobile
+        device_usage_filtered[:web] = "0" unless device_usage_filtered.key? :web
 
         result[:device_usage] = device_usage_filtered
 
