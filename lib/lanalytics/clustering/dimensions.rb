@@ -165,7 +165,7 @@ class Lanalytics::Clustering::Dimensions
   # -----------------------
   # SPECIFIC METRICS
   # -----------------------
-  def self.platform_exploration(course_uuid)
+  def self.platform_exploration(course_uuid, user_ids )
     # Counts the "discovered" verbs per user
 
     # Some verbs don't have a course_id. This is why we only allow
@@ -175,11 +175,21 @@ class Lanalytics::Clustering::Dimensions
      where user_uuid in (
        select user_uuid
        from events "
-    s2 = course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}'" : ""
-    s3 = " group by user_uuid
+    s4 = course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}'" : ""
+    s3 = user_ids.present? ? userfilter_query user_ids, course_uuid.present? : ""
+    s4 = " group by user_uuid
      )
      group by user_uuid"
-    s1 + s2 + s3
+    s1 + s2 + s3 + s4
+  end
+
+  def userfilter_query user_ids, append_and
+       if user_ids.size == 1
+         result = " user_uuid = '#{user_ids.first}'"
+       else
+         result =  " user_uuid ANY (#{user_ids.explode(',')})"
+       end
+       append_and ? " AND " result : result
   end
 
   def self.textual_forum_contribution(course_uuid)

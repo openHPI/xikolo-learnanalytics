@@ -1,2 +1,6 @@
 ---
 :logfile: ./log/sidekiq.log
+:verbose: true
+:queues:
+  - high
+  - default

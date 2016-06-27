@@ -41,4 +41,17 @@ Rails.application.routes.draw do
 
     end
   end
+
+  root to: 'root#index'
+  resources :jobs
+  resources :system_info, only: [:show]
+  resources :qc_rules
+  resources :qc_recommendations
+  resources :qc_alerts do
+    collection do
+      post :ignore
+    end
+  end
+  resources :qc_alert_statuses
+  resources :qc_course_statuses
 end

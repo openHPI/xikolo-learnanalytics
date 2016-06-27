@@ -74,3 +74,5 @@ route 'xikolo.web.tracking', to: 'Lanalytics#create'
 
 # If you want to know how the routes look like, you can puts them with the following line:x
 # puts @routes.inspect
+
+route 'xikolo.pinboard.report.new', to: 'qc_alert#pinboard_report'

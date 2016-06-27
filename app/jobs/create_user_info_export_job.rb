@@ -1,0 +1,174 @@
+class CreateUserInfoExportJob < CreateExportJob
+  queue_as :default
+
+  def perform (job_id, password, user_id, course_id = nil, privacy_flag, combined_enrollment_info_flag)
+    job = find_and_save_job(job_id)
+    begin
+      temp_report = create_report(job_id, privacy_flag, combined_enrollment_info_flag)
+      csv_name = get_tempdir.to_s + '/UserInfoExport_' + DateTime.now.strftime('%Y-%m') +'.csv'
+      additional_files = []
+      create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
+    rescue => error
+      puts error.inspect
+      job.status = 'failing' +  error.inspect
+      job.save
+    end
+  end
+
+
+  private
+
+  def create_report(job_id, privacy_flag, combined_enrollment_info_flag=false, use_course_state = false)
+    pager = 1
+    file = Tempfile.open(job_id.to_s, get_tempdir)
+    csv = CSV.new(file)
+    @filepath = File.absolute_path(file)
+    courses =[]
+    Xikolo::Course::Course.each_item(affiliated: 'true', public: 'true') do |item|
+      courses << item
+    end
+    Acfs.run
+    all_courses = {}
+
+    courses.each do |c|
+      all_courses[c.id] = c
+    end
+
+    #$stdout.print all_courses.inspect
+    $stdout.print 'Writing export to '+ @filepath + " \n"
+    #csv << ["row", "of", "CSV", "data"]
+    loop do
+      begin
+        users = Xikolo::Account::User.where(confirmed:true, page: pager, per_page: 10)
+        Acfs.run
+        if users.current_page == 1
+          presenter = Account::ProfilePresenter.new users.first
+          Acfs.run
+          #write header
+          unless privacy_flag
+            csv << ['User ID',
+                 'First Name',
+                 'Last name',
+                 'Email',
+                 'Language',
+                 'Affiliated',
+                 'BirthDate',
+                 'TopCountry',
+                 'FirstEnrollment',
+                 *presenter.fields.map{|f|f.name},
+                 *courses.map{|c|c.course_code}
+            ]
+          else
+            csv << ['User ID',
+                  'Language',
+                  'Affiliated',
+                  'BirthDate',
+                  'TopCountry',
+                  'FirstEnrollment',
+                  *presenter.fields.map{|f|f.name},
+                  *courses.map{|c|c.course_code}
+            ]
+          end
+        end
+        p = 0
+        tmp_holder = {}
+        user_courses = {}
+        enrollments = {}
+        profiles = {}
+        users.each do |user|
+          p += 1
+          update_progress(users, job_id, p)
+          enrollments[user.id] = Xikolo::Course::Enrollment.where(user_id: user.id, learning_evaluation: 'true', deleted: 'true', per_page:200)
+          profiles[user.id] = Account::ProfilePresenter.new user
+          user_courses[user.id] = {}
+          user_courses[user.id].each do |course|
+            user_courses[user.id][course.id] = 'n'
+          end
+          #$stdout.print user_courses.inspect
+          Acfs.run
+        end
+        Acfs.run
+        #iterate again
+        users.each do |user|
+          enrollments[user.id].each do |enrollment|
+            if combined_enrollment_info_flag
+              # n: not enrolled
+              # e: enrolled
+              # v: visited
+              # c: completed
+              # r: RoA
+              state = 'n'
+              state = 'e' if enrollment.present?
+              state = 'v' if enrollment.points.present? and enrollment.points[:percentage].to_f > 0
+              state = 'c' if enrollment.completed
+              state = 'r' if enrollment.certificates.present? and enrollment.certificates[:record_of_achievement]
+              user_courses[user.id][enrollment.course_id] = state
+            else
+              user_courses[user.id][enrollment.course_id] = enrollment.points ? enrollment.points[:percentage] : '-'
+            end
+          end
+          if enrollments[user.id].count > 0
+           course_id = enrollments[user.id].sort_by { |c| c.created_at }.first.course_id
+           if course_id.present? && all_courses[course_id].present? && all_courses[course_id].course_code.present?
+              first_enrollment = all_courses[course_id].course_code
+            else
+              first_enrollment = ''
+            end
+
+          else
+            first_enrollment = ''
+          end
+
+          begin
+            top_country =  API[:learnanalytics].rel(:query).get(
+                metric: 'UserCourseCountry',
+                course_id: nil,
+                start_time: nil,
+                end_date: nil,
+                resource_id: user.id).value!
+          rescue => error
+            puts error.inspect
+            top_country = ''
+          end
+          unless privacy_flag
+            csv << [user.id,
+                   user.first_name,
+                   user.last_name,
+                   user.email,
+                   user.language,
+                   user.affiliated,
+                   user.born_at,
+                   top_country,
+                   first_enrollment,
+                   *profiles[user.id].fields.map{|f|f.value},
+                   *courses.map{|c|user_courses[user.id][c.id].present? ? user_courses[user.id][c.id] : 'n'}
+            ]
+          else
+            csv << [user.id,
+                   user.language,
+                   user.affiliated,
+                   user.born_at,
+                   top_country,
+                   first_enrollment,
+                   *profiles[user.id].fields.map{|f|f.value},
+                   *courses.map{|c|user_courses[user.id][c.id].present? ? user_courses[user.id][c.id] : 'n'}
+            ]
+          end
+        end
+
+        $stdout.print 'fetching page ' + pager.to_s + " \n"
+        pager = pager+1
+        break if (users.current_page >= users.total_pages)
+
+      rescue Exception => e
+        puts e.message
+      end
+    end
+      file.close
+      Acfs.run
+      file
+  end
+end
+
+
+

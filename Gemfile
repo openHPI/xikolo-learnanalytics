@@ -18,6 +18,11 @@ gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 
+gem 'rails-api'
+gem 'xikolo-common', '~> 0.1.0'
+
+gem 'xikolo-config', '~> 1.37'
+
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
@@ -54,6 +59,32 @@ gem 'multi_json'
 
 gem 'ruby-progressbar'
 gem 'link_header'
+
+
+group :test do
+  gem 'rspec-sidekiq'
+end
+
+gem 'business_time'
+
+gem 'zipruby-compat', :require => 'zipruby', :git => "https://github.com/jawspeak/zipruby-compatibility-with-rubyzip-fork.git", :tag => "v0.3.7"
+gem 'sidekiq'
+gem 'sidekiq-cron'
+gem 'database_cleaner'
+
+gem 'xikolo-file', '~> 1.8.1'
+gem 'xikolo-course', '~> 9.5.2'
+gem 'xikolo-account'
+gem 'xikolo-pinboard', '~> 4.28.0'
+gem 'xikolo-quiz'
+gem 'xikolo-richtext'
+gem 'xikolo-submission'
+gem 'xikolo-news', '~>0.4.0'
+gem 'xikolo-video'
+
+# Xikolo service clients
+gem 'acfs', '= 0.42'
+gem 'restify'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -105,4 +136,3 @@ group :test do
   gem 'simplecov'
 end
 
-gem 'xikolo-config', '~> 1.37'
