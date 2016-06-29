@@ -6,13 +6,16 @@ describe AnnouncementFailedWorker do
     ActiveJob::Base.queue_adapter = :test
      stub_request(:get, "http://news.xikolo.tld/").
         to_return(:status => 200, :body => news, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
+    stub_request(:get, "http://localhost:4300/").
+        to_return(:status => 200, :body => news, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
     stub_request(:get, "http://localhost:4300/news/?published=true").
         to_return(:status => 200, :body => published_news, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
+    stub_request(:get, "http://localhost:3200/").
+        to_return(:status => 200, :body => notification, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
     stub_request(:get, "http://notification.xikolo.tld/").
         to_return(:status => 200, :body => notification, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
     stub_request(:get, "http://localhost:3200/mail_log_stats?news_id=c97b9403-0e81-4857-a52f-a02e901856b1").
         to_return(:status => 200, :body => mail_logs, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
-
   end
   let!(:news) {'{
       "system_info_url": "http://localhost:4300/system_info/{id}",

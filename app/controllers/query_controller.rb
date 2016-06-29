@@ -1,5 +1,5 @@
-class Api::QueryController < ApplicationController
-  protect_from_forgery with: :null_session
+class QueryController < ApplicationController
+  #protect_from_forgery with: :null_session
 
   # TODO: secure controller
   skip_before_action :require_login
@@ -87,5 +87,8 @@ class Api::QueryController < ApplicationController
         metric: "must be one of #{metric_names.join(', ')}"
       }
     }, status: 422
+  end
+
+  def protect_from_forgery
   end
 end

@@ -23,26 +23,24 @@ Rails.application.routes.draw do
 
   defaults format: 'json' do
     resources :system_info, only: [:show]
-    namespace :api do
-      root to: 'api#index'
-      get 'query', to: 'query#show', as: :query
-      get 'query/job_results',  to: 'query#job_results', as: :job_results
 
-      get 'query/available_cluster_dimensions', as: :available_cluster_dimensions
-      post 'query/clustering_job', to: 'query#clustering_job', as: :clustering_job
+    get 'query', to: 'query#show', as: :query
+    get 'query/job_results',  to: 'query#job_results', as: :job_results
 
-      resources :cluster_groups do
-        resource :recomputing_job, to: 'cluster_groups#recomputing_job', only: [:create]
+    get 'query/available_cluster_dimensions', as: :available_cluster_dimensions
+    post 'query/clustering_job', to: 'query#clustering_job', as: :clustering_job
 
-        resources :teacher_actions, only: [:show, :index, :create] do
-          resource :recomputing_job, to: 'teacher_actions#recomputing_job', only: [:create]
-        end
+    resources :cluster_groups do
+      resource :recomputing_job, to: 'cluster_groups#recomputing_job', only: [:create]
+
+      resources :teacher_actions, only: [:show, :index, :create] do
+        resource :recomputing_job, to: 'teacher_actions#recomputing_job', only: [:create]
       end
+    end
 
     end
-  end
 
-  root to: 'root#index'
+  #root to: 'root#index'
   resources :jobs
   resources :system_info, only: [:show]
   resources :qc_rules

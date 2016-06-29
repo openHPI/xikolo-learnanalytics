@@ -1,4 +1,4 @@
-class Api::ApiController < ApplicationController
+class ApiController < ApplicationController
   protect_from_forgery with: :null_session
 
   # TODO secure controller when researcher interface is published

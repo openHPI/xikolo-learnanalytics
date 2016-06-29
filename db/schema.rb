@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401092354) do
+ActiveRecord::Schema.define(version: 20160607123036) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,63 @@ ActiveRecord::Schema.define(version: 20160401092354) do
     t.jsonb    "with_result"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "jobs", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.string   "task_type"
+    t.string   "task_scope"
+    t.string   "status"
+    t.string   "job_params"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.uuid     "user_id"
+    t.uuid     "file_id"
+    t.datetime "file_expire_date"
+    t.integer  "progress"
+    t.string   "annotation"
+  end
+
+  create_table "qc_alert_statuses", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.uuid     "qc_alert_id"
+    t.uuid     "user_id"
+    t.boolean  "ignored"
+    t.boolean  "ack"
+    t.boolean  "muted"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "qc_alerts", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.uuid     "qc_rule_id"
+    t.string   "status"
+    t.uuid     "course_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "severity"
+    t.text     "annotation"
+    t.json     "qc_alert_data"
+  end
+
+  create_table "qc_course_statuses", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.uuid     "qc_rule_id"
+    t.uuid     "course_id"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "qc_recommendations", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.uuid     "qc_alert_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "qc_rules", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.string   "worker"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_active"
+    t.boolean  "is_global"
   end
 
   create_table "research_cases", force: :cascade do |t|

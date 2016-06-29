@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::QueryController, type: :controller do
+RSpec.describe QueryController, type: :controller do
   let(:user_id) { SecureRandom.uuid }
   let(:course_id) { SecureRandom.uuid }
   let(:start_date) { 2.weeks.ago.to_s }

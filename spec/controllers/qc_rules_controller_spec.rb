@@ -1,6 +1,6 @@
 require 'rspec'
 
-describe QcRulesController do
+describe QcRulesController, type: :controller do
   let(:qc_rule) { FactoryGirl.create :qc_rule }
   let(:json) { JSON.parse response.body }
   let(:params) { FactoryGirl.attributes_for(:qc_rule) }
@@ -19,6 +19,10 @@ describe QcRulesController do
       post :create, qc_rule: {worker:'PinboardActivityWorker', is_active: true}
       assert_response :success
       rules = QcRule.all
+      puts " ##############"
+      puts "''''''''''''''''"
+
+      puts rules
       expect(rules.count).to eq(1)
     end
   end

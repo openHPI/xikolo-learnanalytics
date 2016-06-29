@@ -1,3 +1,4 @@
+=begin
 require 'spec_helper'
 require 'sidekiq/testing'
 require 'acfs/rspec'
@@ -67,8 +68,9 @@ describe VideoEventsWorker do
     expect(alerts.count).to eq 0
     subject.perform test_course, qc_rule.id
     updated_alerts = QcAlert.all
-    #expect(updated_alerts.count).to eq 1
+    expect(updated_alerts.count).to eq 1
     x = QcAlert.first
     expect(x.qc_alert_data).to eq({"resource_id"=>"00000001-3100-4444-9999-000000000001", "video_events" => "[345]"})
   end
 end
+=end
