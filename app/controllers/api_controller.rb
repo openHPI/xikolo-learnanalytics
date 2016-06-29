@@ -1,4 +1,5 @@
 class ApiController < ApplicationController
+  include ActionController::RequestForgeryProtection
   protect_from_forgery with: :null_session
 
   # TODO secure controller when researcher interface is published
@@ -12,5 +13,8 @@ class ApiController < ApplicationController
       route_name = name.to_s.gsub('api_', '')
       ["#{route_name}_url", route]
     }.to_h
+  end
+
+  def protect_from_forgery
   end
 end
