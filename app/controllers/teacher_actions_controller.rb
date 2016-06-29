@@ -1,5 +1,4 @@
 class TeacherActionsController < ApplicationController
-  protect_from_forgery with: :null_session
 
   # TODO: Secure controller
   skip_before_action :require_login
