@@ -1,18 +1,18 @@
 class CreateCourseExportJob < CreateExportJob
   queue_as :default
 
-  def perform (job_id, password, user_id, course_id, privacy_flag)
+  def perform (job_id, password, user_id, course_id, privacy_flag, extended_flag)
     job = find_and_save_job (job_id)
 
     begin
-    course = Xikolo::Course::Course.find(course_id)
-    Acfs.run
-    job.annotation = course.course_code.to_s
-    job.save
-    temp_report = create_report(job_id, course_id, privacy_flag)
-    csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-    additional_files = []
-    create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
+      course = Xikolo::Course::Course.find(course_id)
+      Acfs.run
+      job.annotation = course.course_code.to_s
+      job.save
+      temp_report = create_report(job_id, course_id, privacy_flag, extended_flag)
+      csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      additional_files = []
+      create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing'
@@ -22,7 +22,7 @@ class CreateCourseExportJob < CreateExportJob
 
   private
 
-  def create_report (job_id, course_id, privacy_flag=false)
+  def create_report (job_id, course_id, privacy_flag = false, extended_flag = false)
     page_size = 50
     course = Xikolo::Course::Course.find(course_id)
     Acfs.run
@@ -43,61 +43,59 @@ class CreateCourseExportJob < CreateExportJob
 
           headers = []
           headers += ['User ID',
-                      'Enrollment role',
-                      'Enrollment date',
-                      'Enrollment_day'
+                      'Enrollment Role',
+                      'Enrollment Date',
+                      'Enrollment Day',
+                      'Language',
+                      'Affiliated',
+                      'Birthdate',
+                      'Age'
           ]
           headers += ['First Name',
-                      'Last name',
+                      'Last Name',
                       'Email'
           ] unless privacy_flag
-          headers += ['Language',
-                      'Affiliated',
-                      'BirthDate',
-                      'TopCountry',
-                      'DeviceUsage',
-                      'WebUsage',
-                      'MobileUsage',
+          headers += ['Top Country',
+                      'Device Usage',
+                      'Web Usage',
+                      'Mobile Usage',
                       'Sessions',
-                      'AvgSessionDuration',
-                      'TotalSessionDuration',
-                      'ForumActivity',
-                      'ForumTextualContribution',
-                      'ForumObservation',
-                      'ItemDiscovery',
-                      'VideoDiscovery',
-                      'QuizDiscovery',
-                      'VideoPlayerActivity',
-                      'DownloadActivity',
-                      'CoursePerformance',
-                      'QuizPerformance (total)',
-                      'QuizPerformance (avg points percentage)',
-                      'QuizPerformance (avg attempts)',
-                      'QuizPerformance (avg points percentage first attempt)',
-                      'UngradedQuizPerformance',
-                      'GradedQuizPerformance',
-                      'MainQuizPerformance',
-                      'BonusQuizPerformance',
-                      'CourseActivity',
-                      'QuestionResponseTime (avg)',
-                      'EnrollmentDeltaInDays',
-                      *presenter.fields.map{|f|f.name},
-                      'questions',
-                      'answers',
-                      'comments_on_answers',
-                      'comments_on_questions',
-                      'points.achived',
-                      'points.percentage',
-                      'certificates.cop',
-                      'certificates.roa',
-                      'certificates.paidcertificate',
-                      'completed',
-                      'deleted',
-                      'quantile',
-                      'topPerformance',
-                      'age',
-                      *cp.sections.map{|f|f.title + '_percentage'},
-                      *cp.sections.map{|f|f.title + '_points'},
+                      'Avg. Session Duration',
+                      'Total Session Duration',
+                      'Forum Activity',
+                      'Forum Textual Contribution',
+                      'Forum Observation',
+                      'Item Discovery',
+                      'Video Discovery',
+                      'Quiz Discovery',
+                      'Video Player Activity',
+                      'Download Activity',
+                      'Course Performance',
+                      'Quiz Performance',
+                      'Ungraded Quiz Performance',
+                      'Graded Quiz Performance',
+                      'Main Quiz Performance',
+                      'Bonus Quiz Performance',
+                      'Course Activity',
+                      'Question Response Time',
+          ] if extended_flag
+          headers += ['Enrollment Delta in Days',
+                      *presenter.fields.map{|f|f.name.titleize},
+                      'Questions',
+                      'Answers',
+                      'Comments on Answers',
+                      'Comments on Questions',
+                      'Points Achived',
+                      'Points Percentage',
+                      'Confirmation of Participation',
+                      'Record of Achievement',
+                      'Certificate',
+                      'Completed',
+                      'Deleted',
+                      'Quantile',
+                      'Top Performance',
+                      *cp.sections.map{|f|f.title.titleize + ' Percentage'},
+                      *cp.sections.map{|f|f.title.titleize + ' Points'},
           ]
           csv << headers
         end
@@ -113,64 +111,75 @@ class CreateCourseExportJob < CreateExportJob
           fullenrollment = Xikolo::Course::Enrollment.find_by(user_id: enrollment.user_id, course_id: enrollment.course_id, learning_evaluation: 'true')
           Acfs.run
 
-          item[:user] =  UserPresenter.create user
+          item[:user] = UserPresenter.create user
           item[:profile] = Account::ProfilePresenter.new user
-          item[:data] =  fullenrollment
+          item[:data] = fullenrollment
           item[:stat_pinboard] = Xikolo::Pinboard::Statistic.find course.id, params: {user_id: user.id}
           #for user and profile presenter
           item[:cp] = Course::ProgressPresenter.build user, course
           Acfs.run
 
-          item[:device_usage] = fetch_device_usage(course_id, item[:user].id)
-          item[:quiz_performance] = fetch_quiz_performance(course_id, user.id)
+          item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at)/ 365).to_i : "-99"
 
-          course_activity = fetch_metric('CourseActivity', course_id, user.id)
-          course_activity_count = course_activity.present? && course_activity[:count].present? ? course_activity[:count] : '-99'
+          item[:top_performance] = caluculate_top_performance(fullenrollment.quantile)
 
-          question_response_time = fetch_metric('QuestionResponseTime', course_id, user.id)
-          question_response_time_average = question_response_time.present? && question_response_time[:average].present? ? question_response_time[:average].to_s : "-99"
-          age = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at)/ 365).to_i  : "-99"
-          top_performance = caluculate_top_performance(fullenrollment.quantile)
+          if extended_flag
+            metrics = ActiveSupport::HashWithIndifferentAccess.new
+
+            metrics[:device_usage] = fetch_device_usage(course_id, user.id)
+
+            course_activity = fetch_metric('CourseActivity', course_id, user.id)
+            metrics[:course_activity] = course_activity.present? && course_activity[:count].present? ? course_activity[:count].to_s : "-99"
+
+            question_response_time = fetch_metric('QuestionResponseTime', course_id, user.id)
+            metrics[:question_response_time] = question_response_time.present? && question_response_time[:average].present? ? question_response_time[:average].to_s : "-99"
+
+            user_course_country = fetch_metric('UserCourseCountry', course_id, user.id, :unescaped_query)
+            metrics[:user_course_country] = user_course_country.present? ? user_course_country : "zz"
+
+            clustering_metrics = fetch_clustering_metrics(course_id, user.id)
+            metrics.merge! clustering_metrics
+          end
+
           values = []
           values += [item[:user].id,
                      'student',
                      item[:data].created_at,
-                     item[:data].created_at.strftime('%Y-%m-%d')
+                     item[:data].created_at.strftime('%Y-%m-%d'),
+                     item[:user].language,
+                     item[:user].affiliated,
+                     item[:user].born_at,
+                     item[:age]
           ]
           values += [item[:user].first_name,
                      item[:user].last_name,
                      item[:user].email
           ] unless privacy_flag
-          values += [item[:user].language,
-                     item[:user].affiliated,
-                     item[:user].born_at,
-                     fetch_top_country(course_id, user.id),
-                     item[:device_usage][:state],
-                     item[:device_usage][:web],
-                     item[:device_usage][:mobile],
-                     fetch_metric('Sessions', course_id, user.id),
-                     fetch_metric('AvgSessionDuration', course_id, user.id),
-                     fetch_metric('TotalSessionDuration', course_id, user.id),
-                     fetch_metric('ForumActivity', course_id, user.id),
-                     fetch_metric('ForumTextualContribution', course_id, user.id),
-                     fetch_metric('ForumObservation', course_id, user.id),
-                     fetch_metric('ItemDiscovery', course_id, user.id),
-                     fetch_metric('VideoDiscovery', course_id, user.id),
-                     fetch_metric('QuizDiscovery', course_id, user.id),
-                     fetch_metric('VideoPlayerActivity', course_id, user.id),
-                     fetch_metric('DownloadActivity', course_id, user.id),
-                     fetch_metric('CoursePerformance', course_id, user.id),
-                     item[:quiz_performance][:total],
-                     item[:quiz_performance][:average_points_percentage],
-                     item[:quiz_performance][:avg_attempts],
-                     item[:quiz_performance][:average_points_percentage_first_attempt],
-                     fetch_metric('UngradedQuizPerformance', course_id, user.id),
-                     fetch_metric('GradedQuizPerformance', course_id, user.id),
-                     fetch_metric('MainQuizPerformance', course_id, user.id),
-                     fetch_metric('BonusQuizPerformance', course_id, user.id),
-                     course_activity_count,
-                     question_response_time_average,
-                     (item[:data].created_at - course.start_date).to_i,
+          values += [metrics[:user_course_country],
+                     metrics[:device_usage][:state],
+                     metrics[:device_usage][:web],
+                     metrics[:device_usage][:mobile],
+                     metrics[:sessions],
+                     metrics[:average_session_duration],
+                     metrics[:total_session_duration],
+                     metrics[:forum_activity],
+                     metrics[:textual_forum_contribution],
+                     metrics[:forum_observation],
+                     metrics[:item_discovery],
+                     metrics[:video_discovery],
+                     metrics[:quiz_discovery],
+                     metrics[:video_player_activity],
+                     metrics[:download_activity],
+                     metrics[:course_performance],
+                     metrics[:quiz_performance],
+                     metrics[:ungraded_quiz_performance],
+                     metrics[:graded_quiz_performance],
+                     metrics[:main_quiz_performance],
+                     metrics[:bonus_quiz_performance],
+                     metrics[:course_activity],
+                     metrics[:question_response_time]
+          ] if extended_flag
+          values += [(item[:data].created_at - course.start_date).to_i,
                      *item[:profile].fields.map{|f|f.value},
                      item[:stat_pinboard].questions,
                      item[:stat_pinboard].answers,
@@ -184,8 +193,7 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].completed.present? ? item[:data].completed : '',
                      item[:data].deleted.present? ? item[:data].deleted : '',
                      item[:data].quantile.present? ? item[:data].quantile : '',
-                     top_performance,
-                     age,
+                     item[:top_performance],
                      *item[:cp].sections.map{|s|s.visits_stats.user_percentage},
                      *item[:cp].sections.map{|s|s.main_exercise_stats.graded_points if s.main_exercise_stats.available? }
           ]
@@ -203,80 +211,32 @@ class CreateCourseExportJob < CreateExportJob
     file
   end
 
-  def fetch_top_country (course_id, user_id)
-    begin
-      top_country = Lanalytics::Metric::UserCourseCountry.query(
-          nil,
-          course_id,
-          nil,
-          nil,
-          user_id,
-          nil,
-          nil)
-    rescue => error
-      puts error.inspect
-      top_country = ''
-    end
-  end
-
   def fetch_device_usage (course_id, user_id)
+    device_usage = fetch_metric('DeviceUsage', course_id, user_id)
+
     result = {}
-    begin
-      device_usage = Lanalytics::Metric::DeviceUsage.query(
-          user_id,
-          course_id,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil)
+
+    unless device_usage == 0
       result[:state] = device_usage[:behavior][:state]
       device_usage[:behavior][:usage].each do |usage|
-        result[usage[:category].to_sym] = usage[:total_activity]
+        result[usage[:category].to_sym] = usage[:total_activity].to_s
       end
-    rescue => error
-      puts error.inspect
-      result = {[:state] => "unknown"}
+    else
+      result[:state] = "unknown"
     end
-    result[:mobile] = 0 unless result.key? :mobile
-    result[:web] = 0 unless result.key? :web
+    result[:mobile] = "0" unless result.key? :mobile
+    result[:web] = "0" unless result.key? :web
 
     return result
   end
 
-
-  def fetch_quiz_performance (course_id, user_id)
+  def fetch_metric (metric, course_id, user_id, exec = :query)
     begin
-      result = Lanalytics::Metric::QuizPerformance.query(
-                         nil,
-                        course_id,
-                         nil,
-                         nil,
-                        user_id,
-                        nil,
-                        nil)
-    rescue => error
-      puts error.inspect
-      result = {
-          total: 0,
-          average_points_percentage: 0,
-          avg_attempts: 0,
-          average_points_percentage_first_attempt: 0
-      }
-    end
-  end
-
-  def fetch_metric (metric, course_id, user_id)
-    begin
-      metric =  "Lanalytics::Metric::#{metric}".constantize
-      result = metric.query(
+      metric = "Lanalytics::Metric::#{metric}".constantize
+      result = metric.public_send(exec,
           user_id,
           course_id,
-          nil,
-          nil,
-          nil,
-          nil,
-          nil
+          nil, nil, nil, nil, nil
       )
     rescue => error
       puts error.inspect
@@ -284,7 +244,36 @@ class CreateCourseExportJob < CreateExportJob
     end
   end
 
-  def caluculate_top_performance(quantile)
+  def fetch_clustering_metrics (course_id, user_id)
+    clustering_metrics = [
+        'sessions',
+          'average_session_duration',
+          'total_session_duration',
+        'forum_activity',
+          'textual_forum_contribution',
+          'forum_observation',
+        'item_discovery',
+         'video_discovery',
+         'quiz_discovery',
+        'video_player_activity',
+        'download_activity',
+        'course_performance',
+        'quiz_performance',
+          'ungraded_quiz_performance',
+         'graded_quiz_performance',
+         'main_quiz_performance',
+         'bonus_quiz_performance'
+    ]
+    result = Lanalytics::Clustering::Dimensions.query(course_id, clustering_metrics, [user_id]).first.with_indifferent_access
+    result.each { |k, v| result[k] = -99 if v.nil? }
+    return result
+  rescue => error
+    puts error.inspect
+    clustering_metrics.each { |metric| result[metric.to_sym] = -99 }
+    return result
+  end
+
+  def caluculate_top_performance (quantile)
     return "-99" unless quantile
     top_percentage = (1 - quantile.to_f).round(2)
     if top_percentage <= 0.05
@@ -295,5 +284,6 @@ class CreateCourseExportJob < CreateExportJob
       return "Top20"
     end
   end
+
 end
 
