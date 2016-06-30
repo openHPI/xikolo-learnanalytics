@@ -26,6 +26,7 @@ class CreateCourseExportJob < CreateExportJob
     page_size = 50
     course = Xikolo::Course::Course.find(course_id)
     Acfs.run
+    birth_compare_date = course.start_date.present? ? course.start_date : DateTime.now
     pager = 1
     file = Tempfile.open(job_id.to_s, get_tempdir)
     csv = CSV.new(file)
@@ -93,6 +94,8 @@ class CreateCourseExportJob < CreateExportJob
                       'completed',
                       'deleted',
                       'quantile',
+                      'topPerformance',
+                      'age',
                       *cp.sections.map{|f|f.title + '_percentage'},
                       *cp.sections.map{|f|f.title + '_points'},
           ]
@@ -121,6 +124,13 @@ class CreateCourseExportJob < CreateExportJob
           item[:device_usage] = fetch_device_usage(course_id, item[:user].id)
           item[:quiz_performance] = fetch_quiz_performance(course_id, user.id)
 
+          course_activity = fetch_metric('CourseActivity', course_id, user.id)
+          course_activity_count = course_activity.present? && course_activity[:count].present? ? course_activity[:count] : '-99'
+
+          question_response_time = fetch_metric('QuestionResponseTime', course_id, user.id)
+          question_response_time_average = question_response_time.present? && question_response_time[:average].present? ? question_response_time[:average].to_s : "-99"
+          age = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at)/ 365).to_i  : "-99"
+          top_performance = caluculate_top_performance(fullenrollment.quantile)
           values = []
           values += [item[:user].id,
                      'student',
@@ -158,8 +168,8 @@ class CreateCourseExportJob < CreateExportJob
                      fetch_metric('GradedQuizPerformance', course_id, user.id),
                      fetch_metric('MainQuizPerformance', course_id, user.id),
                      fetch_metric('BonusQuizPerformance', course_id, user.id),
-                     fetch_metric('CourseActivity', course_id, user.id)[:count],
-                     fetch_metric('QuestionResponseTime', course_id, user.id)[:average].to_i,
+                     course_activity_count,
+                     question_response_time_average,
                      (item[:data].created_at - course.start_date).to_i,
                      *item[:profile].fields.map{|f|f.value},
                      item[:stat_pinboard].questions,
@@ -174,6 +184,8 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].completed.present? ? item[:data].completed : '',
                      item[:data].deleted.present? ? item[:data].deleted : '',
                      item[:data].quantile.present? ? item[:data].quantile : '',
+                     top_performance,
+                     age,
                      *item[:cp].sections.map{|s|s.visits_stats.user_percentage},
                      *item[:cp].sections.map{|s|s.main_exercise_stats.graded_points if s.main_exercise_stats.available? }
           ]
@@ -193,12 +205,14 @@ class CreateCourseExportJob < CreateExportJob
 
   def fetch_top_country (course_id, user_id)
     begin
-      top_country = API[:learnanalytics].rel(:query).get(
-          metric: 'UserCourseCountry',
-          course_id: course_id,
-          start_time: nil,
-          end_date: nil,
-          resource_id: user_id).value!
+      top_country = Lanalytics::Metric::UserCourseCountry.query(
+          nil,
+          course_id,
+          nil,
+          nil,
+          user_id,
+          nil,
+          nil)
     rescue => error
       puts error.inspect
       top_country = ''
@@ -208,13 +222,14 @@ class CreateCourseExportJob < CreateExportJob
   def fetch_device_usage (course_id, user_id)
     result = {}
     begin
-      device_usage = API[:learnanalytics].rel(:query).get(
-          metric: 'DeviceUsage',
-          user_id: user_id,
-          course_id: course_id,
-          start_time: nil,
-          end_date: nil,
-          resource_id: nil).value!
+      device_usage = Lanalytics::Metric::DeviceUsage.query(
+          user_id,
+          course_id,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil)
       result[:state] = device_usage[:behavior][:state]
       device_usage[:behavior][:usage].each do |usage|
         result[usage[:category].to_sym] = usage[:total_activity]
@@ -232,12 +247,14 @@ class CreateCourseExportJob < CreateExportJob
 
   def fetch_quiz_performance (course_id, user_id)
     begin
-      result = API[:learnanalytics].rel(:query).get(
-          metric: 'QuizPerformance',
-          course_id: course_id,
-          start_time: nil,
-          end_date: nil,
-          resource_id: user_id).value!
+      result = Lanalytics::Metric::QuizPerformance.query(
+                         nil,
+                        course_id,
+                         nil,
+                         nil,
+                        user_id,
+                        nil,
+                        nil)
     rescue => error
       puts error.inspect
       result = {
@@ -251,19 +268,32 @@ class CreateCourseExportJob < CreateExportJob
 
   def fetch_metric (metric, course_id, user_id)
     begin
-      result = API[:learnanalytics].rel(:query).get(
-          metric: metric,
-          user_id: user_id,
-          course_id: course_id,
-          start_time: nil,
-          end_date: nil,
-          resource_id: nil).value!
+      metric =  "Lanalytics::Metric::#{metric}".constantize
+      result = metric.query(
+          user_id,
+          course_id,
+          nil,
+          nil,
+          nil,
+          nil,
+          nil
+      )
     rescue => error
       puts error.inspect
       result = 0
     end
   end
 
+  def caluculate_top_performance(quantile)
+    return "-99" unless quantile
+    top_percentage = (1 - quantile.to_f).round(2)
+    if top_percentage <= 0.05
+      return "Top5"
+    elsif top_percentage <= 0.1
+      return "Top10"
+    elsif top_percentage <= 0.2
+      return "Top20"
+    end
+  end
 end
-
 
