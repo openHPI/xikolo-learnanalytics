@@ -1,3 +1,4 @@
+require 'typhoeus/adapters/faraday'
 module Lanalytics
   module Processing
     module Datasources

@@ -1,6 +1,23 @@
+GIT
+  remote: https://github.com/jawspeak/zipruby-compatibility-with-rubyzip-fork.git
+  revision: f0e0668599cd95adb5d5024773a7b9eb16869a79
+  tag: v0.3.7
+  specs:
+    zipruby-compat (0.3.7)
+
 GEM
   remote: https://gemuser:K6c1mcRWtrTQepS6aI8HRXc7DPoRYXbG@dev.xikolo.de/gems/
   specs:
+    accept_values_for (0.7.2)
+      activemodel (>= 3, < 5)
+      rspec (>= 2.0, < 4.0)
+    acfs (0.42.0)
+      actionpack (>= 3.1)
+      activemodel (>= 3.1)
+      activesupport (>= 3.1)
+      multi_json
+      rack
+      typhoeus (>= 0.6.5)
     actionmailer (4.2.5.1)
       actionpack (= 4.2.5.1)
       actionview (= 4.2.5.1)
@@ -38,6 +55,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.4.0)
     amq-protocol (2.0.1)
+    api-responder (1.0.1)
+      activesupport
     arel (6.0.3)
     bcrypt (3.1.10)
     better_errors (2.1.1)
@@ -50,6 +69,9 @@ GEM
     builder (3.2.2)
     bunny (1.4.1)
       amq-protocol (>= 1.9.2)
+    business_time (0.7.6)
+      activesupport (>= 3.1.0)
+      tzinfo
     byebug (8.2.1)
     callsite (0.0.11)
     celluloid (0.17.3)
@@ -78,16 +100,22 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     colored (1.2)
-    concurrent-ruby (0.5.0)
+    concurrent-ruby (0.9.2)
     connection_pool (2.2.0)
-    cookiejar (0.3.0)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
+    database_cleaner (1.5.3)
     debug_inspector (0.0.2)
+    decorate-responder (1.0.3)
     diff-lcs (1.2.5)
     docile (1.1.5)
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
+    draper (2.1.0)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0)
     elasticsearch (1.0.15)
       elasticsearch-api (= 1.0.15)
       elasticsearch-transport (= 1.0.15)
@@ -96,16 +124,9 @@ GEM
     elasticsearch-transport (1.0.15)
       faraday
       multi_json
-    em-http-request (1.1.3)
-      addressable (>= 2.3.4)
-      cookiejar (<= 0.3.0)
-      em-socksify (>= 0.3)
-      eventmachine (>= 1.0.3)
-      http_parser.rb (>= 0.6.0)
-    em-socksify (0.3.1)
-      eventmachine (>= 1.0.0.beta.4)
     erubis (2.7.0)
-    eventmachine (1.0.9.1)
+    ethon (0.9.0)
+      ffi (>= 1.3.0)
     execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -119,6 +140,7 @@ GEM
     faraday_middleware-multi_json (0.0.6)
       faraday_middleware
       multi_json
+    ffi (1.9.10)
     forgery (0.6.0)
     geminabox (0.12.4)
       builder
@@ -134,12 +156,11 @@ GEM
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     hashdiff (0.2.3)
-    hashie (3.4.3)
+    hashie (3.4.4)
     hike (1.2.3)
     hitimes (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    http_parser.rb (0.6.0)
     httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -157,10 +178,23 @@ GEM
     kgio (2.10.0)
     libv8 (3.16.14.13)
     link_header (0.0.8)
+    lograge (0.3.6)
+      actionpack (>= 3)
+      activesupport (>= 3)
+      railties (>= 3)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
+    mechanize (2.7.4)
+      domain_name (~> 0.5, >= 0.5.1)
+      http-cookie (~> 1.0)
+      mime-types (>= 1.17.2, < 3)
+      net-http-digest_auth (~> 1.1, >= 1.1.1)
+      net-http-persistent (~> 2.5, >= 2.5.2)
+      nokogiri (~> 1.6)
+      ntlm-http (~> 0.1, >= 0.1.1)
+      webrobots (>= 0.0.9, < 0.2)
     meta_request (0.3.4)
       callsite (~> 0.0, >= 0.0.11)
       rack-contrib (~> 1.1)
@@ -173,7 +207,7 @@ GEM
       activesupport
       bunny (>= 1.4, < 3.0)
       multi_json
-    multi_json (1.11.2)
+    multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     murmurhash3 (0.1.6)
@@ -195,11 +229,13 @@ GEM
       rake
       rubyzip (~> 1.1.7)
     nesty (1.0.2)
+    net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
     netrc (0.11.0)
     newrelic_rpm (3.14.2.312)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
+    ntlm-http (0.1.1)
     oauth (0.4.7)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
@@ -207,9 +243,9 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (~> 1.2)
-    obligation (0.2.0)
-      concurrent-ruby (~> 0.5.0)
     os (0.9.6)
+    paginate-responder (1.5.0)
+      rack-link_headers (>= 2.2)
     pg (0.18.4)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -222,6 +258,8 @@ GEM
     rack-contrib (1.4.0)
       git-version-bump (~> 0.15)
       rack (~> 1.4)
+    rack-link_headers (2.2.2)
+      rack
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -237,6 +275,9 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.2.5.1)
       sprockets-rails
+    rails-api (0.4.0)
+      actionpack (>= 3.2.11)
+      railties (>= 3.2.11)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
     rails-dom-testing (1.0.7)
@@ -266,20 +307,27 @@ GEM
     redis-store (1.1.7)
       redis (>= 2.2)
     ref (2.0.0)
+    request_store (1.3.1)
     responders (2.1.1)
       railties (>= 4.2.0, < 5.1)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    restify (0.3.2)
+    restify (0.4.0)
       addressable (~> 2.3)
-      em-http-request (~> 1.1)
+      concurrent-ruby (~> 0.9.0)
       hashie (~> 3.3)
-      multi_json
-      obligation (~> 0.1)
+      net-http-persistent
       rack
+      typhoeus
     rserve-client (0.3.1)
+    rspec (3.0.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+    rspec-collection_matchers (1.1.2)
+      rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.4)
@@ -298,10 +346,14 @@ GEM
       rspec-expectations (~> 3.0.0)
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
+    rspec-sidekiq (2.2.0)
+      rspec (~> 3.0, >= 3.0.0)
+      sidekiq (>= 2.4.0)
     rspec-support (3.0.4)
     ruby-prof (0.15.9)
     ruby-progressbar (1.7.5)
     rubyzip (1.1.7)
+    rufus-scheduler (3.2.1)
     safe_yaml (1.0.4)
     sass (3.2.19)
     sass-rails (4.0.5)
@@ -318,6 +370,9 @@ GEM
       json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
       redis-namespace (~> 1.5, >= 1.5.2)
+    sidekiq-cron (0.3.1)
+      rufus-scheduler (>= 2.0.24)
+      sidekiq (>= 2.17.3)
     simplecov (0.11.1)
       docile (~> 1.1.0)
       json (~> 1.8)
@@ -356,6 +411,8 @@ GEM
       hitimes
     turbolinks (2.5.3)
       coffee-rails
+    typhoeus (1.0.2)
+      ethon (>= 0.9.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.2)
@@ -374,20 +431,69 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
+    webrobots (0.1.2)
+    xikolo-account (5.3.0)
+      acfs (~> 0.31)
+      activesupport
+      xikolo-file (~> 1.0)
+      xikolo-richtext (~> 3.0)
+    xikolo-common (0.1.1)
+      activesupport
+      lograge
+      restify
     xikolo-config (1.37)
       activesupport
+    xikolo-course (9.5.4)
+      acfs (~> 0.42)
+      activesupport
+    xikolo-file (1.8.1)
+      acfs (~> 0.21, >= 0.21.1)
+      activesupport
+    xikolo-lti (0.0.13)
+      acfs (~> 0.32)
+      activesupport
+    xikolo-news (0.4.0)
+      acfs (~> 0.25, >= 0.25.0)
+      activesupport
+    xikolo-pinboard (4.28.0)
+      acfs (~> 0.41)
+      activesupport
+      youyouaidi
+    xikolo-quiz (2.1.4)
+      acfs (~> 0.15)
+      activesupport
+      xikolo-richtext (~> 3.0)
+    xikolo-richtext (3.1.1)
+      acfs (~> 0.15)
+      activesupport
+    xikolo-submission (2.7.2)
+      acfs (~> 0.32)
+      activesupport
+      xikolo-lti (~> 0.0.5)
+      xikolo-quiz (~> 2.0)
+    xikolo-video (4.13.0)
+      acfs (~> 0.31)
+      activesupport
+      xikolo-file (~> 1.0)
     youyouaidi (0.1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  accept_values_for
+  acfs (= 0.42)
+  api-responder
   better_errors
   binding_of_caller
   browser
   bunny (< 1.5)
+  business_time
   coffee-rails (~> 4.0.0)
   connection_pool
+  database_cleaner
+  decorate-responder
+  draper
   elasticsearch
   factory_girl_rails
   forgery
@@ -396,6 +502,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   link_header
+  mechanize
   meta_request
   msgr
   multi_json
@@ -403,22 +510,27 @@ DEPENDENCIES
   neo4j-core
   newrelic_rpm
   os
+  paginate-responder
   pg
   pry-byebug
   rails (~> 4.2.5)
+  rails-api
   rails-rfc6570 (~> 0.3)
   redis-activesupport
   responders
   rest-client
-  restify
+  restify (~> 0.4.0.b1)
   rserve-client (~> 0.3.1)
+  rspec-collection_matchers
   rspec-its
-  rspec-rails (~> 3.0.0)
+  rspec-rails
+  rspec-sidekiq
   ruby-prof
   ruby-progressbar
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
   sidekiq
+  sidekiq-cron
   simplecov
   slim
   sorcery
@@ -429,8 +541,20 @@ DEPENDENCIES
   unicorn
   validates_email_format_of
   webmock
+  xikolo-account
+  xikolo-common (~> 0.1.0)
   xikolo-config (~> 1.37)
+  xikolo-course (~> 9.5.2)
+  xikolo-file (~> 1.8.1)
+  xikolo-news (~> 0.4.0)
+  xikolo-pinboard (~> 4.28.0)
+  xikolo-quiz
+  xikolo-richtext
+  xikolo-submission
+  xikolo-video
   youyouaidi
+  zipruby-compat!
 
 BUNDLED WITH
    1.12.5
+

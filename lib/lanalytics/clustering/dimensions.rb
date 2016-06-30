@@ -175,6 +175,7 @@ class Lanalytics::Clustering::Dimensions
   # -----------------------
   # SPECIFIC METRICS
   # -----------------------
+
   def self.platform_exploration(course_uuid, user_uuids = nil)
     # Counts the "discovered" verbs per user
 

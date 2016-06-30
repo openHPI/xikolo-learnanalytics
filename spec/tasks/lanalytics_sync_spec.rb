@@ -9,7 +9,7 @@
 #   end
 
 #   before do
-#     Lanalytics::Application.load_tasks
+#     Xikolo::Lanalytics::Application.load_tasks
 #   end
 
 #   describe "(services online)", pending: true do
