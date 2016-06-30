@@ -6,12 +6,12 @@ common: &common
   datasources:
     - moocdb_postgresql.yml
     - exp_api_elastic.yml   # uses exp_api pipeline
-     - exp_api_native.yml    # uses exp_api pipeline
-     - experience_graph_schema_neo4j_datasource.yml
+    # - exp_api_native.yml    # uses exp_api pipeline
+    # - experience_graph_schema_neo4j_datasource.yml
   pipelines:
     - moocdb_pipeline.prb
     - exp_api_pipeline.prb
-     - experience_graph_pipeline.prb
+    # - experience_graph_pipeline.prb
     - referrer_pipeline.prb
 
 development:
@@ -20,11 +20,11 @@ development:
     - referral.yml
     - exp_api_elastic.yml   # uses exp_api pipeline
     - exp_api_native.yml    # uses exp_api pipeline
-     - experience_graph_schema_neo4j_datasource.yml
+    # - experience_graph_schema_neo4j_datasource.yml
   pipelines:
     - moocdb_pipeline.prb
     - exp_api_pipeline.prb
-     - experience_graph_pipeline.prb
+    # - experience_graph_pipeline.prb
     - referrer_pipeline.prb
 
 test:
