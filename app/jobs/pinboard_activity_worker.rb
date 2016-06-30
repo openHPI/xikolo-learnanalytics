@@ -25,11 +25,14 @@ class PinboardActivityWorker < QcRuleWorker
       if total_enrollments.to_i >= enrollments_threshold and start_date < 2.day.ago
         start_time_for_activity = [start_date, (Date.today - 7.days)].max
         # Check
-        activity = API[:learnanalytics].rel(:query).get(
-            metric: 'PinboardActivity',
-            course_id: course.id,
-            start_time: start_time_for_activity.iso8601,
-            end_time: Time.now.iso8601).value![:count]
+        activity =  Lanalytics::Metric::PinboardActivity.query(
+                      nil,
+                      course.id,
+                      start_time_for_activity.iso8601,
+                      Time.now.iso8601,
+                      nil,
+                      nil,
+                      nil)[:count]
         course_runtime_in_days = (Date.today - start_date).to_i
         course_analysis_time = Date.today - start_time_for_activity
         if (total_enrollments.to_f * course_analysis_time.to_f) != 0
