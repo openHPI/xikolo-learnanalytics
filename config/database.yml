@@ -20,6 +20,10 @@ test:
   <<: *default
   database: xikolo-learnanalytics-test
 
+integration:
+  <<: *common
+  database: xikolo-learnanalytics-integration
+
 staging:
   <<: *default
   database: db/staging.sqlite3
