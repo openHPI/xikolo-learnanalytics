@@ -21,7 +21,7 @@ test:
   database: xikolo-learnanalytics-test
 
 integration:
-  <<: *common
+  <<: *default
   database: xikolo-learnanalytics-integration
 
 staging:
