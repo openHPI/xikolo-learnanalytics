@@ -8,6 +8,7 @@ Cany::Specification.new do
   maintainer_email 'xikolo-dev@hpi.uni-potsdam.de'
   website 'https://dev.xikolo.de'
   licence 'MIT'
+  depend 'git', version: '>= 1.7', situation: :build
 
   use :bundler do
     skip_group :integration

@@ -108,7 +108,6 @@ gem 'api-responder'
 gem 'decorate-responder'
 gem 'paginate-responder'
 gem 'draper'
-gem 'decorate-responder'
 gem 'mechanize'
 # Asynchronous execution + cache in redis
 gem 'redis-activesupport'
