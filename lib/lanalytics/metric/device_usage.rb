@@ -112,7 +112,7 @@ module Lanalytics
         state = 'unknown'
         usage = []
         # mobile and web is used
-        if mobile and web
+        if mobile > 0 and web > 0
           state = 'mixed'
           usage << {
               category: 'mobile',
@@ -125,7 +125,7 @@ module Lanalytics
               relative_activity: web.percent_of(total_activity)
           }
         # only mobile used
-        elsif mobile
+        elsif mobile > 0
           state = 'mobile'
           usage << {
               category: 'mobile',
@@ -133,7 +133,7 @@ module Lanalytics
               relative_activity: mobile.percent_of(total_activity)
           }
         # only web used
-        elsif web
+        elsif web > 0
           state = 'web'
           usage << {
               category: 'web',
