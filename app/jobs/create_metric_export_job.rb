@@ -47,11 +47,15 @@ class CreateMetricExportJob < CreateExportJob
         day = course.start_date
         if course.start_date.present? and course.end_date.present?
           while day < course.end_date
-             activity = ::API[:learnanalytics].rel(:query).get(
-                 metric: scope,
-                 course_id: course.id,
-                 start_time: day.iso8601,
-                 end_time: (day+24.hours).iso8601).value![:count]
+            metric =  "Lanalytics::Metric::#{scope}".constantize
+             activity = metric.query(
+                              nil,
+                             course.id,
+                             day.iso8601,
+                             (day+24.hours).iso8601,
+                             nil,
+                             nil,
+                            nil)[:count]
              tmp << activity
              day += 24.hours
           end

@@ -39,7 +39,7 @@ class JobsController < ApplicationController
     case params[:task_type]
       when 'course_export'
         if params[:task_scope] && params[:user_id]
-          CreateCourseExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag] )
+          CreateCourseExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag], params[:extended_flag] )
         end
       when 'user_info_export'
         if params[:user_id]

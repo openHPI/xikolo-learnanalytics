@@ -14,6 +14,14 @@ if Rails.env.development?
                           namespace: 'lanalytics-model'
 end
 
+namespace :sidekiq do
+  desc 'Clear sidekiq queue'
+  task clear: :environment do
+    require 'sidekiq/api'
+    Sidekiq::Queue.new.clear
+    Sidekiq::RetrySet.new.clear
+  end
+end
 namespace :ci do
   desc 'Setup service for CI'
   task setup: %w(db:drop db:create:all db:setup) do
@@ -21,5 +29,13 @@ namespace :ci do
 
   desc 'Run specs for CI'
   task spec: %w(^default) do
+  end
+end
+
+namespace :qc do
+  desc 'Run all rules'
+  task run_all_rules: :environment do
+    QcRunAllRules.new.perform
+    puts "finished"
   end
 end

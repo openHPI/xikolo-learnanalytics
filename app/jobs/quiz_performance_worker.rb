@@ -24,12 +24,14 @@ class QuizPerformanceWorker < QcRuleWorker
   end
 
   def calculate_metrics(item, course)
-    quiz_performance = API[:learnanalytics].rel(:query).get(
-        metric: 'QuizPerformance',
-        course_id: course.id,
-        start_time: nil,
-        end_date: nil,
-        resource_id: item.id).value!
+    quiz_performance = Lanalytics::Metric::QuizPerformance.query(
+        nil,
+        course.id,
+        nil,
+        nil,
+        item.id,
+        nil,
+        nil)
     return quiz_performance
   end
 end

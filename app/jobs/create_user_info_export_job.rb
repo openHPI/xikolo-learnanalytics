@@ -120,12 +120,14 @@ class CreateUserInfoExportJob < CreateExportJob
           end
 
           begin
-            top_country =  API[:learnanalytics].rel(:query).get(
-                metric: 'UserCourseCountry',
-                course_id: nil,
-                start_time: nil,
-                end_date: nil,
-                resource_id: user.id).value!
+            top_country =  Lanalytics::Metric::UserCourseCountry.query(
+                nil,
+                nil,
+                nil,
+                nil,
+                user.id,
+                nil,
+                nil)
           rescue => error
             puts error.inspect
             top_country = ''

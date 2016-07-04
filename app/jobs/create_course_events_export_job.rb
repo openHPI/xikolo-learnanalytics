@@ -89,11 +89,12 @@ class CreateCourseEventsExportJob < CreateExportJob
   end
 
   def do_query(page, course)
-    ::API[:learnanalytics].rel(:query).get(
-        metric: 'CourseEvents',
-        course_id: course.id,
-        start_time: course.start_date.iso8601,
-        end_time: course.end_date.iso8601,
-        page: page).value!
+    Lanalytics::Metric::CourseEvents.query(
+        nil,
+        course.id,
+        course.start_date.iso8601,
+        course.end_date.iso8601,
+        page,
+        nil)
   end
 end
