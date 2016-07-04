@@ -10,7 +10,7 @@ class QcAlertsController < ApplicationController
   def index
     alerts = QcAlert.joins('LEFT OUTER JOIN qc_alert_statuses ON qc_alerts.id = qc_alert_statuses.qc_alert_id')
     alerts.where!('qc_alert_statuses.ignored is FALSE OR qc_alert_statuses.ignored is NULL')
-
+    alerts.where!('is_global_ignored is FALSE OR is_global_ignored is NULL')
     alerts.where!('qc_alert_statuses.user_id = ?', params[:user_id]) if params[:user_id]
 
     alerts.where!('qc_alerts.course_id = ?', params[:course_id]) if params[:course_id]
@@ -44,10 +44,16 @@ class QcAlertsController < ApplicationController
     respond_with qc_alert
   end
 
+  def update
+    q = QcAlert.find(params[:id])
+    q.update_attributes(qc_alert_params)
+    respond_with q
+  end
+
 private
 
   def qc_alert_params
-    params.permit( :qc_rule_id, :status, :severity, :course_id, :annotation)
+    params.permit( :qc_rule_id, :status, :severity, :course_id, :annotation, :is_global_ignored)
   end
 
   def qc_alert_statuses_params
