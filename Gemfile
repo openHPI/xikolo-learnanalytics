@@ -140,3 +140,7 @@ group :test do
   gem 'accept_values_for'
 end
 
+group :test, :integration do
+  gem 'rack-remote'
+end
+

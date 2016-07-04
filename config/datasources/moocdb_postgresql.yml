@@ -20,6 +20,11 @@ test:
   port: 5432
   database: lanalytics-test
 
+integration:
+  <<: *common
+  host: localhost
+  port: 5432
+  database: lanalytics-integration
 
 staging:
   <<: *common

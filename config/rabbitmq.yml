@@ -8,6 +8,9 @@ development:
 test:
   <<: *common
 
+integration:
+  <<: *common
+
 staging:
   <<: *common
 

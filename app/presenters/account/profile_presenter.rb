@@ -9,9 +9,9 @@ class Account::ProfilePresenter < Presenter
 
   def initialize(user)
     @user = user
-    @emails = Email.where(user_id: user.id)
+    @emails = Hashie::Mash.new
     @profile = Profile.find(user_id: user.id)
-    @authorizations = Authorization.where(user: user.id)
+    @authorizations = Hashie::Mash.new
 
     @gamification = Hashie::Mash.new # Keep delegation working
 

@@ -262,6 +262,9 @@ GEM
       rack
     rack-protection (1.5.3)
       rack
+    rack-remote (1.1.0)
+      multi_json
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.5.1)
@@ -513,6 +516,7 @@ DEPENDENCIES
   paginate-responder
   pg
   pry-byebug
+  rack-remote
   rails (~> 4.2.5)
   rails-api
   rails-rfc6570 (~> 0.3)
@@ -557,4 +561,3 @@ DEPENDENCIES
 
 BUNDLED WITH
    1.12.5
-
