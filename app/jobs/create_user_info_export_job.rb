@@ -121,11 +121,11 @@ class CreateUserInfoExportJob < CreateExportJob
 
           begin
             top_country =  Lanalytics::Metric::UserCourseCountry.query(
-                nil,
-                nil,
-                nil,
-                nil,
                 user.id,
+                nil,
+                nil,
+                nil,
+                nil,
                 nil,
                 nil)
           rescue => error
