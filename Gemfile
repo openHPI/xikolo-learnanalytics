@@ -53,6 +53,7 @@ gem 'connection_pool'
 gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'pg'
 gem 'elasticsearch'
+gem 'elasticsearch-transport'
 
 gem 'rest-client'
 gem 'multi_json'

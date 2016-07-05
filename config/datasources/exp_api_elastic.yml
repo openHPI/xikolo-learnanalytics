@@ -19,6 +19,11 @@ test:
 
 integration:
   <<: *common
+  host: 'localhost'
+  port: '9200'
+  index: 'lanalytics'
+  user: 'lanalytics'
+  password: 'lanalytics'
 
 staging:
   <<: *common
