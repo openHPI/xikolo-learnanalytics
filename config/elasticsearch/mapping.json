@@ -152,19 +152,16 @@
               "index": "not_analyzed"
             },
             "quiz_access_time": {
-              "type": "date",
-              "format": "strict_date_optional_time||epoch_millis"
+              "type": "date"
             },
             "quiz_submission_time": {
-              "type": "date",
-              "format": "strict_date_optional_time||epoch_millis"
+              "type": "date"
             },
             "quiz_type": {
               "type": "string"
             },
             "quiz_version_at": {
-              "type": "date",
-              "format": "strict_date_optional_time||epoch_millis"
+              "type": "date"
             },
             "ratio": {
               "type": "float"
@@ -228,8 +225,7 @@
               "index": "not_analyzed"
             },
             "user_local_timestamp": {
-              "type": "date",
-              "format": "strict_date_optional_time||epoch_millis"
+              "type": "date"
             },
             "user_location_city": {
               "type": "string"
@@ -293,8 +289,7 @@
           }
         },
         "timestamp": {
-          "type": "date",
-          "format": "strict_date_optional_time||epoch_millis"
+          "type": "date"
         },
         "user": {
           "properties": {
@@ -327,8 +322,7 @@
           "index": "not_analyzed"
         },
         "timestamp": {
-          "type": "date",
-          "format": "strict_date_optional_time||epoch_millis"
+          "type": "date"
         },
         "tracking_type": {
           "type": "string"
