@@ -15,7 +15,7 @@ module Elasticsearch
 
     # elasticsearch mapping
     def self.mapping
-      File.read("#{Rails.root}/config/elasticsearch/mapping.json")
+      ActiveSupport::JSON.decode File.read("#{Rails.root}/config/elasticsearch/mapping.json")
     end
 
     private
