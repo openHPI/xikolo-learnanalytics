@@ -1,6 +1,6 @@
 class CreateCourseExportJob < CreateExportJob
   queue_as :default
-  require 'axlsx'
+
   def perform (job_id, password, user_id, course_id, privacy_flag, extended_flag)
     job = find_and_save_job (job_id)
 
@@ -9,11 +9,11 @@ class CreateCourseExportJob < CreateExportJob
       Acfs.run
       job.annotation = course.course_code.to_s
       job.save
-      temp_report, excel_file = create_report(job_id, course_id, privacy_flag, extended_flag)
+      temp_report, temp_excel_report = create_report(job_id, course_id, privacy_flag, extended_flag)
       csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      excel_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
-      additional_files << excel_file
-      create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing'
@@ -217,7 +217,7 @@ class CreateCourseExportJob < CreateExportJob
     file.close
     Acfs.run
 
-    excel_file = ecxel_attachment(excel_tmp_file, headers, course_info)
+    excel_file = excel_attachment('CourseExport', excel_tmp_file, headers, course_info)
     excel_file.close
     return file, excel_file
   end
@@ -296,16 +296,4 @@ class CreateCourseExportJob < CreateExportJob
     end
   end
 
-  def ecxel_attachment(tmp_file, headers, course_info)
-    Axlsx::Package.new do |p|
-      p.workbook.add_worksheet(:name => 'CourseExport') do |sheet|
-        sheet.add_row(headers)
-        course_info.each do |course_i|
-          sheet.add_row(course_i)
-        end
-      end
-      p.serialize(tmp_file)
-    end
-    tmp_file
-  end
 end

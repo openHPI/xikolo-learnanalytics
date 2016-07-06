@@ -1,8 +1,9 @@
 require 'tempfile'
 require 'csv'
 require 'zipruby'
+require 'axlsx'
 
-class CreateExportJob< ActiveJob::Base
+class CreateExportJob < ActiveJob::Base
   queue_as :default
 
   def perform (job_id, password, user_id, task_scope, privacy_flag)
@@ -14,30 +15,30 @@ class CreateExportJob< ActiveJob::Base
   def create_report(*p)
   end
 
-  def rename_and_zip (csv_name, filename, password = nil, additional_files = [])
-    zipname = csv_name[0..-5] + '.zip'
-    File.rename(filename, csv_name)
-    excel_name = csv_name[0..-5] + '.xlsx'
-    ::ZipRuby::Archive.open(zipname, ::ZipRuby::CREATE) do |archive|
-      archive.add_file(csv_name)
-      if additional_files
-        additional_files.each do |additional_file|
-          File.rename(additional_file.path, excel_name)
+  def rename_and_zip (csv_name, temp_report, excel_name, temp_excel_report, password = nil, additional_files = [])
+    zipname = csv_name + '.zip'
+    begin
+      File.rename(temp_report, excel_name)
+      File.rename(temp_excel_report, csv_name)
+      ::ZipRuby::Archive.open(zipname, ::ZipRuby::CREATE) do |archive|
+        archive.add_file(csv_name)
         archive.add_file(excel_name)
+        unless password.nil? or password.empty?
+          archive.encrypt(password)
         end
       end
-      unless password.nil? or password.empty?
-        archive.encrypt(password)
-      end
-    zipname
+    ensure
+      File.delete(csv_name) if File.exist?(csv_name)
+      File.delete(excel_name) if File.exist?(excel_name)
     end
+    zipname
   end
 
 
-  def create_file (job_id, csv_name, temp_report, password, user_id, course_id=nil, additional_files )
+  def create_file (job_id, csv_name, temp_report, excel_name, temp_excel_report, password, user_id, course_id=nil, additional_files )
 
     begin
-      zipped_file_path =  rename_and_zip(csv_name, temp_report.path, password, additional_files)
+      zipped_file_path =  rename_and_zip(csv_name, temp_report, excel_name, temp_excel_report, password, additional_files)
       file = File.open(zipped_file_path, 'rb')
       uploader = FileUploader.new
       file_expire_date = 1.days.from_now
@@ -66,8 +67,6 @@ class CreateExportJob< ActiveJob::Base
       job.save
     ensure
       File.delete(file.path) if File.exist?(file.path)
-      File.delete(csv_name) if File.exist?(csv_name)
-      File.delete(csv_name[0..-5] + '.xlsx') if File.exist?(csv_name[0..-5] + '.xlsx')
     end
   end
 
@@ -104,5 +103,20 @@ class CreateExportJob< ActiveJob::Base
     }
 
     Msgr.publish(event, to: 'xikolo.notification.platform_notify')
+  end
+
+
+  def excel_attachment(worksheet_name, tmp_file, headers, data)
+    Axlsx::Package.new do |p|
+      p.workbook.add_worksheet(:name => worksheet_name) do |sheet|
+        sheet.add_row(headers)
+        data.each do |row|
+          sheet.add_row(row)
+        end
+      end
+      p.serialize(tmp_file)
+    end
+    puts tmp_file.path
+    tmp_file
   end
 end
