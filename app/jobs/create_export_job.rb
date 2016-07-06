@@ -18,14 +18,26 @@ class CreateExportJob< ActiveJob::Base
     new_file_name = csv_name
     zipname = csv_name + ".zip"
     File.rename(filename, new_file_name)
+    puts "*****"
+    puts additional_files
+    excel_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+
     ::ZipRuby::Archive.open(zipname, ::ZipRuby::CREATE) do |ar|
       ar.add_file(new_file_name)
+
+      if additional_files
+        additional_files.each do |additional_file|
+          File.rename(additional_file.path, "test.xlsx")
+          puts additional_file
+        arr.add_file(additional_file.path)
+      end
       unless password.nil? or password.empty?
         ar.encrypt(password)
       end
     end
     zipname
-  end
+    end
+    end
 
 
   def create_file (job_id, csv_name, temp_report, password, user_id, course_id=nil, additional_files )
