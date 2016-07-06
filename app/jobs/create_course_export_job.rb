@@ -13,8 +13,6 @@ class CreateCourseExportJob < CreateExportJob
       csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
       additional_files = []
       additional_files << excel_file
-      puts '###############'
-      puts excel_file.to_s
       create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
     rescue => error
       puts error.inspect
@@ -33,7 +31,7 @@ class CreateCourseExportJob < CreateExportJob
     pager = 1
     file = Tempfile.open(job_id.to_s, get_tempdir)
     csv = CSV.new(file)
-    excel_tmp_file =  Tempfile.new('excel')
+    excel_tmp_file =  Tempfile.new('excel_course_export')
     headers = []
     course_info = []
     loop do
@@ -220,11 +218,7 @@ class CreateCourseExportJob < CreateExportJob
     Acfs.run
 
     excel_file = ecxel_attachment(excel_tmp_file, headers, course_info)
-    puts excel_file.path
     excel_file.close
-    test_file = File.open(excel_file.path, "rb")
-    contents = test_file.read
-    test_file.close
     return file, excel_file
   end
 
@@ -303,15 +297,11 @@ class CreateCourseExportJob < CreateExportJob
   end
 
   def ecxel_attachment(tmp_file, headers, course_info)
-    file_name = 'CourseExport'
-    puts headers
-    puts course_info
     Axlsx::Package.new do |p|
-      p.workbook.add_worksheet(:name => file_name) do |sheet|
+      p.workbook.add_worksheet(:name => 'CourseExport') do |sheet|
         sheet.add_row(headers)
-
         course_info.each do |course_i|
-        sheet.add_row(course_i)
+          sheet.add_row(course_i)
         end
       end
       p.serialize(tmp_file)

@@ -15,29 +15,23 @@ class CreateExportJob< ActiveJob::Base
   end
 
   def rename_and_zip (csv_name, filename, password = nil, additional_files = [])
-    new_file_name = csv_name
-    zipname = csv_name + ".zip"
-    File.rename(filename, new_file_name)
-    puts "*****"
-    puts additional_files
-    excel_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-
-    ::ZipRuby::Archive.open(zipname, ::ZipRuby::CREATE) do |ar|
-      ar.add_file(new_file_name)
-
+    zipname = csv_name[0..-5] + '.zip'
+    File.rename(filename, csv_name)
+    excel_name = csv_name[0..-5] + '.xlsx'
+    ::ZipRuby::Archive.open(zipname, ::ZipRuby::CREATE) do |archive|
+      archive.add_file(csv_name)
       if additional_files
         additional_files.each do |additional_file|
-          File.rename(additional_file.path, "test.xlsx")
-          puts additional_file
-        arr.add_file(additional_file.path)
+          File.rename(additional_file.path, excel_name)
+        archive.add_file(excel_name)
+        end
       end
       unless password.nil? or password.empty?
-        ar.encrypt(password)
+        archive.encrypt(password)
       end
-    end
     zipname
     end
-    end
+  end
 
 
   def create_file (job_id, csv_name, temp_report, password, user_id, course_id=nil, additional_files )
@@ -73,6 +67,7 @@ class CreateExportJob< ActiveJob::Base
     ensure
       File.delete(file.path) if File.exist?(file.path)
       File.delete(csv_name) if File.exist?(csv_name)
+      File.delete(csv_name[0..-5] + '.xlsx') if File.exist?(csv_name[0..-5] + '.xlsx')
     end
   end
 
