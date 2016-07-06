@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160630153003) do
+ActiveRecord::Schema.define(version: 20160607123036) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20160630153003) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2016-07-06 06:59:46', null: false
+    t.datetime "accessed_at",      default: '2016-02-11 16:34:02', null: false
   end
 
   create_table "datasources", id: false, force: :cascade do |t|
@@ -87,7 +87,6 @@ ActiveRecord::Schema.define(version: 20160630153003) do
     t.string   "severity"
     t.text     "annotation"
     t.json     "qc_alert_data"
-    t.boolean  "is_global_ignored", default: false, null: false
   end
 
   create_table "qc_course_statuses", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
