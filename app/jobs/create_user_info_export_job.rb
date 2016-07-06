@@ -39,7 +39,7 @@ class CreateUserInfoExportJob < CreateExportJob
     #csv << ["row", "of", "CSV", "data"]
     loop do
       begin
-        users = Xikolo::Account::User.where(confirmed:true, page: pager, per_page: 10)
+        users = Xikolo::Account::User.where(confirmed:true, page: pager, per_page: 250)
         Acfs.run
         if users.current_page == 1
           presenter = Account::ProfilePresenter.new users.first

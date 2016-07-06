@@ -96,6 +96,7 @@ class CreateCourseExportJob < CreateExportJob
                       'Top Performance',
                       *cp.sections.map{|f|f.title.titleize + ' Percentage'},
                       *cp.sections.map{|f|f.title.titleize + ' Points'},
+                      'Course Code'
           ]
           csv << headers
         end
@@ -195,7 +196,8 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].quantile.present? ? item[:data].quantile : '',
                      item[:top_performance],
                      *item[:cp].sections.map{|s|s.visits_stats.user_percentage},
-                     *item[:cp].sections.map{|s|s.main_exercise_stats.graded_points if s.main_exercise_stats.available? }
+                     *item[:cp].sections.map{|s|s.main_exercise_stats.graded_points if s.main_exercise_stats.available? },
+                     course.course_code
           ]
           csv << values
         rescue Exception => e
