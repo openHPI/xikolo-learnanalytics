@@ -21,22 +21,27 @@ describe CreateCourseExportJob do
   #  post :create
   #end
   it 'should zip an object with a password' do
-    course_export_job = CreateCourseExportJob.new
-    zipname = "result_zip"
+    course_export_job = CreateExportJob.new
+    csv_name = 'test.csv'
     unless File.exists? "test.txt"
       file = File.open "test.txt", "w"
-      end
+    end
+    unless File.exists? "excel.txt"
+      excel_file = File.open "excel.txt", "w"
+    end
     password = "VeryStrongPassword!"
-    result = course_export_job.send(:rename_and_zip,  zipname,  file.path, password, [])
-    expect(result).to eq(zipname + ".zip")
+    result = course_export_job.send(:rename_and_zip, csv_name , file.path, 'excel.xlsx', excel_file.path, password, [])
+    expect(result).to eq(csv_name + ".zip")
     expect(File).to exist(result)
     expect(ZipRuby::Archive.decrypt(result, password)).to eq true
 
   end
 
   after do
-    File.delete("test.txt") if File.exist?("test.txt")
-    File.delete("result_zip") if File.exists?("result_zip")
-    File.delete("result_zip.zip") if File.exists?("result_zip.zip")
+    File.delete('test.txt') if File.exist?('test.txt')
+    File.delete('excel.txt') if File.exist?('excel.txt')
+    File.delete('excel.csv') if File.exist?('excel.csv')
+    File.delete('test.csv') if File.exists?('test.csv')
+    File.delete('test.csv.zip') if File.exists?('test.csv.zip')
   end
 end

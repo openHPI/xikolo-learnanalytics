@@ -18,8 +18,8 @@ class CreateExportJob < ActiveJob::Base
   def rename_and_zip (csv_name, temp_report, excel_name, temp_excel_report, password = nil, additional_files = [])
     zipname = csv_name + '.zip'
     begin
-      File.rename(temp_report, excel_name)
-      File.rename(temp_excel_report, csv_name)
+      File.rename(temp_excel_report, excel_name)
+      File.rename(temp_report, csv_name)
       ::ZipRuby::Archive.open(zipname, ::ZipRuby::CREATE) do |archive|
         archive.add_file(csv_name)
         archive.add_file(excel_name)
