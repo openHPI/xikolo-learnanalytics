@@ -11,7 +11,8 @@ class QcAlertDecorator< ApplicationDecorator
       updated_at: model.updated_at,
       created_at: model.created_at,
       annotation: model.annotation,
-      qc_alert_data: model.qc_alert_data
+      qc_alert_data: model.qc_alert_data,
+      is_global_ignored: model.is_global_ignored
     }.as_json(**opts)
   end
 end
