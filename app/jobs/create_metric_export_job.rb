@@ -5,10 +5,11 @@ class CreateMetricExportJob < CreateExportJob
     job = find_and_save_job (job_id)
 
     begin
-      temp_report = create_report(job_id, scope, privacy_flag)
+      temp_report, temp_excel_report = create_report(job_id, scope, privacy_flag)
       csv_name = get_tempdir.to_s + '/MetricExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      excel_name = get_tempdir.to_s + '/MetricExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
-      create_file(job_id, csv_name, temp_report, password, user_id, scope, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path,  password, user_id, scope, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing'
@@ -20,6 +21,9 @@ class CreateMetricExportJob < CreateExportJob
 
   def create_report(job_id, scope, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
+    excel_tmp_file =  Tempfile.new('excel_metric_export')
+    headers = []
+    metric_info = []
     @filepath = File.absolute_path(file)
     courses = []
     Xikolo::Course::Course.each_item(public: true) do |course|
@@ -29,7 +33,8 @@ class CreateMetricExportJob < CreateExportJob
     Acfs.run
 
     CSV.open(@filepath, 'wb') do |csv|
-      csv << ['Course Code', 'Enrollments', 'Metric' ]
+      headers = ['Course Code', 'Enrollments', 'Metric' ]
+      csv << headers
       $stdout.print 'Writing export to '+ @filepath + " \n"
       i = 0
       courses.each do |course|
@@ -60,13 +65,16 @@ class CreateMetricExportJob < CreateExportJob
              day += 24.hours
           end
           csv << tmp
+          metric_info << tmp
           update_job_progress(job_id, i/courses.count*100 )
         end
      end
     end
     file.close
     Acfs.run
-    file
+    excel_file = excel_attachment('CourseExport', excel_tmp_file, headers, metric_info)
+    excel_file.close
+    return file, excel_file
   end
 
   def update_job_progress(job_id, percent)

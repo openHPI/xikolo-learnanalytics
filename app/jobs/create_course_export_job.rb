@@ -9,10 +9,11 @@ class CreateCourseExportJob < CreateExportJob
       Acfs.run
       job.annotation = course.course_code.to_s
       job.save
-      temp_report = create_report(job_id, course_id, privacy_flag, extended_flag)
+      temp_report, temp_excel_report = create_report(job_id, course_id, privacy_flag, extended_flag)
       csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      excel_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
-      create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing'
@@ -30,6 +31,9 @@ class CreateCourseExportJob < CreateExportJob
     pager = 1
     file = Tempfile.open(job_id.to_s, get_tempdir)
     csv = CSV.new(file)
+    excel_tmp_file =  Tempfile.new('excel_course_export')
+    headers = []
+    course_info = []
     loop do
       enrollments = Xikolo::Course::Enrollment.where(course_id: course_id, page: pager, per_page: page_size, deleted: true)
       Acfs.run
@@ -41,7 +45,6 @@ class CreateCourseExportJob < CreateExportJob
           cp = Course::ProgressPresenter.build enrolled_user, course
           Acfs.run
 
-          headers = []
           headers += ['User ID',
                       'Enrollment Role',
                       'Enrollment Date',
@@ -200,6 +203,7 @@ class CreateCourseExportJob < CreateExportJob
                      course.course_code
           ]
           csv << values
+          course_info << values
         rescue Exception => e
           puts e.message
         end
@@ -208,9 +212,14 @@ class CreateCourseExportJob < CreateExportJob
       break if enrollments.total_pages == 0
       break if (enrollments.current_page >= enrollments.total_pages)
     end
+
+
     file.close
     Acfs.run
-    file
+
+    excel_file = excel_attachment('CourseExport', excel_tmp_file, headers, course_info)
+    excel_file.close
+    return file, excel_file
   end
 
   def fetch_device_usage (course_id, user_id)
@@ -288,4 +297,3 @@ class CreateCourseExportJob < CreateExportJob
   end
 
 end
-

@@ -4,10 +4,11 @@ class CreateUserInfoExportJob < CreateExportJob
   def perform (job_id, password, user_id, course_id = nil, privacy_flag, combined_enrollment_info_flag)
     job = find_and_save_job(job_id)
     begin
-      temp_report = create_report(job_id, privacy_flag, combined_enrollment_info_flag)
-      csv_name = get_tempdir.to_s + '/UserInfoExport_' + DateTime.now.strftime('%Y-%m') +'.csv'
+      temp_report, temp_excel_report = create_report(job_id, privacy_flag, combined_enrollment_info_flag)
+      csv_name = get_tempdir.to_s + '/UserInfoExport_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      excel_name = get_tempdir.to_s + '/UserInfoExport_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
-      create_file(job_id, csv_name, temp_report, password, user_id, course_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing' +  error.inspect
@@ -23,7 +24,10 @@ class CreateUserInfoExportJob < CreateExportJob
     file = Tempfile.open(job_id.to_s, get_tempdir)
     csv = CSV.new(file)
     @filepath = File.absolute_path(file)
-    courses =[]
+    excel_tmp_file =  Tempfile.new('excel_user_export')
+    headers = []
+    user_info = []
+    courses = []
     Xikolo::Course::Course.each_item(affiliated: 'true', public: 'true') do |item|
       courses << item
     end
@@ -37,6 +41,7 @@ class CreateUserInfoExportJob < CreateExportJob
     #$stdout.print all_courses.inspect
     $stdout.print 'Writing export to '+ @filepath + " \n"
     #csv << ["row", "of", "CSV", "data"]
+
     loop do
       begin
         users = Xikolo::Account::User.where(confirmed:true, page: pager, per_page: 250)
@@ -46,7 +51,7 @@ class CreateUserInfoExportJob < CreateExportJob
           Acfs.run
           #write header
           unless privacy_flag
-            csv << ['User ID',
+            headers += ['User ID',
                  'First Name',
                  'Last name',
                  'Email',
@@ -59,7 +64,7 @@ class CreateUserInfoExportJob < CreateExportJob
                  *courses.map{|c|c.course_code}
             ]
           else
-            csv << ['User ID',
+            headers += ['User ID',
                   'Language',
                   'Affiliated',
                   'BirthDate',
@@ -69,6 +74,8 @@ class CreateUserInfoExportJob < CreateExportJob
                   *courses.map{|c|c.course_code}
             ]
           end
+          csv << headers
+
         end
         p = 0
         tmp_holder = {}
@@ -132,8 +139,9 @@ class CreateUserInfoExportJob < CreateExportJob
             puts error.inspect
             top_country = ''
           end
+          values = []
           unless privacy_flag
-            csv << [user.id,
+            values += [user.id,
                    user.first_name,
                    user.last_name,
                    user.email,
@@ -146,7 +154,7 @@ class CreateUserInfoExportJob < CreateExportJob
                    *courses.map{|c|user_courses[user.id][c.id].present? ? user_courses[user.id][c.id] : 'n'}
             ]
           else
-            csv << [user.id,
+            values += [user.id,
                    user.language,
                    user.affiliated,
                    user.born_at,
@@ -156,6 +164,9 @@ class CreateUserInfoExportJob < CreateExportJob
                    *courses.map{|c|user_courses[user.id][c.id].present? ? user_courses[user.id][c.id] : 'n'}
             ]
           end
+          csv << values
+          user_info << values
+
         end
 
         $stdout.print 'fetching page ' + pager.to_s + " \n"
@@ -166,9 +177,12 @@ class CreateUserInfoExportJob < CreateExportJob
         puts e.message
       end
     end
+      excel_file = excel_attachment('UserInfoExport', excel_tmp_file, headers, user_info)
+      excel_file.close
+
       file.close
       Acfs.run
-      file
+      return file, excel_file
   end
 end
 
