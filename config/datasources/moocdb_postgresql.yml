@@ -3,6 +3,7 @@
 
 common: &common
   datasource_adapter: 'PostgresqlDatasource'
+  adapter: postgresql
   key: 'moocdb_postgresql'
   name: 'MOOCdb on PostgreSQL'
   description: 'The MOOCdb project aims to brings together education researchers, computer science researchers, machine learning researchers, technologists, database and big data experts to advance MOOC data science. The openHPI Team wants to contribute to this project by providing their data in the proposed schema.'
@@ -10,28 +11,20 @@ common: &common
 
 development:
   <<: *common
-  host: localhost
-  port: 5432
-  database: lanalytics-development
+  database: xikolo-learnanalytics-development
 
 test:
   <<: *common
-  host: localhost
-  port: 5432
-  database: lanalytics-test
+  database: xikolo-learnanalytics-test
 
 integration:
   <<: *common
-  host: localhost
-  port: 5432
-  database: lanalytics-integration
+  database: xikolo-learnanalytics-integration
 
 staging:
   <<: *common
-  host: lanalytics.openhpi.de
-  port: 5432
-  database: lanalytics-staging
+  database: xikolo-learnanalytics-staging
 
 production:
   <<: *common
-  database: lanalytics-production
+  database: xikolo-learnanalytics-production
