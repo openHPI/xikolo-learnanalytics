@@ -1,3 +1,5 @@
+# run before integration initializers
+
 # We only want the Msgr.client from the 'msgr' gem to start only for the rails server, not for rake tasks or rails c
 
 # We do not want this initializer to be executed within a rake task

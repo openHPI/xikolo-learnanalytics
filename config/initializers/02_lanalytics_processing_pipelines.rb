@@ -1,3 +1,5 @@
+# run before integration initializers
+
 LANALYTICS_PIPELINE_FLIPPER_FILE = "#{Rails.root}/config/lanalytics_pipeline_flipper.yml"
 flipper_config = YAML.load_file(LANALYTICS_PIPELINE_FLIPPER_FILE).with_indifferent_access
 flipper_config = flipper_config[Rails.env] || flipper_config

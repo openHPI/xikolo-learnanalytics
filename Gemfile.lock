@@ -510,6 +510,7 @@ DEPENDENCIES
   decorate-responder
   draper
   elasticsearch
+  elasticsearch-transport
   factory_girl_rails
   forgery
   geminabox-rake (~> 1.1.0)
