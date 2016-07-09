@@ -14,8 +14,8 @@ class CreateCourseExportJob < CreateExportJob
       excel_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
-    rescue => error
-      puts error.inspect
+    rescue => e
+      Sidekiq.logger.error e.inspect
       job.status = 'failing'
       job.save
     end
@@ -116,6 +116,7 @@ class CreateCourseExportJob < CreateExportJob
         # get postgres metrics for all users in course
         if extended_flag
           clustering_metrics = fetch_clustering_metrics(course_id)
+          Sidekiq.logger.info "[Clustering Metrics] Number of Users: #{clustering_metrics.size}"
         end
 
       end
@@ -123,8 +124,8 @@ class CreateCourseExportJob < CreateExportJob
       enrollments.each.with_index(1) do |enrollment, index|
         begin
           update_progress(enrollments, job_id, index)
-          user = Xikolo::Account::User.find enrollment.user_id
-          full_enrollment = Xikolo::Course::Enrollment.find_by(user_id: enrollment.user_id, course_id: enrollment.course_id, learning_evaluation: 'true')
+          user = Xikolo::Account::User.find(enrollment.user_id)
+          full_enrollment = Xikolo::Course::Enrollment.find_by(user_id: enrollment.user_id, course_id: course_id, learning_evaluation: 'true')
           Acfs.run
 
           item = {}
@@ -219,8 +220,8 @@ class CreateCourseExportJob < CreateExportJob
 
           csv << values
           course_info << values
-        rescue Exception => e
-          puts e.message
+        rescue => e
+          Sidekiq.logger.error e.inspect
         end
       end
 
@@ -261,8 +262,8 @@ class CreateCourseExportJob < CreateExportJob
                        user_id,
                        course_id,
                        nil, nil, nil, nil, nil)
-  rescue => error
-    puts error.inspect
+  rescue => e
+    Sidekiq.logger.error e.inspect
     0
   end
 
@@ -288,8 +289,8 @@ class CreateCourseExportJob < CreateExportJob
       )
     result = Lanalytics::Clustering::Dimensions.query(course_id, clustering_metrics, user_id ? [user_id] : nil)
     result.map { |x| [x['user_uuid'], x.except('user_uuid')] }.to_h.with_indifferent_access
-  rescue => error
-    puts error.inspect
+  rescue => e
+    Sidekiq.logger.error e.inspect
     {}
   end
 
