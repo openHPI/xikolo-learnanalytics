@@ -39,6 +39,8 @@ class CreateCourseExportJob < CreateExportJob
     page_size = 50
     pager = 1
 
+    clustering_metrics = {}
+
     loop do
       enrollments = Xikolo::Course::Enrollment.where(course_id: course_id, page: pager, per_page: page_size, deleted: true)
       Acfs.run
@@ -47,8 +49,8 @@ class CreateCourseExportJob < CreateExportJob
         enrolled_user = Xikolo::Account::User.find(enrollments.first.user_id) if enrollments.first.present?
         Acfs.run
 
-        presenter = Account::ProfilePresenter.new(enrolled_user)
-        cp = Course::ProgressPresenter.build(enrolled_user, course)
+        profile_presenter = Account::ProfilePresenter.new(enrolled_user)
+        course_presenter = Course::ProgressPresenter.build(enrolled_user, course)
         Acfs.run
 
         headers += ['User ID',
@@ -93,7 +95,7 @@ class CreateCourseExportJob < CreateExportJob
         end
 
         headers += ['Enrollment Delta in Days',
-                    *presenter.fields.map{|f|f.name.titleize},
+                    *profile_presenter.fields.map { |f| f.name.titleize },
                     'Questions',
                     'Answers',
                     'Comments on Answers',
@@ -107,8 +109,8 @@ class CreateCourseExportJob < CreateExportJob
                     'Deleted',
                     'Quantile',
                     'Top Performance',
-                    *cp.sections.map{|f|f.title.titleize + ' Percentage'},
-                    *cp.sections.map{|f|f.title.titleize + ' Points'},
+                    *course_presenter.sections.map { |f| f.title.titleize + ' Percentage' },
+                    *course_presenter.sections.map { |f| f.title.titleize + ' Points' },
                     'Course Code']
 
         csv << headers
@@ -137,7 +139,7 @@ class CreateCourseExportJob < CreateExportJob
           item[:cp] = Course::ProgressPresenter.build(user, course)
           Acfs.run
 
-          item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at)/ 365).to_i : '-99'
+          item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at) / 365).to_i : '-99'
 
           item[:top_performance] = calculate_top_performance(full_enrollment.quantile)
 
@@ -222,6 +224,7 @@ class CreateCourseExportJob < CreateExportJob
           course_info << values
         rescue => e
           Sidekiq.logger.error e.inspect
+          e.backtrace.each { |line| Sidekiq.logger.error line }
         end
       end
 
