@@ -1,12 +1,8 @@
 class DocumentsPresenter < Presenter
-  attr_accessor :enrollment, :course
+  attr_accessor :enrollment
 
-  def self.create enrollment
-    new(enrollment: enrollment).tap { |presenter| presenter.course! }
-  end
-
-  def course!
-    @course = Xikolo::Course::Course.find enrollment.course_id
+  def self.create(enrollment)
+    new(enrollment: enrollment)
   end
 
   def cop?

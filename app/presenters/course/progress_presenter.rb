@@ -19,7 +19,7 @@ class Course::ProgressPresenter < CourseInfoPresenter
   end
 
   def enrollment!
-    Xikolo::Course::Enrollment.find_by user_id: @user.id, course_id: @course.id, learning_evaluation: true do |enrollment|
+    Xikolo::Course::Enrollment.find_by(user_id: @user.id, course_id: @course.id, learning_evaluation: true) do |enrollment|
       @documents = DocumentsPresenter.create(enrollment)
     end
   end
