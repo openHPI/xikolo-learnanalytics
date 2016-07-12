@@ -127,7 +127,7 @@ class CreateCourseExportJob < CreateExportJob
         begin
           update_progress(enrollments, job_id, index)
           user = Xikolo::Account::User.find(enrollment.user_id)
-          full_enrollment = Xikolo::Course::Enrollment.find_by(user_id: enrollment.user_id, course_id: course_id, learning_evaluation: 'true')
+          full_enrollment = Xikolo::Course::Enrollment.find_by(user_id: enrollment.user_id, course_id: course_id, deleted: true, learning_evaluation: 'true')
           Acfs.run
 
           item = {}
