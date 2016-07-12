@@ -141,8 +141,6 @@ class CreateCourseExportJob < CreateExportJob
 
           item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at) / 365).to_i : '-99'
 
-          item[:top_performance] = calculate_top_performance(full_enrollment.quantile)
-
           # get elasticsearch metrics per user
           if extended_flag
             metrics = ActiveSupport::HashWithIndifferentAccess.new
@@ -212,10 +210,10 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].certificates[:confirmation_of_participation].present? ? item[:data].certificates[:confirmation_of_participation] : '-99',
                      item[:data].certificates[:record_of_achievement].present? ? item[:data].certificates[:record_of_achievement] : '-99',
                      item[:data].certificates[:certificate].present? ? item[:data].certificates[:certificate] : '-99',
-                     item[:data].completed.present? ? item[:data].completed : '',
-                     item[:data].deleted.present? ? item[:data].deleted : '',
-                     item[:data].quantile.present? ? item[:data].quantile : '',
-                     item[:top_performance],
+                     item[:data].completed.present? ? item[:data].completed : '-99',
+                     item[:data].deleted.present? ? item[:data].deleted : '-99',
+                     item[:data].quantile.present? ? item[:data].quantile : '-99',
+                     item[:data].quantile.present? ? calculate_top_performance(item[:data].quantile) : '-99',
                      *item[:cp].sections.map{|s|s.visits_stats.user_percentage},
                      *item[:cp].sections.map{|s|s.main_exercise_stats.graded_points if s.main_exercise_stats.available? },
                      course.course_code]
