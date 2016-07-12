@@ -3,8 +3,7 @@ class AnnouncementFailedWorker < QcRuleWorker
   def perform(course, rule_id)
     severity = 'high'
     allowed_delta = 10
-    annotation = 'Announcement failed '
-    all_news = API[:news].rel(:news).get(published: "true").value!
+    all_news = API[:news].rel(:news_index).get(published: "true").value!
     all_news.each do |announcement|
       if announcement.publish_at.present? and announcement.publish_at >= 2.weeks.ago
         mail_logs = API[:notification].rel(:mail_log_stats).get(news_id: announcement.id).value!
