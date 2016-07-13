@@ -19,14 +19,14 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 
 gem 'rails-api'
-gem 'xikolo-common', '~> 0.1.0'
+gem 'xikolo-common', '~> 1.0'
 
 gem 'xikolo-config', '~> 1.37'
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'restify', '~> 0.4.0.b1'
+gem 'restify', '~> 0.5.0'
 gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
@@ -81,7 +81,6 @@ gem 'xikolo-pinboard', '~> 4.28.0'
 gem 'xikolo-quiz'
 gem 'xikolo-richtext'
 gem 'xikolo-submission'
-gem 'xikolo-news', '~>0.4.0'
 gem 'xikolo-video'
 
 # Xikolo service clients

@@ -32,6 +32,19 @@ require 'acfs/rspec'
 require 'webmock/rspec'
 require 'rspec/collection_matchers'
 
+require 'xikolo/common/rspec'
+
+Xikolo::Common::RSpec.relations[:news] = '{
+  "news_index_url": "http://news.xikolo.tld/news",
+  "news_url": "http://news.xikolo.tld/news/{id}"
+}'
+
+require 'restify'
+require 'restify/adapter/typhoeus'
+
+Restify::Registry.store :test, 'http://lanalytics.xikolo.tld',
+                        adapter: Restify::Adapter::Typhoeus.new(sync: true)
+
 Sidekiq::Testing.fake!
 
 ActiveRecord::Migration.maintain_test_schema!
@@ -48,13 +61,13 @@ RSpec.configure do |config|
   #config.order = 'random'
 
 
- # config.before(:each) do
+  config.around(:each) do |example|
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.cleaning(&example)
+  end
 
-  #  DatabaseCleaner.start
- # end
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-
+  config.before(:all) do
+    DatabaseCleaner.clean_with :truncation
   end
 
   # Do not leak Acfs queue between specs

@@ -28,6 +28,7 @@ development: &dev
 test:
   services:
     <<: *devserv
+    news: http://news.xikolo.tld
 
 staging:
   services:
