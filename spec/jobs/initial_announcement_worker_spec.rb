@@ -59,32 +59,45 @@ describe InitialAnnouncementWorker do
         return: [{id: '00000001-3100-4444-9999-000000000001'}],
         headers: headers
   end
+
   let!(:get_news) do
-    Acfs::Stub.resource Xikolo::News::News,
-                        :list,
-                        with: {course_id: test_course.id, published: "true"},
-        return: [{id: '00000001-3100-4444-9999-000000000002', sending_state: 1}]
+    stub_restify(
+      :news,
+      :news,
+      :get,
+      with: {course_id: test_course.id, published: "true"},
+      body_res: [[{id: '00000001-3100-4444-9999-000000000002', sending_state: 1}]]
+    )
   end
 
   let!(:get_news2) do
-    Acfs::Stub.resource Xikolo::News::News,
-                        :list,
-                        with: {course_id: test_course2.id, published: "true"},
-        return: [{id: '00000001-3100-4444-9999-000000000003'}]
+    stub_restify(
+      :news,
+      :news,
+      :get,
+      with: {course_id: test_course2.id, published: "true"},
+      body_res: [[{id: '00000001-3100-4444-9999-000000000003'}]]
+    )
   end
 
   let!(:get_news3) do
-    Acfs::Stub.resource Xikolo::News::News,
-                        :list,
-                        with: {course_id: course_little_enrollments.id, published: "true"},
-        return: [{id: '00000001-3100-4444-9999-000000000003', sending_state: 0}]
+    stub_restify(
+      :news,
+      :news,
+      :get,
+      with: {course_id: course_little_enrollments.id, published: "true"},
+      body_res: [[{id: '00000001-3100-4444-9999-000000000003', sending_state: 0}]]
+    )
   end
 
   let!(:get_news4) do
-    Acfs::Stub.resource Xikolo::News::News,
-                        :list,
-                        with: {course_id: normal_course.id, published: "true"},
-        return: [{id: '00000001-3100-4444-9999-000000000003', sending_state: 1, publish_at: 4.days.ago}]
+    stub_restify(
+      :news,
+      :news,
+      :get,
+      with: {course_id: normal_course.id, published: "true"},
+      body_res: [[{id: '00000001-3100-4444-9999-000000000003', sending_state: 1, publish_at: 4.days.ago}]]
+    )
   end
 
   it 'should update open alert annotation' do

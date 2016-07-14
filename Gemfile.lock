@@ -109,6 +109,7 @@ GEM
     colored (1.2)
     concurrent-ruby (0.9.2)
     connection_pool (2.2.0)
+    cookiejar (0.3.3)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     database_cleaner (1.5.3)
@@ -131,9 +132,18 @@ GEM
     elasticsearch-transport (1.0.15)
       faraday
       multi_json
+    em-http-request (1.1.5)
+      addressable (>= 2.3.4)
+      cookiejar (!= 0.3.1)
+      em-socksify (>= 0.3)
+      eventmachine (>= 1.0.3)
+      http_parser.rb (>= 0.6.0)
+    em-socksify (0.3.1)
+      eventmachine (>= 1.0.0.beta.4)
     erubis (2.7.0)
     ethon (0.9.0)
       ffi (>= 1.3.0)
+    eventmachine (1.2.0.1)
     execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -147,7 +157,7 @@ GEM
     faraday_middleware-multi_json (0.0.6)
       faraday_middleware
       multi_json
-    ffi (1.9.10)
+    ffi (1.9.14)
     forgery (0.6.0)
     geminabox (0.12.4)
       builder
@@ -169,6 +179,7 @@ GEM
     htmlentities (4.3.4)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
+    http_parser.rb (0.6.0)
     httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -209,8 +220,8 @@ GEM
       railties (>= 3.0.0, < 5.0.0)
     method_source (0.8.2)
     mime-types (2.99)
-    mini_portile2 (2.0.0)
-    minitest (5.8.4)
+    mini_portile2 (2.1.0)
+    minitest (5.9.0)
     msgr (0.13.0)
       activesupport
       bunny (>= 1.4, < 3.0)
@@ -241,8 +252,9 @@ GEM
     net-http-persistent (2.9.4)
     netrc (0.11.0)
     newrelic_rpm (3.14.2.312)
-    nokogiri (1.6.7.2)
-      mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.6.8)
+      mini_portile2 (~> 2.1.0)
+      pkg-config (~> 1.1.7)
     ntlm-http (0.1.1)
     oauth (0.4.7)
     oauth2 (1.0.0)
@@ -255,6 +267,7 @@ GEM
     paginate-responder (1.5.0)
       rack-link_headers (>= 2.2)
     pg (0.18.4)
+    pkg-config (1.1.7)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -306,7 +319,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     raindrops (0.15.0)
-    rake (10.5.0)
+    rake (11.2.2)
     rdoc (4.2.1)
       json (~> 1.4)
     redis (3.2.2)
@@ -325,13 +338,13 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    restify (0.4.0)
+    restify (0.5.0)
       addressable (~> 2.3)
       concurrent-ruby (~> 0.9.0)
+      em-http-request (~> 1.1.3)
+      eventmachine (>= 1.2)
       hashie (~> 3.3)
-      net-http-persistent
       rack
-      typhoeus
     rserve-client (0.3.1)
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
@@ -448,9 +461,10 @@ GEM
       activesupport
       xikolo-file (~> 1.0)
       xikolo-richtext (~> 3.0)
-    xikolo-common (0.1.1)
+    xikolo-common (1.1.0)
       activesupport
-      lograge
+      lograge (~> 0.3.5)
+      railties
       restify
     xikolo-config (1.37)
       activesupport
@@ -462,9 +476,6 @@ GEM
       activesupport
     xikolo-lti (0.0.13)
       acfs (~> 0.32)
-      activesupport
-    xikolo-news (0.4.0)
-      acfs (~> 0.25, >= 0.25.0)
       activesupport
     xikolo-pinboard (4.28.0)
       acfs (~> 0.41)
@@ -536,7 +547,7 @@ DEPENDENCIES
   redis-activesupport
   responders
   rest-client
-  restify (~> 0.4.0.b1)
+  restify (~> 0.5.0)
   rserve-client (~> 0.3.1)
   rspec-collection_matchers
   rspec-its
@@ -560,11 +571,10 @@ DEPENDENCIES
   validates_email_format_of
   webmock
   xikolo-account
-  xikolo-common (~> 0.1.0)
+  xikolo-common (~> 1.0)
   xikolo-config (~> 1.37)
   xikolo-course (~> 9.5.2)
   xikolo-file (~> 1.8.1)
-  xikolo-news (~> 0.4.0)
   xikolo-pinboard (~> 4.28.0)
   xikolo-quiz
   xikolo-richtext

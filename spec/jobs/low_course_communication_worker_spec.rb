@@ -36,15 +36,23 @@ describe LowCourseCommunicationWorker do
       return: [{ id: '00000001-3100-4444-9999-000000000004'}],
       headers: headers
   end
-  let!(:get_news) do  Acfs::Stub.resource Xikolo::News::News,
-                                          :list,
-                                          with: {course_id: test_course.id, published: "true", per_page: 1, page: 1},
-      return: [{ id: '00000001-3100-4444-9999-000000000002', publish_at: 11.days.ago}]
+  let!(:get_news) do
+    stub_restify(
+      :news,
+      :news,
+      :get,
+      with: {course_id: test_course.id, published: "true", per_page: 1, page: 1},
+      body_res: [[{ id: '00000001-3100-4444-9999-000000000002', publish_at: 11.days.ago}]]
+    )
   end
-  let!(:get_news2) do  Acfs::Stub.resource Xikolo::News::News,
-                                          :list,
-                                          with: {course_id: test_course2.id, published: "true", per_page: 1, page: 1},
-      return: [{ id: '00000001-3100-4444-9999-000000000002', publish_at: 9.days.ago}]
+  let!(:get_news2) do
+    stub_restify(
+      :news,
+      :news,
+      :get,
+      with: {course_id: test_course2.id, published: "true", per_page: 1, page: 1},
+      body_res: [[{ id: '00000001-3100-4444-9999-000000000002', publish_at: 9.days.ago}]]
+    )
   end
   subject { described_class.new}
 
