@@ -35,7 +35,7 @@ class VideoEventsWorker < QcRuleWorker
         nil,
         nil,
         nil,
-        resource_id: item.id,
+        item.id,
         nil,
         nil).value!
     start_pause_time = {}
