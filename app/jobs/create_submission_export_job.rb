@@ -5,10 +5,11 @@ class CreateSubmissionExportJob < CreateExportJob
     job = find_and_save_job (job_id)
 
     begin
-      temp_report = create_report(job_id, quiz_id, privacy_flag)
+      temp_report, temp_excel_report = create_report(job_id, quiz_id, privacy_flag)
       csv_name = get_tempdir.to_s + '/SubmissionExport_' + quiz_id.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      excel_name = get_tempdir.to_s + '/SubmissionExport_' + quiz_id.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
-      create_file(job_id, csv_name, temp_report, password, user_id, quiz_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, quiz_id, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing'
@@ -20,6 +21,9 @@ class CreateSubmissionExportJob < CreateExportJob
 
   def create_report(job_id, quiz_id, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
+    excel_tmp_file =  Tempfile.new('excel_submission_export')
+    headers = []
+    submission_info = []
     @filepath = File.absolute_path(file)
     p = 1
 
@@ -93,54 +97,59 @@ class CreateSubmissionExportJob < CreateExportJob
     end
     Acfs.run
 
-
     tmp = []
+
     CSV.open(@filepath, 'wb') do |csv|
       #csv << ["row", "of", "CSV", "data"]
+      headers  += ['User ID',
+      'User Name',
+      'Email',
+      'Submitted On',
+      'Points',
+      ]
 
-      tmp.push('User ID')
-      tmp.push('User Name')
-      tmp.push('Email')
-      tmp.push('Submitted On')
-      tmp.push('Points')
-
+      current_question = []
       @quiz_questions.each do |key, question|
-        tmp.push(question[:question_text])
-
+        current_question << [question[:question_text]]
         question[:answers].each do |answer|
-          tmp.push(answer[:answer_text])
+          current_question += [answer[:answer_text]]
         end
       end
-
-      csv << tmp
+      headers += current_question
+      csv << headers
       @submissions.each do |key, submission|
-        tmp = []
-        tmp.push(submission[:user_id])
-        tmp.push(submission[:user_name])
-        tmp.push(submission[:user_email])
-        tmp.push(submission[:created_at])
-        tmp.push(submission[:points])
+        current_submission = []
+        current_submission += [submission[:user_id],
+                               submission[:user_name],
+                               submission[:user_email],
+                               submission[:created_at],
+                               submission[:points]
+        ]
 
         #submission[:questions].each do |key, sub_q|
         @quiz_questions.each do |key, question|
-          tmp.push('')
+          current_submission += ['']
           sub_q = submission[:questions][key]
           question[:answers].each do |quiz_a|
 
             if sub_q[:selected_answers].include? quiz_a[:id]
-              tmp.push('x')
+              current_submission += ['x']
             else
-              tmp.push(sub_q[:freetext_answer])
+              current_submission += [sub_q[:freetext_answer]]
             end
           end
         end
-        csv << tmp
+        csv << current_submission
+        submission_info << current_submission
 
       end
     end
     file.close
     Acfs.run
-    file
+
+    excel_file = excel_attachment('SubmissionExport', excel_tmp_file, headers, submission_info)
+    excel_file.close
+    return file, excel_file
   end
 
 

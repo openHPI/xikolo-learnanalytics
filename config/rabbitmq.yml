@@ -1,6 +1,6 @@
 common: &common
   uri: amqp://localhost/
-  # autostart: true - we do not need this because we start the Msgr.client explicitly in initializers/lanalytics_start_msgr.rb
+  # autostart: true - we do not need this because we start the Msgr.client explicitly in initializers/02_lanalytics_start_msgr.rb
 
 development:
   <<: *common

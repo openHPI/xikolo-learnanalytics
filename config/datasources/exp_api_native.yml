@@ -17,6 +17,10 @@ test:
   <<: *common
   database: xikolo-learnanalytics-test
 
+integration:
+  <<: *common
+  database: xikolo-learnanalytics-integration
+
 staging:
   <<: *common
   database: db/staging.sqlite3

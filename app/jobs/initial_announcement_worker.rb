@@ -1,7 +1,6 @@
 class InitialAnnouncementWorker < QcRuleWorker
 
   def perform(course, rule_id)
-    announcements = []
     severity = 'low'
     annnotation = 'No initial mail announcement before course start'
     enrollments_threshold = 1
@@ -12,20 +11,16 @@ class InitialAnnouncementWorker < QcRuleWorker
     if course.end_date.present? && course.end_date < DateTime.now
       find_and_close_qc_alert(rule_id, course.id)
     elsif start_date.present? && start_date < 7.business_days.from_now  && total_enrollments.to_i > enrollments_threshold
-      Xikolo::News::News.each_item(course_id: course.id, published: "true") do |item|
-        announcements << item
-      end
-      Acfs.run
       mail_sent_flag = false
-      announcements.each do |announcement|
+      API[:news].rel(:news_index).get(course_id: course.id, published: "true").value!.each do |announcement|
         if announcement.present?
-          if announcement.sending_state.present?
-            sending_state = announcement.sending_state
+          if announcement['sending_state'].present?
+            sending_state = announcement['sending_state']
           else
             sending_state = 0
           end
-          if announcement.publish_at.present?
-            if sending_state > 0 && announcement.publish_at <= start_date
+          if announcement['publish_at'].present?
+            if sending_state > 0 && announcement['publish_at'] <= start_date
               mail_sent_flag = true
             end
           end

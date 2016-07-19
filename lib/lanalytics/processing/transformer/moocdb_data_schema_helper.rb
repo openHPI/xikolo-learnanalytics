@@ -103,7 +103,11 @@ module Lanalytics
           end
 
           @course_cache.fetch(course_id) do
-            service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
+            if File.exist?("#{Rails.root}/config/services.#{Rails.env}.yml")
+              service_base_urls = YAML.load_file("#{Rails.root}/config/services.#{Rails.env}.yml")
+            else
+              service_base_urls = YAML.load_file("#{Rails.root}/config/services.yml")
+            end
             service_base_urls = (service_base_urls[Rails.env] || service_base_urls)['services']
             course_service_base_url = service_base_urls['course']
             json_url = "#{course_service_base_url}/courses/#{course_id}.json"

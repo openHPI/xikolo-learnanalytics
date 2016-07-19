@@ -6,10 +6,12 @@ class CreateCourseEventsExportJob < CreateExportJob
 
     begin
       #scope = 'c1556425-5449-4b05-97b3-42b38a39f6c5' #manual overwrite
-      temp_report = create_report(job_id, scope, privacy_flag)
+      temp_report, temp_excel_report = create_report(job_id, scope, privacy_flag)
       csv_name = get_tempdir.to_s + '/CourseEventsExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
+      excel_name = get_tempdir.to_s + '/CourseEventsExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
+
       additional_files = []
-      create_file(job_id, csv_name, temp_report, password, user_id, scope, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, scope, additional_files)
     rescue => error
       puts error.inspect
       job.status = 'failing'
@@ -21,6 +23,9 @@ class CreateCourseEventsExportJob < CreateExportJob
 
   def create_report(job_id, scope, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
+    excel_tmp_file =  Tempfile.new('excel_course_export')
+    headers = []
+    courseevent_info = []
     @filepath = File.absolute_path(file)
 
     course = Xikolo::Course::Course.find(scope)
@@ -37,17 +42,20 @@ class CreateCourseEventsExportJob < CreateExportJob
     puts 'after acfs'
 
     CSV.open(@filepath, 'wb') do |csv|
-      csv << ['Course ID', 'Verb', 'User', 'Timestamp', 'Resource', 'Action', 'Typ', 'Title', 'Section' ]
-      $stdout.print 'Writing export to '+ @filepath + " \n"
+      headers += ['Course ID', 'Verb', 'User', 'Timestamp', 'Resource', 'Action', 'Typ', 'Title', 'Section' ]
+      csv << headers
+          $stdout.print 'Writing export to '+ @filepath + " \n" + "with headers " + headers.to_s
       i = 0
       if course.start_date.present? and course.end_date.present?
         puts 'get data'
-        get_all course, csv, items, sections
+        get_all course, csv, courseevent_info, items, sections
       end
     end
     file.close
     Acfs.run
-    file
+    excel_file = excel_attachment('CourseEventsExport', excel_tmp_file, headers, courseevent_info)
+    excel_file.close
+    return file, excel_file
   end
 
   def update_job_progress(job_id, percent)
@@ -56,7 +64,7 @@ class CreateCourseEventsExportJob < CreateExportJob
     job.save!
   end
 
-  def get_all(course, csv, items, sections)
+  def get_all(course, csv, courseevent_info, items, sections)
     page = 1
     loop do
       paged = do_query page, course
@@ -80,6 +88,7 @@ class CreateCourseEventsExportJob < CreateExportJob
           item['section'] = ''
         end
         csv << item.values
+        courseevent_info << item.values
       end
       puts paged[:next]
       puts paged[:next] == true
