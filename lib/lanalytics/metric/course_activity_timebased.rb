@@ -35,12 +35,12 @@ module Lanalytics
       end
 
       def self.convert_to_timestamps(buckets)
-        # Convert to a hash of timestamps and quantity 1
+        # Convert to a hash of timestamps and quantity
         # (needed for cal-heatmap)
         Hash[
             buckets.map do |bucket|
               [
-                  bucket[:key_as_string].to_s[0..-4],
+                  Time.parse(bucket[:key_as_string].to_s[0..-4]).to_i,
                   bucket[:doc_count]
               ]
             end
