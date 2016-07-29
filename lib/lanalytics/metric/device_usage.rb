@@ -4,33 +4,40 @@ module Lanalytics
       include Lanalytics::Helper::PercentageHelper
 
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+        query_must = [
+          { match: { 'user.resource_uuid' => user_id } }
+        ]
+
+        if course_id.present?
+          query_must << {
+            bool: {
+              should: [
+                { match: { 'in_context.course_id' => course_id } },
+                { match: { 'resource.resource_uui' => course_id } }
+              ]
+            }
+          }
+        end
+
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
             query: {
               bool: {
-                must: [
-                  { match: { "user.resource_uuid" => user_id } },
-                  { bool: {
-                      should: [
-                        { match: { "in_context.course_id" => course_id } },
-                        { match: { "resource.resource_uuid" => course_id } }
-                      ]
-                  } }
-                ]
+                must: query_must
               }
             },
             aggregations: {
               platforms: {
                 terms: {
                   size: 0,
-                  field: "in_context.platform"
+                  field: 'in_context.platform'
                 },
                 aggregations: {
                   runtimes: {
                     terms: {
                       size: 0,
-                      field: "in_context.runtime"
+                      field: 'in_context.runtime'
                     }
                   }
                 }
@@ -38,7 +45,7 @@ module Lanalytics
               runtimes: {
                 terms: {
                   size: 0,
-                  field: "in_context.runtime"
+                  field: 'in_context.runtime'
                 }
               }
             }
@@ -115,30 +122,30 @@ module Lanalytics
         if mobile > 0 and web > 0
           state = 'mixed'
           usage << {
-              category: 'mobile',
-              total_activity: mobile,
-              relative_activity: mobile.percent_of(total_activity)
+            category: 'mobile',
+            total_activity: mobile,
+            relative_activity: mobile.percent_of(total_activity)
           }
           usage << {
-              category: 'web',
-              total_activity: web,
-              relative_activity: web.percent_of(total_activity)
+            category: 'web',
+            total_activity: web,
+            relative_activity: web.percent_of(total_activity)
           }
         # only mobile used
         elsif mobile > 0
           state = 'mobile'
           usage << {
-              category: 'mobile',
-              total_activity: mobile,
-              relative_activity: mobile.percent_of(total_activity)
+            category: 'mobile',
+            total_activity: mobile,
+            relative_activity: mobile.percent_of(total_activity)
           }
         # only web used
         elsif web > 0
           state = 'web'
           usage << {
-              category: 'web',
-              total_activity: web,
-              relative_activity: web.percent_of(total_activity)
+            category: 'web',
+            total_activity: web,
+            relative_activity: web.percent_of(total_activity)
           }
         end
 
@@ -147,8 +154,8 @@ module Lanalytics
 
         # add behavior
         behavior = {
-            state: state,
-            usage: usage
+          state: state,
+          usage: usage
         }
         processed_result[:behavior] = behavior
 
