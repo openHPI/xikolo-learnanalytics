@@ -19,6 +19,17 @@ class Course::SectionProgressPresenter < SectionPresenter
     exercise_stats_for @section.bonus_exercises
   end
 
+  def total_graded_points
+    points = 0
+    if main_exercise_stats.available?
+      points += main_exercise_stats.graded_points
+    end
+    if bonus_exercise_stats.available?
+      points += bonus_exercise_stats.graded_points
+    end
+    points
+  end
+
   def description
     @section.description
   end

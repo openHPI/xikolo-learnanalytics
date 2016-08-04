@@ -214,8 +214,8 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].deleted.present? ? item[:data].deleted : '-99',
                      item[:data].quantile.present? ? item[:data].quantile : '-99',
                      item[:data].quantile.present? ? calculate_top_performance(item[:data].quantile) : '-99',
-                     *item[:cp].sections.map{|s|s.visits_stats.user_percentage},
-                     *item[:cp].sections.map{|s|s.main_exercise_stats.graded_points if s.main_exercise_stats.available? },
+                     *item[:cp].sections.map{ |s| s.visits_stats.user_percentage },
+                     *item[:cp].sections.map{ |s| s.total_graded_points },
                      course.course_code]
 
           csv << values
