@@ -11,11 +11,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160630153003) do
+ActiveRecord::Schema.define(version: 20160805112014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "admin_statistics", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.string   "course_name"
+    t.string   "course_code"
+    t.integer  "total_enrollments"
+    t.float    "no_shows"
+    t.integer  "current_enrollments"
+    t.integer  "enrollemnts_last_24h"
+    t.integer  "enrollments_at_course"
+    t.integer  "enrollments_at_course_middle_incl_unenrollments"
+    t.integer  "enrollments_at_course_middle"
+    t.integer  "enrollments_at_course_end"
+    t.integer  "total_questions"
+    t.integer  "questions_last_24h"
+    t.integer  "total_answers"
+    t.integer  "answers_last_24h"
+    t.integer  "total_comments_on_answers"
+    t.integer  "comments_on_answers_last_24h"
+    t.integer  "total_comments_on_aquestions"
+    t.integer  "comments_on_aquestions_last_24h"
+    t.integer  "certificates"
+    t.integer  "helpdesk_tickets"
+    t.integer  "helpdesk_tickets_last_24h"
+    t.float    "success_rate"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cluster_groups", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
     t.string   "name"
