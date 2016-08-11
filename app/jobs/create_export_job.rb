@@ -16,7 +16,7 @@ class CreateExportJob < ActiveJob::Base
   end
 
   def rename_and_zip (csv_name, temp_report, excel_name, temp_excel_report, password = nil, additional_files = [])
-    zipname = csv_name + '.zip'
+    zipname = csv_name[0..-5] + '.zip'
     begin
       File.rename(temp_excel_report, excel_name)
       File.rename(temp_report, csv_name)

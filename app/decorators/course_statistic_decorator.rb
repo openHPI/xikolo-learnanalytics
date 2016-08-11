@@ -1,4 +1,4 @@
-class AdminStatisticDecorator < ApplicationDecorator
+class CourseStatisticDecorator < ApplicationDecorator
   delegate_all
 
   def as_json (**opts)

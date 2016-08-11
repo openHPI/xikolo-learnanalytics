@@ -1,4 +1,4 @@
-class AdminStatistic < ActiveRecord::Base
+class CourseStatistic < ActiveRecord::Base
   #attr_reader :all_course_infos, :general_course_statistic
 =begin
   def initialize
