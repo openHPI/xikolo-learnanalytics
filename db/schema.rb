@@ -29,10 +29,11 @@ ActiveRecord::Schema.define(version: 20160805112014) do
   create_table "course_statistics", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
     t.string   "course_name"
     t.string   "course_code"
+    t.uuid     "course_id"
     t.integer  "total_enrollments"
     t.float    "no_shows"
     t.integer  "current_enrollments"
-    t.integer  "enrollemnts_last_24h"
+    t.integer  "enrollments_last_24h"
     t.integer  "enrollments_at_course"
     t.integer  "enrollments_at_course_middle_incl_unenrollments"
     t.integer  "enrollments_at_course_middle"
@@ -61,7 +62,7 @@ ActiveRecord::Schema.define(version: 20160805112014) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2016-08-11 10:04:30', null: false
+    t.datetime "accessed_at",      default: '2016-08-18 09:16:08', null: false
   end
 
   create_table "datasources", id: false, force: :cascade do |t|

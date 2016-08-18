@@ -3,10 +3,11 @@ class AddCourseStatistics < ActiveRecord::Migration
     create_table :course_statistics, id: :uuid do |t|
       t.string :course_name
       t.string :course_code
+      t.uuid :course_id
       t.integer :total_enrollments
       t.float :no_shows
       t.integer :current_enrollments
-      t.integer :enrollemnts_last_24h
+      t.integer :enrollments_last_24h
       t.integer :enrollments_at_course
       t.integer :enrollments_at_course_middle_incl_unenrollments
       t.integer :enrollments_at_course_middle
