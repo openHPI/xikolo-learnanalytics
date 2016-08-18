@@ -14,6 +14,10 @@ class CreateMetricExportJob < CreateExportJob
       puts error.inspect
       job.status = 'failing'
       job.save
+      temp_report.close
+      temp_report.unlink
+      temp_excel_report.close
+      temp_excel_report.unlink
     end
   end
 
@@ -70,11 +74,14 @@ class CreateMetricExportJob < CreateExportJob
         end
      end
     end
-    file.close
     Acfs.run
     excel_file = excel_attachment('CourseExport', excel_tmp_file, headers, metric_info)
-    excel_file.close
     return file, excel_file
+  ensure
+    file.close
+    excel_file.close
+    excel_tmp_file.close
+
   end
 
   def update_job_progress(job_id, percent)

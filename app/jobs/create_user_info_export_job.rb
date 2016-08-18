@@ -13,6 +13,10 @@ class CreateUserInfoExportJob < CreateExportJob
       puts error.inspect
       job.status = 'failing' +  error.inspect
       job.save
+      temp_report.close
+      temp_report.unlink
+      temp_excel_report.close
+      temp_excel_report.unlink
     end
   end
 
@@ -178,11 +182,15 @@ class CreateUserInfoExportJob < CreateExportJob
       end
     end
       excel_file = excel_attachment('UserInfoExport', excel_tmp_file, headers, user_info)
-      excel_file.close
 
-      file.close
       Acfs.run
       return file, excel_file
+
+  ensure
+    file.close
+    excel_file.close
+    excel_tmp_file.close
+
   end
 end
 

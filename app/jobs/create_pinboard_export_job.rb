@@ -17,6 +17,10 @@ class CreatePinboardExportJob < CreateExportJob
       puts error.inspect
       job.status = 'failing'
       job.save
+      temp_report.close
+      temp_report.unlink
+      temp_excel_report.close
+      temp_excel_report.unlink
     end
   end
 
@@ -65,10 +69,12 @@ class CreatePinboardExportJob < CreateExportJob
     end
     Acfs.run
     excel_file = excel_attachment('PinboardExport', excel_tmp_file, headers, pinboard_info)
-    excel_file.close
-    file.close
 
     return file, excel_file
+  ensure
+    file.close
+    excel_file.close
+    excel_tmp_file.close
   end
 
   def write_header(csv, headers)

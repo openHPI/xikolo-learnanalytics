@@ -65,6 +65,10 @@ class CreateExportJob < ActiveJob::Base
       puts error.inspect
       job.status = 'failing'
       job.save
+      File.delete(csv_name) if File.exist?(csv_name)
+      File.delete(excel_name) if File.exist?(excel_name)
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report ) if File.exist?(temp_excel_report)
     ensure
       File.delete(file.path) if File.exist?(file.path)
     end
@@ -117,6 +121,7 @@ class CreateExportJob < ActiveJob::Base
       p.serialize(tmp_file)
     end
     puts tmp_file.path
+    tmp_file.close
     tmp_file
   end
 end
