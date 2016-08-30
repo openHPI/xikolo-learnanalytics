@@ -69,7 +69,7 @@ module Lanalytics
         puts "Count of hits "  + result['hits']['hits'].count.to_s
         puts "Scroll ID "
         puts result['_scroll_id']
-        result = {data:processed_result, next: current_last < result['hits']['total'] , scroll_id: result['_scroll_id']}
+        result = {data: processed_result, next: current_last < result['hits']['total'] , scroll_id: result['_scroll_id']}
 
       end
 
