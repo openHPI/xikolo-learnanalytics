@@ -16,10 +16,10 @@ class CreateCourseEventsExportJob < CreateExportJob
 
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
-    #rescue => error
-      #Sidekiq.logger.error error.inspect
-      #job.status = 'failing'
-      #job.save
+    rescue => error
+      Sidekiq.logger.error error.inspect
+      job.status = 'failing'
+      job.save
     end
   end
 
@@ -35,7 +35,7 @@ class CreateCourseEventsExportJob < CreateExportJob
     course = Xikolo::Course::Course.find(course_id)
     items = ActiveSupport::HashWithIndifferentAccess.new
     sections = ActiveSupport::HashWithIndifferentAccess.new
-    #we may need to include deleted if there is usage ddata for those
+    #we may need to include deleted if there is usage data for those
     Xikolo::Course::Section.each_item(course_id: course_id) do |section|
       sections[section.id] = section
     end
@@ -47,7 +47,6 @@ class CreateCourseEventsExportJob < CreateExportJob
 
     CSV.open(@filepath, 'wb') do |csv|
       headers += ['Course ID', 'Verb', 'User', 'Timestamp', 'Resource', 'Action', 'Typ', 'Title', 'Section' ]
-      puts headers
       csv << headers
       Sidekiq.logger.debug 'Writing export to '+ @filepath + " \n" + 'with headers ' + headers.to_s
       i = 0

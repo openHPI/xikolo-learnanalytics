@@ -27,6 +27,8 @@ class CreateExportJob < ActiveJob::Base
           archive.encrypt(password)
         end
       end
+    rescue
+      File.delete(zipname) if File.exist?(zipname)
     ensure
       File.delete(csv_name) if File.exist?(csv_name)
       File.delete(excel_name) if File.exist?(excel_name)
@@ -63,11 +65,11 @@ class CreateExportJob < ActiveJob::Base
       file.close
     rescue => error
       puts error.inspect
-      job = find_and_save_job (job_id)
+      job = Job.find(job_id)
       job.status = 'failing'
       job.save
     ensure
-      #File.delete(file.path) if File.exist?(file.path)
+      File.delete(file.path) if File.exist?(file.path)
     end
   end
 
@@ -117,7 +119,6 @@ class CreateExportJob < ActiveJob::Base
       end
       p.serialize(tmp_file)
     end
-    puts tmp_file.path
     tmp_file
   end
 end
