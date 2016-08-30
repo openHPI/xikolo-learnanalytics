@@ -63,10 +63,11 @@ class CreateExportJob < ActiveJob::Base
       file.close
     rescue => error
       puts error.inspect
+      job = find_and_save_job (job_id)
       job.status = 'failing'
       job.save
     ensure
-      File.delete(file.path) if File.exist?(file.path)
+      #File.delete(file.path) if File.exist?(file.path)
     end
   end
 

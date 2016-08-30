@@ -16,10 +16,10 @@ class CreateCourseEventsExportJob < CreateExportJob
 
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
-    rescue => error
-      Sidekiq.logger.error error.inspect
-      job.status = 'failing'
-      job.save
+    #rescue => error
+      #Sidekiq.logger.error error.inspect
+      #job.status = 'failing'
+      #job.save
     end
   end
 
@@ -71,8 +71,9 @@ class CreateCourseEventsExportJob < CreateExportJob
 
   def get_all(course, csv, courseevent_info, items, sections)
     page = 1
+    scroll_id = nil
     loop do
-      paged = do_query page, course
+      paged = do_query page, course, scroll_id
       paged[:data].each do |item|
         id = item['resource']
         if item['verb'] == 'VISITED'
@@ -95,6 +96,7 @@ class CreateCourseEventsExportJob < CreateExportJob
         csv << item.values
         courseevent_info << item.values
       end
+      scroll_id = paged[:scroll_id]
       puts paged[:next]
       puts paged[:next] == true
       break unless paged[:next] == true
@@ -102,13 +104,14 @@ class CreateCourseEventsExportJob < CreateExportJob
     end
   end
 
-  def do_query(page, course)
+  def do_query(page, course, scroll_id)
     Lanalytics::Metric::CourseEvents.query(
         nil,
         course.id,
         course.start_date.iso8601,
         course.end_date.iso8601,
         page,
-        nil)
+        nil,
+        scroll_id)
   end
 end
