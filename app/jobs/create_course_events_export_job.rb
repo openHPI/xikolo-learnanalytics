@@ -1,19 +1,22 @@
 class CreateCourseEventsExportJob < CreateExportJob
   queue_as :default
 
-  def perform(job_id, password, user_id, scope, privacy_flag)
+  def perform(job_id, password, user_id, course_id, privacy_flag)
     job = find_and_save_job (job_id)
 
     begin
-      #scope = 'c1556425-5449-4b05-97b3-42b38a39f6c5' #manual overwrite
-      temp_report, temp_excel_report = create_report(job_id, scope, privacy_flag)
-      csv_name = get_tempdir.to_s + '/CourseEventsExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-      excel_name = get_tempdir.to_s + '/CourseEventsExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
-
+      #course_id = 'c1556425-5449-4b05-97b3-42b38a39f6c5' #manual overwrite
+      course = Xikolo::Course::Course.find(course_id)
+      Acfs.run
+      job.annotation = course.course_code.to_s
+      job.save
+      temp_report, temp_excel_report = create_report(job_id, course_id, privacy_flag)
+      csv_name = "#{get_tempdir}/CourseEventsExport_#{course_id}_#{DateTime.now.strftime('%Y-%m-%d')}.csv"
+      excel_name = "#{get_tempdir}/CourseEventsExport_#{course_id}_#{DateTime.now.strftime('%Y-%m-%d')}.xlsx"
       additional_files = []
-      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, scope, additional_files)
+      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
     end
@@ -21,33 +24,32 @@ class CreateCourseEventsExportJob < CreateExportJob
 
   private
 
-  def create_report(job_id, scope, privacy_flag)
+  def create_report(job_id, course_id, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
     excel_tmp_file =  Tempfile.new('excel_course_export')
     headers = []
     courseevent_info = []
     @filepath = File.absolute_path(file)
 
-    course = Xikolo::Course::Course.find(scope)
+    course = Xikolo::Course::Course.find(course_id)
     items = ActiveSupport::HashWithIndifferentAccess.new
     sections = ActiveSupport::HashWithIndifferentAccess.new
-    #we may need to include deleted if there is usage ddata for those
-    Xikolo::Course::Section.each_item(course_id: scope) do |section|
+    #we may need to include deleted if there is usage data for those
+    Xikolo::Course::Section.each_item(course_id: course_id) do |section|
       sections[section.id] = section
     end
-    Xikolo::Course::Item.each_item(course_id: scope) do |item|
+    Xikolo::Course::Item.each_item(course_id: course_id) do |item|
      items[item.id] = item
     end
     Acfs.run
-    puts 'after acfs'
 
     CSV.open(@filepath, 'wb') do |csv|
       headers += ['Course ID', 'Verb', 'User', 'Timestamp', 'Resource', 'Action', 'Typ', 'Title', 'Section' ]
       csv << headers
-          $stdout.print 'Writing export to '+ @filepath + " \n" + "with headers " + headers.to_s
+      Sidekiq.logger.debug 'Writing export to '+ @filepath + " \n" + 'with headers ' + headers.to_s
       i = 0
       if course.start_date.present? and course.end_date.present?
-        puts 'get data'
+        logger.debug 'get data'
         get_all course, csv, courseevent_info, items, sections
       end
     end
@@ -66,8 +68,9 @@ class CreateCourseEventsExportJob < CreateExportJob
 
   def get_all(course, csv, courseevent_info, items, sections)
     page = 1
+    scroll_id = nil
     loop do
-      paged = do_query page, course
+      paged = do_query page, course, scroll_id
       paged[:data].each do |item|
         id = item['resource']
         if item['verb'] == 'VISITED'
@@ -90,20 +93,20 @@ class CreateCourseEventsExportJob < CreateExportJob
         csv << item.values
         courseevent_info << item.values
       end
-      puts paged[:next]
-      puts paged[:next] == true
+      scroll_id = paged[:scroll_id]
       break unless paged[:next] == true
       page = page + 1
     end
   end
 
-  def do_query(page, course)
+  def do_query(page, course, scroll_id)
     Lanalytics::Metric::CourseEvents.query(
         nil,
         course.id,
         course.start_date.iso8601,
         course.end_date.iso8601,
         page,
-        nil)
+        nil,
+        scroll_id)
   end
 end
