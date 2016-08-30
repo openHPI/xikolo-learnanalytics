@@ -26,12 +26,13 @@ class CourseStatisticDecorator < ApplicationDecorator
     certificates: model.certificates,
     helpdesk_tickets: model.helpdesk_tickets,
     helpdesk_tickets_last_24h: helpdesk_tickets_last_24h,
-    success_rate: model.success_rate,
+    success_rate: model.success_rate || 0,
     start_date: model.start_date,
     end_date: model.end_date,
     new_users: model.new_users,
     created_at: model.created_at,
-    updated_at: model.updated_at
+    updated_at: model.updated_at,
+    completion_rate: model.enrollments_at_course_middle <= 0 ? 0 :  (model.certificates.to_f  / model.enrollments_at_course_middle * 100).round(2)
     }.as_json(**opts)
   end
 end
