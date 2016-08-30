@@ -66,9 +66,6 @@ module Lanalytics
         processed_result
         #first alpha pagination support
         current_last = result['hits']['hits'].count + (page.to_i-1)*per_page
-        puts "Count of hits "  + result['hits']['hits'].count.to_s
-        puts "Scroll ID "
-        puts result['_scroll_id']
         result = {data: processed_result, next: current_last < result['hits']['total'] , scroll_id: result['_scroll_id']}
 
       end

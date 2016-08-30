@@ -42,7 +42,6 @@ class CreateCourseEventsExportJob < CreateExportJob
      items[item.id] = item
     end
     Acfs.run
-    puts 'after acfs'
 
     CSV.open(@filepath, 'wb') do |csv|
       headers += ['Course ID', 'Verb', 'User', 'Timestamp', 'Resource', 'Action', 'Typ', 'Title', 'Section' ]
@@ -95,8 +94,6 @@ class CreateCourseEventsExportJob < CreateExportJob
         courseevent_info << item.values
       end
       scroll_id = paged[:scroll_id]
-      puts paged[:next]
-      puts paged[:next] == true
       break unless paged[:next] == true
       page = page + 1
     end
