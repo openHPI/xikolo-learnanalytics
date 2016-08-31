@@ -46,7 +46,7 @@ class CreateUserInfoExportJob < CreateExportJob
 
     loop do
       begin
-        users = Xikolo::Account::User.where(confirmed:true, page: pager, per_page: 250)
+        users = Xikolo::Account::User.where(confirmed: true, page: pager, per_page: 250)
         Acfs.run
         if users.current_page == 1
           presenter = Account::ProfilePresenter.new users.first
@@ -87,7 +87,7 @@ class CreateUserInfoExportJob < CreateExportJob
         users.each do |user|
           p += 1
           update_progress(users, job_id, p)
-          enrollments[user.id] = Xikolo::Course::Enrollment.where(user_id: user.id, learning_evaluation: 'true', deleted: 'true', per_page:200)
+          enrollments[user.id] = Xikolo::Course::Enrollment.where(user_id: user.id, learning_evaluation: 'true', deleted: 'true', per_page: 200)
           profiles[user.id] = Account::ProfilePresenter.new user
           user_courses[user.id] = {}
           user_courses[user.id].each do |course|
@@ -176,7 +176,7 @@ class CreateUserInfoExportJob < CreateExportJob
         break if (users.current_page >= users.total_pages)
 
       rescue Exception => error
-        Sidekiw.logger.error error.message
+        Sidekiq.logger.error error.message
       end
     end
       excel_file = excel_attachment('UserInfoExport', excel_tmp_file, headers, user_info)
@@ -187,8 +187,6 @@ class CreateUserInfoExportJob < CreateExportJob
   ensure
     file.close
     excel_file.close
-    excel_tmp_file.close
-
   end
 end
 
