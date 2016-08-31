@@ -31,7 +31,7 @@ describe CreateCourseExportJob do
     end
     password = "VeryStrongPassword!"
     result = course_export_job.send(:rename_and_zip, csv_name , file.path, 'excel.xlsx', excel_file.path, password, [])
-    expect(result).to eq(csv_name + ".zip")
+    expect(result).to eq(csv_name[0..-5] + ".zip")
     expect(File).to exist(result)
     expect(ZipRuby::Archive.decrypt(result, password)).to eq true
 
@@ -42,6 +42,6 @@ describe CreateCourseExportJob do
     File.delete('excel.txt') if File.exist?('excel.txt')
     File.delete('excel.csv') if File.exist?('excel.csv')
     File.delete('test.csv') if File.exists?('test.csv')
-    File.delete('test.csv.zip') if File.exists?('test.csv.zip')
+    File.delete('test.zip') if File.exists?('test.zip')
   end
 end
