@@ -14,13 +14,11 @@ class CreatePinboardExportJob < CreateExportJob
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
-      temp_report.close
-      temp_report.unlink
-      temp_excel_report.close
-      temp_excel_report.unlink
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -35,6 +33,7 @@ class CreatePinboardExportJob < CreateExportJob
       headers = []
       pinboard_info = []
       csv = CSV.new(file)
+      Sidekiq.logger.info "Writing export to #{file.path}"
       write_header(csv, headers)
       question_count = 0
       loop do
@@ -57,16 +56,16 @@ class CreatePinboardExportJob < CreateExportJob
             get_comments(question, csv, "Question", pinboard_info)
           end
         end
-        $stdout.print 'Fetching page ' + question_pager.to_s + ' from ' + questions.total_pages.to_s + ' \n'
-        question_pager +=1
+        Sidekiq.logger.info "Fetching page #{question_pager.to_s} from  #{questions.total_pages.to_s}"
+        question_pager += 1
         break if questions.total_pages == 0
         break if (questions.current_page >= questions.total_pages)
       end
-      $stdout.print 'Writing export to '+ file.path + " \n"
 
-      #rescue Exception => e
-      #puts e.message
+    rescue Exception => e
+      Sidekiq.logger.error e.message
     end
+
     Acfs.run
     excel_file = excel_attachment('PinboardExport', excel_tmp_file, headers, pinboard_info)
 

@@ -12,7 +12,6 @@ module Lanalytics
 
         if  scroll_id.nil?
           result = datasource.exec do |client|
-            client.indices.refresh index: datasource.index
             client.search index: datasource.index,
                           scroll: '5m',
                           body: {

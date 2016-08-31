@@ -10,13 +10,11 @@ class CreateUserInfoExportJob < CreateExportJob
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
       job.status = 'failing' +  error.inspect
       job.save
-      temp_report.close
-      temp_report.unlink
-      temp_excel_report.close
-      temp_excel_report.unlink
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -43,7 +41,7 @@ class CreateUserInfoExportJob < CreateExportJob
     end
 
     #$stdout.print all_courses.inspect
-    $stdout.print 'Writing export to '+ @filepath + " \n"
+    Sidekiq.logger.debug "Writing export to #{@filepath}"
     #csv << ["row", "of", "CSV", "data"]
 
     loop do
@@ -140,7 +138,7 @@ class CreateUserInfoExportJob < CreateExportJob
                 nil,
                 nil)
           rescue => error
-            puts error.inspect
+            Sidekiq.logger.error error.inspect
             top_country = ''
           end
           values = []
@@ -173,12 +171,12 @@ class CreateUserInfoExportJob < CreateExportJob
 
         end
 
-        $stdout.print 'fetching page ' + pager.to_s + " \n"
+        Sidekiq.logger.debug "fetching page #{pager.to_s}"
         pager = pager+1
         break if (users.current_page >= users.total_pages)
 
-      rescue Exception => e
-        puts e.message
+      rescue Exception => error
+        Sidekiw.logger.error error.message
       end
     end
       excel_file = excel_attachment('UserInfoExport', excel_tmp_file, headers, user_info)

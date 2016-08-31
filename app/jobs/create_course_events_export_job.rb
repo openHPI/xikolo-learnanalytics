@@ -19,10 +19,8 @@ class CreateCourseEventsExportJob < CreateExportJob
       Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
-      temp_report.close
-      temp_report.unlink
-      temp_excel_report.close
-      temp_excel_report.unlink
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 

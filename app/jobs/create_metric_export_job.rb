@@ -11,13 +11,11 @@ class CreateMetricExportJob < CreateExportJob
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path,  password, user_id, scope, additional_files)
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
-      temp_report.close
-      temp_report.unlink
-      temp_excel_report.close
-      temp_excel_report.unlink
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -39,7 +37,7 @@ class CreateMetricExportJob < CreateExportJob
     CSV.open(@filepath, 'wb') do |csv|
       headers = ['Course Code', 'Enrollments', 'Metric' ]
       csv << headers
-      $stdout.print 'Writing export to '+ @filepath + " \n"
+      Sidekiq.logger.info "Writing export to #{@filepath}"
       i = 0
       courses.each do |course|
         course_stats = Xikolo::Course::Stat.find key: 'enrollments',
