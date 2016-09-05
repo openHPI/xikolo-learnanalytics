@@ -19,6 +19,8 @@ class CreateCourseEventsExportJob < CreateExportJob
       Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -53,11 +55,13 @@ class CreateCourseEventsExportJob < CreateExportJob
         get_all course, csv, courseevent_info, items, sections
       end
     end
-    file.close
     Acfs.run
     excel_file = excel_attachment('CourseEventsExport', excel_tmp_file, headers, courseevent_info)
-    excel_file.close
     return file, excel_file
+  ensure
+    file.close
+    excel_file.close
+    excel_tmp_file.close
   end
 
   def update_job_progress(job_id, percent)

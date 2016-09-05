@@ -10,9 +10,11 @@ class CreateUserInfoExportJob < CreateExportJob
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
       job.status = 'failing' +  error.inspect
       job.save
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -39,12 +41,12 @@ class CreateUserInfoExportJob < CreateExportJob
     end
 
     #$stdout.print all_courses.inspect
-    $stdout.print 'Writing export to '+ @filepath + " \n"
+    Sidekiq.logger.debug "Writing export to #{@filepath}"
     #csv << ["row", "of", "CSV", "data"]
 
     loop do
       begin
-        users = Xikolo::Account::User.where(confirmed:true, page: pager, per_page: 250)
+        users = Xikolo::Account::User.where(confirmed: true, page: pager, per_page: 250)
         Acfs.run
         if users.current_page == 1
           presenter = Account::ProfilePresenter.new users.first
@@ -85,7 +87,7 @@ class CreateUserInfoExportJob < CreateExportJob
         users.each do |user|
           p += 1
           update_progress(users, job_id, p)
-          enrollments[user.id] = Xikolo::Course::Enrollment.where(user_id: user.id, learning_evaluation: 'true', deleted: 'true', per_page:200)
+          enrollments[user.id] = Xikolo::Course::Enrollment.where(user_id: user.id, learning_evaluation: 'true', deleted: 'true', per_page: 200)
           profiles[user.id] = Account::ProfilePresenter.new user
           user_courses[user.id] = {}
           user_courses[user.id].each do |course|
@@ -136,7 +138,7 @@ class CreateUserInfoExportJob < CreateExportJob
                 nil,
                 nil)
           rescue => error
-            puts error.inspect
+            Sidekiq.logger.error error.inspect
             top_country = ''
           end
           values = []
@@ -169,20 +171,22 @@ class CreateUserInfoExportJob < CreateExportJob
 
         end
 
-        $stdout.print 'fetching page ' + pager.to_s + " \n"
+        Sidekiq.logger.debug "fetching page #{pager.to_s}"
         pager = pager+1
         break if (users.current_page >= users.total_pages)
 
-      rescue Exception => e
-        puts e.message
+      rescue Exception => error
+        Sidekiq.logger.error error.message
       end
     end
       excel_file = excel_attachment('UserInfoExport', excel_tmp_file, headers, user_info)
-      excel_file.close
 
-      file.close
       Acfs.run
       return file, excel_file
+
+  ensure
+    file.close
+    excel_file.close
   end
 end
 

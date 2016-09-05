@@ -14,10 +14,12 @@ class CreateCourseExportJob < CreateExportJob
       excel_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
-    rescue => e
-      Sidekiq.logger.error e.inspect
+    rescue => error
+      Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -29,7 +31,7 @@ class CreateCourseExportJob < CreateExportJob
 
     birth_compare_date = course.start_date.present? ? course.start_date : DateTime.now
 
-    file = Tempfile.open(job_id.to_s, get_tempdir)
+    file = Tempfile.open("course_export_" + job_id.to_s, get_tempdir)
     csv = CSV.new(file)
     excel_tmp_file =  Tempfile.new('excel_course_export')
 
@@ -229,13 +231,14 @@ class CreateCourseExportJob < CreateExportJob
       pager += 1
       break if enrollments.total_pages == 0 || enrollments.current_page >= enrollments.total_pages
     end
-
-    file.close
     Acfs.run
 
     excel_file = excel_attachment('CourseExport', excel_tmp_file, headers, course_info)
-    excel_file.close
     return file, excel_file
+  ensure
+    file.close
+    excel_file.close
+    excel_tmp_file.close
   end
 
   def fetch_device_usage(course_id, user_id)
