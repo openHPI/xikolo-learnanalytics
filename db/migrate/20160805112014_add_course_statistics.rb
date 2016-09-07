@@ -3,6 +3,7 @@ class AddCourseStatistics < ActiveRecord::Migration
     create_table :course_statistics, id: :uuid do |t|
       t.string :course_name
       t.string :course_code
+      t.string :course_status
       t.uuid :course_id
       t.integer :total_enrollments
       t.float :no_shows
@@ -23,7 +24,8 @@ class AddCourseStatistics < ActiveRecord::Migration
       t.integer :certificates
       t.integer :helpdesk_tickets
       t.integer :helpdesk_tickets_last_24h
-      t.float :success_rate
+      t.float :completion_rate
+      t.float :consumption_rate
       t.datetime :start_date
       t.datetime :end_date
       t.integer :new_users
