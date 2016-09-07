@@ -15,17 +15,12 @@ class CourseStatisticsController < ApplicationController
     respond_with course_statistics.offset(@offset)
   end
 
-  def create
-    course_statistic = CourseStatistic.find_or_create_by(course_id: params[:course_id])
-    #calculate_statistic(params[:course_id], course_statistic.id)
-    respond_with course_statistic
-  end
-
   def show
-    course_statistic = CourseStatistic.find(params[:id])
-    course_id = course_statistic.course_id.blank? ? params[:course_id] : course_statistic.course_id
+    # incoming id is course_id!
+    course_id = params[:id]
+    course_statistic = CourseStatistic.find_or_create_by(course_id: course_id)
     calculate_statistic(course_id, course_statistic.id)
-    respond_with CourseStatistic.find params[:id]
+    respond_with CourseStatistic.find course_statistic.id
   end
 
   def calculate_statistic(course_id, course_statistic_id)
@@ -46,8 +41,8 @@ class CourseStatisticsController < ApplicationController
         extended_course_stat: extended_course_stat,
         helpdesk_stat: ticket_course_stat
     }
-    if course_info[:extended_course_stat].certificates_count > 0
-      completion_rate = course_info[:extended_course_stat].certificates_count/(course_info[:extended_course_stat].student_enrollments_at_middle_netto.to_f - course_info[:extended_course_stat].no_shows)
+    if course_info[:extended_course_stat].certificates_count > 0 and (course_info[:extended_course_stat].student_enrollments_at_middle_netto.to_f - course_info[:extended_course_stat].no_shows) > 0
+      completion_rate = course_info[:extended_course_stat].certificates_count / (course_info[:extended_course_stat].student_enrollments_at_middle_netto - course_info[:extended_course_stat].no_shows).to_f
     else
       completion_rate = 0
     end
