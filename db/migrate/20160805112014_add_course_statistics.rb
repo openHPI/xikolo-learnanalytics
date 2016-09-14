@@ -29,6 +29,7 @@ class AddCourseStatistics < ActiveRecord::Migration
       t.datetime :start_date
       t.datetime :end_date
       t.integer :new_users
+      t.json  :enrollments_per_day
       t.timestamps
     end
   end

@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 20160805112014) do
     t.datetime "start_date"
     t.datetime "end_date"
     t.integer  "new_users"
+    t.json     "enrollments_per_day"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -64,7 +65,7 @@ ActiveRecord::Schema.define(version: 20160805112014) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2016-09-07 08:12:21', null: false
+    t.datetime "accessed_at",      default: '2016-09-14 06:58:57', null: false
   end
 
   create_table "datasources", id: false, force: :cascade do |t|

@@ -33,7 +33,8 @@ class CourseStatisticDecorator < ApplicationDecorator
     created_at: model.created_at,
     updated_at: model.updated_at,
     completion_rate: model.completion_rate,
-    consumption_rate: model.consumption_rate
+    consumption_rate: model.consumption_rate,
+    enrollments_per_day: model.enrollments_per_day
     }.as_json(**opts)
   end
 end

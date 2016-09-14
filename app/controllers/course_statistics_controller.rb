@@ -46,6 +46,22 @@ class CourseStatisticsController < ApplicationController
     else
       completion_rate = 0
     end
+    # consumption rate needs  to be calculated properly
+
+  # for enrollments per day:
+    last_days = []
+    9.downto(0).each do |day|
+      last_days << day.days.ago.strftime("%Y-%m-%d")
+    end
+    total = 0
+    cresults = Array.new(10).fill(0)
+    last_days.each_with_index do |day, i|
+      enrollments_per_day.student_enrollments_by_day.each do |item|
+        #[["2016-03-23 00:00:00 UTC", 6]]
+        cresults[i] = item[1] if item[0].start_with?(day)
+        total = total + 1
+      end
+    end
     CourseStatistic.update(course_statistic_id,
                            course_name: course_info[:course].title,
                            course_code: course_info[:course].course_code,
@@ -75,7 +91,8 @@ class CourseStatisticsController < ApplicationController
                            new_users: course_info[:extended_course_stat].new_users,
                            updated_at: DateTime.now,
                            completion_rate: completion_rate,
-                           consumption_rate: 0
+                           consumption_rate: 0,
+                           enrollments_per_day: cresults
     )
   end
 end
