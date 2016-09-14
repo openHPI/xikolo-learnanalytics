@@ -113,6 +113,11 @@ gem 'draper'
 gem 'mechanize'
 gem 'axlsx'
 gem 'axlsx_rails'
+
+# for versioning
+gem 'paper_trail'
+
+
 # Asynchronous execution + cache in redis
 gem 'redis-activesupport'
 
