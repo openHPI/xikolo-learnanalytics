@@ -10,7 +10,7 @@ module Lanalytics
         start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day)
         end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
 
-        if  scroll_id.nil?
+        if scroll_id.nil?
           result = datasource.exec do |client|
             client.search index: datasource.index,
                           scroll: '5m',
@@ -19,13 +19,17 @@ module Lanalytics
                                 filtered: {
                                     query: {
                                         bool: {
-                                            must: [
-                                                {
-                                                    match: {
-                                                        verb: verbs.join(' OR ')
-                                                    }
-                                                }
-                                            ] + (all_filters(course_id))
+                                            # must: [
+                                            #     {
+                                            #         match: {
+                                            #             verb: verbs.join(' OR ')
+                                            #         }
+                                            #     }
+                                            # ],
+                                            should: [
+                                                { match: { 'in_context.course_id' => course_id } },
+                                                { match: { 'resource.resource_uui' => course_id } }
+                                            ]
                                         }
                                     },
                                     filter: {
@@ -70,13 +74,13 @@ module Lanalytics
       end
 
       # this is the list of events we would like, all must have the course id
-      def self.verbs
-        %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
-            VISITED_ANNOUNCEMENTS VISITED_RECAP
-            VISITED_ITEM VISITED_PINBOARD VIDEO_PLAY VIDEO_PAUSE
-            VIDEO_SEEK VIDEO_FULLSCREEN VIDEO_CHANGE_SPEED VIDEO_CHANGE_SIZE
-            ANSWERED_QUESTION ASKED_QUESTION ANSWER_ACCEPT COMMENTED)
-      end
+      # def self.verbs
+      #   %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
+      #       VISITED_ANNOUNCEMENTS VISITED_RECAP
+      #       VISITED_ITEM VISITED_PINBOARD VIDEO_PLAY VIDEO_PAUSE
+      #       VIDEO_SEEK VIDEO_FULLSCREEN VIDEO_CHANGE_SPEED VIDEO_CHANGE_SIZE
+      #       ANSWERED_QUESTION ASKED_QUESTION ANSWER_ACCEPT COMMENTED)
+      # end
     end
   end
 end
