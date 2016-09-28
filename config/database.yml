@@ -24,10 +24,6 @@ integration:
   <<: *default
   database: xikolo-learnanalytics-integration
 
-staging:
-  <<: *default
-  database: db/staging.sqlite3
-
 production:
   <<: *default
-  database: db/production.sqlite3
+  database: xikolo-learnanalytics

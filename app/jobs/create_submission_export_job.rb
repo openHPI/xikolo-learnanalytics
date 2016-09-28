@@ -11,9 +11,11 @@ class CreateSubmissionExportJob < CreateExportJob
       additional_files = []
       create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, quiz_id, additional_files)
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -27,7 +29,7 @@ class CreateSubmissionExportJob < CreateExportJob
     @filepath = File.absolute_path(file)
     p = 1
 
-    $stdout.print 'Writing export to '+ @filepath + " \n"
+    Sidekiq.logger.info "Writing export to #{@filepath}"
     @submissions = {}
     Xikolo::Quiz::Quiz.find(quiz_id) do |quiz|
 
@@ -144,12 +146,14 @@ class CreateSubmissionExportJob < CreateExportJob
 
       end
     end
-    file.close
     Acfs.run
 
     excel_file = excel_attachment('SubmissionExport', excel_tmp_file, headers, submission_info)
-    excel_file.close
     return file, excel_file
+  ensure
+    file.close
+    excel_file.close
+    excel_tmp_file.close
   end
 
 

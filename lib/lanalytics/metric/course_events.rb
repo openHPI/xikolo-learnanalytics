@@ -1,7 +1,7 @@
 module Lanalytics
   module Metric
     class CourseEvents < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time, resource_id=nil, page, per_page)
+      def self.query(user_id, course_id, start_time, end_time, resource_id=nil, page, per_page, scroll_id)
         page = 1 if page == nil
         per_page = 100 if per_page == nil
         from = (page.to_i-1)*per_page
@@ -10,34 +10,46 @@ module Lanalytics
         start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day)
         end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
 
-        result = datasource.exec do |client|
-          client.search index: datasource.index, body: {
-              size: per_page,
-              from: from,
-              query: {
-                  filtered: {
-                      query: {
-                          bool: {
-                              must: [
-                                  {
-                                      match: {
-                                          verb: verbs.join(' OR ')
-                                      }
-                                  }
-                              ] + (all_filters(course_id))
-                          }
-                      },
-                      filter: {
-                              range: {
-                                  timestamp: {
-                                      gte: start_time.iso8601,
-                                      lte: end_time.iso8601
-                                  }
-                              }
-                      }
-                  }
-              }
-          }
+        if scroll_id.nil?
+          result = datasource.exec do |client|
+            client.search index: datasource.index,
+                          scroll: '5m',
+                          body: {
+                            query: {
+                                filtered: {
+                                    query: {
+                                        bool: {
+                                            # must: [
+                                            #     {
+                                            #         match: {
+                                            #             verb: verbs.join(' OR ')
+                                            #         }
+                                            #     }
+                                            # ],
+                                            should: [
+                                                { match: { 'in_context.course_id' => course_id } },
+                                                { match: { 'resource.resource_uui' => course_id } }
+                                            ]
+                                        }
+                                    },
+                                    filter: {
+                                            range: {
+                                                timestamp: {
+                                                    gte: start_time.iso8601,
+                                                    lte: end_time.iso8601
+                                                }
+                                            }
+                                    }
+                                }
+                            },
+                            sort: ["_doc"],
+                            size: per_page
+                        }
+          end
+        else
+          result = datasource.exec do |client|
+            client.scroll scroll: '5m', scroll_id: scroll_id
+          end
         end
 
         processed_result = []
@@ -57,18 +69,18 @@ module Lanalytics
         processed_result
         #first alpha pagination support
         current_last = result['hits']['hits'].count + (page.to_i-1)*per_page
-        result = {data:processed_result, next: current_last < result['hits']['total'] }
+        result = {data: processed_result, next: current_last < result['hits']['total'] , scroll_id: result['_scroll_id']}
 
       end
 
       # this is the list of events we would like, all must have the course id
-      def self.verbs
-        %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
-            VISITED_ANNOUNCEMENTS VISITED_RECAP
-            VISITED_ITEM VISITED_PINBOARD VIDEO_PLAY VIDEO_PAUSE
-            VIDEO_SEEK VIDEO_FULLSCREEN VIDEO_CHANGE_SPEED VIDEO_CHANGE_SIZE
-            ANSWERED_QUESTION ASKED_QUESTION ANSWER_ACCEPT COMMENTED)
-      end
+      # def self.verbs
+      #   %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
+      #       VISITED_ANNOUNCEMENTS VISITED_RECAP
+      #       VISITED_ITEM VISITED_PINBOARD VIDEO_PLAY VIDEO_PAUSE
+      #       VIDEO_SEEK VIDEO_FULLSCREEN VIDEO_CHANGE_SPEED VIDEO_CHANGE_SIZE
+      #       ANSWERED_QUESTION ASKED_QUESTION ANSWER_ACCEPT COMMENTED)
+      # end
     end
   end
 end

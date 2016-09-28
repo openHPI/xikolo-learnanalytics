@@ -27,7 +27,9 @@ class CreateExportJob < ActiveJob::Base
           archive.encrypt(password)
         end
       end
-    ensure
+    rescue => error
+      Sidekiq.logger.error error.inspect
+      File.delete(zipname) if File.exist?(zipname)
       File.delete(csv_name) if File.exist?(csv_name)
       File.delete(excel_name) if File.exist?(excel_name)
     end
@@ -62,11 +64,16 @@ class CreateExportJob < ActiveJob::Base
       notify(user_id, job.task_type, job.annotation, job.status)
       file.close
     rescue => error
-      puts error.inspect
+      Sidekiq.logger.error error.inspect
+      job = Job.find(job_id)
       job.status = 'failing'
       job.save
     ensure
       File.delete(file.path) if File.exist?(file.path)
+      File.delete(csv_name) if File.exist?(csv_name)
+      File.delete(excel_name) if File.exist?(excel_name)
+      File.delete(temp_report) if File.exist?(temp_report)
+      File.delete(temp_excel_report ) if File.exist?(temp_excel_report)
     end
   end
 
@@ -116,7 +123,6 @@ class CreateExportJob < ActiveJob::Base
       end
       p.serialize(tmp_file)
     end
-    puts tmp_file.path
     tmp_file
   end
 end

@@ -42,6 +42,6 @@ describe CreateCourseExportJob do
     File.delete('excel.txt') if File.exist?('excel.txt')
     File.delete('excel.csv') if File.exist?('excel.csv')
     File.delete('test.csv') if File.exists?('test.csv')
-    File.delete('test.csv.zip') if File.exists?('test.csv.zip')
+    File.delete('test.zip') if File.exists?('test.zip')
   end
 end

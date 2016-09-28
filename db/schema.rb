@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 20160914151730) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2016-09-14 09:09:37', null: false
+    t.datetime "accessed_at",      default: '2016-07-26 15:38:19', null: false
   end
 
   create_table "datasources", id: false, force: :cascade do |t|
