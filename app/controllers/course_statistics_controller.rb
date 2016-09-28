@@ -62,7 +62,7 @@ class CourseStatisticsController < ApplicationController
           total = total + 1
         end
       end
-      end
+    end
     CourseStatistic.update(course_statistic_id,
                            course_name: course_info[:course].title,
                            course_code: course_info[:course].course_code,
