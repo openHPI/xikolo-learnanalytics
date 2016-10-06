@@ -11,7 +11,7 @@ class AnnouncementFailedWorker < QcRuleWorker
         if announcement['receivers'].present?
           delta = announcement['receivers'] - mail_logs["count"]
           if delta >= allowed_delta and mail_logs["newest"] < 10.minutes.ago
-            annotation = 'Announcement failed ' + announcement['id'].to_s
+            annotation = 'Announcement failed ' + announcement['title'].to_s + ' (' + announcement['id'].to_s + ')'
             qc_alert_data = create_json(announcement['id'])
             update_or_create_qc_alert_with_data(rule_id, course_id, severity, annotation, announcement['id'], qc_alert_data)
           else
