@@ -46,7 +46,7 @@ class CreateUserInfoExportJob < CreateExportJob
 
     loop do
       begin
-        users = Xikolo::Account::User.where(confirmed: true, page: pager, per_page: 250)
+        users = Xikolo::Account::User.where(confirmed: true, page: pager, per_page: 500)
         Acfs.run
         if users.current_page == 1
           presenter = Account::ProfilePresenter.new users.first
