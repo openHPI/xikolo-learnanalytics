@@ -173,7 +173,7 @@ class CreateCourseExportJob < CreateExportJob
                      item[:user].affiliated,
                      item[:user].born_at,
                      item[:age],
-                     age_group_from_age item[:age]
+                     age_group_from_age(item[:age])
           ]
 
           unless privacy_flag
