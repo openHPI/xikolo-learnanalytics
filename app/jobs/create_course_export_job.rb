@@ -115,6 +115,8 @@ class CreateCourseExportJob < CreateExportJob
                     'Quantile',
                     'Top Performance',
                     *course_presenter.sections.map { |f| f.title.titleize + ' Percentage' },
+                    'Items Visited',
+                    'Visited Items Percentage',
                     *course_presenter.sections.map { |f| f.title.titleize + ' Points' },
                     'Course Code']
 
@@ -225,6 +227,8 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].quantile.present? ? item[:data].quantile : '-99',
                      item[:data].quantile.present? ? calculate_top_performance(item[:data].quantile) : '-99',
                      *item[:cp].sections.map{ |s| s.visits_stats.user_percentage },
+                     item[:data].visits[:visited].present? ? item[:data].visits[:visited] : '',
+                     item[:data].visits[:percentage].present? ? item[:data].visits[:percentage] : '',
                      *item[:cp].sections.map{ |s| s.total_graded_points },
                      course.course_code]
 

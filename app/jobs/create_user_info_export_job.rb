@@ -110,7 +110,7 @@ class CreateUserInfoExportJob < CreateExportJob
               # r: RoA
               state = ''
               state = 'e' if enrollment.present?
-              state = 'v' if enrollment.present?
+              state = 'v' if enrollment.visits.present? and enrollment.visits[:visited].to_f > 0
               state = 'p' if enrollment.points.present? and enrollment.points[:percentage].to_f > 0
               state = 'c' if enrollment.completed
               state = 'r' if enrollment.certificates.present? and enrollment.certificates[:record_of_achievement]
