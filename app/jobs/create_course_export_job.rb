@@ -105,7 +105,7 @@ class CreateCourseExportJob < CreateExportJob
                     'Comments on Answers',
                     'Comments on Questions',
                     'Total Forum Items',
-                    'Points Achived',
+                    'Points Achieved',
                     'Points Percentage',
                     'Confirmation of Participation',
                     'Record of Achievement',
