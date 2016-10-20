@@ -63,7 +63,8 @@ class CreateCourseExportJob < CreateExportJob
                     'Language',
                     'Affiliated',
                     'Birthdate',
-                    'Age']
+                    'Age',
+                    'Age Group']
 
         unless privacy_flag
           headers += ['First Name',
@@ -145,6 +146,7 @@ class CreateCourseExportJob < CreateExportJob
 
           item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at) / 365).to_i : '-99'
 
+
           # get elasticsearch metrics per user
           if extended_flag
             metrics = ActiveSupport::HashWithIndifferentAccess.new
@@ -170,7 +172,9 @@ class CreateCourseExportJob < CreateExportJob
                      item[:user].language,
                      item[:user].affiliated,
                      item[:user].born_at,
-                     item[:age]]
+                     item[:age],
+                     age_group_from_age item[:age]
+          ]
 
           unless privacy_flag
             values += [item[:user].first_name,
@@ -243,6 +247,18 @@ class CreateCourseExportJob < CreateExportJob
     file.close
     excel_file.close
     excel_tmp_file.close
+  end
+
+  def age_group_from_age age
+    if age < 30
+      '< 30'
+    elsif age < 40
+      '30+'
+    elsif age < 50
+      '40+'
+    else
+      '50+'
+    end
   end
 
   def fetch_device_usage(course_id, user_id)
