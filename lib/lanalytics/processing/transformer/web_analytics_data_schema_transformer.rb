@@ -15,6 +15,7 @@ module Lanalytics
               with_attribute :tracking_campaign, :uuid, punit[:tracking_campaign] if punit[:tracking_campaign].present?
               with_attribute :tracking_id, :uuid, punit[:tracking_camp] if punit[:tracking_campaign].present?
               with_attribute :tracking_type, :string, punit[:tracking_type] if punit[:tracking_type].present?
+              with_attribute :tracking_external_link, :string, punit[:tracking_external_link] if punit[:tracking_external_link].present?
             end
 
             load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)

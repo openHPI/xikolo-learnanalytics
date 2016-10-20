@@ -19,7 +19,7 @@ module Lanalytics
                               bool: {
                                 should: [
                                   { match: { 'in_context.course_id' => course_id } },
-                                  { match: { 'resource.resource_uui' => course_id } }
+                                  { match: { 'resource.resource_uuid' => course_id } }
                                 ]
                               }
                             },
