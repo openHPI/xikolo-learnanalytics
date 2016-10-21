@@ -12,7 +12,7 @@ module Lanalytics
         result[:total_item_visits_now] = total_item_visits_24[:hits][:total]
         result[:users_visited] = total_item_visits[:aggregations][:distinct_user_count][:value]
         result[:users_visited_24] = total_item_visits_24[:aggregations][:distinct_user_count][:value]
-        result[:users_visited_now] = total_item_visits_24[:aggregations][:distinct_user_count][:value]
+        result[:users_visiting_now] = total_item_visits_24[:aggregations][:distinct_user_count][:value]
         result
       end
 
