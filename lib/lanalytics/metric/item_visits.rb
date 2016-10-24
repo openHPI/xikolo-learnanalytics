@@ -46,7 +46,7 @@ module Lanalytics
         end
 
         if now_only
-          start_time = DateTime.now - 15 minutes
+          start_time = DateTime.now - 15.minutes
           end_time = DateTime.now
           filter = {
               range: {
