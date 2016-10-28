@@ -254,6 +254,7 @@ class CreateCourseExportJob < CreateExportJob
   end
 
   def age_group_from_age age
+    age = age.to_i
     if age < 30
       '< 30'
     elsif age < 40
