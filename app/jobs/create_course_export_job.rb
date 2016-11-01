@@ -59,10 +59,12 @@ class CreateCourseExportJob < CreateExportJob
                     'Enrollment Role',
                     'Enrollment Date',
                     'Enrollment Day',
+                    'User created',
                     'Language',
                     'Affiliated',
                     'Birthdate',
-                    'Age']
+                    'Age',
+                    'Age Group']
 
         unless privacy_flag
           headers += ['First Name',
@@ -102,7 +104,8 @@ class CreateCourseExportJob < CreateExportJob
                     'Answers',
                     'Comments on Answers',
                     'Comments on Questions',
-                    'Points Achived',
+                    'Total Forum Items',
+                    'Points Achieved',
                     'Points Percentage',
                     'Confirmation of Participation',
                     'Record of Achievement',
@@ -112,6 +115,8 @@ class CreateCourseExportJob < CreateExportJob
                     'Quantile',
                     'Top Performance',
                     *course_presenter.sections.map { |f| f.title.titleize + ' Percentage' },
+                    'Items Visited',
+                    'Visited Items Percentage',
                     *course_presenter.sections.map { |f| f.title.titleize + ' Points' },
                     'Course Code']
 
@@ -143,6 +148,7 @@ class CreateCourseExportJob < CreateExportJob
 
           item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at) / 365).to_i : '-99'
 
+
           # get elasticsearch metrics per user
           if extended_flag
             metrics = ActiveSupport::HashWithIndifferentAccess.new
@@ -164,10 +170,13 @@ class CreateCourseExportJob < CreateExportJob
                      'student',
                      item[:data].created_at,
                      item[:data].created_at.strftime('%Y-%m-%d'),
+                     item[:user].created_at.strftime('%Y-%m-%d'),
                      item[:user].language,
                      item[:user].affiliated,
                      item[:user].born_at,
-                     item[:age]]
+                     item[:age],
+                     age_group_from_age(item[:age])
+          ]
 
           unless privacy_flag
             values += [item[:user].first_name,
@@ -207,6 +216,7 @@ class CreateCourseExportJob < CreateExportJob
                      item[:stat_pinboard].answers,
                      item[:stat_pinboard].comments_on_answers,
                      item[:stat_pinboard].comments_on_questions,
+                     item[:stat_pinboard].questions + item[:stat_pinboard].answers + item[:stat_pinboard].comments_on_answers + item[:stat_pinboard].comments_on_questions,
                      item[:data].points[:achieved].present? ? item[:data].points[:achieved] : '',
                      item[:data].points[:percentage].present? ? item[:data].points[:percentage] : '',
                      item[:data].certificates[:confirmation_of_participation].present? ? item[:data].certificates[:confirmation_of_participation] : '-99',
@@ -217,6 +227,8 @@ class CreateCourseExportJob < CreateExportJob
                      item[:data].quantile.present? ? item[:data].quantile : '-99',
                      item[:data].quantile.present? ? calculate_top_performance(item[:data].quantile) : '-99',
                      *item[:cp].sections.map{ |s| s.visits_stats.user_percentage },
+                     item[:data].visits[:visited].present? ? item[:data].visits[:visited] : '',
+                     item[:data].visits[:percentage].present? ? item[:data].visits[:percentage] : '',
                      *item[:cp].sections.map{ |s| s.total_graded_points },
                      course.course_code]
 
@@ -239,6 +251,19 @@ class CreateCourseExportJob < CreateExportJob
     file.close
     excel_file.close
     excel_tmp_file.close
+  end
+
+  def age_group_from_age age
+    age = age.to_i
+    if age < 30
+      '< 30'
+    elsif age < 40
+      '30+'
+    elsif age < 50
+      '40+'
+    else
+      '50+'
+    end
   end
 
   def fetch_device_usage(course_id, user_id)

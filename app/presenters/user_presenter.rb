@@ -2,7 +2,7 @@ class UserPresenter < Presenter
   include Rails.application.routes.url_helpers
   include UserVisualHelper
 
-  def_delegators :user, :id, :email, :name, :first_name, :last_name, :display_name, :born_at, :is_admin, :to_param, :blurb, :language, :affiliated
+  def_delegators :user, :id, :email, :name, :first_name, :last_name, :display_name, :born_at, :is_admin, :to_param, :blurb, :language, :affiliated, :created_at
   def_delegator :image, :path, :image_path
   def_delegator :image, :description, :image_description
   def_delegator :image, :id, :image_id

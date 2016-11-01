@@ -69,6 +69,7 @@ class CreateUserInfoExportJob < CreateExportJob
             headers += ['User ID',
                   'Language',
                   'Affiliated',
+                  'Created',
                   'BirthDate',
                   'TopCountry',
                   'FirstEnrollment',
@@ -91,7 +92,7 @@ class CreateUserInfoExportJob < CreateExportJob
           profiles[user.id] = Account::ProfilePresenter.new user
           user_courses[user.id] = {}
           user_courses[user.id].each do |course|
-            user_courses[user.id][course.id] = 'n'
+            user_courses[user.id][course.id] = ''
           end
           #$stdout.print user_courses.inspect
           Acfs.run
@@ -101,14 +102,16 @@ class CreateUserInfoExportJob < CreateExportJob
         users.each do |user|
           enrollments[user.id].each do |enrollment|
             if combined_enrollment_info_flag
-              # n: not enrolled
+              # '': not enrolled
               # e: enrolled
               # v: visited
+              # p: achieved points
               # c: completed
               # r: RoA
-              state = 'n'
+              state = ''
               state = 'e' if enrollment.present?
-              state = 'v' if enrollment.points.present? and enrollment.points[:percentage].to_f > 0
+              state = 'v' if enrollment.visits.present? and enrollment.visits[:visited].to_f > 0
+              state = 'p' if enrollment.points.present? and enrollment.points[:percentage].to_f > 0
               state = 'c' if enrollment.completed
               state = 'r' if enrollment.certificates.present? and enrollment.certificates[:record_of_achievement]
               user_courses[user.id][enrollment.course_id] = state
@@ -159,6 +162,7 @@ class CreateUserInfoExportJob < CreateExportJob
             values += [user.id,
                    user.language,
                    user.affiliated,
+                   user.created_at.strftime('%Y-%m-%d'),
                    user.born_at,
                    top_country,
                    first_enrollment,

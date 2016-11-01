@@ -473,7 +473,7 @@ GEM
       restify
     xikolo-config (1.62)
       activesupport
-    xikolo-course (9.5.4)
+    xikolo-course (9.9.0)
       acfs (~> 0.42)
       activesupport
     xikolo-file (1.8.1)
@@ -582,7 +582,7 @@ DEPENDENCIES
   xikolo-account
   xikolo-common (~> 1.0)
   xikolo-config (~> 1.37)
-  xikolo-course (~> 9.5.2)
+  xikolo-course (~> 9.9.0)
   xikolo-file (~> 1.8.1)
   xikolo-helpdesk
   xikolo-pinboard (~> 4.28.0)
