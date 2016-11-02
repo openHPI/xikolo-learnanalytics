@@ -7,12 +7,7 @@ class CourseStatisticsController < ApplicationController
 
   def index
     course_statistics = CourseStatistic.all
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-      @offset = params['offset']
-    end
-    respond_with course_statistics.offset(@offset)
+    respond_with course_statistics
   end
 
   def show
@@ -22,6 +17,8 @@ class CourseStatisticsController < ApplicationController
     calculate_statistic(course_id, course_statistic.id)
     respond_with CourseStatistic.find course_statistic.id
   end
+
+private
 
   def calculate_statistic(course_id, course_statistic_id)
     course = Xikolo::Course::Course.find(course_id)
@@ -49,17 +46,14 @@ class CourseStatisticsController < ApplicationController
     consumption_rate = 0
     # for enrollments per day:
     if course.status.present? and course.status == 'active'
-      last_days = []
-      9.downto(0).each do |day|
-        last_days << day.days.ago.strftime("%Y-%m-%d")
+      last_days = 9.downto(0).map do |num|
+        num.days.ago.strftime("%Y-%m-%d")
       end
-      total = 0
       cresults = Array.new(10).fill(0)
       last_days.each_with_index do |day, i|
         enrollments_per_day.student_enrollments_by_day.each do |item|
           #[["2016-03-23 00:00:00 UTC", 6]]
           cresults[i] = item[1] if item[0].start_with?(day)
-          total = total + 1
         end
       end
     end
