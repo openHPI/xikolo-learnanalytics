@@ -6,8 +6,8 @@ describe CourseStatisticsController do
   let!(:course_id) {'00000001-3300-4444-9999-000000000006'}
   let(:course_id2) {'00000001-3300-4444-9999-000000000007'}
   let(:course_id3) {'00000001-3300-4444-9999-000000000008'}
-  before do
 
+  before do
     Acfs::Stub.resource Xikolo::Course::Course, :read,
                         with: { id: course_id},
                         return:
@@ -138,7 +138,6 @@ describe CourseStatisticsController do
                         }
   end
   describe '#index' do
-
     it 'should answer with an empty list' do
       get :index
       expect(response.status).to eq(200)
@@ -161,7 +160,6 @@ describe CourseStatisticsController do
       expect(cs.course_name).to eq 'Test Course'
       get :show, id: course_id2
       expect(json["course_name"]).to eq('Course in Preparation')
-
     end
 
     it 'should use the right values' do
@@ -177,12 +175,6 @@ describe CourseStatisticsController do
       expect(json['total_questions']).to eq 500
       expect(json['questions_last_24h']).to eq 50
       expect(json['enrollments_per_day']).to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 199]
-
     end
   end
-
-
-
-
-
 end
