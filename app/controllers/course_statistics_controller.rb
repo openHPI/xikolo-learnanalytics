@@ -10,7 +10,7 @@ class CourseStatisticsController < ApplicationController
     if params['offset'].nil?
       @offset = 0
     elsif
-    @offset = params['offset']
+      @offset = params['offset']
     end
     respond_with course_statistics.offset(@offset)
   end
@@ -46,8 +46,8 @@ class CourseStatisticsController < ApplicationController
       completion_rate = 0
     end
     # consumption rate needs  to be calculated properly
-
-  # for enrollments per day:
+    consumption_rate = 0
+    # for enrollments per day:
     if course.status.present? and course.status == 'active'
       last_days = []
       9.downto(0).each do |day|
@@ -92,7 +92,7 @@ class CourseStatisticsController < ApplicationController
                            new_users: course_info[:extended_course_stat].new_users,
                            updated_at: DateTime.now,
                            completion_rate: completion_rate,
-                           consumption_rate: 0,
+                           consumption_rate: consumption_rate,
                            enrollments_per_day: cresults || [],
                            hidden: course_info[:course].hidden
     )
