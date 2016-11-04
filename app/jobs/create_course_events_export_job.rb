@@ -9,17 +9,15 @@ class CreateCourseEventsExportJob < CreateExportJob
       Acfs.run
       job.annotation = course.course_code.to_s
       job.save
-      temp_report, temp_excel_report = create_report(job_id, course_id, privacy_flag)
+      temp_report = create_report(job_id, course_id, privacy_flag)
       csv_name = "#{get_tempdir}/CourseEventsExport_#{course_id}_#{DateTime.now.strftime('%Y-%m-%d')}.csv"
-      excel_name = "#{get_tempdir}/CourseEventsExport_#{course_id}_#{DateTime.now.strftime('%Y-%m-%d')}.xlsx"
       additional_files = []
-      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, false, false, password, user_id, course_id, additional_files)
     rescue => error
       Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
       File.delete(temp_report) if File.exist?(temp_report)
-      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -27,7 +25,6 @@ class CreateCourseEventsExportJob < CreateExportJob
 
   def create_report(job_id, course_id, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
-    excel_tmp_file =  Tempfile.new('excel_course_export')
     headers = []
     course_event_info = []
     @filepath = File.absolute_path(file)
@@ -54,13 +51,9 @@ class CreateCourseEventsExportJob < CreateExportJob
       end
     end
     Acfs.run
-
-    excel_file = excel_attachment('CourseEventsExport', excel_tmp_file, headers, course_event_info)
-    return file, excel_file
+    return file
   ensure
     file.close
-    excel_file.close
-    excel_tmp_file.close
   end
 
   def update_job_progress(job_id, percent)
