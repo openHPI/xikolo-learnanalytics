@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160630153003) do
+ActiveRecord::Schema.define(version: 20160914151730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,12 +26,47 @@ ActiveRecord::Schema.define(version: 20160630153003) do
     t.datetime "updated_at"
   end
 
+  create_table "course_statistics", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.string   "course_name"
+    t.string   "course_code"
+    t.string   "course_status"
+    t.uuid     "course_id"
+    t.integer  "total_enrollments"
+    t.float    "no_shows"
+    t.integer  "current_enrollments"
+    t.integer  "enrollments_last_day"
+    t.integer  "enrollments_at_course_start"
+    t.integer  "enrollments_at_course_middle_netto"
+    t.integer  "enrollments_at_course_middle"
+    t.integer  "enrollments_at_course_end"
+    t.integer  "total_questions"
+    t.integer  "questions_last_day"
+    t.integer  "total_answers"
+    t.integer  "answers_last_day"
+    t.integer  "total_comments_on_answers"
+    t.integer  "comments_on_answers_last_day"
+    t.integer  "total_comments_on_questions"
+    t.integer  "comments_on_questions_last_day"
+    t.integer  "certificates"
+    t.integer  "helpdesk_tickets"
+    t.integer  "helpdesk_tickets_last_day"
+    t.float    "completion_rate"
+    t.float    "consumption_rate"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer  "new_users"
+    t.json     "enrollments_per_day"
+    t.boolean  "hidden"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "datasource_accesses", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2016-07-26 15:38:19', null: false
+    t.datetime "accessed_at",      default: '2016-11-02 14:48:52', null: false
   end
 
   create_table "datasources", id: false, force: :cascade do |t|
@@ -161,5 +196,16 @@ ActiveRecord::Schema.define(version: 20160630153003) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "versions", force: :cascade do |t|
+    t.string   "item_type",  null: false
+    t.integer  "item_id",    null: false
+    t.string   "event",      null: false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+  end
+
+  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
 end

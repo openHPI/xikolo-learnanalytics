@@ -78,6 +78,7 @@ gem 'xikolo-file', '~> 1.8.1'
 gem 'xikolo-course', '~> 9.9.0'
 gem 'xikolo-account'
 gem 'xikolo-pinboard', '~> 4.28.0'
+gem 'xikolo-helpdesk'
 gem 'xikolo-quiz'
 gem 'xikolo-richtext'
 gem 'xikolo-submission'
@@ -112,6 +113,11 @@ gem 'draper'
 gem 'mechanize'
 gem 'axlsx'
 gem 'axlsx_rails'
+
+# for versioning
+gem 'paper_trail'
+
+
 # Asynchronous execution + cache in redis
 gem 'redis-activesupport'
 

@@ -268,6 +268,9 @@ GEM
     os (0.9.6)
     paginate-responder (1.5.0)
       rack-link_headers (>= 2.2)
+    paper_trail (3.0.9)
+      activerecord (>= 3.0, < 5.0)
+      activesupport (>= 3.0, < 5.0)
     pg (0.19.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -476,6 +479,9 @@ GEM
     xikolo-file (1.8.1)
       acfs (~> 0.21, >= 0.21.1)
       activesupport
+    xikolo-helpdesk (0.2.2)
+      acfs (~> 0.25, >= 0.25.0)
+      activesupport
     xikolo-lti (0.0.13)
       acfs (~> 0.32)
       activesupport
@@ -540,6 +546,7 @@ DEPENDENCIES
   newrelic_rpm
   os
   paginate-responder
+  paper_trail
   pg
   pry-byebug
   rack-remote
@@ -577,6 +584,7 @@ DEPENDENCIES
   xikolo-config (~> 1.37)
   xikolo-course (~> 9.9.0)
   xikolo-file (~> 1.8.1)
+  xikolo-helpdesk
   xikolo-pinboard (~> 4.28.0)
   xikolo-quiz
   xikolo-richtext

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     resources :system_info, only: [:show]
 
     resources :jobs
+    resources :course_statistics
     resources :system_info, only: [:show]
     resources :qc_rules
     resources :qc_recommendations
