@@ -12,7 +12,7 @@ class CourseStatisticDecorator < ApplicationDecorator
       no_shows: model.no_shows,
       current_enrollments: model.current_enrollments,
       enrollments_last_day: model.enrollments_last_day,
-      enrollments_at_course: model.enrollments_at_course_start,
+      enrollments_at_course_start: model.enrollments_at_course_start,
       enrollments_at_course_middle_netto: model.enrollments_at_course_middle_netto,
       enrollments_at_course_middle: model.enrollments_at_course_middle,
       enrollments_at_course_end: model.enrollments_at_course_end,
