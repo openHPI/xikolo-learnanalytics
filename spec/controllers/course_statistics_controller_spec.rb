@@ -170,7 +170,7 @@ describe CourseStatisticsController do
       expect(json['no_shows']).to eq 4.0
       expect(json['total_enrollments']).to eq 200
       expect(json['enrollments_last_day']).to eq 20
-      expect(json['enrollments_at_course']).to eq 0
+      expect(json['enrollments_at_course_start']).to eq 0
       expect(json['enrollments_at_course_middle_netto']).to eq 1
       expect(json['total_questions']).to eq 500
       expect(json['questions_last_day']).to eq 50
