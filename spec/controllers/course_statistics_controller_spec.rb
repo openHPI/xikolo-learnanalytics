@@ -20,7 +20,7 @@ describe CourseStatisticsController do
     Acfs::Stub.resource Xikolo::Course::Course, :read,
                         with: { id: course_id3},
                         return:
-                            { id: course_id3, title: 'SAP Course', affiliated: true , status: 'active' }
+                            { id: course_id3, title: 'SAP Course', affiliated: true , status: 'active', start_date: 10.days.ago }
 
     Acfs::Stub.resource Xikolo::Course::Statistic, :read,
                         with: { course_id: course_id },
@@ -175,6 +175,11 @@ describe CourseStatisticsController do
       expect(json['total_questions']).to eq 500
       expect(json['questions_last_day']).to eq 50
       expect(json['enrollments_per_day']).to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 199]
+    end
+
+    it 'should calculate days since course start properly' do
+      get :show, id: course_id3
+      expect(json['days_since_coursestart']).to eq 10
     end
   end
 end

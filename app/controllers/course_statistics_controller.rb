@@ -48,6 +48,8 @@ private
     if course_info[:course].start_date and course_info[:course].start_date.present?
       course_start = course_info[:course].start_date
       days_since_coursestart = (Date.today - course_start.to_date).to_i
+    else
+      days_since_coursestart = nil
     end
 
     # for enrollments per day:
