@@ -1,66 +1,72 @@
 class DifficultSelftestWorker < QcRuleWorker
   def perform(course, rule_id)
-    severity = 'high'
+    severity = 'medium'
     quiz_items = []
-    annotation = 'Question average is below 50'
+    annotation = ''
     if course_is_active(course)
-      Xikolo::Course::Item.each_item(:content_type => 'quiz', exercise_type: 'selftest', :course_id => course.id, :published => 'true') do |quiz_item|
+      Xikolo::Course::Item.each_item(:content_type => 'quiz', exercise_type: %w(main bonus selftest), :course_id => course.id, :published => 'true') do |quiz_item|
         quiz_items << quiz_item
       end
       Acfs.run
+      puts quiz_items
       # content_id => quiz_id
-
       quiz_items.each do |quiz_item|
-        qc_alert_data = create_json(quiz_item.content_id)
-        max_points = quiz_item.max_points
-        puts "Max points for quiz #{max_points}"
+        puts quiz_item.exercise_type
+        #max_points = quiz_item.max_points
         quiz_submission_statistic = Xikolo::Submission::QuizSubmissionStatistic.find(quiz_item.content_id)
         Acfs.run
-        total_submissions = quiz_submission_statistic.total_submissions
-        puts "Total Submissions: #{total_submissions}"
+        #total_submissions = quiz_submission_statistic.total_submissions
         quiz_submission_statistic.questions.each do |question|
           question.each do |question_id, question_info|
-            puts '#Question'
-            average_points = question_info["avg_points"]
-            quiz_question = Xikolo::Quiz::Question.find(question_id)
-            Acfs.run
-            puts "Possible points per question: #{quiz_question.points}"
-            puts "Average points per question #{average_points}"
-            # has any question average points less than 50%  (put value to config)
-            threshold = 0.5
-            if average_points/quiz_question.points > threshold
-              update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, qc_alert_data)
-            end
+            check_under_average_question(course, question_id, question_info, rule_id, severity)
             # is any wrong answer checked by more of 50% of all users
-            puts "Total Submission count per question: #{question_info["count"]}"
-            puts "    #Answers"
-
-            answers = question_info["answers"]
-            answers.each do |answer_id, answer|
-              if answer["count"]/question_info["count"].to_f >= threshold
-                puts "answer over threshold"
-                answer_data = Xikolo::Quiz::Answer.find(answer_id)
-                unless answer_data.correct
-                  puts "answer is not correct"
-                  annotation = "answer has many wrongs"
-                  update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, qc_alert_data)
-                end
-              end
-            end
-
-
-
+            check_wrong_answers(course, question_info, rule_id, severity)
           end
         end
-
       end
     end
     # for all self tests, graded homeworks, bonus homworks (not for surveys) for all published courses
-
-
   end
 
-  def create_json(resource_id)
-    {"resource_id" => resource_id}
+  def check_wrong_answers(course, question_info, rule_id, severity)
+    threshold_answers = 0.5
+    answers = question_info["answers"]
+    answers.each do |answer_id, answer|
+      submission_count_answer = answer["count"]
+      submission_count_question = question_info["count"]
+      if submission_count_answer/submission_count_question.to_f >= threshold_answers
+        puts "answer over threshold"
+        answer_data = Xikolo::Quiz::Answer.find(answer_id)
+        Acfs.run
+        unless answer_data.correct
+          puts "answer is not correct"
+          annotation = "Many users selected wrong answer"
+          qc_alert_data = create_json(answer_data.id)
+          update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, answer_data.id, qc_alert_data)
+        else
+          find_and_close_qc_alert_with_data(rule_id, course.id, answer_data.id)
+        end
+      else
+        find_and_close_qc_alert_with_data(rule_id, course.id, answer_data.id)
+      end
+    end
+  end
+
+  def check_under_average_question(course, question_id, question_info, rule_id, severity)
+    # has any question average points less than 50%  (put value to config)
+    average_points = question_info["avg_points"]
+    quiz_question = Xikolo::Quiz::Question.find(question_id)
+    Acfs.run
+    points = quiz_question.points
+    # has any question average points less than 50%  (put value to config)
+    threshold = 0.5
+    if average_points/points.to_f <= threshold
+      puts ' question average is below 50%'
+      qc_alert_data = create_json(quiz_question.id)
+      annotation = 'Question average is below 50'
+      update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, quiz_question.id, qc_alert_data)
+    else
+      find_and_close_qc_alert_with_data(rule_id, course_id, quiz_question.id)
+    end
   end
 end
