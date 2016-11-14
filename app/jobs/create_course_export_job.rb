@@ -253,16 +253,22 @@ class CreateCourseExportJob < CreateExportJob
     excel_tmp_file.close
   end
 
-  def age_group_from_age age
+  def age_group_from_age(age)
     age = age.to_i
-    if age < 30
-      '< 30'
+    if age < 20
+      '0+'
+    elsif age < 30
+      '20+'
     elsif age < 40
       '30+'
     elsif age < 50
       '40+'
-    else
+    elsif age < 60
       '50+'
+    elsif age < 70
+      '60+'
+    else
+      '70+'
     end
   end
 
