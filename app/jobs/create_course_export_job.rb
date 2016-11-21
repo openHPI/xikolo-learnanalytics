@@ -147,7 +147,7 @@ class CreateCourseExportJob < CreateExportJob
           Acfs.run
 
           item[:age] = item[:user].born_at.present? ? ((birth_compare_date - item[:user].born_at) / 365).to_i : '-99'
-
+          item[:age_group] = item[:user].born_at.present? ? age_group_from_age(item[:age]) : '-99'
 
           # get elasticsearch metrics per user
           if extended_flag
@@ -175,7 +175,7 @@ class CreateCourseExportJob < CreateExportJob
                      item[:user].affiliated,
                      item[:user].born_at,
                      item[:age],
-                     age_group_from_age(item[:age])
+                     item[:age_group]
           ]
 
           unless privacy_flag
