@@ -254,6 +254,10 @@
             },
             "user_tags": {
               "type": "string"
+            },
+            "service": {
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         },
