@@ -61,8 +61,6 @@ class DifficultSelftestWorker < QcRuleWorker
     end
   end
 
-
-
 private
 
   def create_json(resource_id, quiz_item_id)
