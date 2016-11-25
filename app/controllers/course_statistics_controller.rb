@@ -44,6 +44,14 @@ private
     end
     # consumption rate needs  to be calculated properly
     consumption_rate = 0
+
+    if course_info[:course].start_date and course_info[:course].start_date.present?
+      course_start = course_info[:course].start_date
+      days_since_coursestart = (Date.today - course_start.to_date).to_i
+    else
+      days_since_coursestart = nil
+    end
+
     # for enrollments per day:
     if course.status.present? and course.status == 'active'
       last_days = 9.downto(0).map do |num|
@@ -88,7 +96,8 @@ private
                            completion_rate: completion_rate,
                            consumption_rate: consumption_rate,
                            enrollments_per_day: cresults || [],
-                           hidden: course_info[:course].hidden
+                           hidden: course_info[:course].hidden,
+                           days_since_coursestart: days_since_coursestart
     )
   end
 end

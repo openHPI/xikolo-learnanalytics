@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914151730) do
+ActiveRecord::Schema.define(version: 20161111125203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(version: 20160914151730) do
     t.boolean  "hidden"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "days_since_coursestart"
   end
 
   create_table "datasource_accesses", force: :cascade do |t|
@@ -66,7 +67,7 @@ ActiveRecord::Schema.define(version: 20160914151730) do
     t.integer  "research_case_id"
     t.string   "datasource_key"
     t.string   "channel"
-    t.datetime "accessed_at",      default: '2016-11-02 14:48:52', null: false
+    t.datetime "accessed_at",      default: '2016-11-11 13:02:55', null: false
   end
 
   create_table "datasources", id: false, force: :cascade do |t|

@@ -35,7 +35,8 @@ class CourseStatisticDecorator < ApplicationDecorator
       completion_rate: model.completion_rate,
       consumption_rate: model.consumption_rate,
       enrollments_per_day: model.enrollments_per_day,
-      hidden: model.hidden
+      hidden: model.hidden,
+      days_since_coursestart: model.days_since_coursestart
     }.as_json(**opts)
   end
 end
