@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'paper_trail/frameworks/rspec'
 describe CourseStatisticsController do
   let(:default_params) { {format: 'json'}}
   let(:json) { JSON.parse response.body }
@@ -138,8 +138,35 @@ describe CourseStatisticsController do
                         }
   end
   describe '#index' do
+    let(:coursestatistic_historic_data) { FactoryGirl.create :course_statistic }
+
+    it 'by default, PaperTrail will be turned off' do
+      expect(PaperTrail).to_not be_enabled
+    end
+
     it 'should answer with an empty list' do
       get :index
+      expect(response.status).to eq(200)
+      expect(json).to have(0).item
+    end
+
+    it 'should retrieve historic data',:versioning => true do
+      expect(PaperTrail).to be_enabled
+      get :show, id: course_id
+      coursestatistics = CourseStatistic.all
+      expect(coursestatistics.count).to eq(1)
+      get :index, {historic_data: 'true', course_id: course_id, start_date: 2.days.ago.to_s}
+      expect(response.status).to eq(200)
+      expect(json).to have(1).item
+      expect(json[0]["course_id"]).to eq course_id
+    end
+
+    it 'should retrieve empty array if historic data parameters are wrong', :versioning => true do
+      expect(PaperTrail).to be_enabled
+      get :show, id: course_id
+      coursestatistics = CourseStatistic.all
+      expect(coursestatistics.count).to eq(1)
+      get :index, {historic_data: 'true', start_date: 2.days.ago.to_s}
       expect(response.status).to eq(200)
       expect(json).to have(0).item
     end
@@ -155,7 +182,7 @@ describe CourseStatisticsController do
       expect(coursestatistics.count).to eq(1)
     end
 
-    it ' should update an course statistic' do
+    it ' should update a course statistic' do
       cs = CourseStatistic.new(course_id: course_id2, course_name: 'Test Course')
       expect(cs.course_name).to eq 'Test Course'
       get :show, id: course_id2

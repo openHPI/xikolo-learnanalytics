@@ -6,12 +6,19 @@ class CourseStatisticsController < ApplicationController
   respond_to :json
 
   def index
-    course_statistics = CourseStatistic.all
+    course_statistics = []
+    if params[:historic_data] == 'true'
+      if params[:start_date] and params[:course_id]
+        course_statistics = retrieve_versions(params[:course_id], params[:start_date], params[:end_date])
+      end
+    else
+      course_statistics = CourseStatistic.all
+    end
     respond_with course_statistics
   end
 
   def show
-    # incoming id is course_id!
+    # incoming id is a course_id!
     course_id = params[:id]
     course_statistic = CourseStatistic.find_or_create_by(course_id: course_id)
     calculate_statistic(course_id, course_statistic.id)
@@ -99,5 +106,15 @@ private
                            hidden: course_info[:course].hidden,
                            days_since_coursestart: days_since_coursestart
     )
+  end
+
+  def retrieve_versions(course_id, start_date, end_date)
+    start_date = DateTime.parse(start_date)
+    end_date ||= DateTime.now
+    course_statistic_versions = CourseStatistic.find_by(course_id: course_id).versions.where("(object->>'course_id')= ?", course_id).between(start_date, end_date)
+    course_statistic_versions.map do |version|
+      version.object['version_created_at'] = version.created_at
+      version.object
+    end
   end
 end
