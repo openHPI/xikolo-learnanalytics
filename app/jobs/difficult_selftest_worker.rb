@@ -1,4 +1,5 @@
 class DifficultSelftestWorker < QcRuleWorker
+
   def perform(course, rule_id)
     severity = 'medium'
     quiz_items = []
@@ -22,12 +23,7 @@ class DifficultSelftestWorker < QcRuleWorker
   end
 
   def check_for_difficult_selftest(course, question_id, question_info, quiz_item, rule_id, severity)
-    #Wenn eine falsche Antwort häufiger angeklickt wurde als eine richtige Antwort,
-    # sollte es eine Warnung geben (zeigt i.d.R. an, dass Regrading notwendig ist)
-
-    # Wenn die Summe der Klicks zu richtigen Antworten weniger als 70% aller Klicks zu einer Frage ausmachen,
-    # dann sollte es zu dieser Frage ebenfalls eine Warnung geben.
-
+    minimum_submissions = 20
     right_answers_threshold = 0.7 # put in Xikolo config
     clicks_correct_answer = 0
 
@@ -35,36 +31,37 @@ class DifficultSelftestWorker < QcRuleWorker
     wrong_answers_submission_counts = []
 
     submission_count_question = question_info["count"]
-    answers = question_info["answers"]
-
-    answers.each do |answer_id, answer|
-      answer_submission_count = answer["count"]
-      quiz_answer = Xikolo::Quiz::Answer.find(answer_id)
-      Acfs.run
-      if quiz_answer.correct
-        clicks_correct_answer += answer_submission_count
-        highest_correct_answer_submission_count = [answer_submission_count, highest_correct_answer_submission_count].max
-      else
-        wrong_answers_submission_counts << answer_submission_count
+    if submission_count_question > minimum_submissions
+      answers = question_info["answers"]
+      answers.each do |answer_id, answer|
+        answer_submission_count = answer["count"]
+        quiz_answer = Xikolo::Quiz::Answer.find(answer_id)
+        Acfs.run
+        if quiz_answer.correct
+          clicks_correct_answer += answer_submission_count
+          highest_correct_answer_submission_count = [answer_submission_count, highest_correct_answer_submission_count].max
+        else
+          wrong_answers_submission_counts << answer_submission_count
+        end
       end
-    end
-    if (wrong_answers_submission_counts.max || 0) >= highest_correct_answer_submission_count or clicks_correct_answer <= (right_answers_threshold * submission_count_question)
-      qc_alert_data = create_json(question_id, quiz_item.id,)
-      quiz_question = Xikolo::Quiz::Question.find(question_id)
-      Acfs.run
-      question_title = Xikolo::RichText::RichText.find(quiz_question.question_rtid)
-      Acfs.run
-      annotation = "Question: '#{question_title.markup[0...20]}[..]'"
-      update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, question_id, qc_alert_data)
-    else
-      find_and_close_qc_alert_with_data(rule_id, course.id, question_id)
+      if (wrong_answers_submission_counts.max || 0) >= highest_correct_answer_submission_count or clicks_correct_answer <= (right_answers_threshold * submission_count_question)
+        qc_alert_data = create_json(question_id, quiz_item.id,)
+        quiz_question = Xikolo::Quiz::Question.find(question_id)
+        Acfs.run
+        question_title = Xikolo::RichText::RichText.find(quiz_question.question_rtid)
+        Acfs.run
+        annotation = "Question: '#{question_title.markup[0...20]}[..]'"
+        update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, question_id, qc_alert_data)
+      else
+        find_and_close_qc_alert_with_data(rule_id, course.id, question_id)
+      end
     end
   end
 
 private
 
   def create_json(resource_id, quiz_item_id)
+    #resource_id => question_id
     {"resource_id" => resource_id, "quiz_item_id" => quiz_item_id.to_s}
   end
-
 end
