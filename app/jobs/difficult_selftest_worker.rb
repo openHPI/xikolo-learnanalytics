@@ -23,14 +23,14 @@ class DifficultSelftestWorker < QcRuleWorker
   end
 
   def check_for_difficult_selftest(course, question_id, question_info, quiz_item, rule_id, severity)
-    minimum_submissions = 20
-    right_answers_threshold = 0.7 # put in Xikolo config
+    minimum_submissions = Xikolo.config.qc_alert['difficult_selftest']['minimum_submissions']
+    right_answers_threshold = Xikolo.config.qc_alert['difficult_selftest']['right_answer_threshold']
     clicks_correct_answer = 0
 
     highest_correct_answer_submission_count = 0
     wrong_answers_submission_counts = []
-
     submission_count_question = question_info["count"]
+
     if submission_count_question > minimum_submissions
       answers = question_info["answers"]
       answers.each do |answer_id, answer|
@@ -44,7 +44,7 @@ class DifficultSelftestWorker < QcRuleWorker
           wrong_answers_submission_counts << answer_submission_count
         end
       end
-      if (wrong_answers_submission_counts.max || 0) >= highest_correct_answer_submission_count or clicks_correct_answer <= (right_answers_threshold * submission_count_question)
+      if (wrong_answers_submission_counts.max || 0) >= highest_correct_answer_submission_count or clicks_correct_answer <= (right_answers_threshold * submission_count_question.to_f)
         qc_alert_data = create_json(question_id, quiz_item.id,)
         quiz_question = Xikolo::Quiz::Question.find(question_id)
         Acfs.run
