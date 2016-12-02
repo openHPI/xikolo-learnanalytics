@@ -471,7 +471,7 @@ GEM
       lograge (~> 0.3.5)
       railties
       restify
-    xikolo-config (1.62)
+    xikolo-config (1.66)
       activesupport
     xikolo-course (9.9.0)
       acfs (~> 0.42)
@@ -581,7 +581,7 @@ DEPENDENCIES
   webmock
   xikolo-account
   xikolo-common (~> 1.0)
-  xikolo-config (~> 1.37)
+  xikolo-config (~> 1.66)
   xikolo-course (~> 9.9.0)
   xikolo-file (~> 1.8.1)
   xikolo-helpdesk
@@ -595,4 +595,4 @@ DEPENDENCIES
   zipruby-compat!
 
 BUNDLED WITH
-   1.13.3
+   1.13.6
