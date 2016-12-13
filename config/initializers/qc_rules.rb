@@ -11,8 +11,7 @@ qc_rules = [
     ['InitialAnnouncementWorker', false],
     ['VideoEventsWorker', false],
     ['AnnouncementFailedWorker', true],
-    ['QuizPerformanceWorker', false],
-
+    ['QuizPerformanceWorker', false]
 ]
 #This will create an disabled (inactive) worker for each rule that is not set up yet
 begin
