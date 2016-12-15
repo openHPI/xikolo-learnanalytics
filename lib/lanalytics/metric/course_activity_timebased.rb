@@ -7,9 +7,7 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: {
-                  term: { "in_context.course_id" => course_id }
-                },
+                must: all_filters(course_id, user_id),
                 filter: {
                   range: {
                     timestamp: {
