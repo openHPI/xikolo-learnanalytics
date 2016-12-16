@@ -22,7 +22,7 @@ module Lanalytics
               timestamps: {
                 date_histogram: {
                   field: 'timestamp',
-                  interval: 'hour'
+                  interval: user_id.present? ? 'day' : 'hour'
                 }
               }
             }
