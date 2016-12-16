@@ -34,7 +34,7 @@ RSpec.describe Lanalytics::Metric::PinboardPostingActivity do
     it 'queries the course_id' do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .second[:match_phrase]['in_context.course_id']).to eq(
+          .second[:bool][:should].first[:match]['in_context.course_id']).to eq(
             course_id)
       end.and_return('{}')
       subject
@@ -43,7 +43,7 @@ RSpec.describe Lanalytics::Metric::PinboardPostingActivity do
     it 'queries the user_id' do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .third[:match_phrase]['user.resource_uuid']).to eq(
+          .third[:match]['user.resource_uuid']).to eq(
             user_id)
       end.and_return('{}')
       subject
