@@ -103,6 +103,8 @@ gem 'geoip' # Location tracking
 
 gem 'browser' # Browser info
 
+gem 'uuid4'
+
 gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 
 gem 'responders'
