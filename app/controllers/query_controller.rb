@@ -70,7 +70,8 @@ class QueryController < ApplicationController
        ItemDiscovery VideoDiscovery QuizDiscovery
        VideoPlayerActivity DownloadActivity CoursePerformance
        QuizPerformance UngradedQuizPerformance GradedQuizPerformance
-       MainQuizPerformance BonusQuizPerformance ShareButtonClicks)
+       MainQuizPerformance BonusQuizPerformance ShareButtonClicks
+       ExternalLinks)
   end
 
   def query_params
