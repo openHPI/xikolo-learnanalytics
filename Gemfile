@@ -37,9 +37,6 @@ gem 'forgery'
 gem 'sorcery' # Authentication ...
 gem 'validates_email_format_of'
 
-# For the MOOCdb Schema
-gem 'youyouaidi'
-
 # Connecting to RabbitMQ
 gem 'msgr'
 gem 'bunny', '< 1.5' # On production we are using an older RabbitMQ Version (2.XX); this is only supported by a bunny verion < 1.5
@@ -102,6 +99,8 @@ gem 'unicorn'
 gem 'geoip' # Location tracking
 
 gem 'browser' # Browser info
+
+gem 'uuid4'
 
 gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 

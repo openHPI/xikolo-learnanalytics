@@ -10,7 +10,7 @@ class SectionPresenter < PrivatePresenter
   end
 
   def to_param
-    Youyouaidi::UUID.new(id).to_param
+    UUID4.try_convert(id).to_s
   end
 
   def alternatives
