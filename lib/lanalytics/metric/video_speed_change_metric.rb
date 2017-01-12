@@ -5,18 +5,14 @@ module Lanalytics
         result = datasource.exec do |client|
           client.count index: datasource.index, body: {
             query: {
-              filtered: {
-                query: {
-                  bool: {
-                    must: {match: {verb: 'VIDEO_CHANGE_SPEED'}}
-                  }
-                }
+              bool: {
+                must: { match: { verb: 'VIDEO_CHANGE_SPEED' } }
               }
             }
           }
         end
 
-        {count: result['count']}
+        { count: result['count'] }
       end
     end
   end

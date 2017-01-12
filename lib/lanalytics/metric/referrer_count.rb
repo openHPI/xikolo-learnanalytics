@@ -6,23 +6,19 @@ module Lanalytics
           client.search index: datasource.index, body: {
               size: 0,
               query: {
-                  bool: {
-                      must: [
-                          {
-                              match_phrase: {
-                                  "course_id" => course_id
-                              }
-                          }
-                      ]
-                  }
+                bool: {
+                  must: [
+                    { match: { 'course_id' => course_id } }
+                  ]
+                }
               },
               aggregations: {
-                  referrer: {
-                      terms: {
-                          field: "referrer",
-                          size:0
-                      }
+                referrer: {
+                  terms: {
+                    field: 'referrer',
+                    size: 0
                   }
+                }
               }
           }
 

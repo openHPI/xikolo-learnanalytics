@@ -5,24 +5,20 @@ module Lanalytics
         answer_statements = datasource.exec do |client|
           query = {
             query: {
-              filtered: {
-                query: {
-                  bool: {
-                    must: [
-                      {match: {verb: 'ANSWERED_QUESTION'}}
-                    ] + (all_filters(course_id, user_id))
-                  }
-                }
+              bool: {
+                must: [
+                  { match: { verb: 'ANSWERED_QUESTION' } }
+                ] + (all_filters(course_id, user_id))
               }
             }
           }
-          query[:query][:filtered][:filter] = {
-              range: {
-                  timestamp: {
-                      gte: DateTime.parse(start_time).iso8601,
-                      lte: DateTime.parse(end_date).iso8601
-                  }
+          query[:query][:bool][:must][:filter] = {
+            range: {
+              timestamp: {
+                gte: DateTime.parse(start_time).iso8601,
+                lte: DateTime.parse(end_date).iso8601
               }
+            }
           } if start_time.present? and end_date.present?
 
           client.search index: datasource.index, body: query
@@ -41,8 +37,8 @@ module Lanalytics
               query: {
                 bool: {
                   must: [
-                    {match_phrase: {'resource.resource_uuid' => question_id}},
-                    {match: {verb: 'ASKED_QUESTION'}}
+                    { match_phrase: { 'resource.resource_uuid' => question_id } },
+                    { match: { verb: 'ASKED_QUESTION' } }
                   ]
                 }
               }

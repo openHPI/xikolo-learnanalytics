@@ -11,14 +11,14 @@ module Lanalytics
                     must: [
                       {match_phrase: {'user.resource_uuid' => user_id}},
                       {match: {verb: 'COMPLETED_COURSE'}}
-                    ] + (all_filters(course_id))
-                  }
-                },
-                filter: {
-                  range: {
-                    timestamp: {
-                      gte: DateTime.parse(start_time).iso8601,
-                      lte: DateTime.parse(end_date).iso8601
+                    ] + (all_filters(course_id)),
+                    filter: {
+                      range: {
+                        timestamp: {
+                          gte: DateTime.parse(start_time).iso8601,
+                          lte: DateTime.parse(end_date).iso8601
+                        }
+                      }
                     }
                   }
                 }
