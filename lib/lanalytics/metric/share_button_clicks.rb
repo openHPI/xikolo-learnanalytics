@@ -20,7 +20,6 @@ module Lanalytics
             aggregations: {
               services: {
                 terms: {
-                  size: 0,
                   field: 'in_context.service'
                 }
               }

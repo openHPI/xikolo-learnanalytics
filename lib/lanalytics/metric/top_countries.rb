@@ -15,8 +15,7 @@ module Lanalytics
             aggregations: {
               countries: {
                 terms: {
-                  field: 'in_context.user_location_country_code',
-                  size: 0
+                  field: 'in_context.user_location_country_code'
                 },
                 aggregations: {
                   ucount: {
