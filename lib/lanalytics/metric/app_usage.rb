@@ -3,6 +3,16 @@ module Lanalytics
     class AppUsage < ExpApiMetric
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
 
+        # array of app runtimes
+        app_runtimes = %w(Android iOS)
+
+        app_conditions = []
+
+        app_runtimes.each do |runtime|
+          app_conditions << { match: { 'in_context.runtime' => runtime } }
+        end
+
+        # build conditions for query
         conditions = []
 
         if course_id.present?
@@ -32,16 +42,7 @@ module Lanalytics
                 app_count: {
                   filter: {
                       bool: {
-                          should: [
-                              { match: {
-                                  'in_context.runtime': 'Android'
-                              }
-                              },
-                              { match: {
-                                  'in_context.runtime': 'iOS'
-                              }
-                              }
-                          ]
+                          should: app_conditions
                       }
                   },
                   aggs: {
@@ -55,16 +56,7 @@ module Lanalytics
                 web_count: {
                   filter: {
                       bool: {
-                          must_not: [
-                              { match: {
-                                  'in_context.runtime': 'Android'
-                                }
-                              },
-                              { match: {
-                                  'in_context.runtime': 'iOS'
-                                }
-                              }
-                          ]
+                          must_not: app_conditions
                       }
                   },
                   aggs: {
