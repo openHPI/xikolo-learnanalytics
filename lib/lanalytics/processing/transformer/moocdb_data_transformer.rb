@@ -96,7 +96,7 @@ module Lanalytics
 
           course_code = match[:course_code]
           begin
-            item_uuid = UUID4.try_convert(match[:item_short_uuid]).to_s
+            item_uuid = UUID4(match[:item_short_uuid]).to_s(format: :base62)
           rescue
             return
           end
