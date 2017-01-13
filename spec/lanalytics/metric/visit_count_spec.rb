@@ -27,7 +27,7 @@ RSpec.describe Lanalytics::Metric::VisitCount do
 
     it 'queries the correct verbs' do
       expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
+        expect(options[:body][:query][:bool][:must]
           .first[:match][:verb]).to eq(verbs.join(' OR '))
       end.and_return('{}')
       subject

@@ -12,7 +12,7 @@ module Lanalytics
               }
             }
           }
-          query[:query][:bool][:must][:filter] = {
+          query[:query][:bool][:filter] = {
             range: {
               timestamp: {
                 gte: DateTime.parse(start_time).iso8601,
