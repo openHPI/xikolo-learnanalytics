@@ -4,12 +4,10 @@ module Lanalytics
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
 
         # array of app runtimes
-        app_runtimes = %w(Android iOS)
+        mobile_runtimes = %w(Android iOS)
 
-        app_conditions = []
-
-        app_runtimes.each do |runtime|
-          app_conditions << { match: { 'in_context.runtime' => runtime } }
+        mobile_conditions = mobile_runtimes.map do |runtime|
+          { match: { 'in_context.runtime' => runtime } }
         end
 
         # build conditions for query
@@ -34,15 +32,15 @@ module Lanalytics
                   }
               },
               aggs: {
-                user_count: {
+                user: {
                   cardinality: {
                       field: 'user.resource_uuid'
                   }
                 },
-                app_count: {
+                mobile: {
                   filter: {
                       bool: {
-                          should: app_conditions
+                          should: mobile_conditions
                       }
                   },
                   aggs: {
@@ -53,10 +51,10 @@ module Lanalytics
                       }
                   }
                 },
-                web_count: {
+                web: {
                   filter: {
                       bool: {
-                          must_not: app_conditions
+                          must_not: mobile_conditions
                       }
                   },
                   aggs: {
@@ -72,12 +70,13 @@ module Lanalytics
 
         end
 
-        processed_result = {}
-        processed_result[:user_count] = result['aggregations']['user_count']['value']
-        processed_result[:web_count] = result['aggregations']['web_count']['count']['value']
-        processed_result[:app_count] = result['aggregations']['app_count']['count']['value']
-        processed_result[:mixed_count] = processed_result[:app_count] + processed_result[:web_count] - processed_result[:user_count]
-        return processed_result
+        #process results
+        {
+            user: result['aggregations']['user']['value'],
+            web: result['aggregations']['web']['count']['value'],
+            app: result['aggregations']['mobile']['count']['value'],
+            mixed: result['aggregations']['mobile']['count']['value'] + result['aggregations']['web']['count']['value'] - result['aggregations']['user']['value']
+        }
       end
     end
   end
