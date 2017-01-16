@@ -16,7 +16,7 @@ module Lanalytics
                 referrer: {
                   terms: {
                     field: 'referrer',
-                    size: 0
+                    size: 25
                   }
                 }
               }

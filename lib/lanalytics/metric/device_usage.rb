@@ -33,19 +33,22 @@ module Lanalytics
             aggregations: {
               platforms: {
                 terms: {
-                  field: 'in_context.platform'
+                  field: 'in_context.platform',
+                  size: 50
                 },
                 aggregations: {
                   runtimes: {
                     terms: {
-                      field: 'in_context.runtime'
+                      field: 'in_context.runtime',
+                      size: 50
                     }
                   }
                 }
               },
               runtimes: {
                 terms: {
-                  field: 'in_context.runtime'
+                  field: 'in_context.runtime',
+                  size: 50
                 }
               }
             }
