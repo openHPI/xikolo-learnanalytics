@@ -65,6 +65,7 @@ GEM
     axlsx_rails (0.1.5)
       axlsx
       rails (>= 3.1)
+    base62-rb (0.3.1)
     bcrypt (3.1.11)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -454,6 +455,8 @@ GEM
     unicorn (5.1.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
+    uuid4 (1.3.2)
+      base62-rb (~> 0.3.0)
     validates_email_format_of (1.6.3)
       i18n
     webmock (2.1.0)
@@ -577,6 +580,7 @@ DEPENDENCIES
   turbolinks
   uglifier (>= 1.3.0)
   unicorn
+  uuid4
   validates_email_format_of
   webmock
   xikolo-account
@@ -590,9 +594,8 @@ DEPENDENCIES
   xikolo-richtext
   xikolo-submission
   xikolo-video
-  youyouaidi
   zip-zip
   zipruby-compat!
 
 BUNDLED WITH
-   1.13.3
+   1.13.6
