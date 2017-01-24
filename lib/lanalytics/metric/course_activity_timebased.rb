@@ -22,7 +22,8 @@ module Lanalytics
               timestamps: {
                 date_histogram: {
                   field: 'timestamp',
-                  interval: user_id.present? ? 'day' : 'hour'
+                  interval: user_id.present? ? 'day' : 'hour',
+                  min_doc_count: '0'
                 }
               }
             }
@@ -36,12 +37,12 @@ module Lanalytics
         # Convert to a hash of timestamps and quantity
         # (needed for cal-heatmap)
         Hash[
-            buckets.map do |bucket|
-              [
-                  Time.parse(bucket[:key_as_string].to_s[0..-4]).to_i,
-                  bucket[:doc_count]
-              ]
-            end
+          buckets.map do |bucket|
+            [
+              Time.parse(bucket[:key_as_string].to_s[0..-4]).to_i,
+              bucket[:doc_count]
+            ]
+          end
         ]
       end
 
