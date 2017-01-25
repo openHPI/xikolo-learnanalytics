@@ -23,7 +23,7 @@ module Lanalytics
                 date_histogram: {
                   field: 'timestamp',
                   interval: user_id.present? ? 'day' : 'hour',
-                  min_doc_count: '0'
+                  min_doc_count: 0
                 }
               }
             }
