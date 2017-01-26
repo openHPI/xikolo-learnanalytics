@@ -6,7 +6,7 @@ class CreateCombinedCourseExportJob < CreateCourseExportJob
 
     begin
       classifier = Xikolo::Course::Classifier.find(classifier_id)
-      courses = Xikolo::Course::Course.where(cat_id: classifier_id)
+      courses = Xikolo::Course::Course.where(cat_id: classifier_id, affiliated: true)
       Acfs.run
       course_ids = courses.map { |course| course.id }
       job.annotation = classifier.cluster.underscore + '_' + classifier.title.underscore
