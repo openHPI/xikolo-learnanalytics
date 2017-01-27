@@ -35,7 +35,7 @@ class CreateCourseExportJob < CreateExportJob
 
     headers = []
 
-    course_ids.each do |course_id|
+    course_ids.each.with_index(1) do |course_id, course_index|
       course = Xikolo::Course::Course.find(course_id)
       Acfs.run
 
@@ -51,6 +51,8 @@ class CreateCourseExportJob < CreateExportJob
         Acfs.run
 
         if headers.length == 0 && enrollments.current_page == 1 && enrollments.size > 0
+          update_progress(job_id, enrollments, 1, course_ids.length, course_index)
+
           enrolled_user = Xikolo::Account::User.find(enrollments.first.user_id) if enrollments.first.present?
           Acfs.run
 
@@ -140,7 +142,8 @@ class CreateCourseExportJob < CreateExportJob
 
         enrollments.each.with_index(1) do |enrollment, index|
           begin
-            update_progress(enrollments, job_id, index)
+            update_progress(job_id, enrollments, index, course_ids.length, course_index)
+
             user = Xikolo::Account::User.find(enrollment.user_id)
             full_enrollment = Xikolo::Course::Enrollment.find_by(user_id: enrollment.user_id, course_id: course_id, deleted: true, learning_evaluation: 'true')
             Acfs.run
@@ -263,6 +266,34 @@ class CreateCourseExportJob < CreateExportJob
   end
 
   private
+
+  def update_progress(job_id, enrollments, enrollment_index, courses_count, courses_index)
+    job = Job.find(job_id)
+
+    # progress of finished enrollment pages
+    enrollment_progress_page = (enrollments.current_page - 1) / enrollments.total_pages.to_f
+
+    # progress of one enrollment page
+    enrollment_progress_by_page = 1 / enrollments.total_pages.to_f
+
+    # progress of current enrollment
+    enrollment_progress_current = enrollment_index / enrollments.size.to_f
+
+    # progress of finished enrollment pages + current enrollment page progress
+    enrollment_progress = enrollment_progress_page + (enrollment_progress_current * enrollment_progress_by_page)
+
+    # progress of finished courses
+    courses_progress = (courses_index - 1) / courses_count.to_f
+
+    # progress of one course
+    course_progress_by_index = 1 / courses_count.to_f
+
+    # progress of finished courses + progress of current course by finished enrollments
+    total_progress = courses_progress + (course_progress_by_index * enrollment_progress)
+
+    job.progress = total_progress * 100
+    job.save!
+  end
 
   def age_group_from_age(age)
     age = age.to_i
