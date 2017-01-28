@@ -4,16 +4,19 @@ module Lanalytics
       include Lanalytics::Helper::PercentageHelper
 
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        query_must = [
-          { match: { 'user.resource_uuid' => user_id } }
-        ]
+        query_must = []
+        if user_id.present?
+          query_must << [
+            { match: { 'user.resource_uuid' => user_id } }
+          ]
+        end
 
         if course_id.present?
           query_must << {
             bool: {
               should: [
                 { match: { 'in_context.course_id' => course_id } },
-                { match: { 'resource.resource_uui' => course_id } }
+                { match: { 'resource.resource_uuid' => course_id } }
               ]
             }
           }
@@ -30,22 +33,22 @@ module Lanalytics
             aggregations: {
               platforms: {
                 terms: {
-                  size: 0,
-                  field: 'in_context.platform'
+                  field: 'in_context.platform',
+                  size: 50
                 },
                 aggregations: {
                   runtimes: {
                     terms: {
-                      size: 0,
-                      field: 'in_context.runtime'
+                      field: 'in_context.runtime',
+                      size: 50
                     }
                   }
                 }
               },
               runtimes: {
                 terms: {
-                  size: 0,
-                  field: 'in_context.runtime'
+                  field: 'in_context.runtime',
+                  size: 50
                 }
               }
             }

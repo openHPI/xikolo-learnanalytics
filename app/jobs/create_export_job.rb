@@ -7,7 +7,6 @@ class CreateExportJob < ActiveJob::Base
   queue_as :default
 
   def perform (job_id, password, user_id, task_scope, privacy_flag)
-
   end
 
   private
@@ -38,9 +37,8 @@ class CreateExportJob < ActiveJob::Base
 
 
   def create_file (job_id, csv_name, temp_report, excel_name, temp_excel_report, password, user_id, course_id=nil, additional_files)
-
     begin
-      zipped_file_path =  rename_and_zip(csv_name, temp_report, excel_name, temp_excel_report, password, additional_files)
+      zipped_file_path = rename_and_zip(csv_name, temp_report, excel_name, temp_excel_report, password, additional_files)
       file = File.open(zipped_file_path, 'rb')
       uploader = FileUploader.new
       file_expire_date = 1.days.from_now
@@ -102,18 +100,17 @@ class CreateExportJob < ActiveJob::Base
 
   def notify(user_id, type, annotation, state)
     event = {
-        key: 'reporting_finished',
-        receiver_id:user_id,
-        payload: {
-             type: type,
-            annotation: annotation,
-             state: state
-        }
+      key: 'reporting_finished',
+      receiver_id: user_id,
+      payload: {
+        type: type,
+        annotation: annotation,
+        state: state
+      }
     }
 
     Msgr.publish(event, to: 'xikolo.notification.platform_notify')
   end
-
 
   def excel_attachment(worksheet_name, tmp_file, headers, data)
     Axlsx::Package.new do |p|
@@ -127,4 +124,5 @@ class CreateExportJob < ActiveJob::Base
     end
     tmp_file
   end
+
 end

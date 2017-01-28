@@ -8,36 +8,32 @@ module Lanalytics
 
         expresult = datasource.exec do |client|
           client.search index: datasource.index, body: {
-              size: 0,
-              query: {
-                  filtered: {
-                      filter: {
-                          range: {
-                              timestamp: {
-                                  gte: start_time.iso8601,
-                                  lte: end_time.iso8601
-                              }
-                          }
-                      }
-                  }
-              },
-              aggs: {
-                group_by_field: {
+            size: 0,
+            query: {
+              range: {
+                timestamp: {
+                  gte: start_time.iso8601,
+                  lte: end_time.iso8601
+                }
+              }
+            },
+            aggs: {
+              group_by_field: {
+                terms: {
+                  field: 'in_context.course_id',
+                  order: {_count: "desc"}
+                },
+                aggs: {
+                  group_by_field: {
                     terms: {
-                          field: 'in_context.course_id',
-                          order: { _count: "desc" }
-                    },
-                    aggs: {
-                      group_by_field: {
-                        terms: {
-                          field: "verb",
-                          order: { _count: "desc" }
-                        }
-                      }
+                      field: "verb",
+                      order: {_count: "desc"}
                     }
-                 }
-             }
-        }
+                  }
+                }
+              }
+            }
+          }
 
 
         end
@@ -47,12 +43,12 @@ module Lanalytics
           #add new verbs here if needed
 
           result[bucket.with_indifferent_access[:key]] = {
-              course_id: bucket.with_indifferent_access[:key],
-              visited: get_agg_value(buckets, 'visited'),
-              watched_question: get_agg_value(buckets, 'watched_question'),
-              asked_question: get_agg_value(buckets, 'asked_question'),
-              answered_question: get_agg_value(buckets, 'answered_question'),
-              commented: get_agg_value(buckets, 'commented')
+            course_id: bucket.with_indifferent_access[:key],
+            visited: get_agg_value(buckets, 'visited'),
+            watched_question: get_agg_value(buckets, 'watched_question'),
+            asked_question: get_agg_value(buckets, 'asked_question'),
+            answered_question: get_agg_value(buckets, 'answered_question'),
+            commented: get_agg_value(buckets, 'commented')
           }
         end
         result
@@ -60,12 +56,12 @@ module Lanalytics
       end
 
       def self.get_agg_value buckets, verb
-         b = buckets.find{ |hash| hash["key"] == verb }
-         if b.present?
-           b[:doc_count].to_i
-         else
-           0
-         end
+        b = buckets.find { |hash| hash["key"] == verb }
+        if b.present?
+          b[:doc_count].to_i
+        else
+          0
+        end
       end
 
       def self.verbs

@@ -10,34 +10,18 @@ module Lanalytics
           client.search index: datasource.index, body: {
             size: 10000,
             query: {
-              filtered: {
-                query: {
-                  bool: {
-                    must: [
-                      {
-                        match: {
-                          verb: verbs.join(' OR ')
-                        }
-                      }
-                    ] + (all_filters(course_id))
-                  }
-                },
+              bool: {
+                must: [
+                  { match: { verb: verbs.join(' OR ') } },
+                  { exists: { field: 'in_context.user_location_longitude' } }
+                ] + (all_filters(course_id)),
                 filter: {
-                  and: [
-                    {
-                      range: {
-                        timestamp: {
-                          gte: start_time.iso8601,
-                          lte: end_time.iso8601
-                        }
-                      }
-                    },
-                    {
-                      exists: {
-                        field: 'in_context.user_location_longitude'
-                      }
+                  range: {
+                    timestamp: {
+                      gte: start_time.iso8601,
+                      lte: end_time.iso8601
                     }
-                  ]
+                  }
                 }
               }
             }

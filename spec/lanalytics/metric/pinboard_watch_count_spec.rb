@@ -24,7 +24,7 @@ RSpec.describe Lanalytics::Metric::PinboardWatchCount do
 
     it 'queries the correct verbs' do
       expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
+        expect(options[:body][:query][:bool][:must]
           .first[:match][:verb]).to eq(
             'VISITED_PINBOARD OR VISITED_QUESTION')
       end.and_return('{}')

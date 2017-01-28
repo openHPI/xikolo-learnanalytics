@@ -61,6 +61,10 @@ class JobsController < ApplicationController
         if params[:task_scope] && params[:user_id]
           CreateCourseEventsExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag])
         end
+      when 'combined_course_export'
+        if params[:task_scope] && params[:user_id]
+          CreateCombinedCourseExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag], params[:extended_flag] )
+        end
     end
     respond_with job
   end

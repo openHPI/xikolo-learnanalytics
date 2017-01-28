@@ -96,8 +96,8 @@ module Lanalytics
 
           course_code = match[:course_code]
           begin
-            item_uuid = UUID(match[:item_short_uuid]).to_s
-          rescue Youyouaidi::InvalidUUIDError
+            item_uuid = UUID4(match[:item_short_uuid]).to_s(format: :base62)
+          rescue TypeError
             return
           end
 
@@ -160,7 +160,7 @@ module Lanalytics
             with_attribute :resource_type_medium, :string, type_medium
           end
 
-          resource_uri = "/courses/#{course_code}/item/#{UUID(processing_unit[:id]).to_short_string}"
+          resource_uri = "/courses/#{course_code}/item/#{UUID4(processing_unit[:id]).to_s(format: :base62)}"
           resource_type_id = MoocdbDataSchemaHashingHelper.hash_to_resource_type_id(type_content, type_medium)
 
           resource_entity = Lanalytics::Processing::LoadORM::Entity.create(:resources) do

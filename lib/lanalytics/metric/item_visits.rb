@@ -17,74 +17,57 @@ module Lanalytics
       end
 
 
-      def self.get_data resource_id, last_day_only = false, now_only = false
-        conditions = [
-            {
-                match_phrase: {
-                    'resource.resource_uuid' => resource_id
-                }
-            },
-            {
-                match: {
-                    verb: verbs.join(' OR ')
-                }
+      def self.get_data(resource_id, last_day_only = false, now_only = false)
+        query = {
+          size: 0,
+          query: {
+            bool: {
+              must: [
+                { match: { 'resource.resource_uuid' => resource_id } },
+                { match: { verb: 'visited_item' } }
+              ]
             }
-        ]
+          }
+        }
 
         if last_day_only
           start_time = DateTime.now - 1.day
           end_time = DateTime.now
-          filter = {
-              range: {
-                  timestamp: {
-                      gte: DateTime.parse(start_time.to_s).iso8601,
-                      lte: DateTime.parse(end_time.to_s).iso8601
-                  }
+          query[:query][:bool][:filter] = {
+            range: {
+              timestamp: {
+                gte: DateTime.parse(start_time.to_s).iso8601,
+                lte: DateTime.parse(end_time.to_s).iso8601
               }
+            }
           }
-          conditions << filter
         end
 
         if now_only
           start_time = DateTime.now - 15.minutes
           end_time = DateTime.now
-          filter = {
-              range: {
-                  timestamp: {
-                      gte: DateTime.parse(start_time.to_s).iso8601,
-                      lte: DateTime.parse(end_time.to_s).iso8601
-                  }
+          query[:query][:bool][:filter] = {
+            range: {
+              timestamp: {
+                gte: DateTime.parse(start_time.to_s).iso8601,
+                lte: DateTime.parse(end_time.to_s).iso8601
               }
+            }
           }
-          conditions << filter
         end
 
-        query = {
-            size: 0,
-            query: {
-                bool: {
-                    must: conditions
-                }
+        query[:aggs] = {
+          distinct_user_count: {
+            cardinality: {
+              field: 'user.resource_uuid'
             }
-        }
-
-        query[:aggs] =  {
-            distinct_user_count: {
-                cardinality: {
-                    field: 'user.resource_uuid'
-                }
-            }
+          }
         }
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: query
         end
         result.with_indifferent_access
-      end
-
-      def self.verbs
-        %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
-            VISITED_ANNOUNCEMENTS VISITED_RECAP VISITED_ITEM VISITED_PINBOARD)
       end
 
     end

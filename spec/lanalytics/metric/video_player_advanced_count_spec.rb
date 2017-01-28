@@ -24,7 +24,7 @@ RSpec.describe Lanalytics::Metric::VideoPlayerAdvancedCount do
 
     it 'queries the correct verbs' do
       expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
+        expect(options[:body][:query][:bool][:must]
           .first[:match][:verb]).to eq(
             'VIDEO_CHANGE_SIZE OR VIDEO_CHANGE_SPEED OR VIDEO_FULLSCREEN')
       end.and_return('{}')

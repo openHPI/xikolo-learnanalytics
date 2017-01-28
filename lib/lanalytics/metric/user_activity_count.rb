@@ -7,19 +7,15 @@ module Lanalytics
         end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
-              size:0,
-              query: {
-                  filtered: {
-                      filter: {
-                          range: {
-                              timestamp: {
-                                  gte: start_time.iso8601,
-                                  lte: end_time.iso8601
-                              }
-                          }
-                      }
-                  }
+            size: 0,
+            query: {
+              range: {
+                timestamp: {
+                  gte: start_time.iso8601,
+                  lte: end_time.iso8601
+                }
               }
+            }
           }
         end
         result['hits']['total']
