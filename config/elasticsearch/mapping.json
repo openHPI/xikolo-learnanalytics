@@ -1,4 +1,15 @@
 {
+  "settings": {
+    "analysis": {
+      "normalizer": {
+        "keyword_lowercase": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": "lowercase"
+        }
+      }
+    }
+  },
   "mappings": {
     "EXP_STATEMENT": {
       "properties": {
@@ -20,34 +31,42 @@
               "type": "integer"
             },
             "build_version_name": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "certificate": {
               "type": "boolean"
             },
             "client_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "commentable_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "commentable_type": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "confirmation_of_participation": {
               "type": "boolean"
             },
             "course_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "current_orientation": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "current_quality": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "current_source": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "current_speed": {
               "type": "float"
@@ -56,16 +75,20 @@
               "type": "float"
             },
             "device": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "dialog": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "exercise": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "file_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "hd_video": {
               "type": "boolean"
@@ -74,52 +97,63 @@
               "type": "text"
             },
             "item_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "learning_room_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "list_style": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "max_points": {
               "type": "float"
             },
             "network": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "new_current_time": {
               "type": "float"
             },
             "new_quality": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "new_source": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "new_speed": {
               "type": "float"
             },
             "new_state": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "old_current_time": {
               "type": "float"
             },
             "old_quality": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "old_source": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "old_speed": {
               "type": "float"
             },
             "platform": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "platform_version": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "points": {
               "type": "float"
@@ -137,19 +171,23 @@
               "type": "boolean"
             },
             "preferred_language": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "provider_name": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "provider_start_url": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "quantile": {
               "type": "double"
             },
             "question_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "quiz_access_time": {
               "type": "date"
@@ -158,7 +196,8 @@
               "type": "date"
             },
             "quiz_type": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "quiz_version_at": {
               "type": "date"
@@ -179,13 +218,15 @@
               "type": "boolean"
             },
             "runtime": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "runtime_api_level": {
               "type": "integer"
             },
             "runtime_version": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "screen_density": {
               "type": "integer"
@@ -197,13 +238,16 @@
               "type": "integer"
             },
             "sd_video": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "section_id": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "service": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "slides": {
               "type": "boolean"
@@ -218,22 +262,27 @@
               "type": "text"
             },
             "user_app_version": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_ip": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_local_timestamp": {
               "type": "date"
             },
             "user_location_city": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_location_country_code": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_location_country_name": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_location_latitude": {
               "type": "double"
@@ -242,26 +291,31 @@
               "type": "double"
             },
             "user_location_time_zone": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_os": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "user_tags": {
               "type": "text"
             },
             "variant": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             }
           }
         },
         "resource": {
           "properties": {
             "content_type": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "resource_uuid": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "text": {
               "type": "text"
@@ -277,12 +331,14 @@
         "user": {
           "properties": {
             "resource_uuid": {
-              "type": "keyword"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             }
           }
         },
         "verb": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "with_result": {
           "type": "object"
@@ -292,31 +348,39 @@
     "referral": {
       "properties": {
         "course_id": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "referrer": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "referrer_page": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "timestamp": {
           "type": "date"
         },
         "tracking_campaign": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "tracking_external_link": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "tracking_id": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "tracking_type": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         },
         "user_id": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "keyword_lowercase"
         }
       }
     }
