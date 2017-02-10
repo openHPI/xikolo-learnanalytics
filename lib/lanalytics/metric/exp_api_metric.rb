@@ -27,6 +27,7 @@ module Lanalytics
       def self.filters
         []
       end
+
     end
   end
 end

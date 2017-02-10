@@ -1,14 +1,13 @@
 module Lanalytics
   module Metric
     class ExpApiCountMetric < ExpApiMetric
+
       def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
         result = datasource.exec do |client|
           query = {
             query: {
               bool: {
-                must: [
-                  {match: {verb: verbs.join(' OR ')}}
-                ] + (all_filters(course_id, user_id))
+                must: [] + verbs_filter + all_filters(course_id, user_id)
               }
             }
           }
@@ -23,12 +22,27 @@ module Lanalytics
 
           client.count index: datasource.index, body: query
         end
-        {count: result['count']}
+        { count: result['count'] }
       end
 
       def self.verbs
         []
       end
+
+      private
+
+      def self.verbs_filter
+        if verbs == nil || verbs.size == 0
+          return []
+        end
+
+        filter = [ { bool: { should: [] } } ]
+        verbs.each do |verb|
+          filter[0][:bool][:should] << { match: { verb: verb } }
+        end
+        filter
+      end
+
     end
   end
 end

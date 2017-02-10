@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class UserCourseCountry < ExpApiMetric
+
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         unescaped_query(user_id, course_id, start_time, end_time, resource_id, page, per_page).to_json
       end
@@ -45,6 +46,7 @@ module Lanalytics
           return ''
         end
       end
+
     end
   end
 end

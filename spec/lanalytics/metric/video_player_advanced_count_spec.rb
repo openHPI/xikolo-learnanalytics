@@ -21,14 +21,6 @@ RSpec.describe Lanalytics::Metric::VideoPlayerAdvancedCount do
     subject { described_class.query user_id, course_id, start_time, end_date, nil, nil, nil }
 
     it { is_expected.to eq(count: 15) }
-
-    it 'queries the correct verbs' do
-      expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:bool][:must]
-          .first[:match][:verb]).to eq(
-            'VIDEO_CHANGE_SIZE OR VIDEO_CHANGE_SPEED OR VIDEO_FULLSCREEN')
-      end.and_return('{}')
-      subject
-    end
   end
+
 end

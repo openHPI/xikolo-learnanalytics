@@ -61,6 +61,7 @@ module Lanalytics
           average_points_percentage_first_attempt: first_attempt_avg
         }
       end
+
     end
   end
 end

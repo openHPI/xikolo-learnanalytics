@@ -1,8 +1,8 @@
 module Lanalytics
   module Metric
     class CourseActivityList < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
 
+      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day)
         end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
 
@@ -52,10 +52,9 @@ module Lanalytics
           }
         end
         result
-
       end
 
-      def self.get_agg_value buckets, verb
+      def self.get_agg_value(buckets, verb)
         b = buckets.find { |hash| hash["key"] == verb }
         if b.present?
           b[:doc_count].to_i
@@ -64,9 +63,6 @@ module Lanalytics
         end
       end
 
-      def self.verbs
-        []
-      end
     end
   end
 end

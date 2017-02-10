@@ -16,7 +16,6 @@ module Lanalytics
         result
       end
 
-
       def self.get_data(resource_id, last_day_only = false, now_only = false)
         query = {
           size: 0,

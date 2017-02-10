@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class TopCountries < ExpApiMetric
+
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -41,6 +42,7 @@ module Lanalytics
         end
         processed_result.sort_by {|i| i[:distinct_users]}.reverse
       end
+
     end
   end
 end

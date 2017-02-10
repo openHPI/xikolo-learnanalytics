@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class CourseActivityTimebased < ExpApiMetric
+
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -27,7 +28,6 @@ module Lanalytics
                 }
               }
             }
-
           }
         end
         convert_to_timestamps(result.with_indifferent_access[:aggregations][:timestamps][:buckets])
@@ -46,9 +46,6 @@ module Lanalytics
         ]
       end
 
-      def self.verbs
-        []
-      end
     end
   end
 end

@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class QuestionResponseTime < ExpApiMetric
+
       def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
         answer_statements = datasource.exec do |client|
           query = {
@@ -55,6 +56,7 @@ module Lanalytics
 
         response_times.sum.to_f / response_times.size
       end
+
     end
   end
 end

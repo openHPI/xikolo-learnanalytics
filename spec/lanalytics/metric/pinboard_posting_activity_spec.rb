@@ -22,15 +22,6 @@ RSpec.describe Lanalytics::Metric::PinboardPostingActivity do
 
     it { is_expected.to eq(count: 15) }
 
-    it 'queries the correct verbs' do
-      expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:bool][:must]
-          .first[:match][:verb]).to eq(
-            'ASKED_QUESTION OR ANSWERED_QUESTION OR COMMENTED')
-      end.and_return('{}')
-      subject
-    end
-
     it 'queries the course_id' do
       expect(client).to receive(:count) do |options|
         expect(options[:body][:query][:bool][:must]
