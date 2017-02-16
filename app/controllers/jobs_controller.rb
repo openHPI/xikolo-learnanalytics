@@ -21,13 +21,9 @@ class JobsController < ApplicationController
           "OR updated_at >= '#{(Time.now - 3.days).utc.iso8601}'"
       )
     end
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-      @offset = params['offset']
-    end
-    respond_with jobs.offset(@offset)
 
+    @offset = Integer(params['offset']) rescue 0
+    respond_with jobs.offset(@offset)
   end
 
   def show
