@@ -1,4 +1,4 @@
-require 'rspec'
+require 'spec_helper'
 
 describe QcRulesController, type: :controller do
   let(:qc_rule) { FactoryGirl.create :qc_rule }
@@ -6,45 +6,42 @@ describe QcRulesController, type: :controller do
   let(:params) { FactoryGirl.attributes_for(:qc_rule) }
   let(:default_params) { {format: 'json'}}
 
-
   describe '#index' do
+    subject { get :index }
+
     it 'should answer' do
-      get :index
+      subject
       expect(response.status).to eq(200)
     end
 
-    it 'should create a new Rule' do
+    context 'when an active rule exists' do
+      before do
+        FactoryGirl.create :qc_rule, is_active: true
+      end
 
-      expect(QcRule.all.count).to eq(0)
-      post :create, qc_rule: {worker:'PinboardActivityWorker', is_active: true}
-      assert_response :success
-      rules = QcRule.all
-      puts " ##############"
-      puts "''''''''''''''''"
-
-      puts rules
-      expect(rules.count).to eq(1)
+      it 'should list that rule' do
+        subject
+        expect(json.size).to eq 1
+      end
     end
   end
 
   describe '#show' do
-    it 'should show a rule' do
-      qc_rule
-      get :show, id: qc_rule.id
-      expect(response.status).to eq(200)
+    subject { get :show, id: qc_rule.id }
+
+    it { is_expected.to have_http_status 200 }
+
+    it 'should show the rule' do
+      subject
       expect(json).to eq(QcRuleDecorator.new(qc_rule).as_json(api_version: 1).stringify_keys)
     end
-
   end
 
-  describe "#update" do
-    it 'should show update rule' do
-      qc_rule
-      expect(qc_rule.is_active).to eq(false)
-      patch :update, id: qc_rule.id, is_active: true
-      qc_rule.reload
-      expect(qc_rule.is_active).to eq(true)
+  describe '#update' do
+    subject { patch :update, id: qc_rule.id, is_active: true }
+
+    it 'should update the rule' do
+      expect { subject }.to change { qc_rule.reload.is_active }.from(false).to(true)
     end
   end
-
 end
