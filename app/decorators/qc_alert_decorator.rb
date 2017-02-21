@@ -4,7 +4,8 @@ class QcAlertDecorator< ApplicationDecorator
   def as_json (**opts)
     { id: model.id,
       qc_rule_id: model.qc_rule_id,
-      worker_name: model.qc_rule.present? ? model.qc_rule.worker : nil,
+      worker_name: model.qc_rule.present? ? model.qc_rule.worker : nil, # @deprecated
+      rule_name: model.qc_rule.present? ? model.qc_rule.name : nil,
       severity: model.severity,
       status: model.status,
       course_id: model.course_id,
