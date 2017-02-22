@@ -107,6 +107,7 @@ gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 gem 'responders'
 gem 'api-responder'
 gem 'decorate-responder'
+gem 'will_paginate'
 gem 'paginate-responder'
 gem 'draper'
 gem 'mechanize'
