@@ -6,7 +6,7 @@ class QcAlertsController < ApplicationController
 
   respond_to :json
 
-  rfc6570_params index: [:user_id, :course_id, :offset]
+  rfc6570_params index: [:user_id, :course_id, :global_ignored]
   def index
     alerts = QcAlert.joins('LEFT OUTER JOIN qc_alert_statuses ON qc_alerts.id = qc_alert_statuses.qc_alert_id')
     alerts.where!('qc_alert_statuses.ignored is FALSE OR qc_alert_statuses.ignored is NULL')
@@ -15,11 +15,8 @@ class QcAlertsController < ApplicationController
 
     alerts.where!('qc_alerts.course_id = ?', params[:course_id]) if params[:course_id]
 
-    alerts.offset!(params['offset']) if params['offset']
-
     respond_with alerts
   end
-
 
   def show
     respond_with QcAlert.find params[:id]

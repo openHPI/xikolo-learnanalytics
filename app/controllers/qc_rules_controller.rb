@@ -12,13 +12,7 @@ class QcRulesController < ApplicationController
       rules.where! is_active: true
     end
 
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-      @offset = params['offset']
-    end
-
-    respond_with rules.offset(@offset)
+    respond_with rules
   end
 
   def show

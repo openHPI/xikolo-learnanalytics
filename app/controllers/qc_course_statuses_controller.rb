@@ -5,17 +5,9 @@ class QcCourseStatusesController< ApplicationController
              Responders::PaginateResponder
 
   respond_to :json
-  rfc6570_params index: [ :course_id, :qc_rule_id]
 
   def index
-    course_statuses = QcCourseStatus.all
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-    @offset = params['offset']
-    end
-
-    respond_with course_statuses.offset(@offset)
+    respond_with QcCourseStatus.all
   end
 
   def show
