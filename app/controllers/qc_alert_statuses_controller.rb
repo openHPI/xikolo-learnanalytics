@@ -5,17 +5,9 @@ class QcAlertStatusesController < ApplicationController
              Responders::PaginateResponder
 
   respond_to :json
-  rfc6570_params index: [ :user_id, :ignored, :qc_alert_id]
+
   def index
-    alert_statuses = QcAlertStatus.all
-
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-      @offset = params['offset']
-    end
-
-    respond_with alert_statuses.offset(@offset)
+    respond_with QcAlertStatus.all
   end
 
   def show
@@ -34,7 +26,6 @@ class QcAlertStatusesController < ApplicationController
       qc_alert_status.save
     end
     respond_with qc_alert_status
-
   end
 
   private
@@ -42,7 +33,5 @@ class QcAlertStatusesController < ApplicationController
   def qc_alert_statuses_params
     params.permit( :qc_alert_id, :user_id, :ignored, :ack, :muted)
   end
-
-
 
 end

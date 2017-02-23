@@ -22,8 +22,7 @@ class JobsController < ApplicationController
       )
     end
 
-    @offset = Integer(params['offset']) rescue 0
-    respond_with jobs.offset(@offset)
+    respond_with jobs
   end
 
   def show
