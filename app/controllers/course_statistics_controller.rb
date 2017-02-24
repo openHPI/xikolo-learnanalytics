@@ -25,7 +25,7 @@ class CourseStatisticsController < ApplicationController
     respond_with CourseStatistic.find course_statistic.id
   end
 
-private
+  private
 
   def calculate_statistic(course_id, course_statistic_id)
     course = Xikolo::Course::Course.find(course_id)
@@ -104,7 +104,9 @@ private
                            consumption_rate: consumption_rate,
                            enrollments_per_day: cresults || [],
                            hidden: course_info[:course].hidden,
-                           days_since_coursestart: days_since_coursestart
+                           days_since_coursestart: days_since_coursestart,
+                           learning_rooms_threads: course_info[:pinboard_course_stat].posts_in_learning_rooms,
+                           learning_rooms_threads_last_day: course_info[:pinboard_course_stat].posts_in_learning_rooms_last_day
     )
   end
 
