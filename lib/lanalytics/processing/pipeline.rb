@@ -103,14 +103,14 @@ module Lanalytics
           Rails.logger.debug(%Q{
             Transformer #{transformer.class.name} received the following processing units:
             #{processing_units.inspect}
-          })
+          }) rescue Rails.logger.error("Error while inspecting ProcessingUnits of Transformer #{transformer.class.name}")
 
           transformer.transform(original_event, processing_units, load_commands, pipeline_ctx)
 
           Rails.logger.debug(%Q{
             Transformer #{transformer.class.name} transformed to the following load commands:
             #{load_commands.inspect}
-          })
+          }) rescue Rails.logger.error("Error while inspecting LoadCommands of Transformer #{transformer.class.name}")
         end
 
         @loaders.each do |loader|
