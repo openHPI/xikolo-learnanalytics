@@ -489,7 +489,7 @@ GEM
     xikolo-lti (0.0.13)
       acfs (~> 0.32)
       activesupport
-    xikolo-pinboard (4.38)
+    xikolo-pinboard (4.39)
       acfs (~> 0.41)
       activesupport
       uuid4
@@ -590,7 +590,7 @@ DEPENDENCIES
   xikolo-course (~> 9.9.0)
   xikolo-file (~> 1.8.1)
   xikolo-helpdesk
-  xikolo-pinboard (~> 4.38)
+  xikolo-pinboard (~> 4.39)
   xikolo-quiz
   xikolo-richtext
   xikolo-submission
