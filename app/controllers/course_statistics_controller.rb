@@ -85,13 +85,13 @@ class CourseStatisticsController < ApplicationController
                            enrollments_at_course_middle_netto: course_info[:extended_course_stat].student_enrollments_at_middle,
                            enrollments_at_course_middle: course_info[:extended_course_stat].student_enrollments_at_middle_netto,
                            enrollments_at_course_end: course_info[:extended_course_stat].student_enrollments_at_end,
-                           total_questions: course_info[:pinboard_course_stat].questions,
+                           questions: course_info[:pinboard_course_stat].questions,
                            questions_last_day: course_info[:pinboard_course_stat].questions_last_day,
-                           total_answers: course_info[:pinboard_course_stat].answers,
+                           answers: course_info[:pinboard_course_stat].answers,
                            answers_last_day: course_info[:pinboard_course_stat].answers_last_day,
-                           total_comments_on_answers: course_info[:pinboard_course_stat].comments_on_answers,
+                           comments_on_answers: course_info[:pinboard_course_stat].comments_on_answers,
                            comments_on_answers_last_day: course_info[:pinboard_course_stat].comments_on_answers_last_day,
-                           total_comments_on_questions: course_info[:pinboard_course_stat].comments_on_questions,
+                           comments_on_questions: course_info[:pinboard_course_stat].comments_on_questions,
                            comments_on_questions_last_day: course_info[:pinboard_course_stat].comments_on_questions_last_day,
                            certificates: course_info[:extended_course_stat].certificates_count,
                            helpdesk_tickets: course_info[:helpdesk_stat].ticket_count,
@@ -105,8 +105,14 @@ class CourseStatisticsController < ApplicationController
                            enrollments_per_day: cresults || [],
                            hidden: course_info[:course].hidden,
                            days_since_coursestart: days_since_coursestart,
-                           learning_rooms_threads: course_info[:pinboard_course_stat].posts_in_learning_rooms,
-                           learning_rooms_threads_last_day: course_info[:pinboard_course_stat].posts_in_learning_rooms_last_day
+                           questions_in_learning_rooms: course_info[:pinboard_course_stat].questions_in_learning_rooms,
+                           questions_last_day_in_learning_rooms: course_info[:pinboard_course_stat].questions_last_day_in_learning_rooms,
+                           answers_in_learning_rooms: course_info[:pinboard_course_stat].answers_in_learning_rooms,
+                           answers_last_day_in_learning_rooms: course_info[:pinboard_course_stat].answers_last_day_in_learning_rooms,
+                           comments_on_answers_in_learning_rooms: course_info[:pinboard_course_stat].comments_on_answers_in_learning_rooms,
+                           comments_on_answers_last_day_in_learning_rooms: course_info[:pinboard_course_stat].comments_on_answers_last_day_in_learning_rooms,
+                           comments_on_questions_in_learning_rooms: course_info[:pinboard_course_stat].comments_on_questions_in_learning_rooms,
+                           comments_on_questions_last_day_in_learning_rooms: course_info[:pinboard_course_stat].comments_on_questions_last_day_in_learning_rooms
     )
   end
 
