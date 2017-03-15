@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170223155315) do
+ActiveRecord::Schema.define(version: 20170314095111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,13 +39,13 @@ ActiveRecord::Schema.define(version: 20170223155315) do
     t.integer  "enrollments_at_course_middle_netto"
     t.integer  "enrollments_at_course_middle"
     t.integer  "enrollments_at_course_end"
-    t.integer  "total_questions"
+    t.integer  "questions"
     t.integer  "questions_last_day"
-    t.integer  "total_answers"
+    t.integer  "answers"
     t.integer  "answers_last_day"
-    t.integer  "total_comments_on_answers"
+    t.integer  "comments_on_answers"
     t.integer  "comments_on_answers_last_day"
-    t.integer  "total_comments_on_questions"
+    t.integer  "comments_on_questions"
     t.integer  "comments_on_questions_last_day"
     t.integer  "certificates"
     t.integer  "helpdesk_tickets"
@@ -60,8 +60,14 @@ ActiveRecord::Schema.define(version: 20170223155315) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "days_since_coursestart"
-    t.integer  "learning_rooms_threads"
-    t.integer  "learning_rooms_threads_last_day"
+    t.integer  "questions_in_learning_rooms"
+    t.integer  "questions_last_day_in_learning_rooms"
+    t.integer  "answers_in_learning_rooms"
+    t.integer  "answers_last_day_in_learning_rooms"
+    t.integer  "comments_on_answers_in_learning_rooms"
+    t.integer  "comments_on_answers_last_day_in_learning_rooms"
+    t.integer  "comments_on_questions_in_learning_rooms"
+    t.integer  "comments_on_questions_last_day_in_learning_rooms"
   end
 
   create_table "datasource_accesses", force: :cascade do |t|
