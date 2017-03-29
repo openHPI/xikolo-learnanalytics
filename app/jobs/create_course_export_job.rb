@@ -61,7 +61,6 @@ class CreateCourseExportJob < CreateExportJob
           Acfs.run
 
           headers += ['User ID',
-                      'Enrollment Role',
                       'Enrollment Date',
                       'Enrollment Day',
                       'User created',
@@ -178,7 +177,6 @@ class CreateCourseExportJob < CreateExportJob
 
             values = []
             values += [item[:user].id,
-                       'student',
                        item[:data].created_at,
                        item[:data].created_at.strftime('%Y-%m-%d'),
                        item[:user].created_at.strftime('%Y-%m-%d'),
