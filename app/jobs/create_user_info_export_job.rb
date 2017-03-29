@@ -88,7 +88,7 @@ class CreateUserInfoExportJob < CreateExportJob
               state = 'r' if enrollment.certificates.present? and enrollment.certificates[:record_of_achievement]
               user_course_states[enrollment.course_id] = state
             else
-              user_course_states[enrollment.course_id] = enrollment.points ? enrollment.points[:percentage] : '-'
+              user_course_states[enrollment.course_id] = enrollment.points ? enrollment.points[:percentage] : ''
             end
           end
 
@@ -122,7 +122,7 @@ class CreateUserInfoExportJob < CreateExportJob
                      top_country,
                      first_enrollment,
                      *user_profile.fields.map { |f| f.value },
-                     *courses.values.map { |c| user_course_states[c.id].present? ? user_course_states[c.id] : '-'}]
+                     *courses.values.map { |c| user_course_states[c.id].present? ? user_course_states[c.id] : ''}]
 
           csv << values
           csv.flush
