@@ -26,7 +26,7 @@ gem 'xikolo-config', '~> 1.66'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'restify', '~> 0.5.0'
+gem 'restify', '~> 1.0'
 gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
@@ -39,7 +39,6 @@ gem 'validates_email_format_of'
 
 # Connecting to RabbitMQ
 gem 'msgr'
-gem 'bunny', '< 1.5' # On production we are using an older RabbitMQ Version (2.XX); this is only supported by a bunny verion < 1.5
 
 #  Needed for some hashing in DataTransformers ...
 gem 'murmurhash3'
@@ -82,7 +81,7 @@ gem 'xikolo-submission'
 gem 'xikolo-video'
 
 # Xikolo service clients
-gem 'acfs', '= 0.42'
+gem 'acfs', '~> 0.42'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -136,7 +135,7 @@ group :development do
   gem 'meta_request'
 
   # To release the lanalytics-model gem
-  gem 'geminabox-rake', '~> 1.1.0'
+  gem 'geminabox-rake', '~> 1.1'
 
   gem 'ruby-prof' # To do performance evaluation
 
