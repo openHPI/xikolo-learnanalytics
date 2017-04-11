@@ -5,6 +5,7 @@ module Lanalytics
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         # uuid is probably base62 encoded, also in elastic
         tracking_id = UUID4.try_convert(resource_id)
+        return {} unless tracking_id
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -13,10 +14,10 @@ module Lanalytics
               bool: {
                 must: [
                   { match: { 'tracking_type' => 'news' } },
-                  { wildcard: { 'tracking_external_link' => '*' } },
+                  { exists: { 'field' => 'tracking_external_link' } },
                   { bool: { should: [
                     { match: { 'tracking_id' => tracking_id.to_s(format: :default) } },
-                    { match: { 'tracking_id' => tracking_id.to_s(format: :base62) } },
+                    { match: { 'tracking_id' => tracking_id.to_s(format: :base62) } }
                   ] } }
                 ]
               }
@@ -25,10 +26,10 @@ module Lanalytics
               external_links: {
                 terms: {
                   field: 'tracking_external_link',
-                  size: 0
+                  size: 100
                 },
                 aggregations: {
-                  users: {
+                  unique_users: {
                     cardinality: {
                       field: 'user_id'
                     }
@@ -42,7 +43,7 @@ module Lanalytics
         return result['aggregations']['external_links']['buckets'].each_with_object({}) do |link, hash|
           hash[link['key']] = {
             total_clicks: link['doc_count'],
-            unique_clicks: link['users']['value']
+            unique_clicks: link['unique_users']['value']
           }
         end
       end
