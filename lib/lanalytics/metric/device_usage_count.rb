@@ -11,7 +11,7 @@ module Lanalytics
         end
 
         # build conditions for query
-        conditions = all_filters(course_id,nil,resource_id)
+        conditions = all_filters(nil, course_id, resource_id)
 
         conditions << { exists: { field: 'in_context.runtime' }}
 

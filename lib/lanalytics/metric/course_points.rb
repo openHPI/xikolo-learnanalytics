@@ -12,7 +12,7 @@ module Lanalytics
                     must: [
                       { match: { 'user.resource_uuid' => user_id } },
                       { match: { verb: 'COMPLETED_COURSE' } }
-                    ] + (all_filters(course_id)),
+                    ] + (all_filters(nil, course_id, nil)),
                     filter: {
                       range: {
                         timestamp: {

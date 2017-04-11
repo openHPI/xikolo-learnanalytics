@@ -7,7 +7,7 @@ module Lanalytics
           query = {
             query: {
               bool: {
-                must: [] + verbs_filter + all_filters(course_id, user_id)
+                must: [] + verbs_filter + all_filters(user_id, course_id, nil)
               }
             }
           }

@@ -7,7 +7,7 @@ module Lanalytics
           bool: {
             must: [
               { match: { verb: 'SUBMITTED_QUIZ' } }
-            ] + (all_filters(course_id, user_id))
+            ] + (all_filters(user_id, course_id, nil))
           }
         }
         if resource_id.present?
