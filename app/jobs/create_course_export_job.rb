@@ -98,8 +98,9 @@ class CreateCourseExportJob < CreateExportJob
                         'Graded Quiz Performance',
                         'Main Quiz Performance',
                         'Bonus Quiz Performance',
-                        'Course Activity',
-                        'Question Response Time']
+                        'Course Activity'
+                        #'Question Response Time'
+                        ]
           end
 
           headers += ['Enrollment Delta in Days',
@@ -168,8 +169,8 @@ class CreateCourseExportJob < CreateExportJob
               course_activity = fetch_metric('CourseActivity', course_id, user.id)
               metrics[:course_activity] = course_activity.present? && course_activity[:count].present? ? course_activity[:count].to_s : '-99'
 
-              question_response_time = fetch_metric('QuestionResponseTime', course_id, user.id)
-              metrics[:question_response_time] = question_response_time.present? && question_response_time[:average].present? ? question_response_time[:average].to_s : '-99'
+              # question_response_time = fetch_metric('QuestionResponseTime', course_id, user.id)
+              # metrics[:question_response_time] = question_response_time.present? && question_response_time[:average].present? ? question_response_time[:average].to_s : '-99'
 
               user_course_country = fetch_metric('UserCourseCountry', course_id, user.id, :unescaped_query)
               metrics[:user_course_country] = user_course_country.present? ? user_course_country : 'zz'
@@ -214,8 +215,9 @@ class CreateCourseExportJob < CreateExportJob
                          clustering_metric_value(clustering_metrics, user.id, :graded_quiz_performance),
                          clustering_metric_value(clustering_metrics, user.id, :main_quiz_performance),
                          clustering_metric_value(clustering_metrics, user.id, :bonus_quiz_performance),
-                         metrics[:course_activity],
-                         metrics[:question_response_time]]
+                         metrics[:course_activity]
+                         # metrics[:question_response_time]
+              ]
             end
 
             values += [(item[:data].created_at - course.start_date).to_i,
