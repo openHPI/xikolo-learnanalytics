@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class GeoActivity < ExpApiMetric
+
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         course_id = nil unless course_id.present? # handle empty state
         start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.minute)
@@ -10,34 +11,17 @@ module Lanalytics
           client.search index: datasource.index, body: {
             size: 10000,
             query: {
-              filtered: {
-                query: {
-                  bool: {
-                    must: [
-                      {
-                        match: {
-                          verb: verbs.join(' OR ')
-                        }
-                      }
-                    ] + all_filters(user_id, course_id, resource_id)
-                  }
-                },
+              bool: {
+                must: [
+                  { exists: { field: 'in_context.user_location_longitude' } }
+                ] + (all_filters(course_id)),
                 filter: {
-                  and: [
-                    {
-                      range: {
-                        timestamp: {
-                          gte: start_time.iso8601,
-                          lte: end_time.iso8601
-                        }
-                      }
-                    },
-                    {
-                      exists: {
-                        field: 'in_context.user_location_longitude'
-                      }
+                  range: {
+                    timestamp: {
+                      gte: start_time.iso8601,
+                      lte: end_time.iso8601
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -52,17 +36,13 @@ module Lanalytics
           if processed_result[key]
             processed_result[key][:count] =  processed_result[key][:count] + 1
           else
-            processed_result[key] = {count:1, lon: item['user_location_longitude'] , lat: item['user_location_latitude'] }
+            processed_result[key] = { count: 1, lon: item['user_location_longitude'], lat: item['user_location_latitude'] }
           end
         end
         #we dont need the keys in our return value
         processed_result.values
       end
 
-      def self.verbs
-        %w( VISITED_QUESTION VISITED_PROGRESS VISITED_LEARNING_ROOMS
-            VISITED_ANNOUNCEMENTS VISITED_RECAP VISITED_ITEM VISITED_PINBOARD)
-      end
     end
   end
 end

@@ -21,14 +21,6 @@ RSpec.describe Lanalytics::Metric::PinboardWatchCount do
     subject { described_class.query user_id, course_id, start_time, end_date, nil, nil, nil }
 
     it { is_expected.to eq(count: 15) }
-
-    it 'queries the correct verbs' do
-      expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .first[:match][:verb]).to eq(
-            'VISITED_PINBOARD OR VISITED_QUESTION')
-      end.and_return('{}')
-      subject
-    end
   end
+
 end

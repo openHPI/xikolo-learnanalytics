@@ -9,11 +9,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  {
-                    match_phrase: {
-                      'course_id' => course_id
-                    }
-                  }
+                  { match: { 'course_id' => course_id } }
                 ]
               }
             },
@@ -21,14 +17,18 @@ module Lanalytics
               referrer: {
                 terms: {
                   field: 'referrer',
-                  size: 0
+                  size: 25
                 }
               }
             }
           }
         end
 
-        return result['aggregations']['referrer']['buckets'].each_with_object({}) { |item, hash| hash[item['key']] = item['doc_count'] }
+        result_set = {}
+        result['aggregations']['referrer']['buckets'].each do |item|
+          result_set[item['key']] = item['doc_count']
+        end
+        result_set
       end
 
     end

@@ -16,14 +16,14 @@ class CourseStatisticDecorator < ApplicationDecorator
       enrollments_at_course_middle_netto: model.enrollments_at_course_middle_netto,
       enrollments_at_course_middle: model.enrollments_at_course_middle,
       enrollments_at_course_end: model.enrollments_at_course_end,
-      total_questions: model.total_questions,
+      questions: model.questions,
       questions_last_day: model.questions_last_day,
-      total_answers: model.total_answers,
+      answers: model.answers,
       answers_last_day: model.answers_last_day,
-      total_comments_on_answers: model.total_comments_on_answers,
+      comments_on_answers: model.comments_on_answers,
       comments_on_answers_last_day: model.comments_on_answers_last_day,
-      total_comments_on_questions: model.total_comments_on_questions,
-      comments_on_questions_last_day: comments_on_questions_last_day,
+      comments_on_questions: model.comments_on_questions,
+      comments_on_questions_last_day: model.comments_on_questions_last_day,
       certificates: model.certificates,
       helpdesk_tickets: model.helpdesk_tickets,
       helpdesk_tickets_last_day: helpdesk_tickets_last_day,
@@ -36,7 +36,15 @@ class CourseStatisticDecorator < ApplicationDecorator
       consumption_rate: model.consumption_rate,
       enrollments_per_day: model.enrollments_per_day,
       hidden: model.hidden,
-      days_since_coursestart: model.days_since_coursestart
+      days_since_coursestart: model.days_since_coursestart,
+      questions_in_learning_rooms: model.questions_in_learning_rooms,
+      questions_last_day_in_learning_rooms: model.questions_last_day_in_learning_rooms,
+      answers_in_learning_rooms: model.answers_in_learning_rooms,
+      answers_last_day_in_learning_rooms: model.answers_last_day_in_learning_rooms,
+      comments_on_answers_in_learning_rooms: model.comments_on_answers_in_learning_rooms,
+      comments_on_answers_last_day_in_learning_rooms: model.comments_on_answers_last_day_in_learning_rooms,
+      comments_on_questions_in_learning_rooms: model.comments_on_questions_in_learning_rooms,
+      comments_on_questions_last_day_in_learning_rooms: model.comments_on_questions_last_day_in_learning_rooms
     }.as_json(**opts)
   end
 end

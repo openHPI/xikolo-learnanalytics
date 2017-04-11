@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class CombinedMetric
+
       def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
         results = query_dependent(user_id, course_id, start_time, end_date, resource_id)
 
@@ -23,6 +24,7 @@ module Lanalytics
       def self.dependent_metrics
         []
       end
+
     end
   end
 end

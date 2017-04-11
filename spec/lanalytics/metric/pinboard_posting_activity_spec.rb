@@ -22,18 +22,9 @@ RSpec.describe Lanalytics::Metric::PinboardPostingActivity do
 
     it { is_expected.to eq(count: 15) }
 
-    it 'queries the correct verbs' do
-      expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .first[:match][:verb]).to eq(
-            'ASKED_QUESTION OR ANSWERED_QUESTION OR COMMENTED')
-      end.and_return('{}')
-      subject
-    end
-
     it 'queries the course_id' do
       expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
+        expect(options[:body][:query][:bool][:must]
           .second[:bool][:should].first[:match]['in_context.course_id']).to eq(
             course_id)
       end.and_return('{}')
@@ -42,7 +33,7 @@ RSpec.describe Lanalytics::Metric::PinboardPostingActivity do
 
     it 'queries the user_id' do
       expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
+        expect(options[:body][:query][:bool][:must]
           .third[:match]['user.resource_uuid']).to eq(
             user_id)
       end.and_return('{}')
@@ -51,7 +42,7 @@ RSpec.describe Lanalytics::Metric::PinboardPostingActivity do
 
     it 'queries the time' do
       expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:filter][:range][:timestamp]
+        expect(options[:body][:query][:bool][:filter][:range][:timestamp]
           ).to eq ({
             gte: DateTime.parse(start_time).iso8601,
             lte: DateTime.parse(end_time).iso8601})

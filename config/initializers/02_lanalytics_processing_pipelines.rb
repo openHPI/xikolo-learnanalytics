@@ -1,5 +1,9 @@
 # run before integration initializers
 
+# needed for autoloading constants in development
+require "#{Rails.root}/lib/lanalytics/processing/datasource_manager"
+require "#{Rails.root}/lib/lanalytics/processing/pipeline_manager"
+
 LANALYTICS_PIPELINE_FLIPPER_FILE = "#{Rails.root}/config/lanalytics_pipeline_flipper.yml"
 flipper_config = YAML.load_file(LANALYTICS_PIPELINE_FLIPPER_FILE).with_indifferent_access
 flipper_config = flipper_config[Rails.env] || flipper_config
@@ -19,4 +23,3 @@ pipelines ||= []
 pipelines.each do |pipelines_setup_file|
   Lanalytics::Processing::PipelineManager.setup_pipelines("#{PIPELINES_FOLDER}/#{pipelines_setup_file}")
 end
-

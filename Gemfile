@@ -21,12 +21,12 @@ gem 'jbuilder', '~> 2.0'
 gem 'rails-api'
 gem 'xikolo-common', '~> 1.0'
 
-gem 'xikolo-config', '~> 1.37'
+gem 'xikolo-config', '~> 1.66'
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'restify', '~> 0.5.0'
+gem 'restify', '~> 1.0'
 gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
@@ -37,12 +37,8 @@ gem 'forgery'
 gem 'sorcery' # Authentication ...
 gem 'validates_email_format_of'
 
-# For the MOOCdb Schema
-gem 'youyouaidi'
-
 # Connecting to RabbitMQ
 gem 'msgr'
-gem 'bunny', '< 1.5' # On production we are using an older RabbitMQ Version (2.XX); this is only supported by a bunny verion < 1.5
 
 #  Needed for some hashing in DataTransformers ...
 gem 'murmurhash3'
@@ -77,7 +73,7 @@ gem 'database_cleaner'
 gem 'xikolo-file', '~> 1.8.1'
 gem 'xikolo-course', '~> 9.9.0'
 gem 'xikolo-account'
-gem 'xikolo-pinboard', '~> 4.28.0'
+gem 'xikolo-pinboard', '~> 4.39'
 gem 'xikolo-helpdesk'
 gem 'xikolo-quiz'
 gem 'xikolo-richtext'
@@ -85,7 +81,7 @@ gem 'xikolo-submission'
 gem 'xikolo-video'
 
 # Xikolo service clients
-gem 'acfs', '= 0.42'
+gem 'acfs', '~> 0.42'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -110,6 +106,7 @@ gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 gem 'responders'
 gem 'api-responder'
 gem 'decorate-responder'
+gem 'will_paginate'
 gem 'paginate-responder'
 gem 'draper'
 gem 'mechanize'
@@ -138,7 +135,7 @@ group :development do
   gem 'meta_request'
 
   # To release the lanalytics-model gem
-  gem 'geminabox-rake', '~> 1.1.0'
+  gem 'geminabox-rake', '~> 1.1'
 
   gem 'ruby-prof' # To do performance evaluation
 

@@ -74,7 +74,7 @@ class CourseInfoPresenter < PrivatePresenter
   end
 
   def enrollment_id
-    Youyouaidi::UUID.new(enrollment.try(:id)).to_param
+    UUID4(enrollment.try(:id)).to_s(format: :base62)
   end
 
   def meta_tags(request)

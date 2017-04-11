@@ -20,14 +20,14 @@ module Lanalytics
                                 should: [
                                   { match: { 'in_context.course_id' => course_id } },
                                   { match: { 'resource.resource_uuid' => course_id } }
-                                ]
-                              }
-                            },
-                            filter: {
-                              range: {
-                                timestamp: {
-                                  gte: start_time.iso8601,
-                                  lte: end_time.iso8601
+                                ],
+                                filter: {
+                                  range: {
+                                    timestamp: {
+                                      gte: start_time.iso8601,
+                                      lte: end_time.iso8601
+                                    }
+                                  }
                                 }
                               }
                             },

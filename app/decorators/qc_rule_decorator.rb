@@ -3,7 +3,8 @@ class QcRuleDecorator < ApplicationDecorator
 
   def as_json (**opts)
     { id: model.id,
-      worker: model.worker,
+      worker: model.worker, # @deprecated
+      name: model.name,
       is_active: model.is_active,
     }.as_json(**opts)
   end

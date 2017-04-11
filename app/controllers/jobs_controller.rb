@@ -21,13 +21,8 @@ class JobsController < ApplicationController
           "OR updated_at >= '#{(Time.now - 3.days).utc.iso8601}'"
       )
     end
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-      @offset = params['offset']
-    end
-    respond_with jobs.offset(@offset)
 
+    respond_with jobs
   end
 
   def show
@@ -60,6 +55,10 @@ class JobsController < ApplicationController
       when 'course_events_export'
         if params[:task_scope] && params[:user_id]
           CreateCourseEventsExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag])
+        end
+      when 'combined_course_export'
+        if params[:task_scope] && params[:user_id]
+          CreateCombinedCourseExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag], params[:extended_flag] )
         end
     end
     respond_with job

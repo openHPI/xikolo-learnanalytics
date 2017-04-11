@@ -7,20 +7,11 @@ class QcRecommendationsController< ApplicationController
   respond_to :json
 
   def index
-    recommendations = QcRecommendation.all
-
-    if params['offset'].nil?
-      @offset = 0
-    elsif
-      @offset = params['offset']
-    end
-
-    respond_with recommendations.offset(@offset)
+    respond_with QcRecommendation.all
   end
 
   def show
     respond_with QcRecommendation.find params[:id]
   end
-
 
 end

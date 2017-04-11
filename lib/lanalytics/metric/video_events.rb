@@ -8,8 +8,8 @@ module Lanalytics
         change_speed = get_data('VIDEO_CHANGE_SPEED', resource_id, nil)
         seek = get_data('VIDEO_SEEK', resource_id, nil, 'in_context.new_current_time' )
         stop = get_data('VIDEO_STOP', resource_id, nil)
-        fullscreen = get_data('VIDEO_FULLSCREEN', resource_id,  {match_phrase: { 'in_context.new_state' => 'fullscreen'}})
-        fullscreen_off = get_data('VIDEO_FULLSCREEN', resource_id,  {match_phrase: { 'in_context.new_state' => 'player'}})
+        fullscreen = get_data('VIDEO_FULLSCREEN', resource_id,  { match: { 'in_context.new_state' => 'fullscreen' } })
+        fullscreen_off = get_data('VIDEO_FULLSCREEN', resource_id,  { match: { 'in_context.new_state' => 'player' } })
         result = {}
         result = add_to_total(result, pause, 'pause')
         result = add_to_total(result, play, 'play')
@@ -40,10 +40,10 @@ module Lanalytics
         result
       end
 
-      def self.get_data verb, resource_id, add_filter = nil, timefield = "in_context.current_time"
+      def self.get_data(verb, resource_id, add_filter = nil, timefield = 'in_context.current_time')
         conditions = [
           {
-            match_phrase: {
+            match: {
               'resource.resource_uuid' => resource_id
             }
           },

@@ -21,17 +21,6 @@ RSpec.describe Lanalytics::Metric::VideoVisitCount do
     subject { described_class.query user_id, course_id, start_time, end_time, nil, nil, nil }
 
     it { is_expected.to eq(count: 15) }
-
-    it 'queries the correct verbs' do
-      expect(client).to receive(:count) do |options|
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .first[:match][:verb]).to eq(
-            'VISITED_ITEM')
-        expect(options[:body][:query][:filtered][:query][:bool][:must]
-          .fourth[:match_phrase]['resource.content_type']).to eq(
-            'video')
-      end.and_return('{}')
-      subject
-    end
   end
+
 end
