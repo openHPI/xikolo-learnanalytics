@@ -4,7 +4,7 @@ module Lanalytics
 
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
         result = datasource.exec do |client|
-          query_must = all_filters(course_id, user_id, nil)
+          query_must = all_filters(user_id, course_id, nil)
 
           query_must << [
             { match: { 'verb' => 'share_button_click' } }

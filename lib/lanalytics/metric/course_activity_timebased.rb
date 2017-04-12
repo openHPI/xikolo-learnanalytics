@@ -8,7 +8,7 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: all_filters(course_id, user_id),
+                must: all_filters(user_id, course_id, resource_id),
                 filter: {
                   range: {
                     timestamp: {

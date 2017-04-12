@@ -2,12 +2,12 @@ module Lanalytics
   module Metric
     class QuizPerformance < ExpApiMetric
 
-      def self.query(user_id, course_id, start_date = nil, end_date = nil, resource_id, page, per_page)
+      def self.query(user_id, course_id, start_date, end_date, resource_id, page, per_page)
         query = {
           bool: {
             must: [
               { match: { verb: 'SUBMITTED_QUIZ' } }
-            ] + (all_filters(course_id, user_id))
+            ] + (all_filters(user_id, course_id, nil))
           }
         }
         if resource_id.present?
