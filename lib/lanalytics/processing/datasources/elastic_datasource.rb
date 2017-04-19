@@ -27,6 +27,10 @@ module Lanalytics
           yield @client
         end
 
+        def ping
+          @client.ping
+        end
+
         def settings
           # Return all instance variables except the instance variable 'client'
           instance_values.symbolize_keys.except(:client)
