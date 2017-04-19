@@ -5,6 +5,9 @@ describe LanalyticsConsumer do
 
   before(:each) do
     @consumer = LanalyticsConsumer.new
+
+    stub_request(:head, 'http://localhost:9200/')
+      .to_return(status: 200)
   end
 
   describe "(:create)" do
