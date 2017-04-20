@@ -29,7 +29,7 @@ module Lanalytics
 
         def ping
           @client.ping
-        rescue Elasticsearch::Transport::Transport::Errors::ServiceUnavailable
+        rescue Elasticsearch::Transport::Transport::ServerError
           false
         end
 

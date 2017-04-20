@@ -13,9 +13,9 @@ module Lanalytics
           @pool.to_i  # comes from postgres_config file
         end
 
-        def init_with(postgres_config)
+        def init_with(config)
           @connection_pool = ConnectionPool.new(size: pool_size) do
-            PG.connect(get_postgres_config)
+            PG.connect(postgres_config)
           end
 
           # This would be an alternative of initializing the connection
@@ -28,7 +28,7 @@ module Lanalytics
         end
 
         def ping
-          PG::Connection.ping(get_postgres_config) == PG::Constants::PQPING_OK
+          PG::Connection.ping(postgres_config) == PG::Constants::PQPING_OK
         end
 
         def exec(&block)
@@ -46,7 +46,7 @@ module Lanalytics
 
         private
 
-        def get_postgres_config
+        def postgres_config
           {
             host: host, port: port,
             dbname: database,
