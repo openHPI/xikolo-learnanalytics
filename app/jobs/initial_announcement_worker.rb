@@ -12,7 +12,7 @@ class InitialAnnouncementWorker < QcRuleWorker
       find_and_close_qc_alert(rule_id, course.id)
     elsif start_date.present? && start_date < 7.business_days.from_now  && total_enrollments.to_i > enrollments_threshold
       mail_sent_flag = false
-      API[:news].rel(:news_index).get(course_id: course.id, published: "true").value!.each do |announcement|
+      Xikolo.api(:news).value!.rel(:news_index).get(course_id: course.id, published: "true").value!.each do |announcement|
         if announcement.present?
           if announcement['sending_state'].present?
             sending_state = announcement['sending_state']

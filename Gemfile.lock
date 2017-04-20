@@ -560,7 +560,7 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-account
-  xikolo-common (~> 1.0)
+  xikolo-common (~> 1.4)
   xikolo-config (~> 1.66)
   xikolo-course (~> 9.9.0)
   xikolo-file (~> 1.8.1)

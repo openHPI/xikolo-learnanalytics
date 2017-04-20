@@ -11,7 +11,7 @@ class DifficultSelftestWorker < QcRuleWorker
       Acfs.run
       # content_id => quiz_id
       quiz_items.each do |quiz_item|
-        quiz_submission_statistic = ::API[:submission].rel(:quiz_submission_statistic).get(id: quiz_item.content_id).value!
+        quiz_submission_statistic = Xikolo.api(:submission).value!.rel(:quiz_submission_statistic).get(id: quiz_item.content_id).value!
         quiz_submission_statistic.questions.each do |question|
           question.each do |question_id, question_info|
             check_for_difficult_selftest(course, question_id, question_info, quiz_item, rule_id, severity)
@@ -34,7 +34,7 @@ class DifficultSelftestWorker < QcRuleWorker
       answers = question_info["answers"]
       answers.each do |answer_id, answer|
         answer_submission_count = answer["count"]
-        quiz_answer = ::API[:quiz].rel(:answer).get(id: answer_id).value!
+        quiz_answer = Xikolo.api(:quiz).value!.rel(:answer).get(id: answer_id).value!
         if quiz_answer.correct
           clicks_correct_answer += answer_submission_count
           highest_correct_answer_submission_count = [answer_submission_count, highest_correct_answer_submission_count].max
@@ -44,8 +44,8 @@ class DifficultSelftestWorker < QcRuleWorker
       end
       if (wrong_answers_submission_counts.max || 0) >= highest_correct_answer_submission_count or clicks_correct_answer <= (right_answers_threshold * submission_count_question.to_f)
         qc_alert_data = create_json(question_id, quiz_item.id,)
-        quiz_question = ::API[:quiz].rel(:question).get(id: question_id).value!
-        question_title = ::API[:richtext].rel(:rich_text).get(id: quiz_question.question_rtid).value!
+        quiz_question = Xikolo.api(:quiz).value!.rel(:question).get(id: question_id).value!
+        question_title = Xikolo.api(:richtext).value!.rel(:rich_text).get(id: quiz_question.question_rtid).value!
         annotation = "Question: '#{question_title.markup[0...20]}[..]'"
         update_or_create_qc_alert_with_data(rule_id, course.id, severity, annotation, question_id, qc_alert_data)
       else

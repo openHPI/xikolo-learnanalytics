@@ -3,11 +3,11 @@ class AnnouncementFailedWorker < QcRuleWorker
   def perform(course, rule_id)
     severity = 'high'
     allowed_delta = 10
-    all_news = API[:news].rel(:news_index).get(published: "true").value!
+    all_news = Xikolo.api(:news).value!.rel(:news_index).get(published: "true").value!
     all_news.each do |announcement|
       course_id = announcement['course_id']
       if announcement['publish_at'].present? and announcement['publish_at'].to_datetime >= 2.weeks.ago
-        mail_logs = API[:notification].rel(:mail_log_stats).get(news_id: announcement['id']).value!
+        mail_logs = Xikolo.api(:notification).value!.rel(:mail_log_stats).get(news_id: announcement['id']).value!
         if announcement['receivers'].present?
           delta = announcement['receivers'] - mail_logs["count"]
           if delta >= allowed_delta and mail_logs["newest"] < 10.minutes.ago
