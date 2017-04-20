@@ -23,6 +23,10 @@ module Lanalytics
           end
         end
 
+        def available?
+          @postgres_datasource.ping
+        end
+
         def do_create_command(create_command)
           entity  = create_command.entity
 

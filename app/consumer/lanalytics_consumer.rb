@@ -17,23 +17,20 @@ class LanalyticsConsumer < Msgr::Consumer
   end
 
   def process_message_with(processing_action)
-    # Only accept message if Elasticsearch is running
-    begin
-      unless Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').ping
-        message.nack
-        return
-      end
-    rescue Elasticsearch::Transport::Transport::Errors::ServiceUnavailable # is raised by ping while Elasticsearch is booting
+    pipeline_name = message.delivery_info[:routing_key] # e.g. "xikolo.course.enrollment.update"
+
+    pipelines = pipeline_manager.schema_pipelines_with(
+      processing_action,
+      pipeline_name
+    )
+
+    # Only accept messages if data sources are running
+    unless pipelines.all? { |_schema, schema_pipeline| schema_pipeline.loaders_available? }
       message.nack
       return
     end
 
-    pipeline_name = message.delivery_info[:routing_key] # e.g. "xikolo.course.enrollment.update"
-
-    pipeline_manager.schema_pipelines_with(
-      processing_action,
-      pipeline_name
-    ).each do |_schema, schema_pipeline|
+    pipelines.each do |_schema, schema_pipeline|
       schema_pipeline.process(payload, processing_opts(message))
     end
   end

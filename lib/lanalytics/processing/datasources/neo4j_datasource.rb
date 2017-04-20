@@ -33,6 +33,10 @@ module Lanalytics
           end
         end
 
+        def ping
+          !!@session
+        end
+
         def exec(&block)
           return unless block_given?
           yield @session

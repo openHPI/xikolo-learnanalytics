@@ -23,6 +23,10 @@ module Lanalytics
           end
         end
 
+        def available?
+          @elastic_datasource.ping
+        end
+
         def do_create_command_for_entity(create_command)
           entity = create_command.entity
 

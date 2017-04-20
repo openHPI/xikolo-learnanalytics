@@ -26,6 +26,10 @@ module Lanalytics
         def settings
           raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
+
+        def ping
+          raise NotImplementedError.new 'This method has to be implemented in the subclass!'
+        end
       end
 
     end
