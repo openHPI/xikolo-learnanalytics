@@ -127,5 +127,4 @@ describe LanalyticsConsumer do
     end
   end
 
-
 end

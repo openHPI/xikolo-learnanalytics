@@ -75,8 +75,8 @@ GEM
       debug_inspector (>= 0.0.1)
     browser (2.3.0)
     builder (3.2.3)
-    bunny (2.6.4)
-      amq-protocol (>= 2.0.1)
+    bunny (2.6.5)
+      amq-protocol (>= 2.1.0)
     business_time (0.7.6)
       activesupport (>= 3.1.0)
       tzinfo
@@ -206,7 +206,7 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
-    msgr (0.14.1)
+    msgr (0.15.0)
       activesupport
       bunny (>= 1.4, < 3.0)
       multi_json
