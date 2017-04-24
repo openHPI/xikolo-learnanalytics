@@ -8,10 +8,10 @@ module Lanalytics
 
         def initialize(elastic_config)
           super(elastic_config)
-          init_with(elastic_config)
+          setup
         end
 
-        def init_with(elastic_config)
+        def setup
           non_elasticsearch_opts = [:client, :name, :key, :description, :index]
           config = instance_values.symbolize_keys.reject { |k, v| non_elasticsearch_opts.include? k }
 

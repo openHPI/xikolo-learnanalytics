@@ -6,11 +6,10 @@ module Lanalytics
 
         def initialize(neo4j_config)
           super(neo4j_config)
-
-          init_with(neo4j_config)
+          setup
         end
 
-        def init_with(neo4j_config)
+        def setup
           # neo4j_remaining_config = neo4j_config.except(:db_type, :db_url)
 
           # Register a default Neo4j::Session for this application

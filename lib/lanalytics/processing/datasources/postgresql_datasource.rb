@@ -6,14 +6,14 @@ module Lanalytics
 
         def initialize(postgres_config)
           super(postgres_config)
-          init_with(postgres_config)
+          setup
         end
 
         def pool_size
           @pool.to_i  # comes from postgres_config file
         end
 
-        def init_with(config)
+        def setup
           @connection_pool = ConnectionPool.new(size: pool_size) do
             PG.connect(postgres_config)
           end
