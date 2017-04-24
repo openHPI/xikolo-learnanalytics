@@ -13,6 +13,10 @@ module Lanalytics
         def load(original_event, load_commands, pipeline_ctx)
           raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
+
+        def available?
+          raise NotImplementedError.new 'This method has to be implemented in the subclass!'
+        end
       end
 
     end

@@ -19,10 +19,18 @@ class LanalyticsConsumer < Msgr::Consumer
   def process_message_with(processing_action)
     pipeline_name = message.delivery_info[:routing_key] # e.g. "xikolo.course.enrollment.update"
 
-    pipeline_manager.schema_pipelines_with(
+    pipelines = pipeline_manager.schema_pipelines_with(
       processing_action,
       pipeline_name
-    ).each do |_schema, schema_pipeline|
+    )
+
+    # Only accept messages if data sources are running
+    unless pipelines.all? { |_schema, schema_pipeline| schema_pipeline.loaders_available? }
+      message.nack
+      return
+    end
+
+    pipelines.each do |_schema, schema_pipeline|
       schema_pipeline.process(payload, processing_opts(message))
     end
   end

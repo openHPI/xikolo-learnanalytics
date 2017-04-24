@@ -23,6 +23,10 @@ module Lanalytics
           end
         end
 
+        def available?
+          @neo4j_datasource.ping
+        end
+
         def to_resource_props(entity)
           Hash[
             entity.all_non_nil_attributes.map do |attr|
