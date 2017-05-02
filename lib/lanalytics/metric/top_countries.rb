@@ -34,11 +34,15 @@ module Lanalytics
         processed_result = []
         #process result
         result['aggregations']['countries']['buckets'].each do |item|
-          result_subitem = {}
-          result_subitem[:country_code] = item['key']
-          result_subitem[:total_activity] = item['doc_count']
-          result_subitem[:distinct_users] = item['ucount']['value']
-          processed_result << result_subitem
+          begin
+            result_subitem = {}
+            result_subitem[:country_code] = item['key']
+            result_subitem[:country_code_iso3] = IsoCountryCodes.find(item['key']).alpha3
+            result_subitem[:total_activity] = item['doc_count']
+            result_subitem[:distinct_users] = item['ucount']['value']
+            processed_result << result_subitem
+          rescue IsoCountryCodes::UnknownCodeError
+          end
         end
         processed_result.sort_by {|i| i[:distinct_users]}.reverse
       end
