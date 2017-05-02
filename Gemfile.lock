@@ -167,6 +167,7 @@ GEM
     http_parser.rb (0.6.0)
     httpclient (2.8.3)
     i18n (0.8.1)
+    iso_country_codes (0.7.7)
     jbuilder (2.6.3)
       activesupport (>= 3.0.0, < 5.2)
       multi_json (~> 1.2)
@@ -512,6 +513,7 @@ DEPENDENCIES
   forgery
   geminabox-rake (~> 1.1)
   geoip
+  iso_country_codes
   jbuilder (~> 2.0)
   jquery-rails
   link_header

@@ -96,6 +96,7 @@ gem 'unicorn'
 # gem 'debugger', group: [:development, :test]
 
 gem 'geoip' # Location tracking
+gem 'iso_country_codes' #converting ISO country codes
 
 gem 'browser' # Browser info
 
