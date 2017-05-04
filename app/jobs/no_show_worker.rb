@@ -24,7 +24,7 @@ class NoShowWorker < QcRuleWorker
   end
 
   def calculate_no_shows(course)
-   course_stats = ::API[:course].rel(:stats).get(course_id: course.id, key: 'extended').value!
+   course_stats = Xikolo.api(:course).value!.rel(:stats).get(course_id: course.id, key: 'extended').value!
    enrollments = course_stats['student_enrollments']
    no_shows = course_stats['no_shows']
    percentage_noshows = 0

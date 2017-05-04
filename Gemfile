@@ -19,7 +19,7 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 
 gem 'rails-api'
-gem 'xikolo-common', '~> 1.0'
+gem 'xikolo-common', '~> 1.4'
 
 gem 'xikolo-config', '~> 1.66'
 

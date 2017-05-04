@@ -38,7 +38,7 @@ module Lanalytics
           end
 
           if resource_id.present?
-            courses = ::API[:course].rel(:courses).get(cat_id: resource_id).value!
+            courses = Xikolo.api(:course).value!.rel(:courses).get(cat_id: resource_id).value!
             body[:query][:bool][:should] = []
             courses.each do |course|
               body[:query][:bool][:should] << { match: { 'in_context.course_id' => course['id'] } }

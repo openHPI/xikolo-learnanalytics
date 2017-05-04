@@ -12,7 +12,7 @@ class LowCourseCommunicationWorker < QcRuleWorker
       total_enrollments = enrollments.total_pages
       if start_date < 10.days.ago and total_enrollments.to_i > enrollments_threshold
         # since its ordered desc
-        current_announcements = API[:news].rel(:news_index).get(course_id: course.id, published: "true", page: 1, per_page:1).value!
+        current_announcements = Xikolo.api(:news).value!.rel(:news_index).get(course_id: course.id, published: "true", page: 1, per_page:1).value!
 
         if not current_announcements.first or current_announcements.first['publish_at'].to_datetime <= 10.days.ago
           if current_announcements.first
