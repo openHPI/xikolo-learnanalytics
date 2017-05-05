@@ -37,7 +37,8 @@ module Lanalytics
                     filter: {
                       bool: {
                         must: { exists: { field: 'in_context.runtime' }},
-                        should: mobile_conditions
+                        should: mobile_conditions,
+                        minimum_should_match: 1
                       }
                     },
                     aggs: {
@@ -63,6 +64,7 @@ module Lanalytics
             result_subitem[:country_code_iso3] = IsoCountryCodes.find(item['key']).alpha3
             result_subitem[:total_activity] = item['doc_count']
             result_subitem[:distinct_users] = item['ucount']['value']
+            result_subitem[:activity_per_user] = item['ucount']['value'] != 0 ? item['doc_count'] / item['ucount']['value'] : 0
             result_subitem[:mobile_usage] = item['mobile']['count']['value'] != 0 ? item['ucount']['value'] / item['mobile']['count']['value'] : 0
             processed_result << result_subitem
           rescue IsoCountryCodes::UnknownCodeError
