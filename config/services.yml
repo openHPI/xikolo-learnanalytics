@@ -1,29 +1,25 @@
 development: &dev
   services: &devserv
-    account: http://localhost:3100
-    notification: http://localhost:3200
-    course: http://localhost:3300
-    gamification: http://localhost:3400
-    pinboard: http://localhost:3500
-    video: http://localhost:3600
-    richtext: http://localhost:3700
-    quiz: http://localhost:3800
-    submission: http://localhost:3900
-    file: http://localhost:4000
-    certificate: http://localhost:4100
-    log: http://localhost:4200
-    news: http://localhost:4300
-    socialnetworking: http://localhost:4400
-#    crowdsourcing: http://localhost:4500
-#    motivation: http://localhost:4600
-    helpdesk: http://localhost:4700
-    learning_room: http://localhost:4800
-    progress: http://localhost:4900
-    lti: http://localhost:5000
-    game: http://localhost:5100
-    wiki: http://localhost:5200
-    usertesting: http://localhost:5300
-    peerassessment: http://localhost:5400
+    account: <%= ENV['XIKOLO_SERVICE_ACCOUNT'] || 'http://localhost:3100' %>
+    notification: <%= ENV['XIKOLO_SERVICE_NOTIFICATION'] || 'http://localhost:3200' %>
+    course: <%= ENV['XIKOLO_SERVICE_COURSE'] || 'http://localhost:3300' %>
+    gamification: <%= ENV['XIKOLO_SERVICE_GAMIFICATION'] || 'http://localhost:3400' %>
+    pinboard: <%= ENV['XIKOLO_SERVICE_PINBOARD'] || 'http://localhost:3500' %>
+    video: <%= ENV['XIKOLO_SERVICE_VIDEO'] || 'http://localhost:3600' %>
+    richtext: <%= ENV['XIKOLO_SERVICE_RICHTEXT'] || 'http://localhost:3700' %>
+    quiz: <%= ENV['XIKOLO_SERVICE_QUIZ'] || 'http://localhost:3800' %>
+    submission: <%= ENV['XIKOLO_SERVICE_SUBMISSION'] || 'http://localhost:3900' %>
+    file: <%= ENV['XIKOLO_SERVICE_FILE'] || 'http://localhost:4000' %>
+    certificate: <%= ENV['XIKOLO_SERVICE_CERTIFICATE'] || 'http://localhost:4100' %>
+    log: <%= ENV['XIKOLO_SERVICE_LOG'] || 'http://localhost:4200' %>
+    news: <%= ENV['XIKOLO_SERVICE_NEWS'] || 'http://localhost:4300' %>
+    helpdesk: <%= ENV['XIKOLO_SERVICE_HELPDESK'] || 'http://localhost:4700' %>
+    learning_room: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
+    progress: <%= ENV['XIKOLO_SERVICE_PROGRESS'] || 'http://localhost:4900' %>
+    lti: <%= ENV['XIKOLO_SERVICE_LTI'] || 'http://localhost:5000' %>
+    game: <%= ENV['XIKOLO_SERVICE_GAME'] || 'http://localhost:5100' %>
+    wiki: <%= ENV['XIKOLO_SERVICE_WIKI'] || 'http://localhost:5200' %>
+    peerassessment: <%= ENV['XIKOLO_SERVICE_PEERASSESSMENT'] || 'http://localhost:5400' %>
 
 test:
   services:
