@@ -65,7 +65,8 @@ module Lanalytics
             result_subitem[:total_activity] = item['doc_count']
             result_subitem[:distinct_users] = item['ucount']['value']
             result_subitem[:activity_per_user] = item['ucount']['value'] != 0 ? item['doc_count'] / item['ucount']['value'] : 0
-            result_subitem[:mobile_usage] = item['ucount']['value'] != 0 ? item['mobile']['count']['value'] / item['ucount']['value'] : 0
+            result_subitem[:mobile_users] = item['mobile']['count']['value']
+            result_subitem[:mobile_usage] = item['ucount']['value'] != 0 ? item['mobile']['count']['value'].to_f / item['ucount']['value'].to_f : 0
             processed_result << result_subitem
           rescue IsoCountryCodes::UnknownCodeError
           end
