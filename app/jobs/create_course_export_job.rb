@@ -177,6 +177,33 @@ class CreateCourseExportJob < CreateExportJob
               metrics[:user_course_country] = user_course_country.present? ? user_course_country : 'zz'
             end
 
+            if true
+              quizzes = Xikolo.api(:course).value!.rel(:items).get(
+                course_id: course_id,
+                content_type: 'quiz',
+                exercise_type: %w(main selftest bonus)
+              ).value!
+
+              submissions = Xikolo.api(:submission).value!.rel(:quiz_submissions).get(
+                user_id: user.id,
+                only_submitted: true,
+                quiz_id: quizzes.map { |q| q['id'] }
+              ).value!
+              
+              all_submissions = submissions
+
+              while submissions.rel?(:next)
+                submissions = submissions.rel(:next).get.value!
+                all_submissions << submissions
+              end
+
+              # get last submission for every quiz
+              submissions = submissions.group_by { |submission| submission['quiz_id'] }
+                              .map do |_, arr|
+                                arr.sort_by { |s| DateTime.parse(s['updated_at']) }.last
+                              end
+            end
+
             values = []
             values += [item[:user].id,
                        item[:data].created_at,
