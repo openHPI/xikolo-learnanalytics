@@ -198,7 +198,7 @@ class CreateCourseExportJob < CreateExportJob
               end
 
               # get last submission for every quiz
-              submissions = submissions.group_by { |submission| submission['quiz_id'] }
+              all_submissions = all_submissions.group_by { |submission| submission['quiz_id'] }
                               .map do |_, arr|
                                 arr.sort_by { |s| DateTime.parse(s['updated_at']) }.last
                               end
