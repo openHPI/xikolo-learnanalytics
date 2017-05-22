@@ -4,9 +4,12 @@ module Lanalytics
 
       def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
 
-        # calculates the activity of courses relativ to all other courses on the platform (max = 100, min = 0/not present)
+        # calculates the (time-dependant) activity (active users) of courses relative to all other courses on the platform (max = 100, min = 0/not present)
+        # if course_id present return only one value
 
-        start_time = (start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 30.minutes))
+        # default active users of last day
+
+        start_time = (start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day))
         end_time = (end_time.present? ? DateTime.parse(end_time) : (DateTime.now))
 
         active_users = {}
