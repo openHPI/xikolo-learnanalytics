@@ -178,13 +178,13 @@ class CreateCourseExportJob < CreateExportJob
             end
 
             if true
-              quizzes = Xikolo.api(:course).value!.rel(:items).get(
+              quizzes = course_service.rel(:items).get(
                 course_id: course_id,
                 content_type: 'quiz',
                 exercise_type: %w(main selftest bonus)
               ).value!
 
-              submissions = Xikolo.api(:submission).value!.rel(:quiz_submissions).get(
+              submissions = submission_service.rel(:quiz_submissions).get(
                 user_id: user.id,
                 only_submitted: true,
                 quiz_id: quizzes.map { |q| q['id'] }
@@ -425,6 +425,14 @@ class CreateCourseExportJob < CreateExportJob
     ).value!
 
     all_enrollments.none? { |e| DateTime.parse(e['created_at']) < enrollment.created_at }
+  end
+
+  def course_service
+    @course_service ||= Xikolo.api(:course).value!
+  end
+
+  def submission_service
+    @submission_service ||= Xikolo.api(:submission).value!
   end
 
 end
