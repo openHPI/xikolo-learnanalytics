@@ -63,6 +63,7 @@ class CreateCourseExportJob < CreateExportJob
           headers += ['User ID',
                       'Enrollment Date',
                       'Enrollment Day',
+                      'First Enrollment',
                       'User created',
                       'Language',
                       'Affiliated',
@@ -180,6 +181,7 @@ class CreateCourseExportJob < CreateExportJob
             values += [item[:user].id,
                        item[:data].created_at,
                        item[:data].created_at.strftime('%Y-%m-%d'),
+                       first_enrollment?(full_enrollment),
                        item[:user].created_at.strftime('%Y-%m-%d'),
                        item[:user].language,
                        item[:user].affiliated,
@@ -386,6 +388,16 @@ class CreateCourseExportJob < CreateExportJob
     elsif top_percentage <= 0.2
       'Top20'
     end
+  end
+
+  def first_enrollment? (enrollment)
+    all_enrollments = Xikolo.api(:course).value!.rel(:enrollments).get(
+      user_id: enrollment.user_id,
+      deleted: true,
+      per_page: 500
+    ).value!
+
+    all_enrollments.none? { |e| DateTime.parse(e['created_at']) < enrollment.created_at }
   end
 
 end
