@@ -12,6 +12,7 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
+                minimum_should_match: 1,
                 filter: {
                   range: {
                     timestamp: {
