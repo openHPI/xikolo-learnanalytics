@@ -57,7 +57,7 @@ module Lanalytics
 
         result = {}
         active_users.each do |id, value|
-          if max_value == 0
+          if max_value == 0 # should not be possible
             result[id] = 0
           elsif max_value == min_value
             result[id] = 100
@@ -67,11 +67,7 @@ module Lanalytics
         end
 
         if course_id.present?
-          if result.key?(course_id)
-            result[course_id]
-          else
-            0
-          end
+          result[course_id] || 0
         else
           result
         end
