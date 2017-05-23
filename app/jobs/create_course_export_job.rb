@@ -1,7 +1,7 @@
 class CreateCourseExportJob < CreateExportJob
   queue_as :default
 
-  def perform(job_id, password, user_id, course_id, privacy_flag, extended_flag)
+  def perform(job_id, password, user_id, course_id, privacy_flag, extended_flag, include_all_quizzes = false)
     job = find_and_save_job(job_id)
 
     begin
@@ -9,7 +9,7 @@ class CreateCourseExportJob < CreateExportJob
       Acfs.run
       job.annotation = course.course_code.to_s
       job.save
-      temp_report = create_report(job_id, [course_id], privacy_flag, extended_flag)
+      temp_report = create_report(job_id, [course_id], privacy_flag, extended_flag, include_all_quizzes)
       csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
       create_file(job_id, csv_name, temp_report.path, false, false, password, user_id, course_id, nil)
     rescue => error
@@ -22,7 +22,7 @@ class CreateCourseExportJob < CreateExportJob
 
   protected
 
-  def create_report(job_id, course_ids, privacy_flag = false, extended_flag = false)
+  def create_report(job_id, course_ids, privacy_flag = false, extended_flag = false, include_all_quizzes = false)
     if course_ids.length == 1
       file = Tempfile.open("course_export_#{job_id.to_s}", get_tempdir)
     elsif course_ids.length > 1
@@ -45,6 +45,13 @@ class CreateCourseExportJob < CreateExportJob
       pager = 1
 
       clustering_metrics = {}
+
+      if include_all_quizzes
+        quizzes = course_service.rel(:items).get(
+          course_id: course_id,
+          content_type: 'quiz'
+        ).value!.select { |q| %w(main selftest bonus).include? q['exercise_type'] }
+      end
 
       loop do
         enrollments = Xikolo::Course::Enrollment.where(course_id: course_id, page: pager, per_page: page_size, deleted: true)
@@ -124,8 +131,12 @@ class CreateCourseExportJob < CreateExportJob
                       'Visited Items Percentage']
 
           if course_ids.length == 1
-            headers += [*course_presenter.sections.map { |f| f.title.titleize + ' Percentage' },
-                        *course_presenter.sections.map { |f| f.title.titleize + ' Points' }]
+            headers += [*course_presenter.sections.map { |f| f.title.titleize + ' Percentage (Section)' },
+                        *course_presenter.sections.map { |f| f.title.titleize + ' Points (Section)' }]
+          end
+
+          if include_all_quizzes
+            headers += [*quizzes.map { |q| q['title'].titleize + ' Points (Quiz)' }]
           end
 
           headers += ['Course Code']
@@ -177,20 +188,14 @@ class CreateCourseExportJob < CreateExportJob
               metrics[:user_course_country] = user_course_country.present? ? user_course_country : 'zz'
             end
 
-            if true
-              quizzes = course_service.rel(:items).get(
-                course_id: course_id,
-                content_type: 'quiz',
-                exercise_type: %w(main selftest bonus)
-              ).value!
-
+            if include_all_quizzes
               submissions = submission_service.rel(:quiz_submissions).get(
                 user_id: user.id,
                 only_submitted: true,
-                quiz_id: quizzes.map { |q| q['id'] }
+                course_id: course_id
               ).value!
               
-              all_submissions = submissions
+              all_submissions = submissions.data
 
               while submissions.rel?(:next)
                 submissions = submissions.rel(:next).get.value!
@@ -200,7 +205,7 @@ class CreateCourseExportJob < CreateExportJob
               # get last submission for every quiz
               all_submissions = all_submissions.group_by { |submission| submission['quiz_id'] }
                               .map do |_, arr|
-                                arr.sort_by { |s| DateTime.parse(s['updated_at']) }.last
+                                arr.sort_by { |s| DateTime.parse(s['quiz_submission_time']) }.last
                               end
             end
 
@@ -271,6 +276,10 @@ class CreateCourseExportJob < CreateExportJob
             if course_ids.length == 1
               values += [*item[:cp].sections.map{ |s| s.visits_stats.user_percentage },
                          *item[:cp].sections.map{ |s| s.total_graded_points }]
+            end
+
+            if include_all_quizzes
+              values += [*quizzes.map { |q| all_submissions.detect { |s| s['quiz_id'] == q['content_id'] }['points'] rescue 0 }]
             end
 
             values += [course.course_code]
