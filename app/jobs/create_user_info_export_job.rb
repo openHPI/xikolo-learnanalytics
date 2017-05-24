@@ -107,7 +107,7 @@ class CreateUserInfoExportJob < CreateExportJob
             top_country = ''
           end
 
-          values = [privacy_flag ? Digest::SHA256.hexdigest user.id : user.id]
+          values = [privacy_flag ? Digest::SHA256.hexdigest(user.id) : user.id]
 
           unless privacy_flag
             values += [user.first_name,
