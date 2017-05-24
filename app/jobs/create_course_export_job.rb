@@ -199,7 +199,7 @@ class CreateCourseExportJob < CreateExportJob
 
               while submissions.rel?(:next)
                 submissions = submissions.rel(:next).get.value!
-                all_submissions << submissions
+                all_submissions += submissions
               end
 
               # get last submission for every quiz
@@ -279,7 +279,7 @@ class CreateCourseExportJob < CreateExportJob
             end
 
             if include_all_quizzes
-              values += [*quizzes.map { |q| all_submissions.detect { |s| s['quiz_id'] == q['content_id'] }['points'] rescue 0 }]
+              values += quizzes.map { |q| all_submissions.detect { |s| s['quiz_id'] == q['content_id'] }['points'] rescue 0 }
             end
 
             values += [course.course_code]
