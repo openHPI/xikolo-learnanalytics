@@ -30,6 +30,7 @@ gem 'restify', '~> 1.0'
 gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
+gem 'mnemosyne-ruby', '~> 1.1'
 
 # Gems needed for the LAnalytics UI
 gem 'slim'

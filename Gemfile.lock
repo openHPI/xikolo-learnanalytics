@@ -54,7 +54,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.1)
       public_suffix (~> 2.0, >= 2.0.2)
-    amq-protocol (2.1.0)
+    amq-protocol (2.2.0)
     api-responder (1.0.1)
       activesupport
     arel (6.0.4)
@@ -75,8 +75,8 @@ GEM
       debug_inspector (>= 0.0.1)
     browser (2.3.0)
     builder (3.2.3)
-    bunny (2.6.5)
-      amq-protocol (>= 2.1.0)
+    bunny (2.7.0)
+      amq-protocol (>= 2.2.0)
     business_time (0.7.6)
       activesupport (>= 3.1.0)
       tzinfo
@@ -206,7 +206,10 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
-    minitest (5.10.1)
+    minitest (5.10.2)
+    mnemosyne-ruby (1.1.0)
+      activesupport (>= 4)
+      bunny
     msgr (0.15.0)
       activesupport
       bunny (>= 1.4, < 3.0)
@@ -519,6 +522,7 @@ DEPENDENCIES
   link_header
   mechanize
   meta_request
+  mnemosyne-ruby (~> 1.1)
   msgr
   multi_json
   murmurhash3
