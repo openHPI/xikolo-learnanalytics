@@ -210,7 +210,7 @@ class CreateCourseExportJob < CreateExportJob
             end
 
             values = []
-            values += [item[:user].id,
+            values += [privacy_flag ? Digest::SHA256.hexdigest(item[:user].id) : item[:user].id,
                        item[:data].created_at,
                        item[:data].created_at.strftime('%Y-%m-%d'),
                        first_enrollment?(full_enrollment),
