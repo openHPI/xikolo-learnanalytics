@@ -7,11 +7,11 @@ Rails.application.load_tasks
 
 Xikolo::Lanalytics.rake = true
 
-if Rails.env.development?
+begin
   require 'geminabox/rake'
-  Geminabox::Rake.install host: 'https://gemuser:K6c1mcRWtrTQepS6aI8HRXc7DPoRYXbG@openhpi-utils.hpi.uni-potsdam.de/gems/',
-                          dir: '.',
-                          namespace: 'lanalytics-model'
+  Geminabox::Rake.install host: 'https://gemuser:K6c1mcRWtrTQepS6aI8HRXc7DPoRYXbG@dev.xikolo.de/gems/',
+                          dir: './client', namespace: 'client'
+rescue LoadError
 end
 
 namespace :sidekiq do
@@ -22,6 +22,7 @@ namespace :sidekiq do
     Sidekiq::RetrySet.new.clear
   end
 end
+
 namespace :ci do
   desc 'Setup service for CI'
   task setup: %w(db:drop db:create:all db:setup) do
