@@ -1,3 +1,0 @@
-#flash data-message-failure=t('shared.message_failure')
-  - %w[danger info notice success warning].each do |severity|
-    p.alert.flash class="alert-#{severity == 'notice' ? 'success' : severity}" id="flash-#{severity}" = flash[severity]
