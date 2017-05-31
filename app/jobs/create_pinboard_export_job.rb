@@ -8,30 +8,25 @@ class CreatePinboardExportJob < CreateExportJob
       Acfs.run
       job.annotation = course.course_code.to_s
       job.save
-      temp_report, temp_excel_report = create_report(job_id, course_id, privacy_flag)
+      temp_report = create_report(job_id, course_id, privacy_flag)
       csv_name = get_tempdir.to_s + '/PinboardExport_' + course.course_code.to_s + "_" + DateTime.now.strftime('%Y-%m-%d-%H-%M-%S') + '.csv'
-      excel_name = get_tempdir.to_s + '/PinboardExport_' + course.course_code.to_s + "_" + DateTime.now.strftime('%Y-%m-%d-%H-%M-%S') + '.xlsx'
-      additional_files = []
-      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, course_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, password, user_id, course_id)
     rescue => error
       Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
       File.delete(temp_report) if File.exist?(temp_report)
-      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
   private
+
   def create_report(job_id, course_id, privacy_flag)
     begin
       question_page_size = 50
       question_pager = 1
-      #pinboardexport
       file = Tempfile.open(job_id.to_s, get_tempdir)
-      excel_tmp_file =  Tempfile.new('excel_pinboard_export', get_tempdir)
       headers = []
-      pinboard_info = []
       csv = CSV.new(file)
       Sidekiq.logger.info "Writing export to #{file.path}"
       write_header(csv, headers)
@@ -48,12 +43,12 @@ class CreatePinboardExportJob < CreateExportJob
           else
             pinboard_type = 'question'
           end
-          write_question(csv, pinboard_type, question, pinboard_info)
+          write_question(csv, pinboard_type, question)
           if question.discussion_flag == false
-            get_comments(question, csv, "Question", pinboard_info)
-            get_answers(question, csv, pinboard_info)
+            get_comments(question, csv, "Question")
+            get_answers(question, csv)
           else
-            get_comments(question, csv, "Question", pinboard_info)
+            get_comments(question, csv, "Question")
           end
         end
         Sidekiq.logger.info "Fetching page #{question_pager.to_s} from  #{questions.total_pages.to_s}"
@@ -67,13 +62,10 @@ class CreatePinboardExportJob < CreateExportJob
     end
 
     Acfs.run
-    excel_file = excel_attachment('PinboardExport', excel_tmp_file, headers, pinboard_info)
 
-    return file, excel_file
+    return file
   ensure
     file.close
-    excel_file.close
-    excel_tmp_file.close
   end
 
   def write_header(csv, headers)
@@ -103,7 +95,7 @@ class CreatePinboardExportJob < CreateExportJob
     csv << headers
   end
 
-  def write_question(csv, pinboard_type, question, pinboard_info)
+  def write_question(csv, pinboard_type, question)
     current_question = [question.id,
            pinboard_type,
            question.title,
@@ -126,11 +118,10 @@ class CreatePinboardExportJob < CreateExportJob
            question.deleted,
            question.closed
     ]
-    pinboard_info += current_question
     csv << current_question
   end
 
-  def get_answers(question, csv, pinboard_info)
+  def get_answers(question, csv)
     answer_pager = 1
     answer_page_size = 50
     answers = Xikolo::Pinboard::Answer.where(question_id: question.id, per_page: answer_page_size, page: answer_pager)
@@ -157,9 +148,8 @@ class CreatePinboardExportJob < CreateExportJob
                answer.sentimental_value,
         ]
         csv << current_answer
-        pinboard_info += current_answer
         # get comments for each answer
-        get_comments(answer, csv, "Answer", pinboard_info)
+        get_comments(answer, csv, "Answer")
       end
       answer_pager += 1
       break if answers.total_pages == 0
@@ -177,7 +167,7 @@ class CreatePinboardExportJob < CreateExportJob
     end
   end
 
-  def get_comments(object, csv, type, pinboard_info)
+  def get_comments(object, csv, type)
     comments_size = 0
     Xikolo::Pinboard::Comment.each_item(commentable_id: object.id, commentable_type: type) do |comment|
 
@@ -209,10 +199,9 @@ class CreatePinboardExportJob < CreateExportJob
               comment.sentimental_value,
       ]
       csv << current_comment
-      pinboard_info += current_comment
       comments_size += 1
     end
     Acfs.run
   end
-end
 
+end

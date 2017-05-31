@@ -5,17 +5,16 @@ class CreateMetricExportJob < CreateExportJob
     job = find_and_save_job (job_id)
 
     begin
-      temp_report, temp_excel_report = create_report(job_id, scope, privacy_flag)
+      job.annotation = scope.underscore
+      job.save
+      temp_report = create_report(job_id, scope, privacy_flag)
       csv_name = get_tempdir.to_s + '/MetricExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-      excel_name = get_tempdir.to_s + '/MetricExport_' + scope.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
-      additional_files = []
-      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path,  password, user_id, scope, additional_files)
+      create_file(job_id, csv_name, temp_report.path, password, user_id, scope)
     rescue => error
       Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
       File.delete(temp_report) if File.exist?(temp_report)
-      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -23,19 +22,15 @@ class CreateMetricExportJob < CreateExportJob
 
   def create_report(job_id, scope, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
-    excel_tmp_file =  Tempfile.new('excel_metric_export')
-    headers = []
-    metric_info = []
     @filepath = File.absolute_path(file)
     courses = []
     Xikolo::Course::Course.each_item(public: true) do |course|
-
       courses << course unless course.external_course_url.present?
     end
     Acfs.run
 
     CSV.open(@filepath, 'wb') do |csv|
-      headers = ['Course Code', 'Enrollments', 'Metric' ]
+      headers = ['Course Code', 'Enrollments', 'Metric']
       csv << headers
       Sidekiq.logger.info "Writing export to #{@filepath}"
       i = 0
@@ -49,37 +44,32 @@ class CreateMetricExportJob < CreateExportJob
         tmp = []
         tmp << course.course_code
         tmp << course_stats.student_enrollments_at_end
-        tmp << scope
+        tmp << scope  
         ## get metrics for each day from course start to course date
         day = course.start_date
         if course.start_date.present? and course.end_date.present?
           while day < course.end_date
-            metric =  "Lanalytics::Metric::#{scope}".constantize
-             activity = metric.query(
-                              nil,
-                             course.id,
-                             day.iso8601,
-                             (day+24.hours).iso8601,
-                             nil,
-                             nil,
-                            nil)[:count]
-             tmp << activity
-             day += 24.hours
+            metric = "Lanalytics::Metric::#{scope}".constantize
+            activity = metric.query(nil,
+                                    course.id,
+                                    day.iso8601,
+                                    (day+24.hours).iso8601,
+                                    nil,
+                                    nil,
+                                    nil)
+            tmp << activity
+            day += 24.hours
           end
           csv << tmp
-          metric_info << tmp
+          csv.flush
           update_job_progress(job_id, i/courses.count*100 )
         end
      end
     end
     Acfs.run
-    excel_file = excel_attachment('CourseExport', excel_tmp_file, headers, metric_info)
-    return file, excel_file
+    return file
   ensure
     file.close
-    excel_file.close
-    excel_tmp_file.close
-
   end
 
   def update_job_progress(job_id, percent)
@@ -87,4 +77,5 @@ class CreateMetricExportJob < CreateExportJob
     job.progress = percent
     job.save!
   end
+
 end
