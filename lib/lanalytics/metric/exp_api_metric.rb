@@ -13,6 +13,7 @@ module Lanalytics
       def self.all_filters(user_id, course_id, resource_id)
         filters_ = course_id.nil? ? [] : [
           { bool: {
+              minimum_should_match: 1,
               should: [
                 { match: { 'in_context.course_id' => course_id } },
                 { match: { 'resource.resource_uuid' => course_id } }

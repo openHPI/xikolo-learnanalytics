@@ -15,10 +15,13 @@ module Lanalytics
                 must: [
                   { match: { 'tracking_type' => 'news' } },
                   { exists: { 'field' => 'tracking_external_link' } },
-                  { bool: { should: [
-                    { match: { 'tracking_id' => tracking_id.to_s(format: :default) } },
-                    { match: { 'tracking_id' => tracking_id.to_s(format: :base62) } }
-                  ] } }
+                  { bool: {
+                      minimum_should_match: 1,
+                      should: [
+                        { match: { 'tracking_id' => tracking_id.to_s(format: :default) } },
+                        { match: { 'tracking_id' => tracking_id.to_s(format: :base62) } }
+                      ]
+                  } }
                 ]
               }
             },
