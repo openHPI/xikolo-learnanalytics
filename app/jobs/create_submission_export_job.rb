@@ -5,17 +5,17 @@ class CreateSubmissionExportJob < CreateExportJob
     job = find_and_save_job (job_id)
 
     begin
-      temp_report, temp_excel_report = create_report(job_id, quiz_id, privacy_flag)
+      item = Xikolo.api(:course).value!.rel(:items).get(content_id: quiz_id).value!.first
+      job.annotation = item['title'].parameterize.underscore
+      job.save
+      temp_report = create_report(job_id, quiz_id, privacy_flag)
       csv_name = get_tempdir.to_s + '/SubmissionExport_' + quiz_id.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-      excel_name = get_tempdir.to_s + '/SubmissionExport_' + quiz_id.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.xlsx'
-      additional_files = []
-      create_file(job_id, csv_name, temp_report.path, excel_name, temp_excel_report.path, password, user_id, quiz_id, additional_files)
+      create_file(job_id, csv_name, temp_report.path, false, false, password, user_id, quiz_id, nil)
     rescue => error
       Sidekiq.logger.error error.inspect
       job.status = 'failing'
       job.save
       File.delete(temp_report) if File.exist?(temp_report)
-      File.delete(temp_excel_report) if File.exist?(temp_excel_report)
     end
   end
 
@@ -23,9 +23,7 @@ class CreateSubmissionExportJob < CreateExportJob
 
   def create_report(job_id, quiz_id, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
-    excel_tmp_file =  Tempfile.new('excel_submission_export')
     headers = []
-    submission_info = []
     @filepath = File.absolute_path(file)
     p = 1
 
@@ -73,8 +71,6 @@ class CreateSubmissionExportJob < CreateExportJob
         @submissions[submission.id][:user_email] = user.email
       end
 
-
-
       submission.enqueue_acfs_request_for_quiz_submissions_questions do |submission_questions|
 
         submission_questions.each do |submission_question|
@@ -99,19 +95,16 @@ class CreateSubmissionExportJob < CreateExportJob
     end
     Acfs.run
 
-    tmp = []
-
     CSV.open(@filepath, 'wb') do |csv|
-      #csv << ["row", "of", "CSV", "data"]
-      headers  += ['User ID',
-      'User Name',
-      'Email',
-      'Submitted On',
-      'Points',
+      headers += ['User ID',
+                  'User Name',
+                  'Email',
+                  'Submitted On',
+                  'Points',
       ]
 
       current_question = []
-      @quiz_questions.each do |key, question|
+      @quiz_questions.each do |_, question|
         current_question << [question[:question_text]]
         question[:answers].each do |answer|
           current_question += [answer[:answer_text]]
@@ -119,7 +112,7 @@ class CreateSubmissionExportJob < CreateExportJob
       end
       headers += current_question
       csv << headers
-      @submissions.each do |key, submission|
+      @submissions.each do |_, submission|
         current_submission = []
         current_submission += [submission[:user_id],
                                submission[:user_name],
@@ -128,7 +121,6 @@ class CreateSubmissionExportJob < CreateExportJob
                                submission[:points]
         ]
 
-        #submission[:questions].each do |key, sub_q|
         @quiz_questions.each do |key, question|
           current_submission += ['']
           sub_q = submission[:questions][key]
@@ -142,20 +134,15 @@ class CreateSubmissionExportJob < CreateExportJob
           end
         end
         csv << current_submission
-        submission_info << current_submission
-
+        csv.flush
       end
     end
     Acfs.run
 
-    excel_file = excel_attachment('SubmissionExport', excel_tmp_file, headers, submission_info)
-    return file, excel_file
+    return file
   ensure
     file.close
-    excel_file.close
-    excel_tmp_file.close
   end
-
 
   def update_job_progress(job_id, p, total_questions)
     job = Job.find(job_id)
@@ -164,4 +151,5 @@ class CreateSubmissionExportJob < CreateExportJob
     job.progress = total
     job.save!
   end
+
 end
