@@ -14,7 +14,7 @@ class JobsController < ApplicationController
     jobs.where! id: params[:id] if params[:id]
     jobs.where! user_id: params[:user_id] if params[:user_id]
     jobs.where! task_type: params[:task_type] if params[:task_type]
-    unless params[:show_expired].present? and params[:show_expired] == true
+    if params[:show_expired].blank? or !params[:show_expired]
       jobs.where!("file_expire_date >= ? OR file_expire_date IS NULL", DateTime.now())
       jobs.where!(
           "status = 'failed' and created_at >= '#{(Time.now - 5.days).utc.iso8601}' " + \
@@ -31,36 +31,8 @@ class JobsController < ApplicationController
 
   def create
     job = Job.create job_params.merge({status: 'requested'})
-    case params[:task_type]
-      when 'course_export'
-        if params[:task_scope] && params[:user_id]
-          CreateCourseExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag], params[:extended_flag], params[:include_all_quizzes] )
-        end
-      when 'user_info_export'
-        if params[:user_id]
-          CreateUserInfoExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope] , params[:privacy_flag], params[:combined_enrollment_info_flag] )
-        end
-      when 'submission_export'
-        if params[:task_scope] && params[:user_id]
-          CreateSubmissionExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope] , params[:privacy_flag] )
-        end
-      when 'pinboard_export'
-        if params[:task_scope] && params[:user_id]
-          CreatePinboardExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag])
-        end
-      when 'metric_export'
-        if params[:task_scope] && params[:user_id]
-          CreateMetricExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag])
-        end
-      when 'course_events_export'
-        if params[:task_scope] && params[:user_id]
-          CreateCourseEventsExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag])
-        end
-      when 'combined_course_export'
-        if params[:task_scope] && params[:user_id]
-          CreateCombinedCourseExportJob.perform_later(job.id, params[:zip_password], params[:user_id], params[:task_scope], params[:privacy_flag], params[:extended_flag] )
-        end
-    end
+    job.schedule report_params
+
     respond_with job
   end
 
@@ -71,6 +43,10 @@ class JobsController < ApplicationController
   private
 
   def job_params
-    params.permit( :task_type, :task_scope, :job_params, :created_by, :file_id, :file_expire_date, :user_id )
+    params.permit(:task_type, :task_scope, :job_params, :created_by, :file_id, :file_expire_date, :user_id)
+  end
+
+  def report_params
+    params.permit(:zip_password, :privacy_flag, :extended_flag, :combined_enrollment_info_flag, :include_all_quizzes)
   end
 end

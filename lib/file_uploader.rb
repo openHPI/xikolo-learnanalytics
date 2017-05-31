@@ -19,13 +19,12 @@ class FileUploader
   def upload(type, file, file_path, description, current_user, unzip=false, course_id=nil, expire_date=nil )
     new_id = SecureRandom.uuid
     file_path = Pathname.new(File.join data_directory, file_path,  File.basename(file.path))
-    self.file = type.new id: new_id,
-                name:  File.basename(file.path),
+    self.file = type.new name: File.basename(file.path),
                          path: File.join(file_path.relative_path_from data_directory),
-                #path: '/reportings',
-                description: description,
-                user_id: current_user,
-                mime_type: 'application/zip' #this is hardcoded for now
+                         #path: '/reportings',
+                         description: description,
+                         user_id: current_user,
+                         mime_type: 'application/zip' #this is hardcoded for now
     self.file.course_id = course_id if course_id
     self.file.expire_at = expire_date if expire_date
 

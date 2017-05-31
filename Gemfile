@@ -7,7 +7,7 @@ gem 'rails', '~> 4.2.5'
 gem 'jbuilder', '~> 2.0'
 
 gem 'rails-api'
-gem 'xikolo-common', '~> 1.4'
+gem 'xikolo-common', '~> 1.5'
 
 gem 'xikolo-config', '~> 1.66'
 
@@ -63,7 +63,7 @@ gem 'xikolo-submission'
 gem 'xikolo-video'
 
 # Xikolo service clients
-gem 'acfs', '~> 0.42'
+gem 'acfs', '~> 0.49', '>= 0.49.1'
 
 # Use unicorn as the app server
 gem 'unicorn'

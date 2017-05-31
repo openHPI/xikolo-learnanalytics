@@ -57,7 +57,7 @@ module Lanalytics
         end
 
         current_last = result['hits']['hits'].count + (page.to_i - 1) * per_page
-        return { data: processed_result, next: current_last < result['hits']['total'] , scroll_id: result['_scroll_id'] }
+        return { data: processed_result, next: current_last < result['hits']['total'], scroll_id: result['_scroll_id'], total_pages: (result['hits']['total']/per_page.to_f).ceil }
       end
 
     end
