@@ -25,7 +25,6 @@ class CreateCourseEventsExportJob < CreateExportJob
   def create_report(job_id, course_id, privacy_flag)
     file = Tempfile.open(job_id.to_s, get_tempdir)
     headers = []
-    course_event_info = []
     @filepath = File.absolute_path(file)
 
     course = Xikolo::Course::Course.find(course_id)
@@ -46,7 +45,7 @@ class CreateCourseEventsExportJob < CreateExportJob
       csv << headers
       Sidekiq.logger.debug 'Writing export to '+ @filepath + " \n" + 'with headers ' + headers.to_s
       if course.start_date.present? and course.end_date.present?
-        get_all course, csv, course_event_info, items, sections
+        get_all(course, csv, items, sections)
       end
     end
     Acfs.run
@@ -61,7 +60,7 @@ class CreateCourseEventsExportJob < CreateExportJob
     job.save!
   end
 
-  def get_all(course, csv, course_event_info, items, sections)
+  def get_all(course, csv, items, sections)
     page = 1
     scroll_id = nil
 
@@ -92,7 +91,7 @@ class CreateCourseEventsExportJob < CreateExportJob
         end
 
         csv << item.values
-        course_event_info << item.values
+        csv.flush
       end
 
       scroll_id = paged[:scroll_id]
