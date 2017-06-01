@@ -11,7 +11,7 @@ class CreateCourseExportJob < CreateExportJob
       job.save
       temp_report = create_report(job_id, [course_id], privacy_flag, extended_flag, include_all_quizzes)
       csv_name = get_tempdir.to_s + '/CourseExport_' + course.course_code.to_s + '_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-      create_file(job_id, csv_name, temp_report.path, false, false, password, user_id, course_id, nil)
+      create_file(job_id, csv_name, temp_report.path, password, user_id, course_id)
     rescue => error
       Sidekiq.logger.error error.inspect
       job.status = 'failing'

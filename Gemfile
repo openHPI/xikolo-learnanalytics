@@ -98,8 +98,6 @@ gem 'will_paginate'
 gem 'paginate-responder'
 gem 'draper'
 gem 'mechanize'
-gem 'axlsx'
-gem 'axlsx_rails'
 
 # for versioning
 gem 'paper_trail'

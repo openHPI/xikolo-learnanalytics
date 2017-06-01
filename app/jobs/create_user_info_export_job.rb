@@ -6,7 +6,7 @@ class CreateUserInfoExportJob < CreateExportJob
     begin
       temp_report = create_report(job_id, privacy_flag, combined_enrollment_info_flag)
       csv_name = get_tempdir.to_s + '/UserInfoExport_' + DateTime.now.strftime('%Y-%m-%d') + '.csv'
-      create_file(job_id, csv_name, temp_report.path, false, false, password, user_id, course_id, nil)
+      create_file(job_id, csv_name, temp_report.path, password, user_id, course_id)
     rescue => error
       Sidekiq.logger.error error.inspect
       job.status = 'failing' +  error.inspect
