@@ -2,7 +2,6 @@ xikolo.account.user.url: 'http://localhost:3100/users.json'
 xikolo.account.user.create: &XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::UserDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
-  - Lanalytics::Processing::Processor::Neo4jProcessor.new
 xikolo.account.user.update:
   *XIKOLO_ACCOUNT_USER_PROCESSING_CHAIN
 xikolo.account.user.destroy: 
@@ -13,7 +12,6 @@ xikolo.course.course.url: 'http://localhost:3300/courses.json'
 xikolo.course.course.create: &XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
   - Lanalytics::Processing::Filter::CourseDataFilter.new
   - Lanalytics::Processing::Processor::LoggerProcessor.new
-  - Lanalytics::Processing::Processor::Neo4jProcessor.new
 xikolo.course.course.update:
   *XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
 xikolo.course.course.destroy:

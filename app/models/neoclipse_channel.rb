@@ -1,3 +1,0 @@
-class NeoclipseChannel < Channel
-
-end

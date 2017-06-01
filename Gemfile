@@ -27,13 +27,9 @@ gem 'validates_email_format_of'
 # Connecting to RabbitMQ
 gem 'msgr'
 
-#  Needed for some hashing in DataTransformers ...
-gem 'murmurhash3'
-
 gem 'connection_pool'
 
 # Different database adapters to store the data
-gem 'neo4j-core'#, git: 'https://github.com/neo4jrb/neo4j-core', branch: 'master'
 gem 'pg'
 gem 'elasticsearch'
 gem 'elasticsearch-transport'
@@ -43,7 +39,6 @@ gem 'multi_json'
 
 gem 'ruby-progressbar'
 gem 'link_header'
-
 
 group :test do
   gem 'rspec-sidekiq'
@@ -70,17 +65,8 @@ gem 'xikolo-video'
 # Xikolo service clients
 gem 'acfs', '~> 0.42'
 
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
 # Use unicorn as the app server
 gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
-# Use debugger
-# gem 'debugger', group: [:development, :test]
 
 gem 'geoip' # Location tracking
 gem 'iso_country_codes' #converting ISO country codes
@@ -101,7 +87,6 @@ gem 'mechanize'
 
 # for versioning
 gem 'paper_trail'
-
 
 # Asynchronous execution + cache in redis
 gem 'redis-activesupport'
@@ -137,4 +122,3 @@ end
 group :test, :integration do
   gem 'rack-remote'
 end
-

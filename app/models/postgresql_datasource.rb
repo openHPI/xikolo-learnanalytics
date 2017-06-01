@@ -12,10 +12,6 @@ class PostgresqlDatasource < Datasource
     @channels = []
 
     @channels << team_postgresql_browser_channel(current_user)
-    # channels << neo4j_remote_shell
-
-    # channels << Channel.new('Neo4j Rest Interface', %q{Here is the rest interface ...}, "http://neo4j.com/developer/guide-neo4j-browser/")
-    # channels << Channel.new('Neo4j Dummy Client', %q{This is dummy client.}, "http://neo4j.com/developer/guide-neo4j-browser/")
   end
 
   private

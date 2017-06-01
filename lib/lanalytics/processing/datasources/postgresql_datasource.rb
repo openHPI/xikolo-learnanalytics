@@ -17,14 +17,6 @@ module Lanalytics
           @connection_pool = ConnectionPool.new(size: pool_size) do
             PG.connect(postgres_config)
           end
-
-          # This would be an alternative of initializing the connection
-          # begin
-          #   @conn = PG.connect(postgres_database_config)
-          # rescue Exception => any_error
-          #   Rails.logger.error "No Postgres connection could be created for database #{postgres_database_config[:db_name]} with following error message #{any_error.message}."
-          #   # raise 'No Neo4j::Session could be created. Plz have a look at the configuration ...' unless session
-          # end
         end
 
         def ping

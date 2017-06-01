@@ -1,22 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
-#File.expand_path('../lib/lanalytics/experience_api/statement', __FILE__)
-#require '../lanalytics/experience_api/statement'
-
-#require 'rails'
-
-#%w(
-#  neo4j
-#  action_controller
-#  action_mailer
-#  sprockets
-#).each do |framework|
-#  begin
-#    require "#{framework}/railtie"
-#  rescue LoadError
-#  end
-#end
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
