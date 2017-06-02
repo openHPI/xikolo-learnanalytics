@@ -12,7 +12,6 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                minimum_should_match: 1,
                 filter: {
                   range: {
                     timestamp: {
@@ -33,6 +32,7 @@ module Lanalytics
           }
 
           if course_id.present?
+            body[:query][:bool][:minimum_should_match] = 1
             body[:query][:bool][:should] = []
             body[:query][:bool][:should] << { match: { 'in_context.course_id' => course_id } }
             body[:query][:bool][:should] << { match: { 'resource.resource_uuid' => course_id } }
@@ -40,6 +40,7 @@ module Lanalytics
 
           if resource_id.present?
             courses = Xikolo.api(:course).value!.rel(:courses).get(cat_id: resource_id).value!
+            body[:query][:bool][:minimum_should_match] = 1
             body[:query][:bool][:should] = []
             courses.each do |course|
               body[:query][:bool][:should] << { match: { 'in_context.course_id' => course['id'] } }
