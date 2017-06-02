@@ -8,7 +8,7 @@ module Lanalytics
             next if processing_unit[:in_context].nil? || processing_unit[:in_context][:user_ip].nil?
 
             user_ip = processing_unit[:in_context][:user_ip]
-            geoip_info = GeoIP.new('GeoLiteCity.dat').city(user_ip) || stubbed_geoinfo
+            geoip_info = GeoIP.new('GeoLiteCityv6.dat').city(user_ip) || stubbed_geoinfo
 
             next if geoip_info.nil?
 

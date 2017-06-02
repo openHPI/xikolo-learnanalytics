@@ -25,6 +25,6 @@ Cany::Specification.new do
   end
 
   binary do
-    install 'GeoLiteCity.dat', "/usr/share/#{spec.name}"
+    install 'GeoLiteCityv6.dat', "/usr/share/#{spec.name}"
   end
 end
