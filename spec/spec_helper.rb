@@ -16,8 +16,6 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'webmock/rspec'
-# Allow the connection to the test Neo4j instance
-WebMock.disable_net_connect!(allow: ['localhost:8474'])
 
 # Enabling coverage check during test run
 require 'simplecov'
