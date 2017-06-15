@@ -1,6 +1,4 @@
 class Course::ProgressExerciseStatsPresenter < PrivatePresenter
-  include ProgressHelper
-
   def available?
     @total_exercises and @total_exercises > 0
   end
@@ -21,7 +19,11 @@ class Course::ProgressExerciseStatsPresenter < PrivatePresenter
   end
 
   def my_progress
-    calc_progress(graded_points, total_points)
+    if total_points == 0
+      total_points
+    else
+      (graded_points.fdiv(total_points) * 100).floor
+    end
   end
 
   def withhold_gradings?

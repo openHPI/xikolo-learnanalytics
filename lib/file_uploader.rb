@@ -13,7 +13,6 @@ end
 class FileUploader
 
   require 'net/http'
-  include FileHelper
   attr_accessor :file
 
   #unzip param is not supported here
@@ -73,5 +72,9 @@ class FileUploader
 
   def to_ascii(str)
     str.encode('ascii', invalid: :replace, undef: :replace, replace: '?')
+  end
+
+  def data_directory
+    Pathname.new Rails.application.config.data_dir
   end
 end
