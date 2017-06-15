@@ -59,11 +59,7 @@ class VideoEventsWorker < QcRuleWorker
       end
     end
 
-    if final_result.empty?
-      return final_result
-    else
-      return final_result.slice(1..-2)
-    end
+    final_result.slice(1..-2).to_a
   end
 
   def convert_seconds_to_time(seconds)
