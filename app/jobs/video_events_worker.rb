@@ -37,7 +37,7 @@ class VideoEventsWorker < QcRuleWorker
         nil,
         item.id,
         nil,
-        nil).value!
+        nil)
     start_pause_time = {}
     start_value = 0
     video_events.each_with_index do |video_event, index|
