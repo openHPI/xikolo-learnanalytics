@@ -93,9 +93,13 @@ module Reports
               ]
             end
 
+            values << (enrollment.created_at - DateTime.parse(course['start_date'])).to_i
+
+            unless @anonymize
+              values.concat profile['fields'].map { |f| f.dig('values', 0) }
+            end
+
             values += [
-              (enrollment.created_at - DateTime.parse(course['start_date'])).to_i,
-              *profile['fields'].map { |f| f.dig('values', 0) },
               stat_pinboard['questions'],
               stat_pinboard['answers'],
               stat_pinboard['comments_on_answers'],
@@ -279,9 +283,13 @@ module Reports
           ]
         end
 
+        headers << 'Enrollment Delta in Days'
+
+        unless @anonymize
+          headers.concat custom_profile_fields.map { |f| f['title']['en'] }
+        end
+
         headers.concat [
-          'Enrollment Delta in Days',
-          custom_profile_fields.map { |f| f['title']['en'] },
           'Questions',
           'Answers',
           'Comments on Answers',
