@@ -1,5 +1,11 @@
 module Reports
   class CourseEventsReport < Base
+    def initialize(job, params = {})
+      super
+
+      @anonymize = params[:privacy_flag]
+    end
+
     def generate!
       @job.update(annotation: course['course_code'])
 
@@ -47,6 +53,9 @@ module Reports
 
     # Transform one event's data for output to the CSV file
     def transform(row)
+      # Anonymize the user ID, if required
+      row[:user] = @anonymize ? Digest::SHA256.hexdigest(row[:user]) : row[:user]
+
       # We add three more columns with information related to course items
       row[:type] = ''
       row[:title] = ''
