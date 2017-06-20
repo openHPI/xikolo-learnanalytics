@@ -46,6 +46,18 @@ describe JobsController do
     it 'creates a new job' do
       expect { subject }.to change { Job.count }.from(0).to(1)
     end
+
+    it 'marks the job as requested' do
+      subject
+      expect(Job.last.status).to eq 'requested'
+    end
+
+    it 'schedules a job for handling the report' do
+      ActiveJob::Base.queue_adapter = :test
+      expect {
+        subject
+      }.to have_enqueued_job(CreateReportJob)
+    end
   end
 
   describe '#update' do
