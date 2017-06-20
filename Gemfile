@@ -45,9 +45,6 @@ group :test do
 end
 
 gem 'business_time'
-gem 'zip-zip'
-gem 'zipruby-compat', :require => 'zipruby', :git => "https://github.com/jawspeak/zipruby-compatibility-with-rubyzip-fork.git", :tag => "v0.3.7"
-gem 'rubyzip', '~> 1.1.0'
 gem 'sidekiq'
 gem 'sidekiq-cron'
 gem 'database_cleaner'

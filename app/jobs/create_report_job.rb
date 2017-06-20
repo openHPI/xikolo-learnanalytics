@@ -1,5 +1,3 @@
-require 'zipruby'
-
 class CreateReportJob < ActiveJob::Base
   queue_as :default
 
@@ -40,12 +38,10 @@ class CreateReportJob < ActiveJob::Base
   end
 
   def zip_files(files, password, path)
-    ::ZipRuby::Archive.open(path.to_s, ::ZipRuby::CREATE) do |archive|
-      files.each do |name|
-        archive.add_file name.to_s
-      end
-      archive.encrypt(password) if password.present?
-    end
+    password = password.present? ? "--password #{password}" : ''
+    system "zip #{password} #{path} #{files.join(' ')}"
+
+    raise "Zipping files failed: #{$?}" if $?.exitstatus > 0
   end
 
   def upload_file(file, expire_date, user_id, scope)
