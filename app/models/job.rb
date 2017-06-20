@@ -55,7 +55,7 @@ class Job < ActiveRecord::Base
   end
 
   def tmp_directory
-    Rails.root.join('tmp', id)
+    Xikolo.config.data_dir.join('tmp', id)
   end
 
   def in_tmp_directory
