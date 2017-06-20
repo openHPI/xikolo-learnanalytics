@@ -5,8 +5,6 @@ FactoryGirl.define do
     task_scope ''
     status  'pending'
     job_params ''
-    file_id 'b2147ab3-424b-4777-bb31-976b99cb016f'
-    file_expire_date 1.day.from_now
     progress 5
 
     factory :course_export_job do
