@@ -313,7 +313,7 @@ module Reports
           headers.concat course_sections.map { |s| "#{s['title'].titleize} Points (Section)" }
         end
 
-        headers.concat quizzes.map { |q| "#{q['title'].titleize} Points (Quiz)" }
+        headers.concat quiz_column_headers
 
         headers.concat ['Course Code']
       end
@@ -332,6 +332,13 @@ module Reports
         course_id: course['id'],
         published: true
       ).value!
+    end
+
+    def quiz_column_headers
+      quizzes.map { |q|
+        section = course_sections.find { |s| s['id'] == q['section_id'] } || {'title' => ''}
+        "#{section['title'].titleize} - #{q['title'].titleize} Points (Quiz)"
+      }
     end
 
     def quizzes
