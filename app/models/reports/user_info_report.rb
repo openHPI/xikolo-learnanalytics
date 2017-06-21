@@ -32,7 +32,10 @@ module Reports
           'First Enrollment'
         ]
 
-        headers.concat custom_profile_fields.map { |f| f['title']['en'] }
+        unless @anonymize
+          headers.concat custom_profile_fields.map { |f| f['title']['en'] }
+        end
+
         headers.concat courses.values.map(&:course_code)
       end
     end
@@ -94,10 +97,14 @@ module Reports
           user.created_at.strftime('%Y-%m-%d'),
           user.born_at,
           top_country,
-          first_enrollment,
-          *user_profile['fields'].map { |f| f.dig('values', 0) },
-          *courses.values.map { |c| user_course_states[c.id].present? ? user_course_states[c.id] : ''}
+          first_enrollment
         ]
+
+        unless @anonymize
+          values += user_profile['fields'].map { |f| f.dig('values', 0) }
+        end
+
+        values += courses.values.map { |c| user_course_states[c.id].present? ? user_course_states[c.id] : ''}
 
         yield values
 
