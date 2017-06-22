@@ -1,71 +1,74 @@
 require 'spec_helper'
 
 describe JobsController do
-  let(:job) { FactoryGirl.create :job }
+  let(:job) { FactoryGirl.create :course_export_job }
   let(:json) { JSON.parse response.body }
-  let(:params) { FactoryGirl.attributes_for(:job) }
+  let(:params) { FactoryGirl.attributes_for(:course_export_job) }
   let(:default_params) { {format: 'json'}}
 
   describe '#index' do
+    before { job }
+    subject { get :index }
 
-    it 'should answer' do
-      get :index
-      expect(response.status).to eq(200)
-    end
+    it { is_expected.to have_http_status :ok }
 
-    it 'should answer with a list' do
-      job
-      get :index
-      expect(response.status).to eq(200)
+    it 'answers with a list' do
+      subject
       expect(json).to have(1).item
     end
 
-    it 'should answer with job objects' do
-      job
-      get :index
-      expect(response.status).to eq(200)
-      assert_response :success
+    it 'answers with job objects' do
+      subject
       expect(json[0]).to eq(JobDecorator.new(job).as_json(api_version: 1).stringify_keys)
     end
 
-    it 'should create a new job' do
-      jobs = Job.all
-      expect(jobs.count).to eq(0)
-      post :create, job: {file_id: 'b2147ab3-424b-4777-bb31-976b99cb016f', status: 'pending'}
-      assert_response :success
-      jobs = Job.all
-      expect(jobs.count).to eq(1)
-    end
+    context 'filter by user' do
+      let!(:job1) { FactoryGirl.create(:course_export_job, user_id: '00000001-3100-4444-9999-000000000001')}
+      let!(:job2) { FactoryGirl.create(:course_export_job, user_id: '00000001-3100-4444-9999-000000000001')}
+      let!(:job3) { FactoryGirl.create(:course_export_job, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f')}
 
-    it 'should update a job' do
-      patch :update, id: job.id, job: params
-      expect(response.status).to be 204
-    end
+      subject { get :index, user_id: '00000001-3100-4444-9999-000000000001' }
 
-    describe 'check user filter' do
-      let!(:job1) { FactoryGirl.create(:job, user_id: '00000001-3100-4444-9999-000000000001')}
-      let!(:job2) { FactoryGirl.create(:job, user_id: '00000001-3100-4444-9999-000000000001')}
-      let!(:job3) { FactoryGirl.create(:job, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f')}
-      let(:params2) {{user_id: '00000001-3100-4444-9999-000000000001' }}
-      let(:action) { -> { get :index, params2}}
-      before { action.call }
-      it 'should only returns jobs for user' do
-        jobs = Job.all
-        expect(jobs.count).to eq(3)
-        expect(response.status).to eq(200)
-        expect(json).to have(2).item
+      it { is_expected.to have_http_status :ok }
+
+      it 'returns only the jobs for the user' do
+        subject
+        expect(json).to have(2).items
       end
     end
   end
 
-  describe '#show' do
-    let(:action) { -> { get :show, id: job.id } }
-    before { action.call }
+  describe '#create' do
+    subject { post :create, params }
 
-    context 'response' do
-      subject { response }
-      its(:status) { expect eq 200 }
+    it { is_expected.to have_http_status :created }
 
+    it 'creates a new job' do
+      expect { subject }.to change { Job.count }.from(0).to(1)
     end
+
+    it 'marks the job as requested' do
+      subject
+      expect(Job.last.status).to eq 'requested'
+    end
+
+    it 'schedules a job for handling the report' do
+      ActiveJob::Base.queue_adapter = :test
+      expect {
+        subject
+      }.to have_enqueued_job(CreateReportJob)
+    end
+  end
+
+  describe '#update' do
+    subject { patch :update, id: job.id, job: params }
+
+    it { is_expected.to have_http_status :no_content }
+  end
+
+  describe '#show' do
+    subject { get :show, id: job.id }
+
+    it { is_expected.to have_http_status :ok }
   end
 end

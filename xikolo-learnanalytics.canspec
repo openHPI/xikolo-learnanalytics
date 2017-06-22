@@ -9,6 +9,7 @@ Cany::Specification.new do
   website 'https://dev.xikolo.de'
   licence 'MIT'
   depend 'git', version: '>= 1.7', situation: :build
+  depend 'zip'
 
   use :bundler do
     skip_group :integration
