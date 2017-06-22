@@ -66,9 +66,7 @@ module Reports
         item = items[row[:resource]] || {}
         row[:type] = item['content_type']
         row[:title] = item['title']
-
-        section = sections[item['section_id']]
-        row[:section] = section['title']
+        row[:section] = sections.dig(item['section_id'], 'title')
       end
 
       row.values
