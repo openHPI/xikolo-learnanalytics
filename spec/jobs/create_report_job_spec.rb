@@ -27,6 +27,11 @@ describe CreateReportJob do
     let(:new_file_id) { SecureRandom.uuid }
     before do
       allow_any_instance_of(Job).to receive(:generate!).and_return(report_stub)
+
+      Stub.service(
+        :file,
+        uploaded_files_url: 'http://localhost:4000/uploaded_files'
+      )
     end
 
     let!(:create_file_stub) {

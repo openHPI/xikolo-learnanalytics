@@ -484,7 +484,6 @@ DEPENDENCIES
   xikolo-common (~> 1.5)
   xikolo-config (~> 1.66)
   xikolo-course (~> 9.9.0)
-  xikolo-file (~> 1.8.1)
   xikolo-helpdesk
   xikolo-pinboard (~> 4.39)
   xikolo-quiz

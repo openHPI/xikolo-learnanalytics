@@ -49,7 +49,6 @@ gem 'sidekiq'
 gem 'sidekiq-cron'
 gem 'database_cleaner'
 
-gem 'xikolo-file', '~> 1.8.1'
 gem 'xikolo-course', '~> 9.9.0'
 gem 'xikolo-account'
 gem 'xikolo-pinboard', '~> 4.39'

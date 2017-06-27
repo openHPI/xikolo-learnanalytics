@@ -47,21 +47,23 @@ class CreateReportJob < ActiveJob::Base
   end
 
   def upload_file(file, expire_date, user_id, scope)
-    record = Xikolo::File::UploadedFile.new(
+    file_attrs = {
       name: File.basename(file.path),
       path: File.join('reports', File.basename(file.path)),
       description: nil,
       user_id: user_id,
-      mime_type: 'application/zip' # this is hardcoded for now
-    )
-    record.course_id = scope if scope
-    record.expire_at = expire_date if expire_date
+      mime_type: 'application/zip'
+    }
+    file_attrs[:course_id] = scope if scope
+    file_attrs[:expire_at] = expire_date if expire_date
 
-    return nil unless record.save
+    record = Xikolo.api(:file).value!.rel(:uploaded_files).post(file_attrs).value
 
-    return nil unless upload_file_contents(file, record.id)
+    return nil unless record
 
-    record.id
+    return nil unless upload_file_contents(file, record['id'])
+
+    record['id']
   end
 
   BOUNDARY = 'RubyMultipartPostFDSFAKLdslfds'
