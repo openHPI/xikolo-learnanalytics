@@ -11,7 +11,7 @@ class ReportStub
       @job.tmp_directory.join('course-report-example.csv')
     )
 
-    [@job.tmp_directory.join('course-report-example.csv')]
+    ['course-report-example.csv']
   end
 end
 

@@ -14,10 +14,10 @@ module Reports
     private
 
     def csv_file(target, headers, &block)
-      file = @job.tmp_directory.join("#{target}_#{DateTime.now.strftime('%Y-%m-%d')}.csv")
-      files << file
+      target = "#{target}_#{DateTime.now.strftime('%Y-%m-%d')}.csv"
+      files << target
 
-      CSV.open(File.absolute_path(file), 'wb') do |csv|
+      CSV.open(target, 'wb') do |csv|
         csv << headers
 
         block.call do |row|

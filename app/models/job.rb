@@ -59,8 +59,12 @@ class Job < ActiveRecord::Base
   end
 
   def in_tmp_directory
-    FileUtils.mkpath tmp_directory
-    yield tmp_directory
+    tmp_directory.tap do |tmp_dir|
+      FileUtils.mkpath tmp_dir
+      Dir.chdir(tmp_dir) do
+        yield tmp_dir
+      end
+    end
   ensure
     FileUtils.rmtree tmp_directory
   end
