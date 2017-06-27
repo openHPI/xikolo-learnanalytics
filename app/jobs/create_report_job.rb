@@ -1,3 +1,5 @@
+require 'net/http'
+
 class CreateReportJob < ActiveJob::Base
   queue_as :default
 
@@ -45,15 +47,43 @@ class CreateReportJob < ActiveJob::Base
   end
 
   def upload_file(file, expire_date, user_id, scope)
-    FileUploader.new.upload(
-      Xikolo::File::UploadedFile,
-      file,
-      %w(reports),
-      nil,
-      user_id,
-      false,
-      scope,
-      expire_date
+    record = Xikolo::File::UploadedFile.new(
+      name: File.basename(file.path),
+      path: File.join('reports', File.basename(file.path)),
+      description: nil,
+      user_id: user_id,
+      mime_type: 'application/zip' # this is hardcoded for now
     )
+    record.course_id = scope if scope
+    record.expire_at = expire_date if expire_date
+
+    return nil unless record.save
+
+    return nil unless upload_file_contents(file, record.id)
+
+    record.id
+  end
+
+  BOUNDARY = 'RubyMultipartPostFDSFAKLdslfds'
+  def upload_file_contents(file, id)
+    file.rewind
+
+    uri = URI.parse("#{Xikolo::Common::API.services[:file]}/uploaded_files/#{id}/upload")
+
+    post_body = []
+    post_body << "--#{BOUNDARY}\r\n"
+    post_body << "Content-Disposition: form-data; name=\"datafile\"\r\n"
+    post_body << "Content-Type: text/plain\r\n"
+    post_body << "\r\n"
+    post_body << file.read
+    post_body << "\r\n--#{BOUNDARY}--\r\n"
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.body = post_body.join
+    request['Content-Type'] = "multipart/form-data, boundary=#{BOUNDARY}"
+
+    response = http.request(request)
+    response.kind_of? Net::HTTPSuccess
   end
 end
