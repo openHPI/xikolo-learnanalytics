@@ -21,7 +21,8 @@ class CreateReportJob < ActiveJob::Base
         publish_file job, zip_file
       end
     rescue => error
-      Sidekiq.logger.error error.inspect
+      Sidekiq.logger.error error.message
+      Sidekiq.logger.error error.backtrace.join("\n")
       job.fail
     end
   end
