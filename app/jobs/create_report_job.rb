@@ -69,13 +69,16 @@ class CreateReportJob < ActiveJob::Base
   BOUNDARY = 'RubyMultipartPostFDSFAKLdslfds'
   def upload_file_contents(file, id)
     file.rewind
+    filename = File.basename(file.path)
+                   .encode('ascii', invalid: :replace, undef: :replace, replace: '?')
 
     uri = URI.parse("#{Xikolo::Common::API.services[:file]}/uploaded_files/#{id}/upload")
 
     post_body = []
     post_body << "--#{BOUNDARY}\r\n"
-    post_body << "Content-Disposition: form-data; name=\"datafile\"\r\n"
-    post_body << "Content-Type: text/plain\r\n"
+    post_body << "Content-Disposition: form-data; name=\"datafile\"; filename=\"#{filename}\"\r\n"
+    post_body << "Content-Transfer-Encoding: binary\r\n"
+    post_body << "Content-Type: application/zip\r\n"
     post_body << "\r\n"
     post_body << file.read
     post_body << "\r\n--#{BOUNDARY}--\r\n"
