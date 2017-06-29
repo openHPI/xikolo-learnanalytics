@@ -21,8 +21,7 @@ class CreateReportJob < ActiveJob::Base
         publish_file job, zip_file
       end
     rescue => error
-      Sidekiq.logger.error error.message
-      Sidekiq.logger.error error.backtrace.join("\n")
+      Sidekiq.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
       job.fail
     end
   end
@@ -58,11 +57,9 @@ class CreateReportJob < ActiveJob::Base
     file_attrs[:course_id] = scope if scope
     file_attrs[:expire_at] = expire_date if expire_date
 
-    record = Xikolo.api(:file).value!.rel(:uploaded_files).post(file_attrs).value
+    record = Xikolo.api(:file).value!.rel(:uploaded_files).post(file_attrs).value!
 
-    return nil unless record
-
-    return nil unless upload_file_contents(file, record['id'])
+    upload_file_contents(file, record['id'])
 
     record['id']
   end
@@ -90,6 +87,6 @@ class CreateReportJob < ActiveJob::Base
     request['Content-Type'] = "multipart/form-data, boundary=#{BOUNDARY}"
 
     response = http.request(request)
-    response.kind_of? Net::HTTPSuccess
+    raise "Error during ZIP archive upload: #{response.inspect}" unless response.kind_of? Net::HTTPSuccess
   end
 end
