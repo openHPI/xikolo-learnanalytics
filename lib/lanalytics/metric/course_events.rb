@@ -38,7 +38,7 @@ module Lanalytics
           end
         else
           result = datasource.exec do |client|
-            client.scroll scroll: '5m', scroll_id: scroll_id
+            client.scroll scroll: '5m', scroll_id: scroll_id, body: { scroll_id: scroll_id }
           end
         end
 
