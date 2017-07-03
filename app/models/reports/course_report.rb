@@ -29,40 +29,40 @@ module Reports
             user.rel(:profile).get,
             course_service.rel(:enrollment).get(id: e.id, learning_evaluation: true),
             pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
-            course_service.rel(:progresses).get(user_id: user.id, course_id: course['id'])
+            course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id'])
           ) do |profile, enrollment, stat_pinboard, progresses|
             birth_compare_date = course['start_date'] ? DateTime.parse(course['start_date']) : DateTime.now
-            age = user.born_at.present? ? ((birth_compare_date - user.born_at) / 365).to_i : '-99'
-
             enrollment_date = DateTime.parse(enrollment['created_at'])
+            age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : '-99'
+
             values = [
-              @anonymize ? Digest::SHA256.hexdigest(user.id) : user.id,
+              @anonymize ? Digest::SHA256.hexdigest(user['id']) : user['id'],
               enrollment_date,
               enrollment_date.strftime('%Y-%m-%d'),
               first_enrollment?(enrollment),
-              user.created_at.strftime('%Y-%m-%d'),
-              user.language,
-              user.affiliated,
-              user.born_at,
+              DateTime.parse(user['created_at']).strftime('%Y-%m-%d'),
+              user['language'],
+              user['affiliated'],
+              DateTime.parse(user['born_at']),
               age,
-              user.born_at.present? ? age_group_from_age(age) : '-99'
+              user['born_at'].present? ? age_group_from_age(age) : '-99'
             ]
 
             unless @anonymize
               values += [
-                user.first_name,
-                user.last_name,
-                user.email
+                user['first_name'],
+                user['last_name'],
+                user['email']
               ]
             end
 
             # get elasticsearch metrics per user
             if @extended
-              course_activity = fetch_metric('CourseActivity', course['id'], user.id)
-              user_course_country = fetch_metric('UserCourseCountry', course['id'], user.id, :unescaped_query)
+              course_activity = fetch_metric('CourseActivity', course['id'], user['id'])
+              user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query)
 
               metrics = {
-                device_usage: fetch_device_usage(course['id'], user.id),
+                device_usage: fetch_device_usage(course['id'], user['id']),
                 course_activity: course_activity.present? && course_activity[:count].present? ? course_activity[:count].to_s : '-99',
                 user_course_country: user_course_country.present? ? user_course_country : 'zz'
               }
@@ -74,23 +74,23 @@ module Reports
                 metrics[:device_usage][:state],
                 metrics[:device_usage][:web],
                 metrics[:device_usage][:mobile],
-                clustering_metrics.dig(user.id, 'sessions') || '-99',
-                clustering_metrics.dig(user.id, 'average_session_duration') || '-99',
-                clustering_metrics.dig(user.id, 'total_session_duration') || '-99',
-                clustering_metrics.dig(user.id, 'forum_activity') || '-99',
-                clustering_metrics.dig(user.id, 'textual_forum_contribution') || '-99',
-                clustering_metrics.dig(user.id, 'forum_observation') || '-99',
-                clustering_metrics.dig(user.id, 'item_discovery') || '-99',
-                clustering_metrics.dig(user.id, 'video_discovery') || '-99',
-                clustering_metrics.dig(user.id, 'quiz_discovery') || '-99',
-                clustering_metrics.dig(user.id, 'video_player_activity') || '-99',
-                clustering_metrics.dig(user.id, 'download_activity') || '-99',
-                clustering_metrics.dig(user.id, 'course_performance') || '-99',
-                clustering_metrics.dig(user.id, 'quiz_performance') || '-99',
-                clustering_metrics.dig(user.id, 'ungraded_quiz_performance') || '-99',
-                clustering_metrics.dig(user.id, 'graded_quiz_performance') || '-99',
-                clustering_metrics.dig(user.id, 'main_quiz_performance') || '-99',
-                clustering_metrics.dig(user.id, 'bonus_quiz_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'sessions') || '-99',
+                clustering_metrics.dig(user['id'], 'average_session_duration') || '-99',
+                clustering_metrics.dig(user['id'], 'total_session_duration') || '-99',
+                clustering_metrics.dig(user['id'], 'forum_activity') || '-99',
+                clustering_metrics.dig(user['id'], 'textual_forum_contribution') || '-99',
+                clustering_metrics.dig(user['id'], 'forum_observation') || '-99',
+                clustering_metrics.dig(user['id'], 'item_discovery') || '-99',
+                clustering_metrics.dig(user['id'], 'video_discovery') || '-99',
+                clustering_metrics.dig(user['id'], 'quiz_discovery') || '-99',
+                clustering_metrics.dig(user['id'], 'video_player_activity') || '-99',
+                clustering_metrics.dig(user['id'], 'download_activity') || '-99',
+                clustering_metrics.dig(user['id'], 'course_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'quiz_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'ungraded_quiz_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'graded_quiz_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'main_quiz_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'bonus_quiz_performance') || '-99',
                 metrics[:course_activity]
               ]
             end
@@ -132,7 +132,7 @@ module Reports
               }
             end
 
-            all_submissions = all_user_submissions(user.id)
+            all_submissions = all_user_submissions(user['id'])
             values += quizzes.map { |q| all_submissions.dig(q['content_id'], 'points') || 0 }
 
             values += [course['course_code']]
