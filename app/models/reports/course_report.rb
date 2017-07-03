@@ -23,11 +23,11 @@ module Reports
         Xikolo::Course::Enrollment.each_item(
           course_id: course['id'], per_page: 50, deleted: true
         ) do |e, enrollments|
-          user = account_service.rel(:user).get(id: e['user_id']).value!
+          user = account_service.rel(:user).get(id: e.user_id).value!
 
           Restify::Promise.new(
             user.rel(:profile).get,
-            course_service.rel(:enrollment).get(id: e['id'], learning_evaluation: true),
+            course_service.rel(:enrollment).get(id: e.id, learning_evaluation: true),
             pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
             course_service.rel(:progresses).get(user_id: user.id, course_id: course['id'])
           ) do |profile, enrollment, stat_pinboard, progresses|
