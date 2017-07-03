@@ -21,22 +21,24 @@ module Reports
       index = 0
       courses.each_with_index do |course, course_index|
         Xikolo::Course::Enrollment.each_item(
-          course_id: course['id'], per_page: 1, deleted: true, learning_evaluation: 'true'
-        ) do |enrollment, enrollments|
-          user = account_service.rel(:user).get(id: enrollment.user_id).value!
+          course_id: course['id'], per_page: 50, deleted: true
+        ) do |e, enrollments|
+          user = account_service.rel(:user).get(id: e['user_id']).value!
 
           Restify::Promise.new(
             user.rel(:profile).get,
+            course_service.rel(:enrollment).get(id: e['id'], learning_evaluation: true),
             pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
             course_service.rel(:progresses).get(user_id: user.id, course_id: course['id'])
-          ) do |profile, stat_pinboard, progresses|
+          ) do |profile, enrollment, stat_pinboard, progresses|
             birth_compare_date = course['start_date'] ? DateTime.parse(course['start_date']) : DateTime.now
             age = user.born_at.present? ? ((birth_compare_date - user.born_at) / 365).to_i : '-99'
 
+            enrollment_date = DateTime.parse(enrollment['created_at'])
             values = [
               @anonymize ? Digest::SHA256.hexdigest(user.id) : user.id,
-              enrollment.created_at,
-              enrollment.created_at.strftime('%Y-%m-%d'),
+              enrollment_date,
+              enrollment_date.strftime('%Y-%m-%d'),
               first_enrollment?(enrollment),
               user.created_at.strftime('%Y-%m-%d'),
               user.language,
@@ -93,7 +95,7 @@ module Reports
               ]
             end
 
-            values << (enrollment.created_at - DateTime.parse(course['start_date'])).to_i
+            values << (enrollment_date - DateTime.parse(course['start_date'])).to_i
 
             unless @anonymize
               values.concat profile['fields'].map { |f| f.dig('values', 0) }
@@ -105,17 +107,17 @@ module Reports
               stat_pinboard['comments_on_answers'],
               stat_pinboard['comments_on_questions'],
               stat_pinboard['questions'] + stat_pinboard['answers'] + stat_pinboard['comments_on_answers'] + stat_pinboard['comments_on_questions'],
-              enrollment.points[:achieved].present? ? enrollment.points[:achieved] : '',
-              enrollment.points[:percentage].present? ? enrollment.points[:percentage] : '',
-              enrollment.certificates[:confirmation_of_participation].present? ? enrollment.certificates[:confirmation_of_participation] : '-99',
-              enrollment.certificates[:record_of_achievement].present? ? enrollment.certificates[:record_of_achievement] : '-99',
-              enrollment.certificates[:certificate].present? ? enrollment.certificates[:certificate] : '-99',
-              enrollment.completed.present? ? enrollment.completed : '-99',
-              enrollment.deleted.present? ? enrollment.deleted : '-99',
-              enrollment.quantile.present? ? enrollment.quantile : '-99',
-              enrollment.quantile.present? ? calculate_top_performance(enrollment.quantile) : '-99',
-              enrollment.visits[:visited].present? ? enrollment.visits[:visited] : '',
-              enrollment.visits[:percentage].present? ? enrollment.visits[:percentage] : ''
+              enrollment.dig('points', 'achieved'),
+              enrollment.dig('points', 'percentage'),
+              enrollment.dig('certificates', 'confirmation_of_participation') || '-99',
+              enrollment.dig('certificates', 'record_of_achievement') || '-99',
+              enrollment.dig('certificates', 'certificate') || '-99',
+              enrollment['completed'] || '-99',
+              enrollment['deleted'] || '-99',
+              enrollment['quantile'] || '-99',
+              enrollment['quantile'].present? ? calculate_top_performance(enrollment['quantile']) : '-99',
+              enrollment.dig('visits', 'visited'),
+              enrollment.dig('visits', 'percentage')
             ]
 
             # For each section, append visit percentage and total graded points
@@ -377,12 +379,12 @@ module Reports
 
     def first_enrollment?(enrollment)
       all_enrollments = course_service.rel(:enrollments).get(
-        user_id: enrollment.user_id,
+        user_id: enrollment['user_id'],
         deleted: true,
         per_page: 500
       ).value!
 
-      all_enrollments.none? { |e| DateTime.parse(e['created_at']) < enrollment.created_at }
+      all_enrollments.none? { |e| DateTime.parse(e['created_at']) < DateTime.parse(enrollment['created_at']) }
     end
 
     def custom_profile_fields
