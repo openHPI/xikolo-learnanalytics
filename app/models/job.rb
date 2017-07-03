@@ -1,5 +1,7 @@
 class Job < ActiveRecord::Base
-  validates_presence_of :user_id, :task_scope
+  validates_presence_of :user_id
+  validates_presence_of :task_type
+  validates_presence_of :task_scope, if: :scoped?
 
   REPORT_CLASSES = {
     'course_export' => Reports::CourseReport,
@@ -67,6 +69,10 @@ class Job < ActiveRecord::Base
     end
   ensure
     FileUtils.rmtree tmp_directory
+  end
+
+  def scoped?
+    task_type != 'user_info_export'
   end
 
   private
