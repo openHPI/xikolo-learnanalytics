@@ -31,7 +31,7 @@ class JobsController < ApplicationController
 
   def create
     job = Job.create job_params.merge({status: 'requested'})
-    job.schedule report_params
+    job.schedule report_params if job.valid?
 
     respond_with job
   end
