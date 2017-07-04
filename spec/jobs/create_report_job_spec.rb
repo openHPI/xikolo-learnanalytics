@@ -43,12 +43,6 @@ describe CreateReportJob do
       )
     }
 
-    let!(:upload_file_stub) {
-      Stub.request(
-        :file, :post, "/uploaded_files/#{new_file_id}/upload"
-      ).to_return Stub.response
-    }
-
     it 'marks the job as finished' do
       expect { subject }.to change { job.reload.status }.from('pending').to('done')
     end
@@ -58,9 +52,9 @@ describe CreateReportJob do
       expect(create_file_stub).to have_been_requested
     end
 
-    it 'uploads the ZIP file to the file service' do
+    it 'stores the ZIP file at the right location in the share' do
       subject
-      expect(upload_file_stub).to have_been_requested
+      expect(File.exist? 'spec/support/data_dir/reports/course-report-example.zip').to be true
     end
 
     it 'saves an expiry date for the file' do

@@ -1,4 +1,4 @@
-require 'net/http'
+require 'fileutils'
 
 class CreateReportJob < ActiveJob::Base
   queue_as :default
@@ -31,12 +31,10 @@ class CreateReportJob < ActiveJob::Base
   def publish_file(job, path)
     expire_date = 1.days.from_now
 
-    File.open(path, 'rb') do |file|
-      job.finish_with(
-        file_id: upload_file(file, expire_date, job.user_id, job.task_scope),
-        file_expire_date: expire_date
-      )
-    end
+    job.finish_with(
+      file_id: upload_file(path, expire_date, job.user_id, job.task_scope),
+      file_expire_date: expire_date
+    )
   end
 
   def zip_files(files, password, target)
@@ -46,10 +44,12 @@ class CreateReportJob < ActiveJob::Base
     raise "Zipping files failed: #{$?}" if $?.exitstatus > 0
   end
 
-  def upload_file(file, expire_date, user_id, scope)
+  def upload_file(file_path, expire_date, user_id, scope)
+    file_name = File.basename(file_path)
     file_attrs = {
-      name: File.basename(file.path),
-      path: File.join('reports', File.basename(file.path)),
+      name: file_name,
+      path: File.join('reports', file_name),
+      size: File.size(file_name),
       description: nil,
       user_id: user_id,
       mime_type: 'application/zip'
@@ -59,34 +59,10 @@ class CreateReportJob < ActiveJob::Base
 
     record = Xikolo.api(:file).value!.rel(:uploaded_files).post(file_attrs).value!
 
-    upload_file_contents(file, record['id'])
+    target_dir = Xikolo.config.data_dir.join('reports')
+    FileUtils.mkpath target_dir
+    FileUtils.move file_path, target_dir.join(file_name)
 
     record['id']
-  end
-
-  BOUNDARY = 'RubyMultipartPostFDSFAKLdslfds'
-  def upload_file_contents(file, id)
-    file.rewind
-    filename = File.basename(file.path)
-                   .encode('ascii', invalid: :replace, undef: :replace, replace: '?')
-
-    uri = URI.parse("#{Xikolo::Common::API.services[:file]}/uploaded_files/#{id}/upload")
-
-    post_body = []
-    post_body << "--#{BOUNDARY}\r\n"
-    post_body << "Content-Disposition: form-data; name=\"datafile\"; filename=\"#{filename}\"\r\n"
-    post_body << "Content-Transfer-Encoding: binary\r\n"
-    post_body << "Content-Type: application/zip\r\n"
-    post_body << "\r\n"
-    post_body << file.read
-    post_body << "\r\n--#{BOUNDARY}--\r\n"
-
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.body = post_body.join
-    request['Content-Type'] = "multipart/form-data, boundary=#{BOUNDARY}"
-
-    response = http.request(request)
-    raise "Error during ZIP archive upload: #{response.inspect}" unless response.kind_of? Net::HTTPSuccess
   end
 end
