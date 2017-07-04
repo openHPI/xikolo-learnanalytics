@@ -43,7 +43,7 @@ module Reports
               DateTime.parse(user['created_at']).strftime('%Y-%m-%d'),
               user['language'],
               user['affiliated'],
-              DateTime.parse(user['born_at']),
+              user['born_at'] && DateTime.parse(user['born_at']),
               age,
               user['born_at'].present? ? age_group_from_age(age) : '-99'
             ]
