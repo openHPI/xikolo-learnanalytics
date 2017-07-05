@@ -16,18 +16,18 @@ module Reports
 
       csv_file "CombinedCourseReport_#{@job.annotation}", headers, &method(:each_row)
     end
-  end
 
-  private
+    private
 
-  def courses
-    @courses ||= course_service.rel(:courses).get(
-      cat_id: @job.task_scope,
-      affiliated: true
-    ).value!
-  end
+    def courses
+      @courses ||= course_service.rel(:courses).get(
+        cat_id: @job.task_scope,
+        affiliated: true
+      ).value!
+    end
 
-  def classifier
-    @classifier ||= course_service.rel(:classifier).get(id: @job.task_scope).value!
+    def classifier
+      @classifier ||= course_service.rel(:classifier).get(id: @job.task_scope).value!
+    end
   end
 end
