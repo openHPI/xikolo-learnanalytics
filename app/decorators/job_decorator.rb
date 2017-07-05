@@ -12,6 +12,8 @@ class JobDecorator < ApplicationDecorator
       user_id: model.user_id,
       progress: model.progress,
       annotation: model.annotation
+    }.tap { |fields|
+      fields[:error_text] = model.error_text if job.failing?
     }.as_json(**opts)
   end
 end

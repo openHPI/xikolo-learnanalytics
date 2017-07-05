@@ -59,6 +59,10 @@ class Job < ActiveRecord::Base
     )
   end
 
+  def failing?
+    status == 'failing'
+  end
+
   def tmp_directory
     Xikolo.config.data_dir.join('tmp', id)
   end
