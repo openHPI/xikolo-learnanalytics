@@ -6,6 +6,7 @@ FactoryGirl.define do
     status  'pending'
     job_params ''
     progress 5
+    error_text nil
 
     factory :course_export_job do
       task_type 'course_export'

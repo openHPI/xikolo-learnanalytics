@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170314095111) do
+ActiveRecord::Schema.define(version: 20170705083809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 20170314095111) do
     t.datetime "file_expire_date"
     t.integer  "progress"
     t.string   "annotation"
+    t.text     "error_text"
   end
 
   create_table "qc_alert_statuses", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
