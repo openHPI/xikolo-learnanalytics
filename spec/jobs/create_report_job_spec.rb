@@ -71,5 +71,10 @@ describe CreateReportJob do
     it 'marks the job as failed' do
       expect { subject }.to change { job.reload.status }.from('pending').to('failing')
     end
+
+    it 'stores the exception trace in the database' do
+      subject
+      expect(job.reload.error_text).to include 'Report failed'
+    end
   end
 end

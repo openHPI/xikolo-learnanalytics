@@ -52,8 +52,11 @@ class Job < ActiveRecord::Base
   end
 
   # Mark a job as failed
-  def fail
-    update status: 'failing'
+  def fail_with(error_message)
+    update(
+      status: 'failing',
+      error_text: error_message
+    )
   end
 
   def tmp_directory
