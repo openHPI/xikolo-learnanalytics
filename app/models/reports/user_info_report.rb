@@ -46,44 +46,6 @@ module Reports
         user_profile = account_service.rel(:user).get(id: user.id).value!.rel(:profile).get.value!
         user_enrollments = course_service.rel(:enrollments).get(user_id: user.id, learning_evaluation: true, deleted: true, per_page: 200).value!
 
-        user_course_states = {}
-
-        user_enrollments.each do |enrollment|
-          if @combine_enrollment_info
-            # '': not enrolled
-            # e: enrolled
-            # v: visited
-            # p: achieved points
-            # c: completed
-            # r: RoA
-            state = 'e'
-            state = 'v' if enrollment.dig('visits', 'visited').to_f > 0
-            state = 'p' if enrollment.dig('points', 'percentage').to_f > 0
-            state = 'c' if enrollment['completed']
-            state = 'r' if enrollment.dig('certificates', 'record_of_achievement')
-            user_course_states[enrollment['course_id']] = state
-          else
-            user_course_states[enrollment['course_id']] = enrollment.dig('points', 'percentage')
-          end
-        end
-
-        is_first_enrollment = ''
-        if user_enrollments.count > 0
-          first_enrollment = user_enrollments
-                               .select { |e| e['created_at'] }
-                               .sort_by { |e| DateTime.parse(e['created_at']) }
-                               .first
-          if first_enrollment && courses.key?(first_enrollment['course_id'])
-            is_first_enrollment = courses[first_enrollment['course_id']].course_code
-          end
-        end
-
-        begin
-          top_country = Lanalytics::Metric::UserCourseCountry.query(user.id, nil, nil, nil, nil, nil, nil)
-        rescue
-          top_country = ''
-        end
-
         values = [@anonymize ? Digest::SHA256.hexdigest(user.id) : user.id]
 
         unless @anonymize
@@ -99,15 +61,15 @@ module Reports
           user.affiliated,
           user.created_at.strftime('%Y-%m-%d'),
           user.born_at,
-          top_country,
-          is_first_enrollment
+          top_country(user),
+          first_course(user_enrollments)
         ]
 
         unless @anonymize
           values += user_profile['fields'].map { |f| f.dig('values', 0) }
         end
 
-        values += courses.values.map { |c| user_course_states[c.id].present? ? user_course_states[c.id] : ''}
+        values += user_course_states(user_enrollments)
 
         yield values
 
@@ -116,6 +78,52 @@ module Reports
       end
 
       Acfs.run
+    end
+
+    def top_country(user)
+      Lanalytics::Metric::UserCourseCountry.query(
+        user.id, nil, nil, nil, nil, nil, nil
+      )
+    rescue
+      ''
+    end
+
+    def first_course(enrollments)
+      return '' if enrollments.count == 0
+
+      first_enrollment = enrollments
+                           .select { |e| e['created_at'] }
+                           .sort_by { |e| DateTime.parse(e['created_at']) }
+                           .first
+
+      return '' unless first_enrollment && courses.key?(first_enrollment['course_id'])
+
+      courses[first_enrollment['course_id']].course_code
+    end
+
+    def user_course_states(enrollments)
+      # Calculate the "state" for each course the user took
+      course_states = enrollments.each_with_object({}) do |enrollment, states|
+        if @combine_enrollment_info
+          # '': not enrolled
+          # e: enrolled
+          # v: visited
+          # p: achieved points
+          # c: completed
+          # r: RoA
+          state = 'e'
+          state = 'v' if enrollment.dig('visits', 'visited').to_f > 0
+          state = 'p' if enrollment.dig('points', 'percentage').to_f > 0
+          state = 'c' if enrollment['completed']
+          state = 'r' if enrollment.dig('certificates', 'record_of_achievement')
+          states[enrollment['course_id']] = state
+        else
+          states[enrollment['course_id']] = enrollment.dig('points', 'percentage')
+        end
+      end
+
+      # ...and finally map them to all course columns
+      courses.keys.map { |course_id| course_states[course_id] }
     end
 
     def courses
