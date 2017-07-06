@@ -31,19 +31,20 @@ module Reports
             pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
             course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id'])
           ) do |profile, enrollment, stat_pinboard, progresses|
-            birth_compare_date = course['start_date'] ? DateTime.parse(course['start_date']) : DateTime.now
-            enrollment_date = DateTime.parse(enrollment['created_at'])
+            course_start_date = as_date(course['start_date'])
+            birth_compare_date = course_start_date || DateTime.now
+            enrollment_date = as_date(enrollment['created_at'])
             age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : '-99'
 
             values = [
               @anonymize ? Digest::SHA256.hexdigest(user['id']) : user['id'],
               enrollment_date,
-              enrollment_date.strftime('%Y-%m-%d'),
+              enrollment_date&.strftime('%Y-%m-%d'),
               first_enrollment?(enrollment),
               DateTime.parse(user['created_at']).strftime('%Y-%m-%d'),
               user['language'],
               user['affiliated'],
-              user['born_at'] && DateTime.parse(user['born_at']),
+              as_date(user['born_at']),
               age,
               user['born_at'].present? ? age_group_from_age(age) : '-99'
             ]
@@ -95,7 +96,12 @@ module Reports
               ]
             end
 
-            values << (enrollment_date - DateTime.parse(course['start_date'])).to_i
+            # Try to calculate enrollment delta
+            if course_start_date && enrollment_date
+              values << (enrollment_date - course_start_date).to_i
+            else
+              values << '?'
+            end
 
             unless @anonymize
               values.concat profile['fields'].map { |f| f.dig('values', 0) }
@@ -384,7 +390,14 @@ module Reports
         per_page: 500
       ).value!
 
-      all_enrollments.none? { |e| DateTime.parse(e['created_at']) < DateTime.parse(enrollment['created_at']) }
+      compare_date = as_date(enrollment['created_at'])
+
+      return '?' unless compare_date
+
+      all_enrollments
+        .map { |e| as_date(e['created_at']) }
+        .compact
+        .none? { |date| date < compare_date }
     end
 
     def custom_profile_fields
@@ -413,6 +426,10 @@ module Reports
 
     def submission_service
       @submission_service ||= Xikolo.api(:submission).value!
+    end
+
+    def as_date(string_or_nil)
+      string_or_nil && DateTime.parse(string_or_nil)
     end
   end
 end
