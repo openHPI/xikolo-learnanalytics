@@ -4,6 +4,7 @@ roles:
     - lanalytics.alert.ignore
   lanalytics.alert.inspector:
     - lanalytics.alert.index
+    - lanalytics.alert.ignore.own
   lanalytics.report.admin:
     - lanalytics.report.create
   lanalytics.report.inspector:
