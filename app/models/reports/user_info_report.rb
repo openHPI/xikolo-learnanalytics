@@ -67,11 +67,14 @@ module Reports
           end
         end
 
-        first_enrollment = ''
+        is_first_enrollment = ''
         if user_enrollments.count > 0
-          course_id = user_enrollments.sort_by { |c| DateTime.parse(c['created_at']) }.first['course_id']
-          if courses[course_id]
-            first_enrollment = courses[course_id].course_code
+          first_enrollment = user_enrollments
+                               .select { |e| e['created_at'] }
+                               .sort_by { |e| DateTime.parse(e['created_at']) }
+                               .first
+          if first_enrollment && courses.key?(first_enrollment['course_id'])
+            is_first_enrollment = courses[first_enrollment['course_id']].course_code
           end
         end
 
@@ -97,7 +100,7 @@ module Reports
           user.created_at.strftime('%Y-%m-%d'),
           user.born_at,
           top_country,
-          first_enrollment
+          is_first_enrollment
         ]
 
         unless @anonymize
