@@ -43,38 +43,44 @@ module Reports
     def each_user
       index = 0
       Xikolo::Account::User.each_item(confirmed: true, per_page: 500) do |user, users|
-        user_profile = account_service.rel(:user).get(id: user.id).value!.rel(:profile).get.value!
-        user_enrollments = course_service.rel(:enrollments).get(user_id: user.id, learning_evaluation: true, deleted: true, per_page: 200).value!
+        Restify::Promise.new(
+          account_service.rel(:user).get(id: user.id).then { |user|
+            user.rel(:profile).get
+          },
+          course_service.rel(:enrollments).get(
+            user_id: user.id, learning_evaluation: true, deleted: true, per_page: 200
+          )
+        ) do |user_profile, user_enrollments|
+          values = [@anonymize ? Digest::SHA256.hexdigest(user.id) : user.id]
 
-        values = [@anonymize ? Digest::SHA256.hexdigest(user.id) : user.id]
+          unless @anonymize
+            values += [
+              user.first_name,
+              user.last_name,
+              user.email
+            ]
+          end
 
-        unless @anonymize
           values += [
-            user.first_name,
-            user.last_name,
-            user.email
+            user.language,
+            user.affiliated,
+            user.created_at.strftime('%Y-%m-%d'),
+            user.born_at,
+            top_country(user),
+            first_course(user_enrollments)
           ]
-        end
 
-        values += [
-          user.language,
-          user.affiliated,
-          user.created_at.strftime('%Y-%m-%d'),
-          user.born_at,
-          top_country(user),
-          first_course(user_enrollments)
-        ]
+          unless @anonymize
+            values += user_profile['fields'].map { |f| f.dig('values', 0) }
+          end
 
-        unless @anonymize
-          values += user_profile['fields'].map { |f| f.dig('values', 0) }
-        end
+          values += user_course_states(user_enrollments)
 
-        values += user_course_states(user_enrollments)
+          yield values
 
-        yield values
-
-        index += 1
-        @job.progress_to(index, of: users.total_count)
+          index += 1
+          @job.progress_to(index, of: users.total_count)
+        end.value!
       end
 
       Acfs.run
