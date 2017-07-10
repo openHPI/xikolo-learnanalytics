@@ -28,7 +28,9 @@ module Reports
 
           Restify::Promise.new(
             user.rel(:profile).get,
-            course_service.rel(:enrollment).get(id: e.id, learning_evaluation: true),
+            course_service.rel(:enrollments).get(
+              course_id: course['id'], user_id: e.user_id, deleted: true, learning_evaluation: true
+            ).then { |array| array.first },
             pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
             course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id'])
           ) do |profile, enrollment, stat_pinboard, progresses|
