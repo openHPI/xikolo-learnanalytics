@@ -18,8 +18,9 @@ module Reports
     private
 
     def each_row
-      index = 0
       courses.each_with_index do |course, course_index|
+        index = 0
+
         Xikolo::Course::Enrollment.each_item(
           course_id: course['id'], per_page: 50, deleted: true
         ) do |e, enrollments|
