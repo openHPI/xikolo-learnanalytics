@@ -62,12 +62,12 @@ module Reports
 
             # get elasticsearch metrics per user
             if @extended
-              course_activity = fetch_metric('CourseActivity', course['id'], user['id'])
-              user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query)
+              course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
+              user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query) || ''
 
               metrics = {
                 device_usage: fetch_device_usage(course['id'], user['id']),
-                course_activity: course_activity.present? && course_activity[:count].present? ? course_activity[:count].to_s : '-99',
+                course_activity: course_activity[:count] || '-99',
                 user_course_country: user_course_country.present? ? user_course_country : 'zz'
               }
 
@@ -182,7 +182,7 @@ module Reports
 
       result = {}
 
-      if device_usage != 0
+      if device_usage
         result[:state] = device_usage[:behavior][:state]
         device_usage[:behavior][:usage].each do |usage|
           result[usage[:category].to_sym] = usage[:total_activity].to_s
@@ -203,7 +203,7 @@ module Reports
                          course_id,
                          nil, nil, nil, nil, nil)
     rescue
-      0
+      nil
     end
 
     def fetch_clustering_metrics(course)
