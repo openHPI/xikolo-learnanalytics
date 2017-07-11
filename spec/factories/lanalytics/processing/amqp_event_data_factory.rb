@@ -21,7 +21,6 @@ FactoryGirl.define do
     lang "de"
     categories []
     teacher_ids []
-    teaching_team_ids []
     course_code "test-kurs"
     status "preparation"
     vimeo_id nil
