@@ -23,6 +23,6 @@ class CourseStatisticsController < ApplicationController
 
   def show
     # incoming id is a course_id!
-    respond_with CourseStatistic.retrieve params[:id]
+    respond_with CourseStatistic.find_by! course_id: params[:id]
   end
 end

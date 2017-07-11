@@ -87,11 +87,5 @@ class CourseStatistic < ActiveRecord::Base
           version.object
         end
     end
-
-    def retrieve(course_id)
-      CourseStatistic.find_or_create_by(course_id: course_id).tap do |stat|
-        stat.calculate!
-      end
-    end
   end
 end
