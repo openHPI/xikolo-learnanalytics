@@ -29,6 +29,7 @@ require 'sidekiq/testing'
 require 'acfs/rspec'
 require 'webmock/rspec'
 require 'rspec/collection_matchers'
+require 'paper_trail/frameworks/rspec'
 
 require 'xikolo/common/rspec'
 
