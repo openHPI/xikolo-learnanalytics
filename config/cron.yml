@@ -2,3 +2,7 @@ qc_rules_sync:
   cron: '*/15 * * * *'
   class: QcRunAllRules
   queue: high
+calculate_course_statistics:
+  cron: '0 0 * * *'
+  class: CalculateCourseStatsWorker
+  queue: high
