@@ -28,7 +28,7 @@ module Reports
 
         user = account_service.rel(:user).get(id: submission.user_id).value!
         submission_hash[:user_name] = user['full_name']
-        submission_hash[:email] = user['email']
+        submission_hash[:user_email] = user['email']
 
         submission_service.rel(:quiz_submission_questions).get(
           quiz_submission_id: submission.id, per_page: 250
