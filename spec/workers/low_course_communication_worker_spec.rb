@@ -24,36 +24,41 @@ describe LowCourseCommunicationWorker do
       'X-Total-Count' => '10'
     }
   end
-  let!(:get_enrollments) do  Acfs::Stub.resource Xikolo::Course::Enrollment,
-                                                 :list,
-                                                 with: {course_id: test_course.id, per_page: 1},
-      return: [{ id: '00000001-3100-4444-9999-000000000004'}],
-      headers: headers
+  before do
+    Stub.request(
+      :course, :get, '/enrollments',
+      query: { course_id: test_course.id, per_page: '1' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000004' }
+    ], headers: headers)
+    Stub.request(
+      :course, :get, '/enrollments',
+      query: { course_id: test_course2.id, per_page: '1' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000004' }
+    ], headers: headers)
   end
-  let!(:get_enrollments2) do  Acfs::Stub.resource Xikolo::Course::Enrollment,
-                                                 :list,
-                                                 with: {course_id: test_course2.id, per_page: 1},
-      return: [{ id: '00000001-3100-4444-9999-000000000004'}],
-      headers: headers
-  end
-  let!(:get_news) do
-    stub_restify(
+
+  before do
+    Stub.service(
       :news,
-      :news,
-      :get,
-      with: {course_id: test_course.id, published: "true", per_page: 1, page: 1},
-      body_res: [[{ id: '00000001-3100-4444-9999-000000000002', publish_at: 11.days.ago}]]
+      news_index_url: 'http://news.xikolo.tld/news',
+      news_url: 'http://news.xikolo.tld/news/{id}'
     )
+    Stub.request(
+      :news, :get, '/news',
+      query: { course_id: test_course.id, published: 'true', per_page: '1', page: '1' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000002', publish_at: 11.days.ago }
+    ])
+    Stub.request(
+      :news, :get, '/news',
+      query: { course_id: test_course2.id, published: 'true', per_page: '1', page: '1' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000002', publish_at: 9.days.ago }
+    ])
   end
-  let!(:get_news2) do
-    stub_restify(
-      :news,
-      :news,
-      :get,
-      with: {course_id: test_course2.id, published: "true", per_page: 1, page: 1},
-      body_res: [[{ id: '00000001-3100-4444-9999-000000000002', publish_at: 9.days.ago}]]
-    )
-  end
+
   subject { described_class.new}
 
   it 'should create an alert when announcement is too old' do

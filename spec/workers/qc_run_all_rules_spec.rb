@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'sidekiq/testing'
-require 'acfs/rspec'
 
 describe QcRunAllRules do
   before do
@@ -8,25 +7,23 @@ describe QcRunAllRules do
     Sidekiq::Testing.fake!
 
   end
-  let(:qc_rule) {FactoryGirl.create :qc_rule}
-  let(:qc_alert) { FactoryGirl.create :qc_alert, {qc_rule_id: qc_rule.id} }
+  let(:qc_rule) { FactoryGirl.create :qc_rule }
+  let(:qc_alert) { FactoryGirl.create :qc_alert, qc_rule_id: qc_rule.id }
 
-  let!(:get_courses) do Acfs::Stub.resource Xikolo::Course::Course,
-                                            :list,
-                                            with: {},
-                                            return: [{ id: '00000001-3100-4444-9999-000000000001', course_code: 'testcourse', start_date: 1.day.from_now }]
+  before do
+    Stub.request(
+      :course, :get, '/courses',
+      query: { affiliated: 'true', public: 'true', page: '1', per_page: '50' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000001', course_code: 'testcourse' }
+    ])
+    Stub.request(
+      :course, :get, '/enrollments'
+    ).to_return Stub.json([
+      { id: '00000001-3100-5555-9999-000000000008' }
+    ])
   end
-  #let!(:get_enrollment) do  Acfs::Stub.resource Xikolo::Course::Enrollment,
-   #                                                :read,
-    ##                                               with: {course_id: '00000001-3100-4444-9999-000000000001', page: 1, per_page: 1},
-      #                                           return: [{ id: '00000001-3100-4444-9999-000000000001'}]
-  #end
 
-  let!(:get_enrollments) do Acfs::Stub.resource Xikolo::Course::Enrollment,
-                                            :list,
-                                            with: {},
-                                            return: [{ id: '00000001-3100-4444-9999-000000000001', course_code: 'testcourse', start_date: 1.day.from_now }]
-  end
   subject { described_class.new.perform}
 
   it 'should be processed in right queue' do

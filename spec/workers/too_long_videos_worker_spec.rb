@@ -26,49 +26,47 @@ describe TooLongVideosWorker do
   let(:qc_alert_open) { FactoryGirl.create :qc_alert, {qc_rule_id: qc_rule2.id, status: 'open', course_id: test_course_over.id} }
   let(:qc_alert_open_with_data) { FactoryGirl.create :qc_alert, {qc_rule_id: qc_rule2.id, status: 'open', course_id: test_course_over.id,  qc_alert_data: {"resource_id"=>"00000001-3300-4444-9999-000000000003"}} }
 
-  let!(:get_items) do
-    Acfs::Stub.resource Xikolo::Course::Item,
-                        :list,
-                        with: {course_id: test_course.id, content_type: 'video', published: 'true'},
-        return: [{id: '00000001-3100-4444-9999-000000000004', content_id: '00000001-3100-4444-9999-000000000004'} ]
+  before do
+    Stub.request(
+      :course, :get, '/items',
+      query: { course_id: test_course.id, content_type: 'video', published: 'true' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000004', content_id: '00000001-3100-4444-9999-000000000004' }
+    ])
+    Stub.request(
+      :course, :get, '/items',
+      query: { course_id: test_course2.id, content_type: 'video', published: 'true' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000005', content_id: '00000001-3100-4444-9999-000000000005' },
+      { id: '00000001-3100-4444-9999-000000000006', content_id: '00000001-3100-4444-9999-000000000006' },
+      { id: '00000001-3100-4444-9999-000000000007', content_id: '00000001-3100-4444-9999-000000000007' }
+    ])
+    Stub.request(
+      :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
+    ).to_return Stub.json(
+      id: '00000001-3100-4444-9999-000000000004',
+      duration: 100
+    )
+    Stub.request(
+      :video, :get, '/videos/00000001-3100-4444-9999-000000000005'
+    ).to_return Stub.json(
+      id: '00000001-3100-4444-9999-000000000005',
+      duration: 1560
+    )
+    Stub.request(
+      :video, :get, '/videos/00000001-3100-4444-9999-000000000006'
+    ).to_return Stub.json(
+      id: '00000001-3100-4444-9999-000000000006',
+      duration: 2040
+    )
+    Stub.request(
+      :video, :get, '/videos/00000001-3100-4444-9999-000000000007'
+    ).to_return Stub.json(
+      id: '00000001-3100-4444-9999-000000000007',
+      duration: 2700
+    )
   end
 
-  let!(:get_long_items) do
-    Acfs::Stub.resource Xikolo::Course::Item,
-                        :list,
-                        with: {course_id: test_course2.id, content_type: 'video', published: 'true'},
-        return: [{id: '00000001-3100-4444-9999-000000000005', content_id: '00000001-3100-4444-9999-000000000005'},
-        {id: '00000001-3100-4444-9999-000000000006', content_id: '00000001-3100-4444-9999-000000000006'},
-        {id: '00000001-3100-4444-9999-000000000007', content_id: '00000001-3100-4444-9999-000000000007'}]
-  end
-  let!(:get_video) do
-    Acfs::Stub.resource Xikolo::Video::Video,
-                        :read,
-                        with: {id: '00000001-3100-4444-9999-000000000004'},
-        return: {id: '00000001-3100-4444-9999-000000000004', duration: 100}
-
-  end
-
-  let!(:get_long_video) do
-    Acfs::Stub.resource Xikolo::Video::Video,
-                        :read,
-                        with: {id: '00000001-3100-4444-9999-000000000005'},
-        return: {id: '00000001-3100-4444-9999-000000000005', duration: 1560}
-  end
-
-  let!(:get_medium_long_video) do
-    Acfs::Stub.resource Xikolo::Video::Video,
-                        :read,
-                        with: {id: '00000001-3100-4444-9999-000000000006'},
-        return: {id: '00000001-3100-4444-9999-000000000006', duration: 2040}
-  end
-
-  let!(:get_high_long_video) do
-    Acfs::Stub.resource Xikolo::Video::Video,
-                        :read,
-                        with: {id: '00000001-3100-4444-9999-000000000007'},
-        return: {id: '00000001-3100-4444-9999-000000000007', duration: 2700}
-  end
   subject { described_class.new }
 
   it 'should not create an alert' do

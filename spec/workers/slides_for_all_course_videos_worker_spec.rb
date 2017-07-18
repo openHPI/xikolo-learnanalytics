@@ -22,30 +22,31 @@ describe SlidesForAllCourseVideosWorker do
       forum_is_locked: nil
   }}
 
-  let!(:get_items) do
-    Acfs::Stub.resource Xikolo::Course::Item,
-                        :list,
-                        with: {course_id: test_course.id, content_type: 'video'},
-        return: [{id: '00000001-3100-4444-9999-000000000004', content_id: '00000001-3100-4444-9999-000000000004'}]
-  end
-  let!(:get_items2) do
-    Acfs::Stub.resource Xikolo::Course::Item,
-                        :list,
-                        with: {course_id: test_course2.id, content_type: 'video'},
-        return: [{id: '00000001-3100-4444-9999-000000000003', content_id: '00000001-3100-4444-9999-000000000003'}]
-  end
-  let!(:get_video) do
-    Acfs::Stub.resource Xikolo::Video::Video,
-                        :read,
-                        with: {id: '00000001-3100-4444-9999-000000000004'},
-        return: {id: '00000001-3100-4444-9999-000000000004', thumbnail_archive_id: nil}
-  end
-
-  let!(:get_video2) do
-    Acfs::Stub.resource Xikolo::Video::Video,
-                        :read,
-                        with: {id: '00000001-3100-4444-9999-000000000003'},
-        return: {id: '00000001-3100-4444-9999-000000000003', thumbnail_archive_id: 'abc'}
+  before do
+    Stub.request(
+      :course, :get, '/items',
+      query: { course_id: test_course.id, content_type: 'video' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000004', content_id: '00000001-3100-4444-9999-000000000004' }
+    ])
+    Stub.request(
+      :course, :get, '/items',
+      query: { course_id: test_course2.id, content_type: 'video' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000003', content_id: '00000001-3100-4444-9999-000000000003' }
+    ])
+    Stub.request(
+      :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
+    ).to_return Stub.json(
+      id: '00000001-3100-4444-9999-000000000004',
+      thumbnail_archive_id: nil
+    )
+    Stub.request(
+      :video, :get, '/videos/00000001-3100-4444-9999-000000000003'
+    ).to_return Stub.json(
+      id: '00000001-3100-4444-9999-000000000003',
+      thumbnail_archive_id: 'abc'
+    )
   end
 
   subject { described_class.new }

@@ -28,76 +28,63 @@ describe InitialAnnouncementWorker do
         'X-Total-Count' => '10'
     }
   end
-  let!(:get_enrollments) do
-    Acfs::Stub.resource Xikolo::Course::Enrollment,
-                        :list,
-                        with: {course_id: test_course.id, per_page: 1},
-        return: [{id: '00000001-3100-4444-9999-000000000004'}],
-        headers: headers
+  before do
+    Stub.request(
+      :course, :get, '/enrollments',
+      query: { course_id: test_course.id, per_page: 1 }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000004' }
+    ], headers: headers)
+    Stub.request(
+      :course, :get, '/enrollments',
+      query: { course_id: course_little_enrollments.id, per_page: 1 }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000001' }
+    ], headers: headers2)
+    Stub.request(
+      :course, :get, '/enrollments',
+      query: { course_id: test_course2.id, per_page: 1 }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000001' }
+    ], headers: headers)
+    Stub.request(
+      :course, :get, '/enrollments',
+      query: { course_id: normal_course.id, per_page: 1 }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000001' }
+    ], headers: headers)
   end
 
-  let!(:get_enrollments3) do
-    Acfs::Stub.resource Xikolo::Course::Enrollment,
-                        :list,
-                        with: {course_id: course_little_enrollments.id, per_page: 1},
-        return: [{id: '00000001-3100-4444-9999-000000000001'}],
-        headers: headers2
-  end
-
-  let!(:get_enrollments4) do
-    Acfs::Stub.resource Xikolo::Course::Enrollment,
-                        :list,
-                        with: {course_id: test_course2.id, per_page: 1},
-        return: [{id: '00000001-3100-4444-9999-000000000001'}],
-        headers: headers
-  end
-
-  let!(:get_enrollments5) do
-    Acfs::Stub.resource Xikolo::Course::Enrollment,
-                        :list,
-                        with: {course_id: normal_course.id, per_page: 1},
-        return: [{id: '00000001-3100-4444-9999-000000000001'}],
-        headers: headers
-  end
-
-  let!(:get_news) do
-    stub_restify(
+  before do
+    Stub.service(
       :news,
-      :news,
-      :get,
-      with: {course_id: test_course.id, published: "true"},
-      body_res: [[{id: '00000001-3100-4444-9999-000000000002', sending_state: 1}]]
+      news_index_url: 'http://news.xikolo.tld/news',
+      news_url: 'http://news.xikolo.tld/news/{id}'
     )
-  end
-
-  let!(:get_news2) do
-    stub_restify(
-      :news,
-      :news,
-      :get,
-      with: {course_id: test_course2.id, published: "true"},
-      body_res: [[{id: '00000001-3100-4444-9999-000000000003'}]]
-    )
-  end
-
-  let!(:get_news3) do
-    stub_restify(
-      :news,
-      :news,
-      :get,
-      with: {course_id: course_little_enrollments.id, published: "true"},
-      body_res: [[{id: '00000001-3100-4444-9999-000000000003', sending_state: 0}]]
-    )
-  end
-
-  let!(:get_news4) do
-    stub_restify(
-      :news,
-      :news,
-      :get,
-      with: {course_id: normal_course.id, published: "true"},
-      body_res: [[{id: '00000001-3100-4444-9999-000000000003', sending_state: 1, publish_at: 4.days.ago}]]
-    )
+    Stub.request(
+      :news, :get, '/news',
+      query: { course_id: test_course.id, published: 'true' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000002', sending_state: 1 }
+    ])
+    Stub.request(
+      :news, :get, '/news',
+      query: { course_id: test_course2.id, published: 'true' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000003' }
+    ])
+    Stub.request(
+      :news, :get, '/news',
+      query: { course_id: course_little_enrollments.id, published: 'true' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000003', sending_state: 0 }
+    ])
+    Stub.request(
+      :news, :get, '/news',
+      query: { course_id: normal_course.id, published: 'true' }
+    ).to_return Stub.json([
+      { id: '00000001-3100-4444-9999-000000000003', sending_state: 1, publish_at: 4.days.ago }
+    ])
   end
 
   it 'should update open alert annotation' do
