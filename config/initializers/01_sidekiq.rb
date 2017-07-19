@@ -5,7 +5,7 @@
 def load_cron_jobs
   cron_file = 'config/cron.yml'
   if File.exists? cron_file
-    Sidekiq::Cron::Job.load_from_hash YAML.load_file(cron_file)
+    Sidekiq::Cron::Job.load_from_hash! YAML.load_file(cron_file)
   end
 end
 
