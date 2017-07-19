@@ -11,13 +11,19 @@ class CalculateCourseStatsWorker
 
   private
 
-  def each_course
+  def each_course(&block)
+    courses = []
+
     Xikolo::Course::Course.each_item(affiliated: true) do |course|
       next if course.status == 'preparation' or course.external_course_url.present?
 
-      yield course
+      courses << course
     end
     Acfs.run
+
+    # We first gather all courses, and then loop over them again, to prevent problems with
+    # other Acfs calls being executed inside the `each_item` loop. :headdesk:
+    courses.each(&block)
   end
 
   def gather_stats!(course_id)
