@@ -1,0 +1,15 @@
+default: &default
+  namespace: xikolo-services-lanalytics
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+integration:
+  <<: *default
+
+production:
+  <<: *default
+  url: redis://redis:6379/12

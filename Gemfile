@@ -45,7 +45,7 @@ group :test do
 end
 
 gem 'business_time'
-gem 'sidekiq'
+gem 'xikolo-sidekiq'
 gem 'sidekiq-cron'
 gem 'database_cleaner'
 
