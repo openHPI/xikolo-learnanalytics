@@ -64,17 +64,20 @@ module Reports
             if @extended
               course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
               user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query) || ''
+              user_course_city = fetch_metric('UserCourseCity', course['id'], user['id'], :unescaped_query) || ''
 
               metrics = {
                 device_usage: fetch_device_usage(course['id'], user['id']),
                 course_activity: course_activity[:count] || '-99',
-                user_course_country: user_course_country.present? ? user_course_country : 'zz'
+                user_course_country: user_course_country.present? ? user_course_country : 'zz',
+                user_course_city: user_course_city.present? ? user_course_city : '-99'
               }
 
               clustering_metrics = fetch_clustering_metrics(course)
 
               values += [
                 metrics[:user_course_country],
+                metrics[:user_course_city],
                 metrics[:device_usage][:state],
                 metrics[:device_usage][:web],
                 metrics[:device_usage][:mobile],
@@ -262,6 +265,7 @@ module Reports
         if @extended
           headers.concat [
             'Top Country',
+            'Top City',
             'Device Usage',
             'Web Usage',
             'Mobile Usage',

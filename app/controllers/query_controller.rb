@@ -64,10 +64,10 @@ class QueryController < ApplicationController
        VideoSpeedChangeMetric CourseActivity CourseActivityTimebased
        CoursePoints VideoPlayerAdvancedCount GeoActivity VideoEvents
        ActiveUserCount CourseActivityList UserActivityCount CourseEvents
-       ItemVisits QuizPerformance TopCountries UserCourseCountry Sessions
+       ItemVisits QuizPerformance TopCountries UserCourseCountry UserCourseCity
        AvgSessionDuration TotalSessionDuration ReferrerCount DeviceUsage
        ForumActivity ForumTextualContribution ForumObservation
-       ItemDiscovery VideoDiscovery QuizDiscovery
+       ItemDiscovery VideoDiscovery QuizDiscovery Sessions
        VideoPlayerActivity DownloadActivity CoursePerformance
        QuizPerformance UngradedQuizPerformance GradedQuizPerformance
        MainQuizPerformance BonusQuizPerformance ShareButtonClicks DeviceUsageCount
