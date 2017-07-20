@@ -3,7 +3,7 @@ module Reports
     def initialize(job, params = {})
       super
 
-      @anonymize = params[:privacy_flag]
+      @deanonymized = params[:deanonymized]
     end
 
     def generate!
@@ -17,7 +17,7 @@ module Reports
     def headers
       headers = ['User ID']
 
-      unless @anonymize
+      if @deanonymized
         headers.concat [
          'User Name',
          'Email',
@@ -73,9 +73,9 @@ module Reports
     end
 
     def transform_submission(row)
-      values = [@anonymize ? Digest::SHA256.hexdigest(row[:user_id]) : row[:user_id]]
+      values = [@deanonymized ? row[:user_id] : Digest::SHA256.hexdigest(row[:user_id])]
 
-      unless @anonymize
+      if @deanonymized
         values += [
           row[:user_name],
           row[:user_email],

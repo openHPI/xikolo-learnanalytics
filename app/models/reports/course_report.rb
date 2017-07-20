@@ -3,7 +3,7 @@ module Reports
     def initialize(job, params = {})
       super
 
-      @anonymize = params[:privacy_flag]
+      @deanonymized = params[:deanonymized]
       @extended = params[:extended_flag]
       @include_sections = true
       @include_all_quizzes = params[:include_all_quizzes]
@@ -40,7 +40,7 @@ module Reports
             age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : '-99'
 
             values = [
-              @anonymize ? Digest::SHA256.hexdigest(user['id']) : user['id'],
+              @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
               enrollment_date,
               enrollment_date&.strftime('%Y-%m-%d'),
               first_enrollment?(enrollment),
@@ -52,7 +52,7 @@ module Reports
               user['born_at'].present? ? age_group_from_age(age) : '-99'
             ]
 
-            unless @anonymize
+            if @deanonymized
               values += [
                 user['first_name'],
                 user['last_name'],
@@ -102,7 +102,7 @@ module Reports
               values << '?'
             end
 
-            unless @anonymize
+            if @deanonymized
               values.concat profile['fields'].map { |f| f.dig('values', 0) }
             end
 
@@ -251,7 +251,7 @@ module Reports
         'Age',
         'Age Group'
       ].tap do |headers|
-        unless @anonymize
+        if @deanonymized
           headers.concat [
             'First Name',
             'Last Name',
@@ -284,7 +284,7 @@ module Reports
 
         headers << 'Enrollment Delta in Days'
 
-        unless @anonymize
+        if @deanonymized
           headers.concat custom_profile_fields.map { |f| f['title']['en'] }
         end
 
