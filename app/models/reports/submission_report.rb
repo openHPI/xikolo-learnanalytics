@@ -1,7 +1,13 @@
 module Reports
   class SubmissionReport < Base
+    def initialize(job, params = {})
+      super
+
+      @anonymize = params[:privacy_flag]
+    end
+
     def generate!
-      @job.update(annotation: item['title'].parameterize.underscore)
+      @job.update(annotation: "#{item['title'].parameterize.underscore} (#{@job.task_scope})")
 
       csv_file "SubmissionReport_#{@job.task_scope}", headers, &method(:each_submission)
     end
@@ -9,12 +15,23 @@ module Reports
     private
 
     def headers
-      user_columns = ['User ID', 'User Name', 'Email', 'Submitted On', 'Points']
-      question_columns = all_quiz_questions.flat_map { |_, question|
+      headers = ['User ID']
+
+      unless @anonymize
+        headers.concat [
+         'User Name',
+         'Email',
+        ]
+      end
+
+      headers.concat [
+        'Submitted On',
+        'Points',
+      ]
+
+      headers.concat all_quiz_questions.flat_map { |_, question|
         [question[:question_text], *question[:answers].map { |answer| answer[:answer_text] }]
       }
-
-      user_columns + question_columns
     end
 
     def each_submission
@@ -56,18 +73,26 @@ module Reports
     end
 
     def transform_submission(row)
-      [
-        row[:user_id],
-        row[:user_name],
-        row[:user_email],
+      values = [@anonymize ? Digest::SHA256.hexdigest(row[:user_id]) : row[:user_id]]
+
+      unless @anonymize
+        values += [
+          row[:user_name],
+          row[:user_email],
+        ]
+      end
+
+      values += [
         row[:created_at],
-        row[:points]
-      ] + all_quiz_questions.flat_map { |key, question|
+        row[:points],
+      ]
+
+      values + all_quiz_questions.flat_map { |key, question|
         # For each question, we add an empty column (for the quiz question)
         # and one column for each possible answer.
         [''] + question[:answers].map { |answer|
           if row[:questions][key][:selected_answers].include? answer[:id]
-            'x'
+            '1'
           else
             row[:questions][key][:freetext_answer]
           end
@@ -97,10 +122,12 @@ module Reports
               quiz_answers.each do |quiz_answer|
 
                 Xikolo::RichText::RichText.find(quiz_answer.answer_rtid) do |a_richtext|
-                  hash[quiz_question.id][:answers] << {id: quiz_answer.id, answer_text: a_richtext.markup}
+                  hash[quiz_question.id][:answers] << {id: quiz_answer.id, position: quiz_answer.position, answer_text: a_richtext.markup}
                 end
               end
             end
+
+            hash[quiz_question.id][:answers].sort_by! { |answer| answer[:position] }
           end
         end
       end
