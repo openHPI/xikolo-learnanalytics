@@ -91,10 +91,6 @@ module Reports
                 clustering_metrics.dig(user['id'], 'download_activity') || '-99',
                 clustering_metrics.dig(user['id'], 'course_performance') || '-99',
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '-99',
-                # clustering_metrics.dig(user['id'], 'ungraded_quiz_performance') || '-99',
-                # clustering_metrics.dig(user['id'], 'graded_quiz_performance') || '-99',
-                # clustering_metrics.dig(user['id'], 'main_quiz_performance') || '-99',
-                # clustering_metrics.dig(user['id'], 'bonus_quiz_performance') || '-99',
                 metrics[:course_activity]
               ]
             end
@@ -224,11 +220,6 @@ module Reports
         course_performance
         quiz_performance
       ]
-      #   ungraded_quiz_performance
-      #   graded_quiz_performance
-      #   main_quiz_performance
-      #   bonus_quiz_performance
-      # ]
       result = Lanalytics::Clustering::Dimensions.query(course['id'], clustering_metrics, nil)
       result.map { |x| [x['user_uuid'], x.except('user_uuid')] }.to_h
     rescue
@@ -287,10 +278,6 @@ module Reports
             'Download Activity',
             'Course Performance',
             'Quiz Performance',
-            # 'Ungraded Quiz Performance',
-            # 'Graded Quiz Performance',
-            # 'Main Quiz Performance',
-            # 'Bonus Quiz Performance',
             'Course Activity'
           ]
         end
