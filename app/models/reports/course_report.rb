@@ -3,7 +3,7 @@ module Reports
     def initialize(job, params = {})
       super
 
-      @anonymize = params[:privacy_flag]
+      @deanonymized = params[:deanonymized]
       @extended = params[:extended_flag]
       @include_sections = true
       @include_all_quizzes = params[:include_all_quizzes]
@@ -40,7 +40,7 @@ module Reports
             age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : '-99'
 
             values = [
-              @anonymize ? Digest::SHA256.hexdigest(user['id']) : user['id'],
+              @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
               enrollment_date,
               enrollment_date&.strftime('%Y-%m-%d'),
               first_enrollment?(enrollment),
@@ -52,7 +52,7 @@ module Reports
               user['born_at'].present? ? age_group_from_age(age) : '-99'
             ]
 
-            unless @anonymize
+            if @deanonymized
               values += [
                 user['first_name'],
                 user['last_name'],
@@ -64,17 +64,20 @@ module Reports
             if @extended
               course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
               user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query) || ''
+              user_course_city = fetch_metric('UserCourseCity', course['id'], user['id'], :unescaped_query) || ''
 
               metrics = {
                 device_usage: fetch_device_usage(course['id'], user['id']),
                 course_activity: course_activity[:count] || '-99',
-                user_course_country: user_course_country.present? ? user_course_country : 'zz'
+                user_course_country: user_course_country.present? ? user_course_country : 'zz',
+                user_course_city: user_course_city.present? ? user_course_city : '-99'
               }
 
               clustering_metrics = fetch_clustering_metrics(course)
 
               values += [
                 metrics[:user_course_country],
+                metrics[:user_course_city],
                 metrics[:device_usage][:state],
                 metrics[:device_usage][:web],
                 metrics[:device_usage][:mobile],
@@ -91,10 +94,6 @@ module Reports
                 clustering_metrics.dig(user['id'], 'download_activity') || '-99',
                 clustering_metrics.dig(user['id'], 'course_performance') || '-99',
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '-99',
-                clustering_metrics.dig(user['id'], 'ungraded_quiz_performance') || '-99',
-                clustering_metrics.dig(user['id'], 'graded_quiz_performance') || '-99',
-                clustering_metrics.dig(user['id'], 'main_quiz_performance') || '-99',
-                clustering_metrics.dig(user['id'], 'bonus_quiz_performance') || '-99',
                 metrics[:course_activity]
               ]
             end
@@ -106,7 +105,7 @@ module Reports
               values << '?'
             end
 
-            unless @anonymize
+            if @deanonymized
               values.concat profile['fields'].map { |f| f.dig('values', 0) }
             end
 
@@ -223,10 +222,6 @@ module Reports
         download_activity
         course_performance
         quiz_performance
-        ungraded_quiz_performance
-        graded_quiz_performance
-        main_quiz_performance
-        bonus_quiz_performance
       ]
       result = Lanalytics::Clustering::Dimensions.query(course['id'], clustering_metrics, nil)
       result.map { |x| [x['user_uuid'], x.except('user_uuid')] }.to_h
@@ -259,7 +254,7 @@ module Reports
         'Age',
         'Age Group'
       ].tap do |headers|
-        unless @anonymize
+        if @deanonymized
           headers.concat [
             'First Name',
             'Last Name',
@@ -270,6 +265,7 @@ module Reports
         if @extended
           headers.concat [
             'Top Country',
+            'Top City',
             'Device Usage',
             'Web Usage',
             'Mobile Usage',
@@ -286,17 +282,13 @@ module Reports
             'Download Activity',
             'Course Performance',
             'Quiz Performance',
-            'Ungraded Quiz Performance',
-            'Graded Quiz Performance',
-            'Main Quiz Performance',
-            'Bonus Quiz Performance',
             'Course Activity'
           ]
         end
 
         headers << 'Enrollment Delta in Days'
 
-        unless @anonymize
+        if @deanonymized
           headers.concat custom_profile_fields.map { |f| f['title']['en'] }
         end
 

@@ -1,5 +1,11 @@
 module Reports
   class PinboardReport < Base
+    def initialize(job, params = {})
+      super
+
+      @deanonymized = params[:deanonymized]
+    end
+
     def generate!
       @job.update(annotation: course['course_code'])
 
@@ -67,7 +73,7 @@ module Reports
         question.text.squish ,
         question.video_timestamp,
         question.video_id,
-        question.user_id,
+        @deanonymized ? question.user_id : Digest::SHA256.hexdigest(question.user_id),
         question.created_at,
         question.updated_at,
         question.accepted_answer_id,
@@ -96,7 +102,7 @@ module Reports
           answer['text'].squish ,
           '',
           '',
-          answer['user_id'],
+          @deanonymized ? answer['user_id'] : Digest::SHA256.hexdigest(answer['user_id']),
           answer['created_at'],
           answer['updated_at'],
           '',

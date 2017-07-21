@@ -3,7 +3,7 @@ module Reports
     def initialize(job, params = {})
       super
 
-      @anonymize = params[:privacy_flag]
+      @deanonymized = params[:deanonymized]
       @extended = params[:extended_flag]
       @include_sections = false
       @include_all_quizzes = false

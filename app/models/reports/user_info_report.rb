@@ -3,7 +3,7 @@ module Reports
     def initialize(job, params = {})
       super
 
-      @anonymize = params[:privacy_flag]
+      @deanonymized = params[:deanonymized]
       @combine_enrollment_info = params[:combined_enrollment_info_flag]
     end
 
@@ -15,7 +15,7 @@ module Reports
 
     def headers
       ['User ID'].tap do |headers|
-        unless @anonymize
+        if @deanonymized
           headers.concat [
             'First Name',
             'Last name',
@@ -32,7 +32,7 @@ module Reports
           'First Enrollment'
         ]
 
-        unless @anonymize
+        if @deanonymized
           headers.concat custom_profile_fields.map { |f| f['title']['en'] }
         end
 
@@ -51,9 +51,9 @@ module Reports
             user_id: user.id, learning_evaluation: true, deleted: true, per_page: 200
           )
         ) do |user_profile, user_enrollments|
-          values = [@anonymize ? Digest::SHA256.hexdigest(user.id) : user.id]
+          values = [@deanonymized ? user.id : Digest::SHA256.hexdigest(user.id)]
 
-          unless @anonymize
+          if @deanonymized
             values += [
               user.first_name,
               user.last_name,
@@ -70,7 +70,7 @@ module Reports
             first_course(user_enrollments)
           ]
 
-          unless @anonymize
+          if @deanonymized
             values += user_profile['fields'].map { |f| f.dig('values', 0) }
           end
 

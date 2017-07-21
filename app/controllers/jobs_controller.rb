@@ -47,6 +47,6 @@ class JobsController < ApplicationController
   end
 
   def report_params
-    params.permit(:zip_password, :privacy_flag, :extended_flag, :combined_enrollment_info_flag, :include_all_quizzes)
+    params.permit(:zip_password, :deanonymized, :extended_flag, :combined_enrollment_info_flag, :include_all_quizzes)
   end
 end
