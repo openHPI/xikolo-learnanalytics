@@ -170,6 +170,8 @@ module Reports
         when 40...50
           '40+'
         when 50...60
+          '50+'
+        when 60...70
           '60+'
         else
           '70+'
