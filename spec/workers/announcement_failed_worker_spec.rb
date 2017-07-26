@@ -26,7 +26,6 @@ describe AnnouncementFailedWorker do
     [{
       id: 'c97b9403-0e81-4857-a52f-a02e901856b1',
       title: 'Hallo',
-      content_rtid: '948a29f9-07f5-43bb-b62c-f7c4497d00cc',
       author_id: '00000001-3100-4444-9999-000000000002',
       publish_at: 2.days.ago.iso8601,
       published_until: 2.days.from_now.iso8601,
