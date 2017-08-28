@@ -4,13 +4,13 @@ class Job < ActiveRecord::Base
   validates_presence_of :task_scope, if: :scoped?
 
   REPORT_CLASSES = {
-    'course_export' => Reports::CourseReport,
-    'user_info_export' => Reports::UserInfoReport,
-    'submission_export' => Reports::SubmissionReport,
-    'pinboard_export' => Reports::PinboardReport,
-    'metric_export' => Reports::MetricReport,
-    'course_events_export' => Reports::CourseEventsReport,
-    'combined_course_export' => Reports::CombinedCourseReport,
+    'course_report' => Reports::CourseReport,
+    'combined_course_report' => Reports::CombinedCourseReport,
+    'user_report' => Reports::UserReport,
+    'unconfirmed_user_report' => Reports::UnconfirmedUserReport,
+    'submission_report' => Reports::SubmissionReport,
+    'pinboard_report' => Reports::PinboardReport,
+    'course_events_report' => Reports::CourseEventsReport,
   }
 
   default_scope {order('updated_at DESC')}
@@ -79,7 +79,7 @@ class Job < ActiveRecord::Base
   end
 
   def scoped?
-    task_type != 'user_info_export'
+    task_type != 'user_report' && task_type != 'unconfirmed_user_report'
   end
 
   private

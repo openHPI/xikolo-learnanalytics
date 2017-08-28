@@ -1,5 +1,5 @@
 module Reports
-  class UserInfoReport < Base
+  class UserReport < Base
     def initialize(job, params = {})
       super
 
@@ -8,7 +8,7 @@ module Reports
     end
 
     def generate!
-      csv_file 'UserInfoReport', headers, &method(:each_user)
+      csv_file 'UserReport', headers, &method(:each_user)
     end
 
     private
@@ -18,7 +18,7 @@ module Reports
         if @deanonymized
           headers.concat [
             'First Name',
-            'Last name',
+            'Last Name',
             'Email'
           ]
         end
