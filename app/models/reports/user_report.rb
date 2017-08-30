@@ -1,10 +1,10 @@
 module Reports
   class UserReport < Base
-    def initialize(job, params = {})
+    def initialize(job, options = {})
       super
 
-      @deanonymized = params[:deanonymized]
-      @combine_enrollment_info = params[:combined_enrollment_info_flag]
+      @deanonymized = options['deanonymized']
+      @combine_enrollment_info = options['combined_enrollment_info_flag']
     end
 
     def generate!

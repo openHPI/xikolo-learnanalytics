@@ -2,8 +2,8 @@ require 'csv'
 
 module Reports
   class Base
-    def initialize(job, _params = {})
-      # Subclasses can override this method if they need access to the additional parameters
+    def initialize(job, _options = {})
+      # Subclasses can override this method if they need access to the additional options
       @job = job
     end
 

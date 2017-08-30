@@ -31,7 +31,7 @@ class JobsController < ApplicationController
 
   def create
     job = Job.create job_params.merge({status: 'requested'})
-    job.schedule report_params if job.valid?
+    job.schedule options if job.valid?
 
     respond_with job
   end
@@ -43,10 +43,10 @@ class JobsController < ApplicationController
   private
 
   def job_params
-    params.permit(:task_type, :task_scope, :job_params, :created_by, :file_id, :file_expire_date, :user_id)
+    params.permit(:task_type, :task_scope, :job_params, :file_id, :file_expire_date, :user_id)
   end
 
-  def report_params
-    params.permit(:zip_password, :deanonymized, :extended_flag, :combined_enrollment_info_flag, :include_all_quizzes)
+  def options
+    params['options'].is_a?(Hash) ? params['options'] : {}
   end
 end

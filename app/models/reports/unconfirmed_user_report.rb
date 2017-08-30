@@ -1,7 +1,7 @@
 module Reports
   class UnconfirmedUserReport < Base
 
-    def initialize(job, params = {})
+    def initialize(job, options = {})
       super
     end
 

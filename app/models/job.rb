@@ -11,6 +11,7 @@ class Job < ActiveRecord::Base
     'submission_report' => Reports::SubmissionReport,
     'pinboard_report' => Reports::PinboardReport,
     'course_events_report' => Reports::CourseEventsReport,
+    'enrollment_report' => Reports::EnrollmentReport,
   }
 
   default_scope {order('updated_at DESC')}
@@ -21,12 +22,12 @@ class Job < ActiveRecord::Base
     end
   end
 
-  def schedule(report_params)
-    CreateReportJob.perform_later(id, report_params)
+  def schedule(options)
+    CreateReportJob.perform_later(id, options)
   end
 
-  def generate!(params)
-    REPORT_CLASSES.fetch(task_type).new(self, params).tap { |report|
+  def generate!(options)
+    REPORT_CLASSES.fetch(task_type).new(self, options).tap { |report|
       report.generate!
     }
   end

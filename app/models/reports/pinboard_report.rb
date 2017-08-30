@@ -1,9 +1,9 @@
 module Reports
   class PinboardReport < Base
-    def initialize(job, params = {})
+    def initialize(job, options = {})
       super
 
-      @deanonymized = params[:deanonymized]
+      @deanonymized = options['deanonymized']
     end
 
     def generate!
