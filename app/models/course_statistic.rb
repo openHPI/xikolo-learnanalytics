@@ -7,7 +7,7 @@ class CourseStatistic < ActiveRecord::Base
     course_stats = Xikolo::Course::Statistic.find course_id: course.id
     extended_course_stats = Xikolo::Course::Stat.find course_id: course.id, key: 'extended'
     pinboard_stats = Xikolo::Pinboard::Statistic.find course.id
-    ticket_stats = Xikolo::Helpdesk::Statistic.find course_id: course.id
+    ticket_stats = Xikolo.api(:helpdesk).value!.rel(:statistics).get(course_id: course.id)
     enrollment_stats = Xikolo::Course::Stat.find course_id: course.id, key: 'enrollments_by_day'
     Acfs.run
 
@@ -54,8 +54,8 @@ class CourseStatistic < ActiveRecord::Base
       comments_on_questions: pinboard_stats.comments_on_questions,
       comments_on_questions_last_day: pinboard_stats.comments_on_questions_last_day,
       certificates: extended_course_stats.certificates_count,
-      helpdesk_tickets: ticket_stats.ticket_count,
-      helpdesk_tickets_last_day: ticket_stats.ticket_count_last_day,
+      helpdesk_tickets: ticket_stats.value!['ticket_count'],
+      helpdesk_tickets_last_day: ticket_stats.value!['ticket_count_last_day'],
       start_date: course.start_date,
       end_date: course.end_date,
       new_users: extended_course_stats.new_users,

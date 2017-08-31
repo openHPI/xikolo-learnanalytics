@@ -396,9 +396,6 @@ GEM
     xikolo-file (1.8.1)
       acfs (~> 0.21, >= 0.21.1)
       activesupport
-    xikolo-helpdesk (0.2.2)
-      acfs (~> 0.25, >= 0.25.0)
-      activesupport
     xikolo-pinboard (4.39)
       acfs (~> 0.41)
       activesupport
@@ -484,7 +481,6 @@ DEPENDENCIES
   xikolo-common (~> 1.5)
   xikolo-config (~> 1.66)
   xikolo-course (~> 9.9.0)
-  xikolo-helpdesk
   xikolo-pinboard (~> 4.39)
   xikolo-quiz
   xikolo-richtext
@@ -492,4 +488,4 @@ DEPENDENCIES
   xikolo-video
 
 BUNDLED WITH
-   1.15.1
+   1.15.4

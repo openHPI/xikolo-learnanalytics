@@ -42,6 +42,10 @@ describe CourseStatistic do
       student_enrollments_by_day: { DateTime.now.iso8601.to_s => 199}
     )
 
+    Stub.service(
+      :helpdesk,
+      statistics_url: 'http://localhost:4700/statistic{?course_id}'
+    )
     Stub.request(
       :helpdesk, :get, '/statistic',
       query: { course_id: course_id }
