@@ -18,7 +18,6 @@ development: &dev
     progress: <%= ENV['XIKOLO_SERVICE_PROGRESS'] || 'http://localhost:4900' %>
     lti: <%= ENV['XIKOLO_SERVICE_LTI'] || 'http://localhost:5000' %>
     game: <%= ENV['XIKOLO_SERVICE_GAME'] || 'http://localhost:5100' %>
-    wiki: <%= ENV['XIKOLO_SERVICE_WIKI'] || 'http://localhost:5200' %>
     peerassessment: <%= ENV['XIKOLO_SERVICE_PEERASSESSMENT'] || 'http://localhost:5400' %>
 
 test:
