@@ -3,15 +3,15 @@ require 'fileutils'
 class CreateReportJob < ActiveJob::Base
   queue_as :default
 
-  def perform(job_id, report_params = {})
+  def perform(job_id, options = {})
     job = Job.start(job_id)
 
     begin
-      zip_password = report_params.delete(:zip_password)
+      zip_password = options.delete(:zip_password)
 
       job.in_tmp_directory do
         # Let the reporter do its work (i.e. generate a bunch of files)
-        report = job.generate!(report_params)
+        report = job.generate!(options)
 
         # Zip up the generated files
         zip_file = "#{File.basename(report.files.first, '.*')}.zip"

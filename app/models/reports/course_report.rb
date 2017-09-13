@@ -1,12 +1,12 @@
 module Reports
   class CourseReport < Base
-    def initialize(job, params = {})
+    def initialize(job, options = {})
       super
 
-      @deanonymized = params[:deanonymized]
-      @extended = params[:extended_flag]
+      @deanonymized = options['deanonymized']
+      @extended = options['extended_flag']
       @include_sections = true
-      @include_all_quizzes = params[:include_all_quizzes]
+      @include_all_quizzes = options['include_all_quizzes']
     end
 
     def generate!

@@ -1,10 +1,10 @@
 module Reports
   class CombinedCourseReport < CourseReport
-    def initialize(job, params = {})
+    def initialize(job, options = {})
       super
 
-      @deanonymized = params[:deanonymized]
-      @extended = params[:extended_flag]
+      @deanonymized = options['deanonymized']
+      @extended = options['extended_flag']
       @include_sections = false
       @include_all_quizzes = false
     end
