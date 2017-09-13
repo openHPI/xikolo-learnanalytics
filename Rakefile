@@ -14,15 +14,6 @@ begin
 rescue LoadError
 end
 
-namespace :sidekiq do
-  desc 'Clear sidekiq queue'
-  task clear: :environment do
-    require 'sidekiq/api'
-    Sidekiq::Queue.new.clear
-    Sidekiq::RetrySet.new.clear
-  end
-end
-
 namespace :ci do
   desc 'Setup service for CI'
   task setup: %w(db:drop db:create:all db:setup) do
