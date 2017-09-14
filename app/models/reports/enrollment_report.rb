@@ -20,13 +20,19 @@ module Reports
 
       @reports_count = 1
       @report_index = 0
-      csv_file 'EnrollmentReport_global', headers, &each_timeframe
+
+      # we have to fetch these already for progress calculation
       if @include_all_classifiers
         classifiers = course_service.rel(:classifiers).get.value!
         @reports_count += classifiers.size
+      end
+
+      csv_file 'EnrollmentReport_global', headers, &each_timeframe
+
+      if @include_all_classifiers
         classifiers.each do |classifier|
           @report_index += 1
-          csv_file "EnrollmentReport_#{classifier['title']}", headers, &each_timeframe(classifier[:id])
+          csv_file "EnrollmentReport_#{classifier['title'].underscore.gsub(/[^0-9A-Z]/i, '_')}", headers, &each_timeframe(classifier[:id])
         end
       end
     end
@@ -52,7 +58,7 @@ module Reports
       Proc.new do |&block|
         start_date = Date.new(@start_year, @start_month, 1)
         end_date = Date.new(@end_year, @end_month, 1)
-        timeframe_count = (end_date.year * 12 + end_date.month) - (start_date.year * 12 + start_date.month)
+        timeframe_count = (end_date.year * 12 + end_date.month) - (start_date.year * 12 + start_date.month) + 1
         timeframe_index = 0
 
         (@start_year..@end_year).each do |year|
