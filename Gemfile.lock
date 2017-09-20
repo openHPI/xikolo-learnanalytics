@@ -173,7 +173,7 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.2.0)
     minitest (5.10.3)
-    mnemosyne-ruby (1.2.0)
+    mnemosyne-ruby (1.2.1)
       activesupport (>= 4)
       bunny
     msgr (0.15.0)
