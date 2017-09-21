@@ -59,7 +59,7 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    browser (2.3.0)
+    browser (2.5.1)
     builder (3.2.3)
     bunny (2.7.0)
       amq-protocol (>= 2.2.0)
