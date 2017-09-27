@@ -381,7 +381,7 @@ GEM
       activesupport
       xikolo-file (~> 1.0)
       xikolo-richtext (~> 3.0)
-    xikolo-common (1.5.2)
+    xikolo-common (2.3.0)
       activesupport
       addressable
       lograge (~> 0.3.5)
@@ -480,7 +480,7 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-account
-  xikolo-common (~> 1.5)
+  xikolo-common (~> 2.3)
   xikolo-config (~> 1.66)
   xikolo-course (~> 9.9.0)
   xikolo-pinboard (~> 4.39)

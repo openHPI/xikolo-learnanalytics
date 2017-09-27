@@ -7,7 +7,7 @@ gem 'rails', '~> 4.2.5'
 gem 'jbuilder', '~> 2.0'
 
 gem 'rails-api'
-gem 'xikolo-common', '~> 1.5'
+gem 'xikolo-common', '~> 2.3'
 
 gem 'xikolo-config', '~> 1.66'
 

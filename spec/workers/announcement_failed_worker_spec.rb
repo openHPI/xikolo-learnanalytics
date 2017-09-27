@@ -4,46 +4,44 @@ require 'sidekiq/testing'
 describe AnnouncementFailedWorker do
   before  do
     ActiveJob::Base.queue_adapter = :test
-    stub_restify(
-      :news,
-      :news,
-      :get,
-      with: {published: 'true'},
-      body_res: [published_news]
-    )
-    stub_request(:get, "http://localhost:3200/").
-        to_return(:status => 200, :body => notification, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
-    stub_request(:get, "http://notification.xikolo.tld/").
-        to_return(:status => 200, :body => notification, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
-    stub_request(:get, "http://localhost:3200/mail_log_stats?news_id=c97b9403-0e81-4857-a52f-a02e901856b1").
-        to_return(:status => 200, :body => mail_logs, :headers => {'Content-Type' => 'application/json;charset=utf-8'})
-  end
-  let!(:notification) {'{
-    "mail_log_stats_url": "http://localhost:3200/mail_log_stats{?news_id}",
-    "events_url": "http://localhost:3200/events"
-    }'}
-  let!(:published_news){
-    [{
-      id: 'c97b9403-0e81-4857-a52f-a02e901856b1',
-      title: 'Hallo',
-      author_id: '00000001-3100-4444-9999-000000000002',
-      publish_at: 2.days.ago.iso8601,
-      published_until: 2.days.from_now.iso8601,
-      receivers: 500
-    }]
-  }
-  let!(:mail_logs) {'{
-    "news_id": "c97b9403-0e81-4857-a52f-a02e901856b1",
-    "count": 205,
-    "success_count": 200,
-    "error_count": 0,
-    "disabled_count": 0,
-    "unique_count": 205,
-    "oldest": "'+3.days.ago.iso8601+'",
-    "newest": "'+1.day.ago.iso8601+'"
-    }'}
 
-  let!(:qc_rule) {FactoryGirl.create :qc_rule}
+    Stub.service(
+      :news,
+      news_index_url: '/news'
+    )
+    Stub.request(
+      :news, :get, '/news',
+      query: { published: 'true' }
+    ).to_return Stub.json([
+      {
+        id: 'c97b9403-0e81-4857-a52f-a02e901856b1',
+        title: 'Hallo',
+        author_id: '00000001-3100-4444-9999-000000000002',
+        publish_at: 2.days.ago.iso8601,
+        published_until: 2.days.from_now.iso8601,
+        receivers: 500
+      }
+    ])
+
+    Stub.service(
+      :notification,
+      mail_log_stats_url: '/mail_log_stats{?news_id}'
+    )
+    Stub.request(
+      :notification, :get, '/mail_log_stats?news_id=c97b9403-0e81-4857-a52f-a02e901856b1'
+    ).to_return Stub.json(
+      news_id: 'c97b9403-0e81-4857-a52f-a02e901856b1',
+      count: 205,
+      success_count: 200,
+      error_count: 0,
+      disabled_count: 0,
+      unique_count: 205,
+      oldest: 3.days.ago.iso8601,
+      newest: 1.day.ago.iso8601
+    )
+  end
+
+  let!(:qc_rule) { FactoryGirl.create :qc_rule }
   subject { described_class.new}
 
   it 'creates an alert when delta exists' do
