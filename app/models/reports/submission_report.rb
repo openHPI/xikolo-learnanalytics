@@ -36,19 +36,22 @@ module Reports
 
     def each_submission
       i = 0
-      Xikolo::Submission::QuizSubmission.each_item(
-        quiz_id: @job.task_scope, only_submitted: 'true'
-      )  do |submission, submissions|
+      Xikolo.paginate(
+        submission_service.rel(:quiz_submissions).get(
+          quiz_id: @job.task_scope,
+          only_submitted: true
+        )
+      ) do |submission, page|
         submission_hash = Hash.new{ |h,k| h[k] = Hash.new(&h.default_proc) }
-        submission_hash[:created_at] = submission.quiz_submission_time
-        submission_hash[:user_id] = submission.user_id
+        submission_hash[:created_at] = DateTime.parse(submission['quiz_submission_time'])
+        submission_hash[:user_id] = submission['user_id']
 
-        user = account_service.rel(:user).get(id: submission.user_id).value!
+        user = account_service.rel(:user).get(id: submission['user_id']).value!
         submission_hash[:user_name] = user['full_name']
         submission_hash[:user_email] = user['email']
 
         submission_service.rel(:quiz_submission_questions).get(
-          quiz_submission_id: submission.id, per_page: 250
+          quiz_submission_id: submission['id'], per_page: 250
         ).value!.each do |submission_question|
           submission_hash[:questions][submission_question['quiz_question_id']][:selected_answers] = []
 
@@ -67,7 +70,7 @@ module Reports
         yield transform_submission(submission_hash)
 
         i += 1
-        @job.progress_to(i, of: submissions.total_count)
+        @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
       end
       Acfs.run
     end
