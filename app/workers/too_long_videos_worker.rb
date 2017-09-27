@@ -18,7 +18,7 @@ class TooLongVideosWorker < QcRuleWorker
         end
         duration_in_min = 0
         duration_in_min = video['duration'] / 60 if video['duration']
-        video_annotation = "#{annotation} (#{duration_in_min} min): #{video.title}"
+        video_annotation = "#{annotation} (#{duration_in_min} min): #{video['title']}"
 
         if duration_in_min.between?(Xikolo.config.qc_alert['video_duration']['low'], Xikolo.config.qc_alert['video_duration']['medium'])
           severity = 'low'

@@ -35,6 +35,11 @@ describe SlidesForAllCourseVideosWorker do
     ).to_return Stub.json([
       { id: '00000001-3100-4444-9999-000000000003', content_id: '00000001-3100-4444-9999-000000000003' }
     ])
+
+    Stub.service(
+      :video,
+      video_url: '/videos/{id}'
+    )
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
     ).to_return Stub.json(

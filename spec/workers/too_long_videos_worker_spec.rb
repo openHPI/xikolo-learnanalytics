@@ -41,6 +41,11 @@ describe TooLongVideosWorker do
       { id: '00000001-3100-4444-9999-000000000006', content_id: '00000001-3100-4444-9999-000000000006' },
       { id: '00000001-3100-4444-9999-000000000007', content_id: '00000001-3100-4444-9999-000000000007' }
     ])
+
+    Stub.service(
+      :video,
+      video_url: '/videos/{id}'
+    )
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
     ).to_return Stub.json(
