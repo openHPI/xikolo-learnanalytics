@@ -11,11 +11,10 @@ class SlidesForAllCourseVideosWorker < QcRuleWorker
       Acfs.run
 
       items.each do |item|
-        unless  item.content_id.nil? or item.content_id.empty?
-          video = Xikolo::Video::Video.find(item.content_id)
-          Acfs.run
-          if video.thumbnail_archive_id.nil? or video.thumbnail_archive_id.empty?
-            result.push(video.title)
+        unless item.content_id.nil? or item.content_id.empty?
+          video = Xikolo.api(:video).value!.rel(:video).get(id: item.content_id).value!
+          if video['thumbnail_archive_id'].blank?
+            result.push(video['title'])
           end
         end
       end

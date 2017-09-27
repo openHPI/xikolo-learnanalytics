@@ -54,7 +54,6 @@ gem 'xikolo-account'
 gem 'xikolo-pinboard', '~> 4.39'
 gem 'xikolo-quiz'
 gem 'xikolo-richtext'
-gem 'xikolo-video'
 
 # Xikolo service clients
 gem 'acfs', '~> 0.49', '>= 0.49.1'

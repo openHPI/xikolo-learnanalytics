@@ -410,10 +410,6 @@ GEM
       railties (< 6)
       redis-namespace (~> 1)
       sidekiq (< 5)
-    xikolo-video (4.13.0)
-      acfs (~> 0.31)
-      activesupport
-      xikolo-file (~> 1.0)
 
 PLATFORMS
   ruby
@@ -483,7 +479,6 @@ DEPENDENCIES
   xikolo-quiz
   xikolo-richtext
   xikolo-sidekiq
-  xikolo-video
 
 BUNDLED WITH
    1.15.4

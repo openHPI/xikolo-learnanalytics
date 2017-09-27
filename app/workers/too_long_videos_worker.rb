@@ -12,13 +12,13 @@ class TooLongVideosWorker < QcRuleWorker
       end
       Acfs.run
       items.each do |item|
+        video = {}
         if item.content_id.present?
-          video = Xikolo::Video::Video.find(item.content_id)
-          Acfs.run
+          video = Xikolo.api(:video).value!.rel(:video).get(id: item.content_id).value!
         end
         duration_in_min = 0
-        duration_in_min = video.duration / 60 unless video.duration.nil?
-        video_annotation = annotation + ' (' + duration_in_min.to_s + ' min): ' + ' ' + video.title.to_s
+        duration_in_min = video['duration'] / 60 if video['duration']
+        video_annotation = "#{annotation} (#{duration_in_min} min): #{video.title}"
 
         if duration_in_min.between?(Xikolo.config.qc_alert['video_duration']['low'], Xikolo.config.qc_alert['video_duration']['medium'])
           severity = 'low'
