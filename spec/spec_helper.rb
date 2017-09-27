@@ -33,11 +33,6 @@ require 'paper_trail/frameworks/rspec'
 
 require 'xikolo/common/rspec'
 
-Xikolo::Common::RSpec.relations[:news] = '{
-  "news_index_url": "http://news.xikolo.tld/news",
-  "news_url": "http://news.xikolo.tld/news/{id}"
-}'
-
 require 'restify'
 require 'restify/adapter/typhoeus'
 
