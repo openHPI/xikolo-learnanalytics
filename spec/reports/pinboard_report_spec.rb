@@ -19,7 +19,8 @@ describe 'Pinboard Report' do
     Stub.service(
       :pinboard,
       answers_url: 'http://localhost:3500/answers',
-      comments_url: 'http://localhost:3500/comments'
+      comments_url: 'http://localhost:3500/comments',
+      questions_url: 'http://localhost:3500/questions'
     )
 
     Stub.request(
