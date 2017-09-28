@@ -51,8 +51,6 @@ gem 'database_cleaner'
 
 gem 'xikolo-course', '~> 9.9.0'
 gem 'xikolo-account'
-gem 'xikolo-quiz'
-gem 'xikolo-richtext'
 
 # Xikolo service clients
 gem 'acfs', '~> 0.49', '>= 0.49.1'

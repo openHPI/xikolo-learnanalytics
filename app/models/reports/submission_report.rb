@@ -110,32 +110,34 @@ module Reports
     def load_all_quiz_questions
       hash = Hash.new{ |h,k| h[k] = Hash.new(&h.default_proc) }
 
-      Xikolo::Quiz::Quiz.find(@job.task_scope) do |quiz|
-        quiz.enqueue_acfs_request_for_questions do |quiz_questions|
+      quiz = quiz_service.rel(:quiz).get(id: @job.task_scope).value!
+      quiz_questions = quiz_service.rel(:questions).get(
+        quiz_id: quiz['id'],
+        per_page: 250
+      ).value!
 
-          quiz_questions.each do |quiz_question|
+      quiz_questions.each do |quiz_question|
+        q_richtext = richtext_service.rel(:rich_text).get(id: quiz_question['question_rtid']).value!
+        hash[quiz_question['id']][:question_text] = q_richtext['markup']
 
-            Xikolo::RichText::RichText.find(quiz_question.question_rtid) do |q_richtext|
-              hash[quiz_question.id][:question_text] = q_richtext.markup
-            end
+        hash[quiz_question['id']][:answers] = []
 
-            hash[quiz_question.id][:answers] = []
-
-            quiz_question.enqueue_acfs_request_for_answers do |quiz_answers|
-              quiz_answers.each do |quiz_answer|
-
-                Xikolo::RichText::RichText.find(quiz_answer.answer_rtid) do |a_richtext|
-                  hash[quiz_question.id][:answers] << {id: quiz_answer.id, position: quiz_answer.position, answer_text: a_richtext.markup}
-                end
-              end
-            end
-
-            hash[quiz_question.id][:answers].sort_by! { |answer| answer[:position] }
-          end
+        Xikolo.paginate(
+          quiz_service.rel(:answers).get(
+            question_id: quiz_question['id'],
+            per_page: 250
+          )
+        ) do |quiz_answer|
+          a_richtext = richtext_service.rel(:rich_text).get(id: quiz_answer['answer_rtid']).value!
+          hash[quiz_question['id']][:answers] << {
+            id: quiz_answer['id'],
+            position: quiz_answer['position'],
+            answer_text: a_richtext['markup']
+          }
         end
-      end
 
-      Acfs.run
+        hash[quiz_question['id']][:answers].sort_by! { |answer| answer[:position] }
+      end
 
       hash
     end
@@ -150,6 +152,14 @@ module Reports
 
     def course_service
       @course_service ||= Xikolo.api(:course).value!
+    end
+
+    def quiz_service
+      @quiz_service ||= Xikolo.api(:quiz).value!
+    end
+
+    def richtext_service
+      @richtext_service ||= Xikolo.api(:richtext).value!
     end
 
     def submission_service
