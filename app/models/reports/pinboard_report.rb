@@ -43,57 +43,60 @@ module Reports
     def each_post
       i = 0
 
-      Xikolo::Pinboard::Question.each_item(
-        course_id: course['id'], per_page: 50
-      ) do |question, questions|
-        pinboard_type = question.discussion_flag ? 'discussion' : 'question'
+      Xikolo.paginate(
+        pinboard_service.rel(:questions).get(
+          course_id: course['id'],
+          per_page: 50
+        )
+      ) do |question, page|
+        pinboard_type = question['discussion_flag'] ? 'discussion' : 'question'
         yield transform_question(pinboard_type, question)
 
         each_comment(question, 'Question') do |row|
           yield row
         end
 
-        unless question.discussion_flag
+        unless question['discussion_flag']
           each_answer(question) do |row|
             yield row
           end
         end
 
         i += 1
-        @job.progress_to(i, of: questions.total_count)
+        @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
       end
       Acfs.run
     end
 
     def transform_question(pinboard_type, question)
       [
-        question.id,
+        question['id'],
         pinboard_type,
-        question.title,
-        question.text.squish ,
-        question.video_timestamp,
-        question.video_id,
-        @deanonymized ? question.user_id : Digest::SHA256.hexdigest(question.user_id),
-        question.created_at,
-        question.updated_at,
-        question.accepted_answer_id,
-        question.course_id,
-        question.learning_room_id,
-        question.id,
+        question['title'],
+        question['text'].squish ,
+        question['video_timestamp'],
+        question['video_id'],
+        @deanonymized ? question['user_id'] : Digest::SHA256.hexdigest(question['user_id']),
+        question['created_at'],
+        question['updated_at'],
+        question['accepted_answer_id'],
+        question['course_id'],
+        question['learning_room_id'],
+        question['id'],
         '',
         '',
         '',
         '',
-        question.sentimental_value,
-        question.sticky,
-        question.deleted,
-        question.closed
+        question['sentimental_value'],
+        question['sticky'],
+        question['deleted'],
+        question['closed']
       ]
     end
 
     def each_answer(question)
       pinboard_service.rel(:answers).get(
-        question_id: question.id, per_page: 250
+        question_id: question['id'], per_page: 250
       ).value!.each do |answer|
         yield [
           answer['id'],
@@ -125,16 +128,14 @@ module Reports
     end
 
     def each_comment(object, type)
-      # object may be an Acfs or Restify object. Thus, we access its ID (and
-      # the question_id) using method notation, in order to work with either.
       pinboard_service.rel(:comments).get(
-        commentable_id: object.id, commentable_type: type, per_page: 250
+        commentable_id: object['id'], commentable_type: type, per_page: 250
       ).value!.each do |comment|
         question_id = ''
         if comment['commentable_type'] == 'Question'
           question_id = comment['commentable_id']
         elsif comment['commentable_type'] == 'Answer'
-          question_id = object.question_id
+          question_id = object['question_id']
         end
 
         yield [

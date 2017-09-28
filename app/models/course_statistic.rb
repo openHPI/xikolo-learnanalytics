@@ -6,7 +6,7 @@ class CourseStatistic < ActiveRecord::Base
     Acfs.run
     course_stats = Xikolo::Course::Statistic.find course_id: course.id
     extended_course_stats = Xikolo::Course::Stat.find course_id: course.id, key: 'extended'
-    pinboard_stats = Xikolo::Pinboard::Statistic.find course.id
+    pinboard_stats = Xikolo.api(:pinboard).value!.rel(:statistic).get(id: course.id)
     ticket_stats = Xikolo.api(:helpdesk).value!.rel(:statistics).get(course_id: course.id)
     enrollment_stats = Xikolo::Course::Stat.find course_id: course.id, key: 'enrollments_by_day'
     Acfs.run
@@ -32,6 +32,8 @@ class CourseStatistic < ActiveRecord::Base
       end
     end
 
+    pinboard_stats = pinboard_stats.value!
+    ticket_stats = ticket_stats.value!
     update(
       course_name: course.title,
       course_code: course.course_code,
@@ -45,17 +47,17 @@ class CourseStatistic < ActiveRecord::Base
       enrollments_at_course_middle_netto: extended_course_stats.student_enrollments_at_middle,
       enrollments_at_course_middle: extended_course_stats.student_enrollments_at_middle_netto,
       enrollments_at_course_end: extended_course_stats.student_enrollments_at_end,
-      questions: pinboard_stats.questions,
-      questions_last_day: pinboard_stats.questions_last_day,
-      answers: pinboard_stats.answers,
-      answers_last_day: pinboard_stats.answers_last_day,
-      comments_on_answers: pinboard_stats.comments_on_answers,
-      comments_on_answers_last_day: pinboard_stats.comments_on_answers_last_day,
-      comments_on_questions: pinboard_stats.comments_on_questions,
-      comments_on_questions_last_day: pinboard_stats.comments_on_questions_last_day,
+      questions: pinboard_stats['questions'],
+      questions_last_day: pinboard_stats['questions_last_day'],
+      answers: pinboard_stats['answers'],
+      answers_last_day: pinboard_stats['answers_last_day'],
+      comments_on_answers: pinboard_stats['comments_on_answers'],
+      comments_on_answers_last_day: pinboard_stats['comments_on_answers_last_day'],
+      comments_on_questions: pinboard_stats['comments_on_questions'],
+      comments_on_questions_last_day: pinboard_stats['comments_on_questions_last_day'],
       certificates: extended_course_stats.certificates_count,
-      helpdesk_tickets: ticket_stats.value!['ticket_count'],
-      helpdesk_tickets_last_day: ticket_stats.value!['ticket_count_last_day'],
+      helpdesk_tickets: ticket_stats['ticket_count'],
+      helpdesk_tickets_last_day: ticket_stats['ticket_count_last_day'],
       start_date: course.start_date,
       end_date: course.end_date,
       new_users: extended_course_stats.new_users,
@@ -65,14 +67,14 @@ class CourseStatistic < ActiveRecord::Base
       enrollments_per_day: enrollments_per_day,
       hidden: course.hidden,
       days_since_coursestart: days_since_course_start,
-      questions_in_learning_rooms: pinboard_stats.questions_in_learning_rooms,
-      questions_last_day_in_learning_rooms: pinboard_stats.questions_last_day_in_learning_rooms,
-      answers_in_learning_rooms: pinboard_stats.answers_in_learning_rooms,
-      answers_last_day_in_learning_rooms: pinboard_stats.answers_last_day_in_learning_rooms,
-      comments_on_answers_in_learning_rooms: pinboard_stats.comments_on_answers_in_learning_rooms,
-      comments_on_answers_last_day_in_learning_rooms: pinboard_stats.comments_on_answers_last_day_in_learning_rooms,
-      comments_on_questions_in_learning_rooms: pinboard_stats.comments_on_questions_in_learning_rooms,
-      comments_on_questions_last_day_in_learning_rooms: pinboard_stats.comments_on_questions_last_day_in_learning_rooms
+      questions_in_learning_rooms: pinboard_stats['questions_in_learning_rooms'],
+      questions_last_day_in_learning_rooms: pinboard_stats['questions_last_day_in_learning_rooms'],
+      answers_in_learning_rooms: pinboard_stats['answers_in_learning_rooms'],
+      answers_last_day_in_learning_rooms: pinboard_stats['answers_last_day_in_learning_rooms'],
+      comments_on_answers_in_learning_rooms: pinboard_stats['comments_on_answers_in_learning_rooms'],
+      comments_on_answers_last_day_in_learning_rooms: pinboard_stats['comments_on_answers_last_day_in_learning_rooms'],
+      comments_on_questions_in_learning_rooms: pinboard_stats['comments_on_questions_in_learning_rooms'],
+      comments_on_questions_last_day_in_learning_rooms: pinboard_stats['comments_on_questions_last_day_in_learning_rooms']
     )
   end
 
