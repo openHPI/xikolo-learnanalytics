@@ -54,6 +54,10 @@ describe CourseStatistic do
       ticket_count_last_day: 100
     )
 
+    Stub.service(
+      :pinboard,
+      statistic_url: '/statistics/{id}'
+    )
     Stub.request(
       :pinboard, :get, "/statistics/#{course_id}",
     ).to_return Stub.json(
