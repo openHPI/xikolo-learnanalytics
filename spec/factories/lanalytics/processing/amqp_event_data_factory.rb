@@ -30,7 +30,6 @@ FactoryGirl.define do
     enrollment_delta 0
     alternative_teacher_text ""
     external_course_url ""
-    external_course_delay 0
     forum_is_locked false
     affiliated false
     hidden false
