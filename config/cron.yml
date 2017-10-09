@@ -1,7 +1,7 @@
 production:
   qc_rules_sync:
     cron: '*/15 * * * *'
-    class: QcRunAllRules
+    class: CheckAllRulesWorker
     queue: high
   calculate_course_statistics:
     cron: '0 0 * * *'

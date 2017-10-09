@@ -1,10 +1,7 @@
 require 'spec_helper'
-require 'sidekiq/testing'
 
-describe AnnouncementFailedWorker do
-  before  do
-    ActiveJob::Base.queue_adapter = :test
-
+describe QcRules::AnnouncementFailed do
+  before do
     Stub.service(
       :news,
       news_index_url: '/news'
@@ -42,14 +39,24 @@ describe AnnouncementFailedWorker do
   end
 
   let!(:qc_rule) { FactoryGirl.create :qc_rule }
-  subject { described_class.new}
+  subject { described_class.new(qc_rule) }
 
-  it 'creates an alert when delta exists' do
-    alerts = QcAlert.all
-    expect(alerts.count).to eq 0
-    subject.perform(nil, qc_rule.id)
-    updated_alerts = QcAlert.all
-    expect(updated_alerts.count).to eq 1
-    expect(updated_alerts.first.qc_alert_data).to eq({"resource_id"=>"c97b9403-0e81-4857-a52f-a02e901856b1"})
+  describe '#run' do
+    subject { super().run }
+
+    context 'when delta exists' do
+      it 'creates a new alert' do
+        expect { subject }.to change { QcAlert.count }
+                                .from(0)
+                                .to(1)
+      end
+
+      it 'stores the announcement ID with the alert' do
+        subject
+        expect(QcAlert.first.qc_alert_data).to eq(
+          'resource_id' => 'c97b9403-0e81-4857-a52f-a02e901856b1'
+        )
+      end
+    end
   end
 end

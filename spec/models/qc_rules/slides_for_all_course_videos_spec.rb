@@ -1,37 +1,38 @@
 require 'spec_helper'
-require 'sidekiq/testing'
 
-describe SlidesForAllCourseVideosWorker do
-  before do
-    ActiveJob::Base.queue_adapter = :test
-    Sidekiq::Testing.fake!
-  end
+describe QcRules::SlidesForAllCourseVideos do
+  subject { described_class.new qc_rule }
+
   let!(:qc_rule) { FactoryGirl.create :qc_rule }
-  let!(:test_course) { FactoryGirl.create :test_course,
+  let!(:test_course) { FactoryGirl.build :test_course,
                                           { id: '00000001-3100-4444-9999-000000000002',
-      start_date: DateTime.now,
-      end_date: 5.days.from_now,
+      start_date: DateTime.now.iso8601,
+      end_date: 5.days.from_now.iso8601,
       status: 'preparation',
       forum_is_locked: nil
   }}
-  let!(:test_course2) { FactoryGirl.create :test_course,
+  let!(:test_course2) { FactoryGirl.build :test_course,
                                           { id: '00000001-3100-4444-9999-000000000003',
-      start_date: DateTime.now,
-      end_date: 5.days.from_now,
+      start_date: DateTime.now.iso8601,
+      end_date: 5.days.from_now.iso8601,
       status: 'preparation',
       forum_is_locked: nil
   }}
 
   before do
+    Stub.service(
+      :course,
+      items_url: '/items'
+    )
     Stub.request(
       :course, :get, '/items',
-      query: { course_id: test_course.id, content_type: 'video' }
+      query: { course_id: test_course['id'], content_type: 'video' }
     ).to_return Stub.json([
       { id: '00000001-3100-4444-9999-000000000004', content_id: '00000001-3100-4444-9999-000000000004' }
     ])
     Stub.request(
       :course, :get, '/items',
-      query: { course_id: test_course2.id, content_type: 'video' }
+      query: { course_id: test_course2['id'], content_type: 'video' }
     ).to_return Stub.json([
       { id: '00000001-3100-4444-9999-000000000003', content_id: '00000001-3100-4444-9999-000000000003' }
     ])
@@ -54,23 +55,25 @@ describe SlidesForAllCourseVideosWorker do
     )
   end
 
-  subject { described_class.new }
+  describe '#run' do
+    subject { super().run course }
 
-  it 'should create an alert if slides are not present' do
-    test_course
-    qc_alerts = QcAlert.all
-    expect(qc_alerts.count).to eq 0
-    subject.perform test_course, qc_rule.id
-    qc_alerts_after = QcAlert.all
-    expect(qc_alerts_after.count).to eq 1
-  end
+    context 'when slides are not present' do
+      let(:course) { test_course }
 
-  it 'should not create an alert if slides are present' do
-    test_course2
-    qc_alerts = QcAlert.all
-    expect(qc_alerts.count).to eq 0
-    subject.perform test_course2, qc_rule.id
-    qc_alerts_after = QcAlert.all
-    expect(qc_alerts_after.count).to eq 0
+      it 'should create an alert' do
+        expect { subject }.to change { QcAlert.count }
+                                .from(0)
+                                .to(1)
+      end
+    end
+
+    context 'when slides are present' do
+      let(:course) { test_course2 }
+
+      it 'should not create an alert' do
+        expect { subject }.to_not change { QcAlert.count }
+      end
+    end
   end
 end
