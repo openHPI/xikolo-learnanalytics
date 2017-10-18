@@ -78,6 +78,8 @@ class CourseStatistic < ActiveRecord::Base
     )
   end
 
+  private
+
   class << self
     def versions_for(course_id, start_date, end_date = nil)
       find_by(course_id: course_id)
