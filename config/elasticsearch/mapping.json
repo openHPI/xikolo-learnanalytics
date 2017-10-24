@@ -7,6 +7,11 @@
           "char_filter": [],
           "filter": "lowercase"
         }
+      },
+      "analyzer":{
+        "lowercase":{
+          "tokenizer": "lowercase"
+        }
       }
     }
   },
@@ -181,6 +186,10 @@
             "provider_start_url": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
+            },
+            "query": {
+              "type": "text",
+              "analyzer": "lowercase"
             },
             "quantile": {
               "type": "double"
