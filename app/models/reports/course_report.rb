@@ -110,11 +110,8 @@ module Reports
             end
 
             values += [
-              stat_pinboard['questions'],
-              stat_pinboard['answers'],
-              stat_pinboard['comments_on_answers'],
-              stat_pinboard['comments_on_questions'],
-              stat_pinboard['questions'] + stat_pinboard['answers'] + stat_pinboard['comments_on_answers'] + stat_pinboard['comments_on_questions'],
+              stat_pinboard['posts'],
+              stat_pinboard['threads'],
               enrollment.dig('points', 'achieved'),
               enrollment.dig('points', 'percentage'),
               enrollment.dig('certificates', 'confirmation_of_participation') || '-99',
@@ -295,11 +292,8 @@ module Reports
         end
 
         headers.concat [
-          'Questions',
-          'Answers',
-          'Comments on Answers',
-          'Comments on Questions',
-          'Total Forum Items',
+          'Posts',
+          'Threads',
           'Points Achieved',
           'Points Percentage',
           'Confirmation of Participation',
