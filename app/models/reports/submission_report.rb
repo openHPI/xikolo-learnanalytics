@@ -37,7 +37,7 @@ module Reports
     def each_submission
       i = 0
       Xikolo.paginate(
-        submission_service.rel(:quiz_submissions).get(
+        quiz_service.rel(:quiz_submissions).get(
           quiz_id: @job.task_scope,
           only_submitted: true
         )
@@ -50,12 +50,12 @@ module Reports
         submission_hash[:user_name] = user['full_name']
         submission_hash[:user_email] = user['email']
 
-        submission_service.rel(:quiz_submission_questions).get(
+        quiz_service.rel(:quiz_submission_questions).get(
           quiz_submission_id: submission['id'], per_page: 250
         ).value!.each do |submission_question|
           submission_hash[:questions][submission_question['quiz_question_id']][:selected_answers] = []
 
-          submission_service.rel(:quiz_submission_answers).get(
+          quiz_service.rel(:quiz_submission_answers).get(
             quiz_submission_question_id: submission_question['id'], per_page: 500
           ).value!.each do |submission_answer|
             if 'Xikolo::Submission::QuizSubmissionFreeTextAnswer' == submission_answer['type']
@@ -160,10 +160,6 @@ module Reports
 
     def richtext_service
       @richtext_service ||= Xikolo.api(:richtext).value!
-    end
-
-    def submission_service
-      @submission_service ||= Xikolo.api(:submission).value!
     end
   end
 end

@@ -31,7 +31,7 @@ module QcRules
     end
 
     def check_for_difficult_selftest(quiz_item)
-      submission_service.rel(:quiz_submission_statistic).get(
+      quiz_service.rel(:quiz_submission_statistic).get(
         id: quiz_item['content_id']
       ).value!['questions'].each do |question|
         question.each do |question_id, submissions|
@@ -93,10 +93,6 @@ module QcRules
 
     def richtext_service
       @richtext_service ||= Xikolo.api(:richtext).value!
-    end
-
-    def submission_service
-      @submission_service ||= Xikolo.api(:submission).value!
     end
 
     def config
