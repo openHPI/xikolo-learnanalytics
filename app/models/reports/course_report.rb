@@ -352,7 +352,7 @@ module Reports
     def all_user_submissions(user_id)
       return {} unless @include_all_quizzes
 
-      submissions = submission_service.rel(:quiz_submissions).get(
+      submissions = quiz_service.rel(:quiz_submissions).get(
         user_id: user_id,
         only_submitted: true,
         course_id: course['id']
@@ -415,8 +415,8 @@ module Reports
       @pinboard_service ||= Xikolo.api(:pinboard).value!
     end
 
-    def submission_service
-      @submission_service ||= Xikolo.api(:submission).value!
+    def quiz_service
+      @quiz_service ||= Xikolo.api(:quiz).value!
     end
 
     def as_date(string_or_nil)
