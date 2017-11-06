@@ -1,6 +1,6 @@
 class CheckAllRulesWorker
   include Sidekiq::Worker
-  sidekiq_options :queue => :high
+  sidekiq_options queue: :high, retry: false
 
   def perform
     # Global rules
