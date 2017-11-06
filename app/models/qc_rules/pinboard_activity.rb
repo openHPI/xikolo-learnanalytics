@@ -60,7 +60,7 @@ module QcRules
     end
 
     def calculate_activity(course, total_enrollments)
-      start_time_for_activity = [course['start_date'].to_datetime, 7.days.ago].max
+      start_time_for_activity = [course['start_date'].to_datetime, 7.days.ago.to_datetime].max
       activity = activity_count(course, start_time_for_activity)
       course_analysis_time = Date.today - start_time_for_activity
 
