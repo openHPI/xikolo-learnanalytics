@@ -30,7 +30,7 @@ module Reports
       ]
 
       headers.concat all_quiz_questions.flat_map { |_, question|
-        [question[:question_text], *question[:answers].map { |answer| answer[:answer_text] }]
+        [question[:question_text].squish, *question[:answers].map { |answer| answer[:answer_text].squish }]
       }
     end
 
@@ -59,7 +59,7 @@ module Reports
             quiz_submission_question_id: submission_question['id'], per_page: 500
           ).value!.each do |submission_answer|
             if 'Xikolo::Submission::QuizSubmissionFreeTextAnswer' == submission_answer['type']
-              submission_hash[:questions][submission_question['quiz_question_id']][:freetext_answer] = submission_answer['user_answer_text']
+              submission_hash[:questions][submission_question['quiz_question_id']][:freetext_answer] = submission_answer['user_answer_text'].squish
             else
               submission_hash[:questions][submission_question['quiz_question_id']][:selected_answers] << submission_answer['quiz_answer_id']
               submission_hash[:questions][submission_question['quiz_question_id']][:freetext_answer] = ''
