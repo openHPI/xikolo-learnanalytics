@@ -63,7 +63,7 @@ module QcRules
         hash[event[1]['time']] = pause_count + play_count
       end
 
-      start_value = video_events.first[1]['play'] || 0
+      start_value = video_events.first&.dig(1, 'play') || 0
       threshold = start_value * THRESHOLD_PERCENTAGE
 
       start_pause_time
