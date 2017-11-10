@@ -37,11 +37,10 @@ module Reports
             course_start_date = as_date(course['start_date'])
             birth_compare_date = course_start_date || DateTime.now
             enrollment_date = as_date(enrollment['created_at'])
-            age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : '-99'
+            age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : ''
 
             values = [
               @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
-              enrollment_date,
               enrollment_date&.strftime('%Y-%m-%d'),
               first_enrollment?(enrollment),
               DateTime.parse(user['created_at']).strftime('%Y-%m-%d'),
@@ -49,7 +48,7 @@ module Reports
               user['affiliated'],
               as_date(user['born_at']),
               age,
-              user['born_at'].present? ? age_group_from_age(age) : '-99'
+              user['born_at'].present? ? age_group_from_age(age) : ''
             ]
 
             if @deanonymized
@@ -68,9 +67,9 @@ module Reports
 
               metrics = {
                 device_usage: fetch_device_usage(course['id'], user['id']),
-                course_activity: course_activity[:count] || '-99',
-                user_course_country: user_course_country.present? ? user_course_country : 'zz',
-                user_course_city: user_course_city.present? ? user_course_city : '-99'
+                course_activity: course_activity[:count] || '',
+                user_course_country: user_course_country.present? ? user_course_country : '',
+                user_course_city: user_course_city.present? ? user_course_city : ''
               }
 
               clustering_metrics = fetch_clustering_metrics(course)
@@ -81,19 +80,14 @@ module Reports
                 metrics[:device_usage][:state],
                 metrics[:device_usage][:web],
                 metrics[:device_usage][:mobile],
-                clustering_metrics.dig(user['id'], 'sessions') || '-99',
-                clustering_metrics.dig(user['id'], 'average_session_duration') || '-99',
-                clustering_metrics.dig(user['id'], 'total_session_duration') || '-99',
-                clustering_metrics.dig(user['id'], 'forum_activity') || '-99',
-                clustering_metrics.dig(user['id'], 'textual_forum_contribution') || '-99',
-                clustering_metrics.dig(user['id'], 'forum_observation') || '-99',
-                clustering_metrics.dig(user['id'], 'item_discovery') || '-99',
-                clustering_metrics.dig(user['id'], 'video_discovery') || '-99',
-                clustering_metrics.dig(user['id'], 'quiz_discovery') || '-99',
-                clustering_metrics.dig(user['id'], 'video_player_activity') || '-99',
-                clustering_metrics.dig(user['id'], 'download_activity') || '-99',
-                clustering_metrics.dig(user['id'], 'course_performance') || '-99',
-                clustering_metrics.dig(user['id'], 'quiz_performance') || '-99',
+                clustering_metrics.dig(user['id'], 'sessions') || '',
+                clustering_metrics.dig(user['id'], 'average_session_duration') || '',
+                clustering_metrics.dig(user['id'], 'total_session_duration') || '',
+                clustering_metrics.dig(user['id'], 'forum_activity') || '',
+                clustering_metrics.dig(user['id'], 'forum_observation') || '',
+                clustering_metrics.dig(user['id'], 'video_player_activity') || '',
+                clustering_metrics.dig(user['id'], 'download_activity') || '',
+                clustering_metrics.dig(user['id'], 'quiz_performance') || '',
                 metrics[:course_activity]
               ]
             end
@@ -102,7 +96,7 @@ module Reports
             if course_start_date && enrollment_date
               values << (enrollment_date - course_start_date).to_i
             else
-              values << '?'
+              values << ''
             end
 
             if @deanonymized
@@ -114,13 +108,13 @@ module Reports
               stat_pinboard['threads'],
               enrollment.dig('points', 'achieved'),
               enrollment.dig('points', 'percentage'),
-              enrollment.dig('certificates', 'confirmation_of_participation') || '-99',
-              enrollment.dig('certificates', 'record_of_achievement') || '-99',
-              enrollment.dig('certificates', 'certificate') || '-99',
-              enrollment['completed'] || '-99',
-              enrollment['deleted'] || '-99',
-              enrollment['quantile'] || '-99',
-              enrollment['quantile'].present? ? calculate_top_performance(enrollment['quantile']) : '-99',
+              enrollment.dig('certificates', 'confirmation_of_participation') || '',
+              enrollment.dig('certificates', 'record_of_achievement') || '',
+              enrollment.dig('certificates', 'certificate') || '',
+              enrollment['completed'] || '',
+              enrollment['deleted'] || '',
+              enrollment['quantile'] || '',
+              enrollment['quantile'].present? ? calculate_top_performance(enrollment['quantile']) : '',
               enrollment.dig('visits', 'visited'),
               enrollment.dig('visits', 'percentage')
             ]
@@ -212,14 +206,9 @@ module Reports
         average_session_duration
         total_session_duration
         forum_activity
-        textual_forum_contribution
         forum_observation
-        item_discovery
-        video_discovery
-        quiz_discovery
         video_player_activity
         download_activity
-        course_performance
         quiz_performance
       ]
       result = Lanalytics::Clustering::Dimensions.query(course['id'], clustering_metrics, nil)
@@ -229,7 +218,7 @@ module Reports
     end
 
     def calculate_top_performance(quantile)
-      return '-99' unless quantile
+      return '' unless quantile
       top_percentage = (1 - quantile.to_f).round(10)
       if top_percentage <= 0.05
         'Top5'
@@ -244,12 +233,11 @@ module Reports
       @headers ||= [
         'User ID',
         'Enrollment Date',
-        'Enrollment Day',
         'First Enrollment',
         'User created',
         'Language',
         'Affiliated',
-        'Birthdate',
+        'Birth Date',
         'Age',
         'Age Group'
       ].tap do |headers|
@@ -272,14 +260,9 @@ module Reports
             'Avg. Session Duration',
             'Total Session Duration',
             'Forum Activity',
-            'Forum Textual Contribution',
             'Forum Observation',
-            'Item Discovery',
-            'Video Discovery',
-            'Quiz Discovery',
             'Video Player Activity',
             'Download Activity',
-            'Course Performance',
             'Quiz Performance',
             'Course Activity'
           ]
@@ -292,15 +275,15 @@ module Reports
         end
 
         headers.concat [
-          'Posts',
-          'Threads',
+          'Forum Posts',
+          'Forum Threads',
           'Points Achieved',
           'Points Percentage',
           'Confirmation of Participation',
           'Record of Achievement',
-          'Certificate',
-          'Completed',
-          'Deleted',
+          'Qualified Certificate',
+          'Course Completed',
+          'Course Deleted',
           'Quantile',
           'Top Performance',
           'Items Visited',
@@ -383,7 +366,7 @@ module Reports
 
       compare_date = as_date(enrollment['created_at'])
 
-      return '?' unless compare_date
+      return '' unless compare_date
 
       all_enrollments
         .map { |e| as_date(e['created_at']) }
