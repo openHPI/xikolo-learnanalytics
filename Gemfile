@@ -14,7 +14,7 @@ gem 'xikolo-config', '~> 1.66'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'restify', '~> 1.0'
+gem 'restify', '~> 1.4'
 gem 'rails-rfc6570', '~> 0.3'
 
 gem 'newrelic_rpm'
