@@ -30,7 +30,7 @@ class CreateReportJob < ActiveJob::Base
   private
 
   def publish_file(job, path)
-    expire_date = 1.days.from_now
+    expire_date = 7.days.from_now
 
     job.finish_with(
       file_id: upload_file(path, expire_date, job.user_id, job.task_scope),
