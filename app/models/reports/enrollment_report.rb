@@ -23,38 +23,58 @@ module Reports
 
       # we have to fetch these already for progress calculation
       if @include_all_classifiers
-        classifiers = course_service.rel(:classifiers).get.value!
-        @reports_count += classifiers.size
+        @classifiers = course_service.rel(:classifiers).get.value!
+        clusters = @classifiers.map { |c| c['cluster'] }.uniq
+        @reports_count += clusters.size
       end
 
       csv_file 'EnrollmentReport_global', headers, &each_timeframe
 
       if @include_all_classifiers
-        classifiers.each do |classifier|
+        clusters.each do |cluster|
           @report_index += 1
-          csv_file "EnrollmentReport_#{classifier['title'].underscore.gsub(/[^0-9A-Z]/i, '_')}", headers, &each_timeframe(classifier[:id])
+          csv_file "EnrollmentReport_#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}", headers(cluster), &each_timeframe(cluster)
         end
       end
     end
 
     private
 
-    def headers
+    def classifier_for_cluster(cluster)
+      @classifiers.select { |c| c['cluster'] == cluster }.sort_by { |c| c['title'].downcase }
+    end
+
+    def headers(cluster = nil)
       headers = [
         'Start Date',
-        'End Date',
-        'Total Enrollments',
-        'Unique Enrolled Users'
+        'End Date'
       ]
 
-      if @include_active_users
-        headers += ['Active Users']
+      if cluster
+        cc = classifier_for_cluster(cluster)
+        cc.each do |c|
+          headers += [
+            "#{c['title']} - Total Enrollments",
+            "#{c['title']} - Unique Enrolled Users"
+          ]
+          if @include_active_users
+            headers += ["#{c['title']} - Active Users"]
+          end
+        end
+      else
+        headers += [
+          'Total Enrollments',
+          'Unique Enrolled Users'
+        ]
+        if @include_active_users
+          headers += ['Active Users']
+        end
       end
 
       headers
     end
 
-    def each_timeframe(classifier_id = nil)
+    def each_timeframe(cluster = nil)
       Proc.new do |&block|
         start_date = Date.new(@start_year, @start_month, 1)
         end_date = Date.new(@end_year, @end_month, 1)
@@ -68,31 +88,37 @@ module Reports
             current_start_date = Date.new(year, month, 1).to_s
             current_end_date = (Date.new(year, month, 1) + @sliding_window_in_months.month).to_s
 
-            stats = course_service.rel(:enrollment_stats).get(
-              start_date: current_start_date,
-              end_date: current_end_date,
-              classifier_id: classifier_id
-            ).value!
-
             values = [
               current_start_date,
-              current_end_date,
-              stats[:total_enrollments],
-              stats[:unique_enrolled_users]
+              current_end_date
             ]
 
-            if @include_active_users
-              active_users = Lanalytics::Metric::ActiveUserCount.query(
-                nil,
-                nil,
-                current_start_date,
-                current_end_date,
-                classifier_id,
-                nil,
-                nil
-              )
+            cc = classifier_for_cluster(cluster)
+            cc.each do |c|
+              stats = course_service.rel(:enrollment_stats).get(
+                start_date: current_start_date,
+                end_date: current_end_date,
+                classifier_id: c['id']
+              ).value!
 
-              values += [active_users]
+              values += [
+                stats[:total_enrollments],
+                stats[:unique_enrolled_users]
+              ]
+
+              if @include_active_users
+                active_users = Lanalytics::Metric::ActiveUserCount.query(
+                  nil,
+                  nil,
+                  current_start_date,
+                  current_end_date,
+                  c['id'],
+                  nil,
+                  nil
+                )
+
+                values += [active_users]
+              end
             end
 
             block.call values
