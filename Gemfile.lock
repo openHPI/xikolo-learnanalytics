@@ -267,7 +267,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    restify (1.4.0)
+    restify (1.4.1)
       activesupport
       addressable (~> 2.3)
       concurrent-ruby (~> 1.0)
@@ -459,4 +459,4 @@ DEPENDENCIES
   xikolo-sidekiq
 
 BUNDLED WITH
-   1.15.4
+   1.16.0
