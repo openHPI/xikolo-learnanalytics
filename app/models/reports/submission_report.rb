@@ -47,7 +47,7 @@ module Reports
         submission_hash[:user_id] = submission['user_id']
 
         user = account_service.rel(:user).get(id: submission['user_id']).value!
-        submission_hash[:user_name] = user['full_name']
+        submission_hash[:user_name] = escape_csv_string(user['full_name'])
         submission_hash[:user_email] = user['email']
 
         quiz_service.rel(:quiz_submission_questions).get(

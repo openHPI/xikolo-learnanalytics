@@ -53,8 +53,8 @@ module Reports
 
             if @deanonymized
               values += [
-                user['first_name'],
-                user['last_name'],
+                escape_csv_string(user['first_name']),
+                escape_csv_string(user['last_name']),
                 user['email']
               ]
             end

@@ -26,8 +26,8 @@ module Reports
       Xikolo::Account::User.each_item(confirmed: false, per_page: 500) do |user, users|
         values = [
           user.id,
-          user.first_name,
-          user.last_name,
+          escape_csv_string(user.first_name),
+          escape_csv_string(user.last_name),
           user.email,
           user.created_at.strftime('%Y-%m-%d')
         ]

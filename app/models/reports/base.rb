@@ -11,6 +11,10 @@ module Reports
       @files ||= []
     end
 
+    def escape_csv_string(string)
+      "\"#{string}\""
+    end
+
     private
 
     def csv_file(target, headers, &block)
