@@ -60,14 +60,26 @@ class CourseStatisticDecorator < ApplicationDecorator
   #   corresponding resources) are in the process of being renamed
   def with_combined_keys(hash)
     hash.merge(
-      threads: hash[:questions],
-      threads_last_day: hash[:questions_last_day],
-      posts: hash[:questions] + hash[:answers] + hash[:comments_on_questions] + hash[:comments_on_answers],
-      posts_last_day: hash[:questions_last_day] + hash[:answers_last_day] + hash[:comments_on_questions_last_day] + hash[:comments_on_answers_last_day],
-      threads_in_collab_spaces: hash[:questions_in_learning_rooms],
-      threads_last_day_in_collab_spaces: hash[:questions_last_day_in_learning_rooms],
-      posts_in_collab_spaces: hash[:questions_in_learning_rooms] + hash[:answers_in_learning_rooms] + hash[:comments_on_questions_in_learning_rooms] + hash[:comments_on_answers_in_learning_rooms],
-      posts_last_day_in_collab_spaces: hash[:questions_last_day_in_learning_rooms] + hash[:answers_last_day_in_learning_rooms] + hash[:comments_on_questions_last_day_in_learning_rooms] + hash[:comments_on_answers_last_day_in_learning_rooms]
+      threads: hash[:questions].to_i,
+      threads_last_day: hash[:questions_last_day].to_i,
+      posts: hash[:questions].to_i +
+             hash[:answers].to_i +
+             hash[:comments_on_questions].to_i +
+             hash[:comments_on_answers].to_i,
+      posts_last_day: hash[:questions_last_day].to_i +
+                      hash[:answers_last_day].to_i +
+                      hash[:comments_on_questions_last_day].to_i +
+                      hash[:comments_on_answers_last_day].to_i,
+      threads_in_collab_spaces: hash[:questions_in_learning_rooms].to_i,
+      threads_last_day_in_collab_spaces: hash[:questions_last_day_in_learning_rooms].to_i,
+      posts_in_collab_spaces: hash[:questions_in_learning_rooms].to_i +
+                              hash[:answers_in_learning_rooms].to_i +
+                              hash[:comments_on_questions_in_learning_rooms].to_i +
+                              hash[:comments_on_answers_in_learning_rooms].to_i,
+      posts_last_day_in_collab_spaces: hash[:questions_last_day_in_learning_rooms].to_i +
+                                       hash[:answers_last_day_in_learning_rooms].to_i +
+                                       hash[:comments_on_questions_last_day_in_learning_rooms].to_i +
+                                       hash[:comments_on_answers_last_day_in_learning_rooms].to_i
     )
   end
 end
