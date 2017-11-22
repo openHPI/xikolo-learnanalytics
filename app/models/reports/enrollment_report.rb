@@ -93,32 +93,13 @@ module Reports
               current_end_date
             ]
 
-            cc = classifier_for_cluster(cluster)
-            cc.each do |c|
-              stats = course_service.rel(:enrollment_stats).get(
-                start_date: current_start_date,
-                end_date: current_end_date,
-                classifier_id: c['id']
-              ).value!
-
-              values += [
-                stats[:total_enrollments],
-                stats[:unique_enrolled_users]
-              ]
-
-              if @include_active_users
-                active_users = Lanalytics::Metric::ActiveUserCount.query(
-                  nil,
-                  nil,
-                  current_start_date,
-                  current_end_date,
-                  c['id'],
-                  nil,
-                  nil
-                )
-
-                values += [active_users]
+            if cluster
+              cc = classifier_for_cluster(cluster)
+              cc.each do |c|
+                values += fetch_data(current_start_date, current_end_date, c['id'])
               end
+            else
+              values += fetch_data(current_start_date, current_end_date)
             end
 
             block.call values
@@ -128,6 +109,34 @@ module Reports
           end
         end
       end
+    end
+
+    def fetch_data(start_date, end_date, c_id = nil)
+      stats = course_service.rel(:enrollment_stats).get(
+        start_date: start_date,
+        end_date: end_date,
+        classifier_id: c_id
+      ).value!
+
+      values = [
+        stats[:total_enrollments],
+        stats[:unique_enrolled_users]
+      ]
+
+      if @include_active_users
+        active_users = Lanalytics::Metric::ActiveUserCount.query(
+          nil,
+          nil,
+          start_date,
+          end_date,
+          c_id,
+          nil,
+          nil
+        )
+
+        values += [active_users]
+      end
+      values
     end
 
     def course_service
