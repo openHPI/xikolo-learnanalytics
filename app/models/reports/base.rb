@@ -1,4 +1,5 @@
 require 'csv'
+require 'file_collection'
 
 module Reports
   class Base
@@ -8,7 +9,7 @@ module Reports
     end
 
     def files
-      @files ||= []
+      @files ||= FileCollection.new(@job.tmp_directory)
     end
 
     def escape_csv_string(string)
@@ -18,10 +19,10 @@ module Reports
     private
 
     def csv_file(target, headers, &block)
-      target = "#{target}_#{DateTime.now.strftime('%Y-%m-%d')}.csv"
-      files << target
-
-      CSV.open(target, 'wb') do |csv|
+      CSV.open(
+        files.make("#{target}_#{DateTime.now.strftime('%Y-%m-%d')}.csv"),
+        'wb'
+      ) do |csv|
         csv << headers
 
         block.call do |row|

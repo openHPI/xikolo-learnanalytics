@@ -7,7 +7,7 @@ describe 'Pinboard Report' do
   let(:report_params) { {} }
 
   around do |example|
-    report.in_tmp_directory(&example)
+    report.with_tmp_directory(&example)
   end
 
   before do
@@ -38,7 +38,7 @@ describe 'Pinboard Report' do
 
   it 'generates one CSV file' do
     subject
-    expect(subject.files).to have(1).item
-    expect(subject.files.first.to_s).to end_with '.csv'
+    expect(subject.files.count).to eq 1
+    expect(subject.files.names.first).to end_with '.csv'
   end
 end

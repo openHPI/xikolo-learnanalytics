@@ -68,13 +68,9 @@ class Job < ActiveRecord::Base
     Xikolo.config.data_dir.join('tmp', id)
   end
 
-  def in_tmp_directory
-    tmp_directory.tap do |tmp_dir|
-      FileUtils.mkpath tmp_dir
-      Dir.chdir(tmp_dir) do
-        yield tmp_dir
-      end
-    end
+  def with_tmp_directory
+    FileUtils.mkpath tmp_directory
+    yield tmp_directory
   ensure
     FileUtils.rmtree tmp_directory
   end
