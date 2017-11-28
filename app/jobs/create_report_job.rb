@@ -9,13 +9,12 @@ class CreateReportJob < ActiveJob::Base
     begin
       zip_password = options.delete(:zip_password)
 
-      job.in_tmp_directory do
+      job.with_tmp_directory do
         # Let the reporter do its work (i.e. generate a bunch of files)
         report = job.generate!(options)
 
         # Zip up the generated files
-        zip_file = "#{File.basename(report.files.first, '.*')}.zip"
-        zip_files(report.files, zip_password, zip_file)
+        zip_file = report.files.zip(zip_password)
 
         # ...and finally send them to the file service
         publish_file job, zip_file
@@ -38,19 +37,12 @@ class CreateReportJob < ActiveJob::Base
     )
   end
 
-  def zip_files(files, password, target)
-    password = password.present? ? "--password #{password}" : ''
-    system "zip #{password} #{target} #{files.join(' ')}"
-
-    raise "Zipping files failed: #{$?}" if $?.exitstatus > 0
-  end
-
   def upload_file(file_path, expire_date, user_id, scope)
     file_name = File.basename(file_path)
     file_attrs = {
       name: file_name,
       path: File.join('reports', file_name),
-      size: File.size(file_name),
+      size: file_path.size,
       description: nil,
       user_id: user_id,
       mime_type: 'application/zip'

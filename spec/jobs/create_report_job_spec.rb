@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'file_collection'
 
 class ReportStub
   def initialize(job)
@@ -6,12 +7,12 @@ class ReportStub
   end
 
   def files
-    FileUtils.cp(
-      Rails.root.join('spec', 'support', 'files', 'course-report-example.csv'),
-      @job.tmp_directory.join('course-report-example.csv')
-    )
-
-    ['course-report-example.csv']
+    FileCollection.new(@job.tmp_directory).tap { |files|
+      FileUtils.cp(
+        Rails.root.join('spec', 'support', 'files', 'course-report-example.csv'),
+        files.make('course-report-example.csv')
+      )
+    }
   end
 end
 
