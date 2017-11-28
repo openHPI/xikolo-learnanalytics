@@ -41,9 +41,9 @@ module Reports
 
             values = [
               @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
-              enrollment_date&.strftime('%Y-%m-%d'),
+              enrollment_date,
               first_enrollment?(enrollment),
-              DateTime.parse(user['created_at']).strftime('%Y-%m-%d'),
+              user['created_at'],
               user['language'],
               user['affiliated'],
               as_date(user['born_at']),
