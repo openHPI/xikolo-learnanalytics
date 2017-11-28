@@ -1,0 +1,327 @@
+module Lanalytics
+  module Processing
+    module Transformer
+      class GoogleAnalyticsHitTransformer < TransformStep
+        include Lanalytics::Helper::HashHelper
+
+        PROTOCOL_VERSION = 1
+        APP_PLATFORMS = %w(Android iOS)
+        VERB_CATEGORIES = {
+            pageviews: [:visited_question, :visited_item, :visited_pinboard, :visited_progress, :visited_learning_rooms,
+                        :visited_announcements, :visited_recap, :visited_profile, :visited_documents, :visited_activity,
+                        :visited_dashboard, :visited_preferences],
+            video: [:video_play, :video_pause, :video_change_size, :video_change_speed, :video_change_quality,
+                    :video_portrait, :video_landscape, :video_fullscreen, :video_seek, :video_close, :video_end],
+            lti: [:submitted_lti],
+            navigation: [:clicked_item_nav_prev, :navigated_prev_item, :clicked_item_nav_next, :navigated_next_item],
+            download: [:downloaded_hd_video, :downloaded_sd_video, :downloaded_audio, :downloaded_slides, :downloaded_section],
+            second_screen: [:second_screen_slides_start, :visited_second_screen_slides, :second_screen_slides_stop,
+                            :second_screen_pinboard_start, :visited_second_screen_pinboard, :second_screen_pinboard_stop,
+                            :second_screen_quiz_start, :second_screen_quiz_stop],
+            pinboard: [:toggled_pinboard_question_form, :asked_question, :clicked_edit_question, :clicked_edit_answer,
+                       :answered_question, :answer_accepted, :toggled_add_comment, :commented, :clicked_edit_comment,
+                       :clicked_downvote, :clicked_upvote, :toggled_question_form, :toggled_subscription],
+            social: [:share_button_click]
+        }
+
+        def initialize(geo_id_lookup)
+          @geo_id_lookup = geo_id_lookup
+        end
+
+        def transform(_original_event, processing_units, load_commands, pipeline_ctx)
+          processing_action = pipeline_ctx.processing_action.to_s.downcase
+
+          processing_units.each do |processing_unit|
+            processing_unit_type = processing_unit.type.to_s.downcase
+            transform_method = "transform_#{processing_unit_type}_punit_to_#{processing_action}"
+            if respond_to? transform_method.to_sym
+              method(transform_method).call(processing_unit, load_commands)
+            else
+              Rails.logger.error "#{transform_method} does not exist"
+            end
+          end
+        end
+
+        def transform_attrs_to_create(load_commands, attrs)
+          return if Xikolo.config.google_analytics_tracking_id.nil?
+
+          geo_id = @geo_id_lookup.get(attrs[:user_location_country_code], attrs[:user_location_city])
+          entity = Lanalytics::Processing::LoadORM::Entity.create(:google_analytics_hit) do
+            # General properties
+            with_attribute :v,       :int,     PROTOCOL_VERSION
+            with_attribute :tid,     :string,  Xikolo.config.google_analytics_tracking_id
+            with_attribute :ds,      :string,  (APP_PLATFORMS.include? attrs[:platform]) ? 'app' : 'web'
+            with_attribute :qt,      :int,     attrs[:timestamp].to_time.to_i
+            with_attribute :t,       :string,  attrs[:hit_type]
+
+            # User properties
+            with_attribute :cid,     :string,  (Digest::SHA256.hexdigest attrs[:user_id])
+            with_attribute :ua,      :string,  attrs[:user_agent]
+            with_attribute :uip,     :string,  attrs[:user_ip]
+            unless geo_id.nil?
+              with_attribute :geoid, :string,  geo_id
+            end
+            unless attrs[:screen_width].nil? or attrs[:screen_height].nil?
+              with_attribute :sr,    :string,  "#{attrs[:screen_width]}x#{attrs[:screen_height]}"
+            end
+
+            # Content information
+            if attrs[:hit_type] == :pageview
+              with_attribute :dh,    :string,  Xikolo.config.domain
+              with_attribute :dp,    :string,  attrs[:document_path]
+            end
+
+            # Event tracking
+            if attrs[:hit_type] == :event
+              with_attribute :ec,    :string,  attrs[:event_category]
+              with_attribute :ea,    :string,  attrs[:event_action]
+              with_attribute :el,    :string,  attrs[:event_label]
+              with_attribute :ev,    :int,     attrs[:event_value]&.round
+            end
+
+            # Content groups
+            (1..5).each do |n|
+              cg_attr = "content_group_#{n}".to_sym
+              unless attrs[cg_attr].nil?
+                with_attribute :"cg#{n}", :string,  attrs[cg_attr]
+              end
+            end
+
+            # Custom dimensions and metrics
+            (1..20).each do |n|
+              cd_attr = "custom_dimension_#{n}".to_sym
+              unless attrs[cd_attr].nil?
+                with_attribute :"cd#{n}", :string,  attrs[cd_attr]
+              end
+
+              cm_attr = :"custom_metric_#{n}".to_sym
+              unless attrs[cm_attr].nil?
+                with_attribute :"cm#{n}", :int,     attrs[cm_attr].round
+              end
+            end
+          end
+
+          load_commands << Lanalytics::Processing::LoadORM::CreateCommand.with(entity)
+        end
+
+        # Transform events coming from Javascript through the web service.
+        def transform_exp_event_punit_to_create(processing_unit, load_commands)
+          exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
+          verb = exp_stmt.verb.type.downcase
+          cat = VERB_CATEGORIES.find{ |key, verbs| verbs.include? verb }&.first
+
+          if cat.nil?
+            Rails.logger.error "Verb #{verb} has not been mapped to a category"
+          else
+            transform_method = "transform_#{cat}_exp_stmt_to_create"
+            if respond_to? transform_method.to_sym
+              method(transform_method).call(exp_stmt, load_commands)
+            else
+              transform_exp_stmt_to_create exp_stmt, load_commands,
+                                           hit_type: :event,
+                                           event_category: cat,
+                                           event_action: verb.to_sym
+            end
+          end
+        end
+
+        def transform_exp_stmt_to_create(exp_stmt, load_commands, attrs)
+          in_context = hash_keys_to_underscore(exp_stmt.in_context)
+          attrs = attrs.merge user_id: exp_stmt.user.uuid,
+                              timestamp: exp_stmt.timestamp,
+                              user_ip: in_context[:user_ip],
+                              platform: in_context[:platform],
+                              user_agent: in_context[:user_agent],
+                              screen_width: in_context[:screen_width].to_i,
+                              screen_height: in_context[:screen_height].to_i,
+                              user_location_country_code: in_context[:user_location_country_code],
+                              user_location_city: in_context[:user_location_city],
+                              custom_dimension_2: exp_stmt.resource.uuid
+          if attrs[:custom_dimension_1].nil?
+            attrs[:custom_dimension_1] = in_context[:course_id]
+          end
+
+          transform_attrs_to_create(load_commands, attrs)
+        end
+
+        def transform_video_exp_stmt_to_create(exp_stmt, load_commands)
+          verb = exp_stmt.verb.type.downcase
+          in_context = hash_keys_to_underscore(exp_stmt.in_context)
+          attrs = {
+              hit_type: :event,
+              event_category: :video,
+              event_action: verb.to_sym,
+              custom_metric_4: in_context[:current_time].to_f
+          }
+          case verb
+            when :video_seek
+              attrs[:custom_metric_4] = in_context[:old_current_time].to_f
+              attrs[:event_value] = in_context[:new_current_time].to_f
+            when :video_change_speed
+              attrs[:event_value] = in_context[:new_speed].to_f * 10
+            when :video_fullscreen
+              attrs[:event_value] = in_context[:new_current_fullscreen] == 'true' ? 1 : 0
+          end
+
+          transform_exp_stmt_to_create exp_stmt, load_commands, attrs
+        end
+
+        def transform_lti_exp_stmt_to_create(exp_stmt, load_commands)
+          verb = exp_stmt.verb.type.downcase
+          in_context = hash_keys_to_underscore(exp_stmt.in_context)
+          transform_exp_stmt_to_create exp_stmt, load_commands,
+                                       hit_type: :event,
+                                       event_category: :lti,
+                                       event_action: verb.to_sym,
+                                       custom_metric_1: (in_context[:points].to_f / in_context[:max_points].to_f) * 100
+        end
+
+        def transform_pageviews_exp_stmt_to_create(exp_stmt, load_commands)
+          verb = exp_stmt.verb.type.downcase
+          in_context = hash_keys_to_underscore(exp_stmt.in_context)
+          course_id = exp_stmt.resource.type.downcase == :course ? (exp_stmt.resource.uuid) : (in_context[:course_id])
+          attrs = {
+              hit_type: :pageview,
+              document_path: get_document_path(verb, course_id, exp_stmt.resource.uuid),
+              custom_dimension_1: course_id
+          }
+          if exp_stmt.resource.type.downcase == :item
+            attrs[:content_group_2] = in_context[:section_id]
+          end
+
+          transform_exp_stmt_to_create exp_stmt, load_commands, attrs
+
+        end
+
+        def transform_question_punit_to_create(processing_unit, load_commands)
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :pinboard,
+                                    event_action: :asked_question,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: processing_unit[:created_at],
+                                    custom_dimension_1: processing_unit[:course_id],
+                                    custom_dimension_2: processing_unit[:video_id],
+                                    custom_metric_4: processing_unit[:video_timestamp]
+        end
+
+
+        def transform_answer_punit_to_create(processing_unit, load_commands)
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :pinboard,
+                                    event_action: :answered_question,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: processing_unit[:created_at],
+                                    custom_dimension_1: processing_unit[:course_id],
+                                    custom_dimension_2: processing_unit[:question_id]
+        end
+
+        def transform_comment_punit_to_create(processing_unit, load_commands)
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :pinboard,
+                                    event_action: :commented,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: processing_unit[:created_at],
+                                    custom_dimension_1: processing_unit[:course_id],
+                                    custom_dimension_2: processing_unit[:id]
+        end
+
+        def transform_answer_accepted_punit_to_create(processing_unit, load_commands)
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :pinboard,
+                                    event_action: :answer_accepted,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: processing_unit[:created_at],
+                                    custom_dimension_1: processing_unit[:course_id],
+                                    custom_dimension_2: processing_unit[:question_id]
+        end
+
+        def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :course,
+                                    event_action: :completed_course,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: processing_unit[:updated_at],
+                                    custom_dimension_1: processing_unit[:course_id],
+                                    custom_metric_1: processing_unit[:points][:percentage],
+                                    custom_metric_5: processing_unit[:certificates][:certificate] ? 1 : 0
+        end
+
+        def transform_enrollment_punit_to_create(processing_unit, load_commands)
+          save_enrollment(processing_unit, load_commands)
+        end
+
+        def transform_enrollment_punit_to_update(processing_unit, load_commands)
+          save_enrollment(processing_unit, load_commands)
+        end
+
+        def save_enrollment(processing_unit, load_commands)
+          action = processing_unit[:deleted] ? :un_enrolled : :enrolled
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :course,
+                                    event_action: action,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: processing_unit[:created_at],
+                                    custom_dimension_1: processing_unit[:course_id]
+        end
+
+        def transform_user_punit_to_create(processing_unit, load_commands)
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :user,
+                                    event_action: :confirmed_user,
+                                    user_id: processing_unit[:id],
+                                    timestamp: processing_unit[:updated_at]
+        end
+
+        def transform_submission_punit_to_create(processing_unit, load_commands)
+          submission_time = processing_unit[:quiz_submission_time]&.to_time || Time.now
+          transform_attrs_to_create load_commands,
+                                    hit_type: :event,
+                                    event_category: :quiz,
+                                    event_action: :submitted_quiz,
+                                    user_id: processing_unit[:user_id],
+                                    timestamp: submission_time,
+                                    custom_dimension_1: processing_unit[:course_id],
+                                    custom_dimension_2: processing_unit[:item_id],
+                                    custom_dimension_3: processing_unit[:quiz_type],
+                                    custom_metric_1: (processing_unit[:points] / processing_unit[:max_points]) * 100,
+                                    custom_metric_2: processing_unit[:attempt],
+                                    custom_metric_3: submission_time - processing_unit[:quiz_access_time].to_time
+        end
+
+        def get_document_path(verb, course_id = nil, resource_id = nil)
+          case verb
+            when :visited_question
+              "/courses/#{course_id}/question/#{resource_id}"
+            when :visited_item
+              "/courses/#{course_id}/item/#{resource_id}"
+            when :visited_pinboard
+              "/courses/#{course_id}/pinboard"
+            when :visited_learning_rooms
+              "/courses/#{course_id}/learning_rooms"
+            when :visited_announcements
+              "/courses/#{course_id}/announcements"
+            when :visited_recap
+              "/courses/#{course_id}/recap"
+            when :visited_dashboard
+              "/dashboard"
+            when :visited_profile
+              "/dashboard/profile"
+            when :visited_documents
+              "/dashboard/documents"
+            when :visited_activity
+              "/dashboard/activity"
+            when :visited_preferences
+              "/preferences"
+          end
+        end
+      end
+    end
+  end
+end

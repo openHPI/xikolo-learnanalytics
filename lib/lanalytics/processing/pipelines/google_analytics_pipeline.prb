@@ -1,0 +1,33 @@
+def create_ga_pipeline(route, extractor_type, processing_action, geo_id_lookup)
+  pipeline_for(route, :google_analytics, processing_action) do
+    extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
+
+    transformer Lanalytics::Processing::Transformer::ContextData.new
+    transformer Lanalytics::Processing::Transformer::GeoinfoFinder.new
+    transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new(anonymize_ip: true)
+    # Important to be the last transformer, since it creates Entities and Attributes
+    transformer Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(geo_id_lookup)
+
+    loader Lanalytics::Processing::Loader::AmqLoader.new('xikolo.lanalytics.google_analytics_hits')
+  end
+end
+
+create_action = Lanalytics::Processing::Action::CREATE
+update_action = Lanalytics::Processing::Action::UPDATE
+
+geo_id_lookup = Lanalytics::Processing::GoogleAnalytics::GeoIdLookup.new('vendor/lib/Google-Analytics-Location-Criteria-2017-11-02.csv')
+
+create_ga_pipeline('xikolo.web.exp_event.create', :exp_event, create_action, geo_id_lookup)
+
+create_ga_pipeline('xikolo.account.user.confirmed', :user, create_action, geo_id_lookup)
+
+create_ga_pipeline('xikolo.pinboard.question.create', :question, create_action, geo_id_lookup)
+create_ga_pipeline('xikolo.pinboard.answer.create', :answer, create_action, geo_id_lookup)
+create_ga_pipeline('xikolo.pinboard.answer.accept', :answer_accepted, create_action, geo_id_lookup)
+create_ga_pipeline('xikolo.pinboard.comment.create', :comment, create_action, geo_id_lookup)
+
+create_ga_pipeline('xikolo.course.enrollment.create', :enrollment, create_action, geo_id_lookup)
+create_ga_pipeline('xikolo.course.enrollment.update', :enrollment, update_action, geo_id_lookup)
+create_ga_pipeline('xikolo.course.enrollment.completed', :enrollment_completed, create_action, geo_id_lookup)
+
+create_ga_pipeline('xikolo.submission.submission.create', :submission, create_action, geo_id_lookup)

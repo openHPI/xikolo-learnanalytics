@@ -10,7 +10,7 @@ FactoryBot.define do
 
   end
 
-  factory :load_command_with_entity, class: Lanalytics::Processing::LoadORM::MergeEntityCommand do
+  factory :load_command_with_entity, class: Lanalytics::Processing::LoadORM::CreateCommand do
     entity(Lanalytics::Processing::LoadORM::Entity.create(:dummy_type) do
     
       with_primary_attribute :dummy_uuid, :uuid, '1234567890'

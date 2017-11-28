@@ -24,7 +24,7 @@ gem 'sorcery' # Authentication ...
 gem 'validates_email_format_of'
 
 # Connecting to RabbitMQ
-gem 'msgr'
+gem 'msgr', '~> 1.0'
 
 gem 'connection_pool'
 

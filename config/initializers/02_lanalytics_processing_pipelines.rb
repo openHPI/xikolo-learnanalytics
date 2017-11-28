@@ -1,8 +1,11 @@
 # run before integration initializers
 
 # needed for autoloading constants in development
-require "#{Rails.root}/lib/lanalytics/processing/datasource_manager"
-require "#{Rails.root}/lib/lanalytics/processing/pipeline_manager"
+require 'lanalytics/processing/datasource_manager'
+require 'lanalytics/processing/pipeline_manager'
+require 'lanalytics/processing/batching_queue'
+require 'lanalytics/processing/google_analytics/hits_emitter'
+require 'lanalytics/processing/google_analytics/geo_id_lookup'
 
 LANALYTICS_PIPELINE_FLIPPER_FILE = "#{Rails.root}/config/lanalytics_pipeline_flipper.yml"
 flipper_config = YAML.load_file(LANALYTICS_PIPELINE_FLIPPER_FILE).with_indifferent_access
