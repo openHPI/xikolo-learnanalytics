@@ -37,6 +37,8 @@ module Reports
         sticky
         deleted
         closed
+        section_id
+        item_id
       ]
     end
 
@@ -65,7 +67,6 @@ module Reports
         i += 1
         @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
       end
-      Acfs.run
     end
 
     def transform_question(pinboard_type, question)
@@ -90,7 +91,9 @@ module Reports
         question['sentimental_value'],
         question['sticky'],
         question['deleted'],
-        question['closed']
+        question['closed'],
+        implicit_section_id(question['implicit_tags']),
+        implicit_item_id(question['implicit_tags'])
       ]
     end
 
@@ -124,7 +127,6 @@ module Reports
           yield row
         end
       end
-      Acfs.run
     end
 
     def each_comment(object, type)
@@ -159,7 +161,14 @@ module Reports
           comment['sentimental_value'],
         ]
       end
-      Acfs.run
+    end
+
+    def implicit_section_id(tags)
+      tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Section' }&.dig('name')
+    end
+
+    def implicit_item_id(tags)
+      tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Item' }&.dig('name')
     end
 
     def course
