@@ -64,7 +64,7 @@ module Reports
           values += [
             user.language,
             user.affiliated,
-            user.created_at.strftime('%Y-%m-%d'),
+            user.created_at,
             user.born_at,
             top_country(user),
             first_course(user_enrollments)
