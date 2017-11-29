@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :amqp_helpdesk_ticket_no_course_and_no_user, class: Hash do
     id "43ba0089-06db-4181-a7ee-1793daebbcaa"

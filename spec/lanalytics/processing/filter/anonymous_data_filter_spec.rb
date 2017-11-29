@@ -3,7 +3,7 @@
 # describe Lanalytics::Processing::Transformer::AnonymousDataFilter, :broken => true do
 
 #   before(:each) do
-#     @original_hash = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_user).with_indifferent_access
 #     @data_filter = Lanalytics::Processing::Filter::AnonymousDataFilter.new
 #     @processed_resources = [ Lanalytics::Model::StmtResource.new(@original_hash[:id], :USER, {
 #         language: "en",

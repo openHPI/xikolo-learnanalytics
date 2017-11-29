@@ -1,6 +1,6 @@
 require 'date'
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :stmt, class: Lanalytics::Model::ExpApiStatement do
     association :user, factory: :stmt_user, strategy: :build

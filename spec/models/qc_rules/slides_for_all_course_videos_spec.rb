@@ -3,15 +3,15 @@ require 'spec_helper'
 describe QcRules::SlidesForAllCourseVideos do
   subject { described_class.new qc_rule }
 
-  let!(:qc_rule) { FactoryGirl.create :qc_rule }
-  let!(:test_course) { FactoryGirl.build :test_course,
+  let!(:qc_rule) { FactoryBot.create :qc_rule }
+  let!(:test_course) { FactoryBot.build :test_course,
                                           { id: '00000001-3100-4444-9999-000000000002',
       start_date: DateTime.now.iso8601,
       end_date: 5.days.from_now.iso8601,
       status: 'preparation',
       forum_is_locked: nil
   }}
-  let!(:test_course2) { FactoryGirl.build :test_course,
+  let!(:test_course2) { FactoryBot.build :test_course,
                                           { id: '00000001-3100-4444-9999-000000000003',
       start_date: DateTime.now.iso8601,
       end_date: 5.days.from_now.iso8601,

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe JobsController do
-  let(:job) { FactoryGirl.create :course_report_job }
+  let(:job) { FactoryBot.create :course_report_job }
   let(:json) { JSON.parse response.body }
-  let(:params) { FactoryGirl.attributes_for(:course_report_job) }
+  let(:params) { FactoryBot.attributes_for(:course_report_job) }
   let(:default_params) { {format: 'json'}}
 
   describe '#index' do
@@ -23,9 +23,9 @@ describe JobsController do
     end
 
     context 'filter by user' do
-      let!(:job1) { FactoryGirl.create(:course_report_job, user_id: '00000001-3100-4444-9999-000000000001')}
-      let!(:job2) { FactoryGirl.create(:course_report_job, user_id: '00000001-3100-4444-9999-000000000001')}
-      let!(:job3) { FactoryGirl.create(:course_report_job, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f')}
+      let!(:job1) { FactoryBot.create(:course_report_job, user_id: '00000001-3100-4444-9999-000000000001')}
+      let!(:job2) { FactoryBot.create(:course_report_job, user_id: '00000001-3100-4444-9999-000000000001')}
+      let!(:job3) { FactoryBot.create(:course_report_job, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f')}
 
       subject { get :index, user_id: '00000001-3100-4444-9999-000000000001' }
 

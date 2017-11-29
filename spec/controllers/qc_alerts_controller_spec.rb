@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe QcAlertsController do
-  let(:rule) { FactoryGirl.create :qc_rule }
-  let(:rule2) { FactoryGirl.create :qc_rule }
-  let!(:alert1) { FactoryGirl.create :qc_alert, qc_rule_id: rule.id }
-  let!(:alert2) { FactoryGirl.create :qc_alert, :other_course, qc_rule_id: rule2.id }
+  let(:rule) { FactoryBot.create :qc_rule }
+  let(:rule2) { FactoryBot.create :qc_rule }
+  let!(:alert1) { FactoryBot.create :qc_alert, qc_rule_id: rule.id }
+  let!(:alert2) { FactoryBot.create :qc_alert, :other_course, qc_rule_id: rule2.id }
   let(:json) { JSON.parse response.body }
   let(:default_params) { {format: 'json'} }
 
@@ -17,7 +17,7 @@ describe QcAlertsController do
 
     context 'with ignored alerts' do
       # Ignore alert1
-      before { FactoryGirl.create :qc_alert_status, qc_alert_id: alert1.id, ignored: true }
+      before { FactoryBot.create :qc_alert_status, qc_alert_id: alert1.id, ignored: true }
 
       it { is_expected.to have_http_status 200 }
 
@@ -34,7 +34,7 @@ describe QcAlertsController do
 
       context 'with a notification for one user' do
         # Notify the user about alert1
-        before { FactoryGirl.create :qc_alert_status, user_id: filter_user_id, qc_alert_id: alert1.id, ignored: false }
+        before { FactoryBot.create :qc_alert_status, user_id: filter_user_id, qc_alert_id: alert1.id, ignored: false }
 
         it { is_expected.to have_http_status 200 }
 
@@ -46,14 +46,14 @@ describe QcAlertsController do
       end
 
       context 'with two more alerts and another user' do
-        let!(:alert3) { FactoryGirl.create(:qc_alert, {qc_rule_id: rule.id}) }
-        let!(:alert4) { FactoryGirl.create(:qc_alert, {qc_rule_id: rule2.id}) }
+        let!(:alert3) { FactoryBot.create(:qc_alert, {qc_rule_id: rule.id}) }
+        let!(:alert4) { FactoryBot.create(:qc_alert, {qc_rule_id: rule2.id}) }
         let(:other_user_id) { '00000001-3100-4444-9999-000000000003' }
 
         context 'with two alert statuses for different users' do
           before do
-            FactoryGirl.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: filter_user_id, ignored: false)
-            FactoryGirl.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: other_user_id, ignored: false)
+            FactoryBot.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: filter_user_id, ignored: false)
+            FactoryBot.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: other_user_id, ignored: false)
           end
 
           it { is_expected.to have_http_status 200 }
@@ -66,8 +66,8 @@ describe QcAlertsController do
 
         context 'with two alert statuses' do
           before do
-            FactoryGirl.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: filter_user_id, ignored: false)
-            FactoryGirl.create(:qc_alert_status, qc_alert_id: alert4.id, user_id: filter_user_id, ignored: true)
+            FactoryBot.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: filter_user_id, ignored: false)
+            FactoryBot.create(:qc_alert_status, qc_alert_id: alert4.id, user_id: filter_user_id, ignored: true)
           end
 
           it { is_expected.to have_http_status 200 }

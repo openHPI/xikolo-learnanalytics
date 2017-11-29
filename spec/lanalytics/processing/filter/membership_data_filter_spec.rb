@@ -28,7 +28,7 @@
 #   describe '(Processing with default relationship type)' do
 
 #     before(:each) do
-#       @original_hash = FactoryGirl.attributes_for(:amqp_learning_room_membership).with_indifferent_access
+#       @original_hash = FactoryBot.attributes_for(:amqp_learning_room_membership).with_indifferent_access
 #       @data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id)
 #     end
 
@@ -63,7 +63,7 @@
 #   describe '(Processing with custom relationship type)' do
 
 #     it 'should create :USER resource with correct properties' do
-#       original_hash = FactoryGirl.attributes_for(:amqp_learning_room_membership).with_indifferent_access
+#       original_hash = FactoryBot.attributes_for(:amqp_learning_room_membership).with_indifferent_access
 #       data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :learning_room_id, :JOINED)
 
 #       processed_resources = []
@@ -80,7 +80,7 @@
 #     end
 
 #     it 'should create :USER resource with correct properties' do
-#       original_hash = FactoryGirl.attributes_for(:amqp_enrollment).with_indifferent_access
+#       original_hash = FactoryBot.attributes_for(:amqp_enrollment).with_indifferent_access
 #       data_filter = Lanalytics::Processing::Filter::MembershipDataFilter.new(:user_id, :course_id, :ENROLLED)
 
 #       processed_resources = []

@@ -4,7 +4,7 @@
 
 #   before(:each) do
 #     @data_filter = Lanalytics::Processing::Filter::PinboardAnswerDataFilter.new
-#     @original_hash = FactoryGirl.attributes_for(:amqp_pinboard_answer).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_pinboard_answer).with_indifferent_access
 #   end
 
 #   it 'should understand the interface methods of Lanalytics::Processing::ProcessingStep' do

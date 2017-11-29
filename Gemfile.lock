@@ -100,10 +100,10 @@ GEM
       tzinfo
     ethon (0.11.0)
       ffi (>= 1.3.0)
-    factory_girl (4.9.0)
+    factory_bot (4.8.2)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.9.0)
-      factory_girl (~> 4.9.0)
+    factory_bot_rails (4.8.2)
+      factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
@@ -370,7 +370,7 @@ GEM
       activesupport
       xikolo-file (~> 1.0)
       xikolo-richtext (~> 3.0)
-    xikolo-common (2.3.1)
+    xikolo-common (2.4.0)
       activesupport
       addressable
       lograge (~> 0.3.5)
@@ -409,7 +409,7 @@ DEPENDENCIES
   draper
   elasticsearch
   elasticsearch-transport
-  factory_girl_rails
+  factory_bot_rails (~> 4.0)
   forgery
   geminabox-rake (~> 1.1)
   geoip
@@ -453,7 +453,7 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-account
-  xikolo-common (~> 2.3)
+  xikolo-common (~> 2.4)
   xikolo-config (~> 1.66)
   xikolo-course (~> 9.9.0)
   xikolo-sidekiq

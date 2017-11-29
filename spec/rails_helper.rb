@@ -5,7 +5,7 @@ require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 
 require 'rspec/rails'
-require 'factory_girl_rails'
+require 'factory_bot_rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -46,8 +46,8 @@ RSpec.configure do |config|
 end
 
 # This strategy is defined in spec/support
-require "#{Rails.root}/spec/support/factory_girl/json_strategy.rb"
-FactoryGirl.register_strategy(:json, JsonStrategy)
+require "#{Rails.root}/spec/support/factory_bot/json_strategy.rb"
+FactoryBot.register_strategy(:json, JsonStrategy)
 
 def logger
   return RAILS_DEFAULT_LOGGER

@@ -3,7 +3,7 @@
 # describe Lanalytics::Processing::Filter::LearningRoomDataFilter , :broken => true do
 
 #   before(:each) do
-#     @original_hash = FactoryGirl.attributes_for(:amqp_learning_room).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_learning_room).with_indifferent_access
 #     @data_filter = Lanalytics::Processing::Filter::LearningRoomDataFilter.new
 #   end
 

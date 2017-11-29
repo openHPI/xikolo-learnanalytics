@@ -7,7 +7,7 @@ gem 'rails', '~> 4.2.5'
 gem 'jbuilder', '~> 2.0'
 
 gem 'rails-api'
-gem 'xikolo-common', '~> 2.3'
+gem 'xikolo-common', '~> 2.4'
 
 gem 'xikolo-config', '~> 1.66'
 
@@ -84,7 +84,7 @@ gem 'redis-activesupport'
 group :development, :test do
   gem 'rspec-rails'#, '~> 3.0.0'
   gem 'rspec-collection_matchers'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails', '~> 4.0'
   gem 'rspec-its'
 end
 

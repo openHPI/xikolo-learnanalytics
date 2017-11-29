@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :amqp_exp_stmt, class: Hash do
     user({type: :USER, uuid: "00000001-3100-4444-9999-000000000002"})

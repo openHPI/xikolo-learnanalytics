@@ -1,9 +1,9 @@
 require 'rspec'
 
 describe QcRecommendationsController do
-  let(:recommendation) { FactoryGirl.create :qc_recommendation }
+  let(:recommendation) { FactoryBot.create :qc_recommendation }
   let(:json) { JSON.parse response.body }
-  let(:params) { FactoryGirl.attributes_for(:qc_recommendation) }
+  let(:params) { FactoryBot.attributes_for(:qc_recommendation) }
   let(:default_params) { {format: 'json'}}
 
 

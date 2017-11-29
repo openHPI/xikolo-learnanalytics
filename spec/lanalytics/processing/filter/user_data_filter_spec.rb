@@ -6,7 +6,7 @@
 #   describe '(without custom fields)' do
 
 #     before(:each) do
-#       @original_hash = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
+#       @original_hash = FactoryBot.attributes_for(:amqp_user).with_indifferent_access
 #       @data_filter = Lanalytics::Processing::Filter::UserDataFilter.new
 #     end
 
@@ -34,7 +34,7 @@
 
 #   describe '(with custom fields)' do
 #     before(:each) do
-#       @original_hash = FactoryGirl.attributes_for(:amqp_user_with_fields).with_indifferent_access
+#       @original_hash = FactoryBot.attributes_for(:amqp_user_with_fields).with_indifferent_access
 #       @data_filter = Lanalytics::Processing::Filter::UserDataFilter.new
 #     end
 

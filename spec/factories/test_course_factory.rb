@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :test_course, class: Hash do
 
     defaults = {

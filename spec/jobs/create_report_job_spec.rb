@@ -19,7 +19,7 @@ end
 describe CreateReportJob do
   subject { described_class.new.perform(job.id, report_params) }
 
-  let!(:job) { FactoryGirl.create :course_report_job }
+  let!(:job) { FactoryBot.create :course_report_job }
   let(:report_params) { {} }
 
   let(:report_stub) { ReportStub.new(job) }

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe QcRules::InitialAnnouncement do
-  let!(:qc_rule2) { FactoryGirl.create :qc_rule }
-  let!(:test_course) { FactoryGirl.build :test_course, {id: '00000001-3100-4444-9999-000000000002'} }
-  let!(:normal_course) { FactoryGirl.build :test_course, {id: '00000001-3100-4444-9999-000000000022'} }
-  let!(:course_little_enrollments) { FactoryGirl.build :test_course, {id: '00000001-3100-4444-9999-000000000003', end_date: 3.days.ago.iso8601} }
-  let!(:test_course2) { FactoryGirl.build :test_course, {id: '00000001-3100-4444-9999-000000000015'} }
+  let!(:qc_rule2) { FactoryBot.create :qc_rule }
+  let!(:test_course) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000002'} }
+  let!(:normal_course) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000022'} }
+  let!(:course_little_enrollments) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000003', end_date: 3.days.ago.iso8601} }
+  let!(:test_course2) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000015'} }
 
   subject { described_class.new qc_rule2 }
 

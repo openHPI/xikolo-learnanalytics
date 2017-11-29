@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :dummy_punit, class: Lanalytics::Processing::Unit do
     type(:dummy_type)

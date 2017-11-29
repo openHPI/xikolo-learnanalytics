@@ -14,7 +14,7 @@ end
 
 describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
   before(:each) do
-    @original_event = FactoryGirl.attributes_for(:amqp_exp_stmt).with_indifferent_access
+    @original_event = FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
     @processing_units = [Lanalytics::Processing::Unit.new(:exp_event, @original_event)]
     @load_commands = []
     @pipeline_ctx = OpenStruct.new processing_action: :CREATE

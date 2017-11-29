@@ -12,8 +12,8 @@ RSpec.describe Lanalytics::Model::StmtVerb do
   describe "(JSON De-/Serialization)" do
 
     before(:each) do
-      @stmt_verb = FactoryGirl.build(:stmt_verb)
-      @stmt_verb_hash = FactoryGirl.attributes_for(:stmt_verb)
+      @stmt_verb = FactoryBot.build(:stmt_verb)
+      @stmt_verb_hash = FactoryBot.attributes_for(:stmt_verb)
     end
 
     it "from json hash" do
@@ -27,7 +27,7 @@ RSpec.describe Lanalytics::Model::StmtVerb do
     end
 
     it "to json string" do
-      stmt_verb = FactoryGirl.build(:stmt_verb)
+      stmt_verb = FactoryBot.build(:stmt_verb)
       stmt_verb_json_str = JSON.dump(stmt_verb)
       expect(stmt_verb_json_str).to be_a(String)
       expect(JSON.parse(stmt_verb_json_str)).to include('json_class' => @stmt_verb.class.name, 'data' => {'type' => @stmt_verb.type.to_s})

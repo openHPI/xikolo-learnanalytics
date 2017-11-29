@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Lanalytics::Processing::Transformer::AnonymousDataFilter do
 
   before(:each) do
-    @original_hash = FactoryGirl.attributes_for(:amqp_user).with_indifferent_access
+    @original_hash = FactoryBot.attributes_for(:amqp_user).with_indifferent_access
     @data_filter = Lanalytics::Processing::Transformer::AnonymousDataFilter.new
     @processing_units = [ Lanalytics::Processing::Unit.new(:USER, @original_hash) ]
   end

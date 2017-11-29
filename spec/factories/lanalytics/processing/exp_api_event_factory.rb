@@ -1,7 +1,7 @@
 require 'forgery'
 
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :video_play_event, class: Hash do
     user(type: :USER, uuid: "00000001-3100-4444-9999-000000000002")

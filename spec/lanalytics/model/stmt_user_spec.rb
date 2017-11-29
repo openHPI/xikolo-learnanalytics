@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Lanalytics::Model::StmtUser do
 
   before(:each) do
-    @stmt_user = FactoryGirl.build(:stmt_user)
-    @stmt_user_hash = FactoryGirl.attributes_for(:stmt_user)
+    @stmt_user = FactoryBot.build(:stmt_user)
+    @stmt_user_hash = FactoryBot.attributes_for(:stmt_user)
   end
 
   it "initializes correctly" do
@@ -27,7 +27,7 @@ RSpec.describe Lanalytics::Model::StmtUser do
     end
 
     it "to json string" do
-      stmt_user = FactoryGirl.build(:stmt_user)
+      stmt_user = FactoryBot.build(:stmt_user)
       stmt_user_json_str = JSON.dump(stmt_user)
       expect(stmt_user_json_str).to be_a(String)
       expect(JSON.parse(stmt_user_json_str)).to include('json_class' => @stmt_user.class.name, 'data' => {'type' => stmt_user.type.to_s, 'uuid' => stmt_user.uuid.to_s})

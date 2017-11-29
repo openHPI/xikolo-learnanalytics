@@ -12,7 +12,7 @@
 #   end
 
 #   it 'should do nothing when no there is no user or course set', pending: true do
-#     @original_hash = FactoryGirl.attributes_for(:amqp_helpdesk_ticket_no_course_and_user).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_helpdesk_ticket_no_course_and_user).with_indifferent_access
 #     processed_resources = []
 #     @data_filter.filter(@original_hash, processed_resources)
 
@@ -20,7 +20,7 @@
 #   end
 
 #   it 'should create a relationship between :USER and :SYSTEM representing a user submitting a helpdesk ticket into the system', pending: true do
-#     @original_hash = FactoryGirl.attributes_for(:amqp_helpdesk_ticket_no_course_but_user).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_helpdesk_ticket_no_course_but_user).with_indifferent_access
 #     processed_resources = []
 #     @data_filter.filter(@original_hash, processed_resources)
 
@@ -28,7 +28,7 @@
 #   end
 
 #   it 'should create a relationship between :USER and :COURSE representing a user submitting a helpdesk ticket regarding a course' do
-#     @original_hash = FactoryGirl.attributes_for(:amqp_helpdesk_ticket_course_and_user).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_helpdesk_ticket_course_and_user).with_indifferent_access
 #     processed_resources = []
 #     @data_filter.filter(@original_hash, processed_resources)
 
@@ -38,7 +38,7 @@
 #   end
 
 #   it "should not modify the original hash" do
-#     @original_hash = FactoryGirl.attributes_for(:amqp_helpdesk_ticket_course_and_user).with_indifferent_access
+#     @original_hash = FactoryBot.attributes_for(:amqp_helpdesk_ticket_course_and_user).with_indifferent_access
 #     old_hash = @original_hash
 #     expect { @data_filter.filter(@original_hash, []) }.to_not raise_error
 #     expect(@original_hash).to be(old_hash)

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :stmt_verb, class: Lanalytics::Model::StmtVerb do
     type "SOME_VERB"

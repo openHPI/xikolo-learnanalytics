@@ -16,8 +16,8 @@ RSpec.describe Lanalytics::Model::StmtResource do
 
   describe "doing JSON De-/Serialization" do
     before(:each) do
-      @resource = FactoryGirl.build(:stmt_resource)
-      @resource_hash = FactoryGirl.attributes_for(:stmt_resource)
+      @resource = FactoryBot.build(:stmt_resource)
+      @resource_hash = FactoryBot.attributes_for(:stmt_resource)
     end
 
     it "from json hash" do
@@ -36,7 +36,7 @@ RSpec.describe Lanalytics::Model::StmtResource do
     end
 
     it "to json string" do
-      resource = FactoryGirl.build(:stmt_resource)
+      resource = FactoryBot.build(:stmt_resource)
       resource_json_str = JSON.dump(resource)
       expect(resource_json_str).to be_a(String)
       expect(JSON.parse(resource_json_str)).to include('json_class' => resource.class.name)

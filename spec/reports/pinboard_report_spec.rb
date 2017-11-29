@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Pinboard Report' do
-  let!(:report) { FactoryGirl.create :job, :pinboard_report }
+  let!(:report) { FactoryBot.create :job, :pinboard_report }
 
   subject { report.generate!(report_params) }
   let(:report_params) { {} }

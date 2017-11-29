@@ -38,7 +38,7 @@ describe QcRules::AnnouncementFailed do
     )
   end
 
-  let!(:qc_rule) { FactoryGirl.create :qc_rule }
+  let!(:qc_rule) { FactoryBot.create :qc_rule }
   subject { described_class.new(qc_rule) }
 
   describe '#run' do

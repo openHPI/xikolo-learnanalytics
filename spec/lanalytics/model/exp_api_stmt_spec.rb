@@ -6,9 +6,9 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
   describe "(Initialization)" do
 
     before(:each) do
-      @stmt_user = FactoryGirl.build(:stmt_user)
-      @stmt_verb = FactoryGirl.build(:stmt_verb)
-      @stmt_resource = FactoryGirl.build(:stmt_resource)
+      @stmt_user = FactoryBot.build(:stmt_user)
+      @stmt_verb = FactoryBot.build(:stmt_verb)
+      @stmt_resource = FactoryBot.build(:stmt_resource)
       @stmt_timestamp = DateTime.parse('8 May 1989 05:00:00')
       @stmt_result = {result: 1000}
       @stmt_context = {location: 'Potsdam'}
@@ -88,12 +88,12 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
 
   describe "(JSON De-/Serialization)" do
     before(:each) do
-      @stmt = FactoryGirl.build(:stmt)
+      @stmt = FactoryBot.build(:stmt)
       # ::TODO This is ugly and needs to go to the factory
-      @stmt_hash = FactoryGirl.attributes_for(:stmt) do |stmt_hash|
-        stmt_hash[:user] = FactoryGirl.attributes_for(:stmt_user)
-        stmt_hash[:verb] = FactoryGirl.attributes_for(:stmt_verb)
-        stmt_hash[:resource] = FactoryGirl.attributes_for(:stmt_resource)
+      @stmt_hash = FactoryBot.attributes_for(:stmt) do |stmt_hash|
+        stmt_hash[:user] = FactoryBot.attributes_for(:stmt_user)
+        stmt_hash[:verb] = FactoryBot.attributes_for(:stmt_verb)
+        stmt_hash[:resource] = FactoryBot.attributes_for(:stmt_resource)
       end
     end
 
@@ -113,7 +113,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     it "to json string" do
-      stmt = FactoryGirl.build(:stmt)
+      stmt = FactoryBot.build(:stmt)
       stmt_json_str = JSON.dump(stmt)
       expect(stmt_json_str).to be_a(String)
       stmt_json_hash = JSON.parse(stmt_json_str)
@@ -135,7 +135,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
   describe "(Marshalling)" do
 
     it "should marshal the objects" do
-      stmt = FactoryGirl.build(:stmt)
+      stmt = FactoryBot.build(:stmt)
       marshalled_stmt = Marshal.dump(stmt)
       expect(marshalled_stmt).to be_a(String)
       expect(marshalled_stmt).to include(stmt.class.name)
@@ -146,7 +146,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     it "should be able to do the whole cycle" do
-      stmt = FactoryGirl.build(:stmt)
+      stmt = FactoryBot.build(:stmt)
       marshalled_stmt = Marshal.dump(stmt)
       new_stmt = Marshal.load(marshalled_stmt)
       expect(new_stmt).to be_a(Lanalytics::Model::ExpApiStatement)

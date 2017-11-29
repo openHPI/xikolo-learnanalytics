@@ -13,7 +13,7 @@
 
 #   describe '(Connection to :COURSE resource)' do
 #     before(:each) do
-#       @original_hash = FactoryGirl.attributes_for(:amqp_pinboard_question).with_indifferent_access
+#       @original_hash = FactoryBot.attributes_for(:amqp_pinboard_question).with_indifferent_access
 #     end
     
 #     it 'should create :QUESTION resource, a relationship to :USER and :COURSE' do
@@ -54,7 +54,7 @@
 #   describe '(Connection to :LEARNING_ROOM resource)' do
 
 #     it 'should create :QUESTION resource, a relationship to :USER and :LEARNING_ROOM' do
-#       @original_hash = FactoryGirl.attributes_for(:amqp_pinboard_learning_room_question).with_indifferent_access
+#       @original_hash = FactoryBot.attributes_for(:amqp_pinboard_learning_room_question).with_indifferent_access
 
 #       processed_resources = []
       

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :amqp_pinboard_question, class: Hash do
     id "9dcedafc-e6d1-4dd3-adc2-436fecf2baf0"

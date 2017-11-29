@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :stmt_resource, class: Lanalytics::Model::StmtResource do
     type "SomeResource"

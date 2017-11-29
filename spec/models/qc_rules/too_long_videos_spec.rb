@@ -3,19 +3,19 @@ require 'spec_helper'
 describe QcRules::TooLongVideos do
   subject { described_class.new qc_rule2 }
 
-  let!(:qc_rule2) { FactoryGirl.create :qc_rule }
-  let!(:test_course) { FactoryGirl.build :test_course,
+  let!(:qc_rule2) { FactoryBot.create :qc_rule }
+  let!(:test_course) { FactoryBot.build :test_course,
                                           {id: '00000001-3100-4444-9999-000000000002',
       start_date: 11.days.ago.iso8601,
           end_date: 5.days.from_now.iso8601,
           status: 'active' }}
 
-  let!(:test_course_over) { FactoryGirl.build :test_course,
+  let!(:test_course_over) { FactoryBot.build :test_course,
                                           {id: '00000001-3100-4444-9999-000000000002',
       start_date: 11.days.ago.iso8601,
           end_date: 1.day.ago.iso8601,
           status: 'active' }}
-  let!(:test_course2) { FactoryGirl.build :test_course,
+  let!(:test_course2) { FactoryBot.build :test_course,
                                            {id: '00000001-3100-4444-9999-000000000003',
       start_date: 11.days.ago.iso8601,
           end_date: 5.days.from_now.iso8601,
@@ -92,8 +92,8 @@ describe QcRules::TooLongVideos do
     context 'when the course is over' do
       let(:course) { test_course_over }
 
-      let(:alert1) { FactoryGirl.create :qc_alert, {qc_rule_id: qc_rule2.id, status: 'open', course_id: test_course_over['id']} }
-      let(:alert2) { FactoryGirl.create :qc_alert, {qc_rule_id: qc_rule2.id, status: 'open', course_id: test_course_over['id'], qc_alert_data: {'resource_id' => '00000001-3300-4444-9999-000000000003'}} }
+      let(:alert1) { FactoryBot.create :qc_alert, {qc_rule_id: qc_rule2.id, status: 'open', course_id: test_course_over['id']} }
+      let(:alert2) { FactoryBot.create :qc_alert, {qc_rule_id: qc_rule2.id, status: 'open', course_id: test_course_over['id'], qc_alert_data: {'resource_id' => '00000001-3300-4444-9999-000000000003'}} }
 
       it 'should close both alerts' do
         expect { subject }.to change { [alert1.reload.status, alert2.reload.status] }
