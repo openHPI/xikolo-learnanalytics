@@ -98,7 +98,7 @@ module Lanalytics
         def sql_value_of(attribute)
           case attribute.data_type
             when :string
-              "'#{PGconn.escape_string(attribute.value)}'"
+              "'#{PG::Connection.escape_string(attribute.value)}'"
             when :bool
               (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
             when :date, :timestamp, :uuid
@@ -107,7 +107,7 @@ module Lanalytics
               attribute.value.to_s
             when :json
               attribute.value.each do |key, val|
-                attribute.value[key] = PGconn.escape_string(val) if val.is_a? String
+                attribute.value[key] = PG::Connection.escape_string(val) if val.is_a? String
               end
 
               "'#{attribute.value.to_json}'"
