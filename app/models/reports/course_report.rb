@@ -59,27 +59,25 @@ module Reports
               ]
             end
 
-            # get elasticsearch metrics per user
+            # get elasticsearch / postgres metrics per user
             if @extended
-              course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
               user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query) || ''
               user_course_city = fetch_metric('UserCourseCity', course['id'], user['id'], :unescaped_query) || ''
-
-              metrics = {
-                device_usage: fetch_device_usage(course['id'], user['id']),
-                course_activity: course_activity[:count] || '',
-                user_course_country: user_course_country.present? ? user_course_country : '',
-                user_course_city: user_course_city.present? ? user_course_city : ''
-              }
+              device_usage = fetch_device_usage(course['id'], user['id'])
+              course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
+              last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
 
               clustering_metrics = fetch_clustering_metrics(course)
 
               values += [
-                metrics[:user_course_country],
-                metrics[:user_course_city],
-                metrics[:device_usage][:state],
-                metrics[:device_usage][:web],
-                metrics[:device_usage][:mobile],
+                user_course_country,
+                user_course_city,
+                device_usage[:state],
+                device_usage[:web],
+                device_usage[:mobile],
+                course_activity[:count] || '',
+                last_visited_item.dig('resource', 'resource_uuid') || '',
+                last_visited_item.dig('timestamp') || '',
                 clustering_metrics.dig(user['id'], 'sessions') || '',
                 clustering_metrics.dig(user['id'], 'average_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'total_session_duration') || '',
@@ -88,7 +86,6 @@ module Reports
                 clustering_metrics.dig(user['id'], 'video_player_activity') || '',
                 clustering_metrics.dig(user['id'], 'download_activity') || '',
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '',
-                metrics[:course_activity]
               ]
             end
 
@@ -256,6 +253,9 @@ module Reports
             'Device Usage',
             'Web Usage',
             'Mobile Usage',
+            'Course Activity',
+            'Last Visited Item',
+            'Last Visited Item Timestamp',
             'Sessions',
             'Avg. Session Duration',
             'Total Session Duration',
@@ -263,8 +263,7 @@ module Reports
             'Forum Observation',
             'Video Player Activity',
             'Download Activity',
-            'Quiz Performance',
-            'Course Activity'
+            'Quiz Performance'
           ]
         end
 
