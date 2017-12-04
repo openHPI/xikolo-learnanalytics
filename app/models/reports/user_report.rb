@@ -32,9 +32,7 @@ module Reports
           'First Enrollment'
         ]
 
-        if @deanonymized
-          headers.concat custom_profile_fields.map { |f| f['title']['en'] }
-        end
+        headers.concat ProfileFields.all_titles(@deanonymized)
 
         headers.concat courses.values.map(&:course_code)
       end
@@ -50,7 +48,7 @@ module Reports
           course_service.rel(:enrollments).get(
             user_id: user.id, learning_evaluation: true, deleted: true, per_page: 200
           )
-        ) do |user_profile, user_enrollments|
+        ) do |profile, enrollments|
           values = [@deanonymized ? user.id : Digest::SHA256.hexdigest(user.id)]
 
           if @deanonymized
@@ -67,14 +65,13 @@ module Reports
             user.created_at,
             user.born_at,
             top_country(user),
-            first_course(user_enrollments)
+            first_course(enrollments)
           ]
 
-          if @deanonymized
-            values += user_profile['fields'].map { |f| f.dig('values', 0) }
-          end
+          profile_fields = ProfileFields.new(profile, @deanonymized)
+          values += profile_fields.values
 
-          values += user_course_states(user_enrollments)
+          values += user_course_states(enrollments)
 
           yield values
 
@@ -143,18 +140,6 @@ module Reports
       end
       Acfs.run
       courses
-    end
-
-    def custom_profile_fields
-      users = account_service.rel(:users).get(per_page: 1).value!
-
-      return [] if users.empty?
-
-      profile = users.first.rel(:profile).get.value!
-
-      return [] unless profile
-
-      profile['fields']
     end
 
     def account_service
