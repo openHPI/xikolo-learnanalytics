@@ -52,7 +52,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     it "should not initialize when a critical component (user, verb, resource) is missing" do
-      expect { resource = Lanalytics::Model::ExpApiStatement.new }.to raise_error
+      expect { resource = Lanalytics::Model::ExpApiStatement.new }.to raise_error(ArgumentError)
 
       for i in (0...7)
         stmt_user = (i&1) > 0 ? @stmt_user : nil
@@ -64,7 +64,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
         end.to raise_error(ArgumentError), failure_message
       end
 
-      expect { resource = Lanalytics::Model::ExpApiStatement.new(nil, nil, nil, nil, @stmt_result, @stmt_context) }.to raise_error
+      expect { resource = Lanalytics::Model::ExpApiStatement.new(nil, nil, nil, nil, @stmt_result, @stmt_context) }.to raise_error(ArgumentError)
     end
 
     it "should initialize timestamp as current datetime when timestamp nil or not defined" do
@@ -81,7 +81,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
 
       expect do
         stmt = Lanalytics::Model::ExpApiStatement.new(@stmt_user, @stmt_verb, @stmt_resource, 'openhpi')
-      end.to raise_error
+      end.to raise_error(ArgumentError)
     end
 
   end
@@ -109,7 +109,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     it "from nil should raise error" do
-      expect { stmt = Lanalytics::Model::ExpApiStatement.new_from_json(nil) }.to raise_error
+      expect { stmt = Lanalytics::Model::ExpApiStatement.new_from_json(nil) }.to raise_error(ArgumentError)
     end
 
     it "to json string" do

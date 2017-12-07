@@ -4,7 +4,7 @@ describe Lanalytics::Processing::PipelineManager do
 
   describe "(Instantiation)" do
     it "is implemented as Singleton" do
-      expect{ Lanalytics::Processing::PipelineManager.new }.to raise_error
+      expect{ Lanalytics::Processing::PipelineManager.new }.to raise_error(NoMethodError)
 
       expect(Lanalytics::Processing::PipelineManager).to respond_to(:instance)
       expect(Lanalytics::Processing::PipelineManager.instance).to be(Lanalytics::Processing::PipelineManager.instance)

@@ -32,7 +32,7 @@ RSpec.describe Lanalytics::Model::StmtResource do
     end
 
     it "from nil should raise error" do
-      expect { resource = Lanalytics::Model::StmtResource.new_from_json(nil) }.to raise_error
+      expect { resource = Lanalytics::Model::StmtResource.new_from_json(nil) }.to raise_error(ArgumentError)
     end
 
     it "to json string" do
