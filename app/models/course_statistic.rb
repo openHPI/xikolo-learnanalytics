@@ -78,6 +78,38 @@ class CourseStatistic < ActiveRecord::Base
     )
   end
 
+  def threads
+    questions.to_i
+  end
+
+  def threads_last_day
+    questions_last_day.to_i
+  end
+
+  def posts
+    questions.to_i + answers.to_i + comments_on_questions.to_i + comments_on_answers.to_i
+  end
+
+  def posts_last_day
+    questions_last_day.to_i + answers_last_day.to_i + comments_on_questions_last_day.to_i + comments_on_answers_last_day.to_i
+  end
+
+  def threads_in_collab_spaces
+    questions_in_learning_rooms.to_i
+  end
+
+  def threads_last_day_in_collab_spaces
+    questions_last_day_in_learning_rooms.to_i
+  end
+
+  def posts_in_collab_spaces
+    questions_in_learning_rooms.to_i + answers_in_learning_rooms.to_i + comments_on_questions_in_learning_rooms.to_i + comments_on_answers_in_learning_rooms.to_i
+  end
+
+  def posts_last_day_in_collab_spaces
+    questions_last_day_in_learning_rooms.to_i + answers_last_day_in_learning_rooms.to_i + comments_on_questions_last_day_in_learning_rooms.to_i + comments_on_answers_last_day_in_learning_rooms.to_i
+  end
+
   private
 
   class << self
