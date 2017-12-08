@@ -96,9 +96,8 @@ module Reports
               values << ''
             end
 
-            if @deanonymized
-              values.concat profile['fields'].map { |f| f.dig('values', 0) }
-            end
+            profile_fields = ProfileFields.new(profile, @deanonymized)
+            values += profile_fields.values
 
             values += [
               stat_pinboard['posts'],
@@ -269,9 +268,7 @@ module Reports
 
         headers << 'Enrollment Delta in Days'
 
-        if @deanonymized
-          headers.concat custom_profile_fields.map { |f| f['title']['en'] }
-        end
+        headers.concat ProfileFields.all_titles(@deanonymized)
 
         headers.concat [
           'Forum Posts',
@@ -371,18 +368,6 @@ module Reports
         .map { |e| as_date(e['created_at']) }
         .compact
         .none? { |date| date < compare_date }
-    end
-
-    def custom_profile_fields
-      users = account_service.rel(:users).get(per_page: 1).value!
-
-      return [] if users.empty?
-
-      profile = users.first.rel(:profile).get.value!
-
-      return [] unless profile
-
-      profile['fields']
     end
 
     def account_service
