@@ -21,6 +21,12 @@ module Reports
       courses.each_with_index do |course, course_index|
         index = 0
 
+        # these metrics are fetched for all users at once from postgres
+        # needs more memory but much faster performance
+        if @extended
+          clustering_metrics = fetch_clustering_metrics(course)
+        end
+
         Xikolo::Course::Enrollment.each_item(
           course_id: course['id'], per_page: 50, deleted: true
         ) do |e, enrollments|
@@ -65,8 +71,6 @@ module Reports
               user_course_city = fetch_metric('UserCourseCity', course['id'], user['id'], :unescaped_query) || ''
               device_usage = fetch_device_usage(course['id'], user['id'])
               course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
-
-              clustering_metrics = fetch_clustering_metrics(course)
 
               values += [
                 user_course_country,
