@@ -1,3 +1,4 @@
+# applies profile field configurations to user profiles from account service for reports
 class ProfileFields
 
   def initialize(profile, deanonymized)
@@ -9,9 +10,9 @@ class ProfileFields
     all_fields = @profile.dig('fields') || []
 
     if @deanonymized
-      omittable_fields = ProfileField.where('omittable = true')
+      omittable_fields = ProfileFieldConfiguration.where('omittable = true')
     else
-      omittable_fields = ProfileField.where('omittable = true OR sensitive = true')
+      omittable_fields = ProfileFieldConfiguration.where('omittable = true OR sensitive = true')
     end
 
     omittable_fields = omittable_fields.pluck(:name)
