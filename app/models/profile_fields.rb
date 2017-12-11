@@ -14,7 +14,9 @@ class ProfileFields
       omittable_fields = ProfileField.where('omittable = true OR sensitive = true')
     end
 
-    all_fields.reject { |f| omittable_fields.pluck(:name).include? f['name'] }
+    omittable_fields = omittable_fields.pluck(:name)
+
+    all_fields.reject { |f| omittable_fields.include? f['name'] }
   end
 
   def values
