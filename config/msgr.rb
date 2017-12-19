@@ -35,13 +35,13 @@ route 'xikolo.course.enrollment.update', to: 'Lanalytics#update'
 
 
 # ------------------- Learning Room Domain Entities -------------------
-route 'xikolo.learning_room.learning_room.create', to: 'Lanalytics#create'
-route 'xikolo.learning_room.learning_room.update', to: 'Lanalytics#update'
-route 'xikolo.learning_room.learning_room.destroy', to: 'Lanalytics#destroy'
+route 'xikolo.collabspace.collab_space.create', to: 'Lanalytics#create'
+route 'xikolo.collabspace.collab_space.update', to: 'Lanalytics#update'
+route 'xikolo.collabspace.collab_space.destroy', to: 'Lanalytics#destroy'
 
-route 'xikolo.learning_room.membership.create', to: 'Lanalytics#create'
-route 'xikolo.learning_room.membership.update', to: 'Lanalytics#update'
-route 'xikolo.learning_room.membership.destroy', to: 'Lanalytics#destroy'
+route 'xikolo.collabspace.membership.create', to: 'Lanalytics#create'
+route 'xikolo.collabspace.membership.update', to: 'Lanalytics#update'
+route 'xikolo.collabspace.membership.destroy', to: 'Lanalytics#destroy'
 
 
 # ------------------- Submissions Domain Entities -------------------

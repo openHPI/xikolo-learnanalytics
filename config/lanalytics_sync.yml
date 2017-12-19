@@ -9,8 +9,8 @@ xikolo.course.enrollment.create: '/enrollments.json'
 
 
 # ------------------- Learning Room Domain Entities -------------------
-xikolo.learning_room.learning_room.create: '/learning_rooms.json'
-xikolo.learning_room.membership.create: '/memberships.json'
+xikolo.collabspace.collab_space.create: '/collab_spaces.json'
+xikolo.collabspace.membership.create: '/memberships.json'
 
 
 # ------------------- Submission Domain Entities -------------------

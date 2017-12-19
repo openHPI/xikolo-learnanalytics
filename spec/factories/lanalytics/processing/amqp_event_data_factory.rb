@@ -91,7 +91,7 @@ factory :amqp_user_with_fields, class: Hash do
 
   factory :amqp_learning_room_membership, class: Hash do
     id "fb526b1d-a4c8-4380-bee8-1f33fe54e660"
-    learning_room_id "ca90b0aa-d09e-499a-9afb-a462da4baa95"
+    collab_space_id "ca90b0aa-d09e-499a-9afb-a462da4baa95"
     status "admin"
     user_id "00000001-3100-4444-9999-000000000001"
   end
