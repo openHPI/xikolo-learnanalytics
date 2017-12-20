@@ -61,6 +61,8 @@ describe CourseStatistic do
     Stub.request(
       :pinboard, :get, "/statistics/#{course_id}",
     ).to_return Stub.json(
+      threads: 500,
+      threads_last_day: 50,
       questions: 500,
       questions_last_day: 50
     )
@@ -87,8 +89,10 @@ describe CourseStatistic do
       its(:enrollments_last_day) { should eq 20 }
       its(:enrollments_at_course_start) { should eq 0 }
       its(:enrollments_at_course_middle_netto) { should eq 1 }
-      its(:questions) { should eq 500 }
-      its(:questions_last_day) { should eq 50 }
+      its(:threads) { should eq 500 }
+      its(:threads_last_day) { should eq 50 }
+      its(:questions) { should eq 500 } # @deprecated
+      its(:questions_last_day) { should eq 50 } # @deprecated
       its(:enrollments_per_day) { should eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 199] }
       its(:days_since_coursestart) { should eq 10 }
     end
