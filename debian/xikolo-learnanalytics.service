@@ -1,0 +1,12 @@
+[Unit]
+Description=Xikolo Learn Analytics Service
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/true
+WorkingDirectory=/usr/lib/xikolo-learnanalytics
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,44 @@
+.bundle                     usr/lib/xikolo-learnanalytics/
+app                         usr/lib/xikolo-learnanalytics/
+db                          usr/lib/xikolo-learnanalytics/
+lib                         usr/lib/xikolo-learnanalytics/
+vendor                      usr/lib/xikolo-learnanalytics/
+
+config/environments         usr/lib/xikolo-learnanalytics/config/
+config/initializers         usr/lib/xikolo-learnanalytics/config/
+config/locales              usr/lib/xikolo-learnanalytics/config/
+config/application.rb       usr/lib/xikolo-learnanalytics/config/
+config/boot.rb              usr/lib/xikolo-learnanalytics/config/
+config/environment.rb       usr/lib/xikolo-learnanalytics/config/
+config/msgr.rb              usr/lib/xikolo-learnanalytics/config/
+config/routes.rb            usr/lib/xikolo-learnanalytics/config/
+config/permissions.yml      usr/lib/xikolo-learnanalytics/config/
+config/unicorn.rb           usr/lib/xikolo-learnanalytics/config/
+
+config/datasources/         etc/xikolo-learnanalytics/
+config/elasticsearch/       etc/xikolo-learnanalytics/
+config/cron.yml             etc/xikolo-learnanalytics/
+config/database.yml         etc/xikolo-learnanalytics/
+config/lanalytics_pipeline_flipper.yml    etc/xikolo-learnanalytics/
+config/lanalytics_sync.yml  etc/xikolo-learnanalytics/
+config/mnemosyne.yml        etc/xikolo-learnanalytics/
+config/rabbitmq.yml         etc/xikolo-learnanalytics/
+config/rserve.yml           etc/xikolo-learnanalytics/
+config/secrets.yml          etc/xikolo-learnanalytics/
+config/services.yml         etc/xikolo-learnanalytics/
+config/sidekiq.yml          etc/xikolo-learnanalytics/
+config/sidekiq_redis.yml    etc/xikolo-learnanalytics/
+
+config.ru                   usr/lib/xikolo-learnanalytics/
+Rakefile                    usr/lib/xikolo-learnanalytics/
+Gemfile                     usr/lib/xikolo-learnanalytics/
+Gemfile.lock                usr/lib/xikolo-learnanalytics/
+
+bin/bundle                  usr/lib/xikolo-learnanalytics/bin/
+bin/rails                   usr/lib/xikolo-learnanalytics/bin/
+bin/rake                    usr/lib/xikolo-learnanalytics/bin/
+bin/sidekiq                 usr/lib/xikolo-learnanalytics/bin/
+bin/unicorn                 usr/lib/xikolo-learnanalytics/bin/
+bin/xikolo-learnanalytics   usr/bin/
+
+GeoLiteCityv6.dat           usr/lib/xikolo-learnanalytics/

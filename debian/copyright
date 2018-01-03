@@ -1,0 +1,5 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: xikolo-learnanalytics
+Files: *
+Copyright: 2018 HPI <openhpi-info@hpi.uni-potsdam.de>
+License: proprietary

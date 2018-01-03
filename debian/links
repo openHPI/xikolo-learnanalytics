@@ -1,0 +1,2 @@
+/var/log/xikolo-learnanalytics            /usr/lib/xikolo-learnanalytics/log
+/var/tmp                                  /usr/lib/xikolo-learnanalytics/tmp

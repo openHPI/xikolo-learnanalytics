@@ -1,0 +1,28 @@
+[Unit]
+Description=Xikolo Learn Analytics Service - API Server
+After=network.target
+PartOf=xikolo-learnanalytics.service
+
+[Service]
+User=www-data
+Group=www-data
+
+SyslogIdentifier=xikolo-learnanalytics-unicorn
+WorkingDirectory=/usr/lib/xikolo-learnanalytics
+RuntimeDirectory=xikolo-learnanalytics
+PIDFile=/run/xikolo-learnanalytics/unicorn.pid
+
+Environment=RAILS_ENV=production
+Environment=WORKER=4
+ExecStart=/usr/bin/xikolo-learnanalytics unicorn --config-file config/unicorn.rb
+ExecReload=/bin/kill -s SIGUSR2 $MAINPID
+ExecStop=/bin/kill -QUIT $MAINPID
+
+Restart=on-failure
+RestartSec=10s
+
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=xikolo-learnanalytics.service

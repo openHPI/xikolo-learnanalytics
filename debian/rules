@@ -1,0 +1,95 @@
+#!/usr/bin/make -f
+
+# # Enable for debugging purposes
+# export DH_VERBOSE=1
+# export DH_OPTIONS=-v
+
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+
+export RUBY=/usr/bin/ruby2.3
+export GEM_PATH=vendor/bundle/ruby/2.3.0
+export PREFIX=/usr/lib/xikolo-learnanalytics
+
+export DEB_VERSION
+
+override_dh_clean:
+	dh_clean
+
+	rm -f bin/bundle
+	rm -f bin/bundler
+
+	rm -rf .bundle
+	rm -rf vendor/bundle
+
+
+override_dh_auto_build:
+	$(RUBY) -S gem install bundler \
+		--no-ri --no-rdoc \
+		--install-dir $(GEM_PATH) \
+		--bindir bin
+
+	# Force nokogiri to use system libraries
+	${RUBY} -S bin/bundle config build.nokogiri --use-system-libraries
+
+	$(RUBY) -S bin/bundle install \
+		--path vendor/bundle \
+		--deployment \
+		--frozen \
+		--clean \
+		--retry 3 \
+		--standalone \
+		--without development test integration
+
+	$(RUBY) -S bin/bundle binstubs \
+	    --standalone \
+		rake \
+		railties \
+		unicorn \
+		sidekiq
+
+	# Rails binstub is the only one not working without manual patching
+	# We cannot run `rails app:update:bin` as this generates a
+	# binstub with wrong shebang and does not support bundle standalone mode.
+
+	# Remove executable load from bundle binstub
+	sed -i '/^load/d' bin/rails
+
+	# Add rails inline application load code
+	echo "APP_PATH = File.expand_path('../config/application', __dir__)" >> bin/rails
+	echo "require_relative '../config/boot'" >> bin/rails
+	echo "require 'rails/commands'" >> bin/rails
+
+	# Clean up ruby gems cache
+	rm -rf $(GEM_PATH)/cache
+
+	$(RUBY) -S erb prefix=${PREFIX} debian/xikolo-learnanalytics.sh.erb >> bin/xikolo-learnanalytics
+
+	echo 'listen "/run/xikolo-learnanalytics/sock"' >> config/unicorn.rb
+	echo "pid '/run/xikolo-learnanalytics/unicorn.pid'" >> config/unicorn.rb
+
+
+override_dh_link:
+	dh_link -a
+
+	# Symlink all configuration files from etc into rails config directory
+	(cd debian/xikolo-learnanalytics/usr/lib/xikolo-learnanalytics/config/ && \
+		ln --symbolic ../../../../etc/xikolo-learnanalytics/* .)
+
+
+override_dh_installinit:
+	# We handle starting and restarting things ourselves
+	dh_systemd_enable -pxikolo-learnanalytics --name=xikolo-learnanalytics-unicorn xikolo-learnanalytics-unicorn.service
+	dh_systemd_enable -pxikolo-learnanalytics --name=xikolo-learnanalytics-sidekiq xikolo-learnanalytics-sidekiq.service
+
+	dh_installinit -pxikolo-learnanalytics --no-start --name=xikolo-learnanalytics
+	dh_installinit -pxikolo-learnanalytics --no-start --noscripts --name=xikolo-learnanalytics-unicorn
+	dh_installinit -pxikolo-learnanalytics --no-start --noscripts --name=xikolo-learnanalytics-sidekiq
+
+
+override_dh_systemd_start:
+	echo "Not running dh_systemd_start"
+
+
+%:
+	dh $@ --with systemd

@@ -1,0 +1,29 @@
+Source: xikolo-learnanalytics
+Section: ruby
+Priority: optional
+Maintainer: Xikolo CI Build <xikolo-dev@hpi.uni-potsdam.de>
+Standards-Version: 3.9.2
+Homepage: https://openhpi.de
+Build-Depends:
+  coreutils,
+  debhelper (>= 9),
+  dh-systemd,
+  libcurl3,
+  libpq-dev,
+  libxml2-dev,
+  libxslt1-dev,
+  libz-dev,
+  pkg-config,
+  ruby2.3,
+  ruby2.3-dev
+
+Package: xikolo-learnanalytics
+Architecture: any
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends},
+  libcurl3,
+  ruby2.3
+Description: Xikolo Learn Analytics Service
+ .
+ TODO

@@ -1,0 +1,17 @@
+#!/bin/sh
+<%
+  require 'shellwords'
+  require 'pathname'
+  require 'rubygems'
+
+  prefix = Pathname.new(prefix).expand_path
+  gempath = Gem.path.map {|p| prefix.join(p) }
+%>
+
+export RAILS_ENV=${RAILS_ENV:-production}
+export GEM_PATH=<%= gempath.join(':') %>
+export DEB_VERSION=<%= ENV['DEB_VERSION'] %>
+
+cd <%= Shellwords.escape(prefix) %>
+
+exec <%= Shellwords.escape(prefix.join('./bin')) %>/$@

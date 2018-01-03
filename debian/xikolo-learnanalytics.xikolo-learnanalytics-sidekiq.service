@@ -1,0 +1,24 @@
+[Unit]
+Description=Xikolo Learn Analytics Service - Background Job Processor
+After=network.target
+PartOf=xikolo-learnanalytics.service
+
+[Service]
+User=www-data
+Group=www-data
+
+SyslogIdentifier=xikolo-learnanalytics-sidekiq
+WorkingDirectory=/usr/lib/xikolo-learnanalytics
+
+Environment=RAILS_ENV=production
+Environment=CONCURRENCY=25
+ExecStart=/usr/bin/xikolo-learnanalytics sidekiq -c ${CONCURRENCY}
+
+Restart=on-failure
+RestartSec=10s
+
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=xikolo-learnanalytics.service
