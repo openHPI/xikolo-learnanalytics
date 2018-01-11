@@ -71,7 +71,8 @@ class QueryController < ApplicationController
        VideoPlayerActivity DownloadActivity CoursePerformance
        QuizPerformance UngradedQuizPerformance GradedQuizPerformance
        MainQuizPerformance BonusQuizPerformance ShareButtonClicks DeviceUsageCount
-       ExternalLinks ActiveUserCountRelative SocialKpi LastVisitedItem)
+       ExternalLinks ActiveUserCountRelative SocialKpi LastVisitedItem
+       UserEnrollmentCount)
   end
 
   def query_params
