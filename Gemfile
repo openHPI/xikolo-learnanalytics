@@ -17,7 +17,6 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'restify', '~> 1.4'
 gem 'rails-rfc6570', '~> 0.3'
 
-gem 'newrelic_rpm'
 gem 'mnemosyne-ruby', '~> 1.3'
 
 gem 'forgery'

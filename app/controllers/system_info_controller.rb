@@ -1,9 +1,6 @@
 class SystemInfoController < ApplicationController
   respond_to :json
 
-  include NewRelic::Agent::Instrumentation::ControllerInstrumentation
-  newrelic_ignore
-
   skip_before_action :require_login
 
   def show
