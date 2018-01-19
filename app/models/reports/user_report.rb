@@ -28,7 +28,8 @@ module Reports
           'Affiliated',
           'Created',
           'Birth Date',
-          'Top Country',
+          'Top Country (Code)',
+          'Top Country (Name)',
           'First Enrollment'
         ]
 
@@ -59,12 +60,15 @@ module Reports
             ]
           end
 
+          user_top_country = top_country(user)
+
           values += [
             user.language,
             user.affiliated,
             user.created_at,
             user.born_at,
-            top_country(user),
+            user_top_country,
+            suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name },
             first_course(enrollments)
           ]
 

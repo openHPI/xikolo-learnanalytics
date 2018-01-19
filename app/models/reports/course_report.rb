@@ -74,6 +74,7 @@ module Reports
 
               values += [
                 user_course_country,
+                suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_course_country).name },
                 user_course_city,
                 device_usage[:state],
                 device_usage[:web],
@@ -255,7 +256,8 @@ module Reports
 
         if @extended
           headers.concat [
-            'Top Country',
+            'Top Country (Code)',
+            'Top Country (Name)',
             'Top City',
             'Device Usage',
             'Web Usage',
