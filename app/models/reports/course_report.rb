@@ -71,6 +71,7 @@ module Reports
               user_course_city = fetch_metric('UserCourseCity', course['id'], user['id'], :unescaped_query) || ''
               device_usage = fetch_device_usage(course['id'], user['id'])
               course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
+              last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
 
               values += [
                 user_course_country,
@@ -80,6 +81,8 @@ module Reports
                 device_usage[:web],
                 device_usage[:mobile],
                 course_activity[:count] || '',
+                last_visited_item.dig('resource', 'resource_uuid') || '',
+                last_visited_item.dig('timestamp') || '',
                 clustering_metrics.dig(user['id'], 'sessions') || '',
                 clustering_metrics.dig(user['id'], 'average_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'total_session_duration') || '',
@@ -90,13 +93,6 @@ module Reports
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '',
               ]
             end
-
-            last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
-
-            values += [
-              last_visited_item.dig('resource', 'resource_uuid') || '',
-              last_visited_item.dig('timestamp') || '',
-            ]
 
             # Try to calculate enrollment delta
             if course_start_date && enrollment_date
@@ -263,6 +259,8 @@ module Reports
             'Web Usage',
             'Mobile Usage',
             'Course Activity',
+            'Last Visited Item',
+            'Last Visited Item Timestamp',
             'Sessions',
             'Avg. Session Duration',
             'Total Session Duration',
@@ -273,11 +271,6 @@ module Reports
             'Quiz Performance'
           ]
         end
-
-        headers.concat [
-          'Last Visited Item',
-          'Last Visited Item Timestamp',
-        ]
 
         headers << 'Enrollment Delta in Days'
 
