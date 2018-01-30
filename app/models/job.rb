@@ -82,15 +82,15 @@ class Job < ActiveRecord::Base
   private
 
   def notify
-    event = {
+    Xikolo.api(:notification).value!.rel(:events).post(
       key: 'reporting_finished',
-      receiver_id: user_id,
       payload: {
         type: task_type,
         annotation: annotation,
         state: status
-      }
-    }
-    Msgr.publish(event, to: 'xikolo.notification.platform_notify')
+      },
+      public: false,
+      subscribers: [user_id]
+    ).value!
   end
 end

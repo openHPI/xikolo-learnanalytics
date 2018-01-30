@@ -33,6 +33,14 @@ describe CreateReportJob do
         :file,
         uploaded_files_url: 'http://localhost:4000/uploaded_files'
       )
+
+      Stub.service(
+        :notification,
+        events_url: '/events'
+      )
+      Stub.request(
+        :notification, :post, '/events'
+      ).to_return Stub.response(status: 201)
     end
 
     let!(:create_file_stub) {
