@@ -51,7 +51,7 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        result['aggregations']['distinct_user_count']['value']
+        { active_users: result['aggregations']['distinct_user_count']['value'] }
       end
 
     end

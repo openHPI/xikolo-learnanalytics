@@ -124,7 +124,7 @@ module Reports
       ]
 
       if @include_active_users
-        active_users = Lanalytics::Metric::ActiveUserCount.query(
+        result = Lanalytics::Metric::ActiveUserCount.query(
           nil,
           nil,
           start_date,
@@ -134,7 +134,7 @@ module Reports
           nil
         )
 
-        values += [active_users]
+        values += [result['active_users']]
       end
       values
     end
