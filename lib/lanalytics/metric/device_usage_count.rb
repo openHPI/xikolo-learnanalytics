@@ -1,8 +1,12 @@
 module Lanalytics
   module Metric
     class DeviceUsageCount < ExpApiMetric
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
 
+      description 'Counts the web, mobile and mixed device usage per user.'
+
+      optional_parameter :course_id, :resource_id
+
+      exec do |params|
         # array of mobile runtimes
         mobile_runtimes = %w(Android iOS)
 
@@ -11,7 +15,7 @@ module Lanalytics
         end
 
         # build conditions for query
-        conditions = all_filters(nil, course_id, resource_id)
+        conditions = all_filters(nil, params[:course_id], params[:resource_id])
 
         conditions << { exists: { field: 'in_context.runtime' }}
 
@@ -69,6 +73,7 @@ module Lanalytics
           mixed: result['aggregations']['mobile']['count']['value'] + result['aggregations']['web']['count']['value'] - result['aggregations']['user']['value']
         }
       end
+
     end
   end
 end

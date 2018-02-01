@@ -1,10 +1,17 @@
 module Lanalytics
   module Metric
-    class ItemDiscovery
+    class ItemDiscovery < Base
 
-      # No support fo start and endtime yet
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        Lanalytics::Clustering::Dimensions.query(course_id, ['item_discovery'], [user_id]).first['item_discovery'].to_i
+      description 'The number of visited items relative to the available ones. Visited means a single click on the item.'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
+        Lanalytics::Clustering::Dimensions.query(
+          params[:course_id],
+          ['item_discovery'],
+          [params[:user_id]]
+        ).first['item_discovery'].to_i
       end
 
     end

@@ -2,7 +2,19 @@ module Lanalytics
   module Metric
     class CourseActivityTimebased < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Returns course statistics time-based.'
+
+      required_parameter :start_date, :end_date
+
+      optional_parameter :user_id, :course_id, :resource_id
+
+      exec do |params|
+        user_id = params[:user_id]
+        course_id = params[:course_id]
+        resource_id = params[:resource_id]
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
@@ -12,8 +24,8 @@ module Lanalytics
                 filter: {
                   range: {
                     timestamp: {
-                      gte: DateTime.parse(start_time).iso8601,
-                      lte: DateTime.parse(end_time).iso8601
+                      gte: DateTime.parse(start_date).iso8601,
+                      lte: DateTime.parse(end_date).iso8601
                     }
                   }
                 }

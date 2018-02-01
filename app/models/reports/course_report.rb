@@ -67,8 +67,8 @@ module Reports
 
             # get elasticsearch / postgres metrics per user
             if @extended
-              user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id'], :unescaped_query) || ''
-              user_course_city = fetch_metric('UserCourseCity', course['id'], user['id'], :unescaped_query) || ''
+              user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id']) || ''
+              user_course_city = fetch_metric('UserCourseCity', course['id'], user['id']) || ''
               device_usage = fetch_device_usage(course['id'], user['id'])
               course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
               last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
@@ -189,12 +189,9 @@ module Reports
       result
     end
 
-    def fetch_metric(metric, course_id, user_id, exec = :query)
+    def fetch_metric(metric, course_id, user_id)
       metric = "Lanalytics::Metric::#{metric}".constantize
-      metric.public_send(exec,
-                         user_id,
-                         course_id,
-                         nil, nil, nil, nil, nil)
+      metric.query(user_id: user_id, course_id: course_id)
     rescue
       nil
     end

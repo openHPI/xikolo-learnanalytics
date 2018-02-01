@@ -2,9 +2,7 @@ module Lanalytics
   module Metric
     class VideoVisitCount < ExpApiCountMetric
 
-      def self.verbs
-        @verbs ||= %w(VISITED_ITEM)
-      end
+      event_verbs %w(VISITED_ITEM)
 
       def self.filters
         [ { match: { 'resource.content_type' => 'video' } } ]

@@ -3,20 +3,24 @@ module Lanalytics
     class DeviceUsage < ExpApiMetric
       include Lanalytics::Helper::PercentageHelper
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Returns the used platforms and runtimes, as well as an aggregated behavior state, which is either web, mobile or mixed.'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
         query_must = []
-        if user_id.present?
+        if params[:user_id].present?
           query_must << [
-            { match: { 'user.resource_uuid' => user_id } }
+            { match: { 'user.resource_uuid' => params[:user_id] } }
           ]
         end
 
-        if course_id.present?
+        if params[:course_id].present?
           query_must << {
             bool: {
               should: [
-                { match: { 'in_context.course_id' => course_id } },
-                { match: { 'resource.resource_uuid' => course_id } }
+                { match: { 'in_context.course_id' => params[:course_id] } },
+                { match: { 'resource.resource_uuid' => params[:course_id] } }
               ]
             }
           }
@@ -162,7 +166,7 @@ module Lanalytics
         }
         processed_result[:behavior] = behavior
 
-        return processed_result
+        processed_result
       end
 
     end

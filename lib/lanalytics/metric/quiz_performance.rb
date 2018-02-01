@@ -2,7 +2,17 @@ module Lanalytics
   module Metric
     class QuizPerformance < ExpApiMetric
 
-      def self.query(user_id, course_id, start_date, end_date, resource_id, page, per_page)
+      description 'Measures the average percentage of correct answers over all quizzes taken.'
+
+      required_parameter :user_id, :course_id
+
+      optional_parameter :resource_id
+
+      exec do |params|
+        user_id = params[:user_id]
+        course_id = params[:course_id]
+        resource_id = params[:resource_id]
+
         query = {
           bool: {
             must: [
@@ -52,9 +62,9 @@ module Lanalytics
         avg = sum_max_points != 0 ? sum_points / sum_max_points.to_f * 100 : 0
         sum_points_first_attempt = quiz_statements_first_attempt["aggregations"]["sum_points"]["value"]
         sum_max_points_first_attempt = quiz_statements_first_attempt["aggregations"]["sum_max_points"]["value"]
-        first_attempt_avg =
-            sum_max_points_first_attempt != 0 ? sum_points_first_attempt / sum_max_points_first_attempt.to_f * 100 : 0
-        return {
+        first_attempt_avg = sum_max_points_first_attempt != 0 ? sum_points_first_attempt / sum_max_points_first_attempt.to_f * 100 : 0
+
+        {
           total: quiz_statements["hits"]["total"],
           average_points_percentage: avg,
           avg_attempts:  quiz_statements["aggregations"]["avg_attempts"]["value"] ||= 0,

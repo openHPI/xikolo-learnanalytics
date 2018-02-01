@@ -2,10 +2,14 @@ module Lanalytics
   module Metric
     class ExternalLinks < ReferrerMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Counts the total and unique clicks for a given announcement tracking id.'
+
+      required_parameter :tracking_id
+
+      exec do |params|
         # uuid is probably base62 encoded, also in elastic
-        tracking_id = UUID4.try_convert(resource_id)
-        return {} unless tracking_id
+        tracking_id = UUID4.try_convert(params[:tracking_id])
+        break {} unless tracking_id
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -43,7 +47,7 @@ module Lanalytics
           }
         end
 
-        return result['aggregations']['external_links']['buckets'].each_with_object({}) do |link, hash|
+        result['aggregations']['external_links']['buckets'].each_with_object({}) do |link, hash|
           hash[link['key']] = {
             total_clicks: link['doc_count'],
             unique_clicks: link['unique_users']['value']

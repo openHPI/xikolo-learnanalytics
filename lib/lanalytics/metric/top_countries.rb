@@ -2,7 +2,12 @@ module Lanalytics
   module Metric
     class TopCountries < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Returns top 100 countries.'
+
+      required_parameter :course_id
+
+      exec do |params|
+        course_id = params[:course_id]
 
         # array of mobile runtimes
         mobile_runtimes = %w(Android iOS)
@@ -36,7 +41,7 @@ module Lanalytics
                   mobile: {
                     filter: {
                       bool: {
-                        must: { exists: { field: 'in_context.runtime' }},
+                        must: { exists: { field: 'in_context.runtime' } },
                         should: mobile_conditions,
                         minimum_should_match: 1
                       }
@@ -56,7 +61,7 @@ module Lanalytics
         end
 
         processed_result = []
-        #process result
+        # process result
         result['aggregations']['countries']['buckets'].each do |item|
           begin
             result_subitem = {}
@@ -71,7 +76,7 @@ module Lanalytics
           rescue IsoCountryCodes::UnknownCodeError
           end
         end
-        processed_result.sort_by {|i| i[:distinct_users]}.reverse
+        processed_result.sort_by { |i| i[:distinct_users] }.reverse
       end
 
     end

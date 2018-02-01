@@ -2,31 +2,43 @@ module Lanalytics
   module Metric
     class ExpApiCountMetric < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
-        result = datasource.exec do |client|
-          query = {
-            query: {
-              bool: {
-                must: [] + verbs_filter + all_filters(user_id, course_id, nil)
-              }
-            }
-          }
-          query[:query][:bool][:filter] = {
-            range: {
-              timestamp: {
-                gte: DateTime.parse(start_time).iso8601,
-                lte: DateTime.parse(end_date).iso8601
-              }
-            }
-          } if start_time.present? and end_date.present?
-
-          client.count index: datasource.index, body: query
-        end
-        { count: result['count'] }
+      def self.verbs
+        @verbs ||= []
       end
 
-      def self.verbs
-        []
+      def self.event_verbs(verbs)
+        @verbs = verbs
+
+        description "Counts the following events: #{verbs.join(', ').downcase}."
+        optional_parameter :user_id, :course_id, :start_date, :end_date
+
+        @exec = proc do |params|
+          user_id = params[:user_id]
+          course_id = params[:course_id]
+          start_date = params[:start_date]
+          end_date = params[:end_date]
+
+          result = datasource.exec do |client|
+            query = {
+              query: {
+                bool: {
+                  must: [] + verbs_filter + all_filters(user_id, course_id, nil)
+                }
+              }
+            }
+            query[:query][:bool][:filter] = {
+              range: {
+                timestamp: {
+                  gte: DateTime.parse(start_date).iso8601,
+                  lte: DateTime.parse(end_date).iso8601
+                }
+              }
+            } if start_date.present? and end_date.present?
+
+            client.count index: datasource.index, body: query
+          end
+          { count: result['count'] }
+        end
       end
 
       private

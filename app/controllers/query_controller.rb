@@ -13,15 +13,7 @@ class QueryController < ApplicationController
       return
     end
 
-    render json: metric.query(
-      query_params[:user_id],
-      query_params[:course_id],
-      query_params[:start_time],
-      query_params[:end_time],
-      query_params[:resource_id],
-      query_params[:page], # only used for lists
-      query_params[:per_page] # only used for lists
-    )
+    render json: metric.query(query_params)
   end
 
   def clustering_job
@@ -76,7 +68,7 @@ class QueryController < ApplicationController
   end
 
   def query_params
-    params.permit :user_id, :course_id, :start_time, :end_time, :resource_id, :page
+    params.permit(:user_id, :course_id, :start_time, :end_time, :resource_id, :page, :per_page).symbolize_keys
   end
 
   def cluster_params

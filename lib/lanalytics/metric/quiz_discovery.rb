@@ -1,10 +1,17 @@
 module Lanalytics
   module Metric
-    class QuizDiscovery
+    class QuizDiscovery < Base
 
-      # No support fo start and endtime yet
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        Lanalytics::Clustering::Dimensions.query(course_id, ['quiz_discovery'], [user_id]).first['quiz_discovery'].to_i
+      description 'The number of visited quizzes relative to the available ones.'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
+        Lanalytics::Clustering::Dimensions.query(
+          params[:course_id],
+          ['quiz_discovery'],
+          [params[:user_id]]
+        ).first['quiz_discovery'].to_i
       end
 
     end

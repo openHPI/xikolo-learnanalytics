@@ -49,13 +49,9 @@ module QcRules
 
     def activity_count(course, start_time)
       Lanalytics::Metric::PinboardActivity.query(
-        nil,
-        course['id'],
-        start_time.iso8601,
-        Time.now.iso8601,
-        nil,
-        nil,
-        nil
+        course_id: course['id'],
+        start_date: start_time.iso8601,
+        end_date: Time.now.iso8601
       )[:count]
     end
 

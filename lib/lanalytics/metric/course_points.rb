@@ -2,7 +2,16 @@ module Lanalytics
   module Metric
     class CoursePoints < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
+      description 'Achieved points of user in course.'
+
+      required_parameter :user_id, :course_id, :start_date, :end_date
+
+      exec do |params|
+        user_id = params[:user_id]
+        course_id = params[:course_id]
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+
         completed_statements = datasource.exec do |client|
           client.search index: datasource.index, body: {
             query: {
@@ -16,7 +25,7 @@ module Lanalytics
                     filter: {
                       range: {
                         timestamp: {
-                          gte: DateTime.parse(start_time).iso8601,
+                          gte: DateTime.parse(start_date).iso8601,
                           lte: DateTime.parse(end_date).iso8601
                         }
                       }
@@ -28,7 +37,7 @@ module Lanalytics
           }
         end['hits']['hits']
 
-        return { points: nil } if completed_statements.empty?
+        break { points: nil } if completed_statements.empty?
 
         { points: completed_statements.first['_source']['in_context']['points_achieved'] }
       end

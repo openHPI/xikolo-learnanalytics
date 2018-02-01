@@ -2,13 +2,22 @@ module Lanalytics
   module Metric
     class CourseEvents < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page, scroll_id)
-        page = 1 if page == nil
-        per_page = 1000 if per_page == nil
+      description 'Returns raw course events (paginated).'
 
-        course_id = nil unless course_id.present? # handle empty state
-        start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day)
-        end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
+      required_parameter :course_id
+
+      optional_parameter :start_date, :end_date, :page, :per_page, :scroll_id
+
+      exec do |params|
+        course_id = params[:course_id]
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+        page = params[:page] || 1
+        per_page = params[:per_page] || 1000
+        scroll_id = params[:scroll_id]
+
+        start_date = start_date.present? ? DateTime.parse(start_date) : (DateTime.now - 1.day)
+        end_date = end_date.present? ? DateTime.parse(end_date) : (DateTime.now)
 
         if scroll_id.nil?
           result = datasource.exec do |client|
@@ -25,8 +34,8 @@ module Lanalytics
                                 filter: {
                                   range: {
                                     timestamp: {
-                                      gte: start_time.iso8601,
-                                      lte: end_time.iso8601
+                                      gte: start_date.iso8601,
+                                      lte: end_date.iso8601
                                     }
                                   }
                                 }
@@ -57,7 +66,13 @@ module Lanalytics
         end
 
         current_last = result['hits']['hits'].count + (page.to_i - 1) * per_page
-        return { data: processed_result, next: current_last < result['hits']['total'], scroll_id: result['_scroll_id'], total_pages: (result['hits']['total']/per_page.to_f).ceil }
+
+        {
+          data: processed_result,
+          next: current_last < result['hits']['total'],
+          scroll_id: result['_scroll_id'],
+          total_pages: (result['hits']['total'] / per_page.to_f).ceil
+        }
       end
 
     end

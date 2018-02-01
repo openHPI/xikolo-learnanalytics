@@ -2,9 +2,7 @@ module Lanalytics
   module Metric
     class  UnenrollmentCount < ExpApiCountMetric
 
-      def self.verbs
-        @verbs ||= %w(UN_ENROLLED)
-      end
+      event_verbs %w(UN_ENROLLED)
 
     end
   end

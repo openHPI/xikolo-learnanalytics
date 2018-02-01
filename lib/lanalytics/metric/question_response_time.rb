@@ -2,7 +2,18 @@ module Lanalytics
   module Metric
     class QuestionResponseTime < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_date, resource_id, page, per_page)
+      description 'Average time between asked and answered question.'
+
+      required_parameter :user_id, :course_id
+
+      optional_parameter :start_date, :end_date
+
+      exec do |params|
+        user_id = params[:user_id]
+        course_id = params[:course_id]
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+
         answer_statements = datasource.exec do |client|
           query = {
             query: {
@@ -16,16 +27,16 @@ module Lanalytics
           query[:query][:bool][:filter] = {
             range: {
               timestamp: {
-                gte: DateTime.parse(start_time).iso8601,
+                gte: DateTime.parse(start_date).iso8601,
                 lte: DateTime.parse(end_date).iso8601
               }
             }
-          } if start_time.present? and end_date.present?
+          } if start_date.present? and end_date.present?
 
           client.search index: datasource.index, body: query
         end['hits']['hits']
 
-        {average: calculate_average(answer_statements)}
+        { average: calculate_average(answer_statements) }
       end
 
       def self.calculate_average(answer_statements)

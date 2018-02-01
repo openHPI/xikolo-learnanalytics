@@ -1,10 +1,17 @@
 module Lanalytics
   module Metric
-    class VideoDiscovery
+    class VideoDiscovery < Base
 
-      # No support fo start and endtime yet
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        Lanalytics::Clustering::Dimensions.query(course_id, ['video_discovery'], [user_id]).first['video_discovery'].to_i
+      description 'The number of visited videos relative to the available ones.'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
+        Lanalytics::Clustering::Dimensions.query(
+          params[:course_id],
+          ['video_discovery'],
+          [params[:user_id]]
+        ).first['video_discovery'].to_i
       end
 
     end

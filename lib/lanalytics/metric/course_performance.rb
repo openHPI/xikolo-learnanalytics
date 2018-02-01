@@ -1,10 +1,17 @@
 module Lanalytics
   module Metric
-    class CoursePerformance
+    class CoursePerformance < Base
 
-      # No support fo start and endtime yet
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        Lanalytics::Clustering::Dimensions.query(course_id, ['course_performance'], [user_id]).first['course_performance'].to_i
+      description 'Achieved course performance (points achieved / max points).'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
+        Lanalytics::Clustering::Dimensions.query(
+          params[:course_id],
+          ['course_performance'],
+          [params[:user_id]]
+        ).first['course_performance'].to_i
       end
 
     end

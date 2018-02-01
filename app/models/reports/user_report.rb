@@ -88,9 +88,7 @@ module Reports
     end
 
     def top_country(user)
-      Lanalytics::Metric::UserCourseCountry.unescaped_query(
-        user.id, nil, nil, nil, nil, nil, nil
-      )
+      Lanalytics::Metric::UserCourseCountry.query(user_id: user.id)
     rescue
       ''
     end

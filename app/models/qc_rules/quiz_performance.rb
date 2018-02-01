@@ -45,13 +45,8 @@ module QcRules
 
     def calculate_metrics(item, course)
       Lanalytics::Metric::QuizPerformance.query(
-        nil,
-        course['id'],
-        nil,
-        nil,
-        item['id'],
-        nil,
-        nil
+        course_id: course['id'],
+        resource_id: item['id']
       )
     end
 

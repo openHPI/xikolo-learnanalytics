@@ -1,10 +1,17 @@
 module Lanalytics
   module Metric
-    class VideoPlayerActivity
+    class VideoPlayerActivity < Base
 
-      # No support fo start and endtime yet
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        Lanalytics::Clustering::Dimensions.query(course_id, ['video_player_activity'], [user_id]).first['video_player_activity'].to_i
+      description 'The sum of video player-related events (video played, paused, resized, fullscreen triggered, speed changed).'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
+        Lanalytics::Clustering::Dimensions.query(
+          params[:course_id],
+          ['video_player_activity'],
+          [params[:user_id]]
+        ).first['video_player_activity'].to_i
       end
 
     end

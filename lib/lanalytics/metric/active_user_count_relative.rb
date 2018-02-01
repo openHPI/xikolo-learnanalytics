@@ -2,19 +2,26 @@ module Lanalytics
   module Metric
     class ActiveUserCountRelative < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description """
+Calculates activity compared to the platform and itself for the last day.
+Result if course_id present:
+  - relative: percentage of active users compared to total platform activity
+  - top: rank of course by active users
+  - deviation: deviation of avg active users on platform
+  - kpi_activity: activity_today / avg_activity_of_course
 
-        # calculates activity compared to the platform and itself for the last day
-        # result if course_id present:
-        #   relative: percentage of active users compared to total platform activity
-        #   top: rank of course by active users
-        #   deviation: deviation of avg active users on platform
-        #   kpi_activity: activity_today / avg_activity_of_course
+Default active users of last day.
+""".strip
 
-        # default active users of last day
+      optional_parameter :start_date, :end_date, :course_id
 
-        start_time = (start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day))
-        end_time = (end_time.present? ? DateTime.parse(end_time) : (DateTime.now))
+      exec do |params|
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+        course_id = params[:course_id]
+
+        start_date = start_date.present? ? DateTime.parse(start_date) : 1.day.ago
+        end_date = end_date.present? ? DateTime.parse(end_date) : DateTime.now
 
         active_users = {}
 
@@ -26,8 +33,8 @@ module Lanalytics
                 filter: {
                   range: {
                     timestamp: {
-                      gte: start_time.iso8601,
-                      lte: end_time.iso8601
+                      gte: start_date.iso8601,
+                      lte: end_date.iso8601
                     }
                   }
                 }
@@ -64,9 +71,7 @@ module Lanalytics
           relative_users[id] = value.to_f / total_activity.to_f
         end
 
-        if not course_id.present?
-          return relative_users
-        end
+        break relative_users unless course_id.present?
 
         result = {}
         result[:relative] = (relative_users[course_id] || 0).round(2)
@@ -80,14 +85,14 @@ module Lanalytics
         if days_since_start <= 0
           result[:kpi_activity] = nil
         else
-          avg_activity_per_day = CourseActivity.query(nil, course_id, start_date.to_s, (start_date + days_since_start.day).to_s, nil, nil, nil)[:count].to_f / days_since_start.to_f
-          activity_today = CourseActivity.query(nil, course_id, (DateTime.now - 1.day).to_s, DateTime.now.to_s, nil, nil, nil)[:count].to_f
+          avg_activity_per_day = CourseActivity.query(course_id: course_id, start_date: start_date.to_s, end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
+          activity_today = CourseActivity.query(course_id: course_id, start_date: (DateTime.now - 1.day).to_s, end_date: DateTime.now.to_s)[:count].to_f
           result[:kpi_activity] = (avg_activity_per_day != 0 ? activity_today / avg_activity_per_day : 0).round(2)
         end
 
         result
-
       end
+
     end
   end
 end

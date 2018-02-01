@@ -2,18 +2,25 @@ module Lanalytics
   module Metric
     class CourseActivityList < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        start_time = start_time.present? ? DateTime.parse(start_time) : (DateTime.now - 1.day)
-        end_time = end_time.present? ? DateTime.parse(end_time) : (DateTime.now)
+      description 'Returns the top 10 active courses, defaults to last 24h.'
 
-        expresult = datasource.exec do |client|
+      optional_parameter :start_date, :end_date
+
+      exec do |params|
+        start_date = params[:start_date]
+        end_date = params[:end_date]
+
+        start_date = start_date.present? ? DateTime.parse(start_date) : (DateTime.now - 1.day)
+        end_date = end_date.present? ? DateTime.parse(end_date) : (DateTime.now)
+
+        exp_result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
             query: {
               range: {
                 timestamp: {
-                  gte: start_time.iso8601,
-                  lte: end_time.iso8601
+                  gte: start_date.iso8601,
+                  lte: end_date.iso8601
                 }
               }
             },
@@ -21,13 +28,13 @@ module Lanalytics
               group_by_field: {
                 terms: {
                   field: 'in_context.course_id',
-                  order: {_count: "desc"}
+                  order: {_count: 'desc'}
                 },
                 aggs: {
                   group_by_field: {
                     terms: {
-                      field: "verb",
-                      order: {_count: "desc"}
+                      field: 'verb',
+                      order: {_count: 'desc'}
                     }
                   }
                 }
@@ -38,7 +45,7 @@ module Lanalytics
 
         end
         result = {}
-        expresult.with_indifferent_access[:aggregations][:group_by_field][:buckets].each do |bucket|
+        exp_result.with_indifferent_access[:aggregations][:group_by_field][:buckets].each do |bucket|
           buckets = bucket.with_indifferent_access[:group_by_field][:buckets]
           #add new verbs here if needed
 

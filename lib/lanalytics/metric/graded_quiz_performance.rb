@@ -1,10 +1,17 @@
 module Lanalytics
   module Metric
-    class GradedQuizPerformance
+    class GradedQuizPerformance < Base
 
-      # No support fo start and endtime yet
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        Lanalytics::Clustering::Dimensions.query(course_id, ['graded_quiz_performance'], [user_id]).first['graded_quiz_performance'].to_i
+      description 'The average percentage of correct answers in graded quizzes (influencing the final course score).'
+
+      optional_parameter :user_id, :course_id
+
+      exec do |params|
+        Lanalytics::Clustering::Dimensions.query(
+          params[:course_id],
+          ['graded_quiz_performance'],
+          [params[:user_id]]
+        ).first['graded_quiz_performance'].to_i
       end
 
     end
