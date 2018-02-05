@@ -134,7 +134,7 @@ module Reports
           nil
         )
 
-        values += [result['active_users']]
+        values += [result[:active_users]]
       end
       values
     end
