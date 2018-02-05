@@ -3,7 +3,7 @@ def create_exp_pipeline(route, extractor_type, processing_action)
   pipeline_for(route, :exp_api, processing_action) do
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
-    transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
+    transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new(anonymize_ip: false)
     transformer Lanalytics::Processing::Transformer::ContextData.new
     transformer Lanalytics::Processing::Transformer::GeoinfoFinder.new
     # Important to be the last transformer, since it creates Entities and Attributes
@@ -16,7 +16,7 @@ def create_exp_pipeline(route, extractor_type, processing_action)
   pipeline_for(route, :exp_api_native, processing_action) do
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
-    transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
+    transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new(anonymize_ip: false)
     transformer Lanalytics::Processing::Transformer::ContextData.new
     transformer Lanalytics::Processing::Transformer::GeoinfoFinder.new
     # Important to be the last transformer, since it creates Entities and Attributes

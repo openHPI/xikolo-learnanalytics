@@ -40,5 +40,3 @@ bin/rake                    usr/lib/xikolo-learnanalytics/bin/
 bin/sidekiq                 usr/lib/xikolo-learnanalytics/bin/
 bin/unicorn                 usr/lib/xikolo-learnanalytics/bin/
 bin/xikolo-learnanalytics   usr/bin/
-
-GeoLiteCityv6.dat           usr/lib/xikolo-learnanalytics/

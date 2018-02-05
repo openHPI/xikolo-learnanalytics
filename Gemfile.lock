@@ -169,7 +169,7 @@ GEM
     mnemosyne-ruby (1.4.0)
       activesupport (>= 4)
       bunny
-    msgr (0.15.2)
+    msgr (1.0.0)
       activesupport
       bunny (>= 1.4, < 3.0)
       multi_json
@@ -418,7 +418,7 @@ DEPENDENCIES
   mechanize
   meta_request
   mnemosyne-ruby (~> 1.3)
-  msgr
+  msgr (~> 1.0)
   multi_json
   os
   paginate-responder

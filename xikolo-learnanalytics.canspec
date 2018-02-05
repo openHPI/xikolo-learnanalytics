@@ -24,8 +24,4 @@ Cany::Specification.new do
     version = `dpkg-parsechangelog | grep Version: | cut -d: -f2`.strip
     recipe(:bundler).configure :env_vars, DEB_VERSION: version
   end
-
-  binary do
-    install 'GeoLiteCityv6.dat', "/usr/share/#{spec.name}"
-  end
 end
