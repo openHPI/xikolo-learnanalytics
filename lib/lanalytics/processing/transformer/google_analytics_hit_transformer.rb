@@ -135,10 +135,12 @@ module Lanalytics
                               screen_width: in_context[:screen_width].to_i,
                               screen_height: in_context[:screen_height].to_i,
                               user_location_country_code: in_context[:user_location_country_code],
-                              user_location_city: in_context[:user_location_city],
-                              custom_dimension_2: exp_stmt.resource.uuid
+                              user_location_city: in_context[:user_location_city]
           if attrs[:custom_dimension_1].nil?
             attrs[:custom_dimension_1] = in_context[:course_id]
+          end
+          unless exp_stmt.resource.type.downcase == :user
+            attrs[:custom_dimension_2] = exp_stmt.resource.uuid
           end
 
           transform_attrs_to_create(load_commands, attrs)
