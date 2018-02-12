@@ -5,7 +5,8 @@ module Lanalytics
         include Lanalytics::Helper::HashHelper
 
         PROTOCOL_VERSION = 1
-        APP_PLATFORMS = %w(Android iOS)
+        APP_RUNTIMES = %w(Android iOS)
+        DUMMY_UUID = '00000000-0000-0000-0000-000000000000'
         VERB_CATEGORIES = {
             pageviews: [:visited_question, :visited_item, :visited_pinboard, :visited_progress, :visited_learning_rooms,
                         :visited_announcements, :visited_recap, :visited_profile, :visited_documents, :visited_activity,
@@ -50,19 +51,25 @@ module Lanalytics
             # General properties
             with_attribute :v,       :int,     PROTOCOL_VERSION
             with_attribute :tid,     :string,  Xikolo.config.google_analytics_tracking_id
-            with_attribute :ds,      :string,  (APP_PLATFORMS.include? attrs[:platform]) ? 'app' : 'web'
+            with_attribute :ds,      :string,  attrs[:data_source]
             with_attribute :qt,      :int,     attrs[:timestamp].to_time.to_i
             with_attribute :t,       :string,  attrs[:hit_type]
 
             # User properties
             with_attribute :cid,     :string,  (Digest::SHA256.hexdigest attrs[:user_id])
-            with_attribute :ua,      :string,  attrs[:user_agent]
-            with_attribute :uip,     :string,  attrs[:user_ip]
+            with_attribute :ua,      :string,  attrs[:user_agent] || '' # Prevents GA from extracting user agent from HTTP request headers
+            with_attribute :uip,     :string,  attrs[:user_ip] || '' # Prevents GA from extracting IP from HTTP request
             unless geo_id.nil?
               with_attribute :geoid, :string,  geo_id
             end
             unless attrs[:screen_width].nil? or attrs[:screen_height].nil?
               with_attribute :sr,    :string,  "#{attrs[:screen_width]}x#{attrs[:screen_height]}"
+            end
+
+            # App tracking
+            if attrs[:data_source] == :app
+              with_attribute :an,    :string,  attrs[:app_name]
+              with_attribute :av,    :string,  attrs[:app_version]
             end
 
             # Content information
@@ -130,7 +137,9 @@ module Lanalytics
           attrs = attrs.merge user_id: exp_stmt.user.uuid,
                               timestamp: exp_stmt.timestamp,
                               user_ip: in_context[:user_ip],
-                              platform: in_context[:platform],
+                              data_source: (APP_RUNTIMES.include? in_context[:runtime]) ? :app : :web,
+                              app_name: in_context[:runtime],
+                              app_version: in_context[:build_version],
                               user_agent: in_context[:user_agent],
                               screen_width: in_context[:screen_width].to_i,
                               screen_height: in_context[:screen_height].to_i,
@@ -140,7 +149,7 @@ module Lanalytics
             attrs[:custom_dimension_1] = in_context[:course_id]
           end
           unless exp_stmt.resource.type.downcase == :user
-            attrs[:custom_dimension_2] = exp_stmt.resource.uuid
+            attrs[:custom_dimension_2] = sanitize_uuid exp_stmt.resource.uuid
           end
 
           transform_attrs_to_create(load_commands, attrs)
@@ -181,10 +190,10 @@ module Lanalytics
         def transform_pageviews_exp_stmt_to_create(exp_stmt, load_commands)
           verb = exp_stmt.verb.type.downcase
           in_context = hash_keys_to_underscore(exp_stmt.in_context)
-          course_id = exp_stmt.resource.type.downcase == :course ? (exp_stmt.resource.uuid) : (in_context[:course_id])
+          course_id = exp_stmt.resource.type.downcase == :course ? (sanitize_uuid exp_stmt.resource.uuid) : (in_context[:course_id])
           attrs = {
               hit_type: :pageview,
-              document_path: get_document_path(verb, course_id, exp_stmt.resource.uuid),
+              document_path: get_document_path(verb, course_id, sanitize_uuid(exp_stmt.resource.uuid)),
               custom_dimension_1: course_id
           }
           if exp_stmt.resource.type.downcase == :item
@@ -198,6 +207,7 @@ module Lanalytics
         def transform_question_punit_to_create(processing_unit, load_commands)
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :pinboard,
                                     event_action: :asked_question,
                                     user_id: processing_unit[:user_id],
@@ -211,6 +221,7 @@ module Lanalytics
         def transform_answer_punit_to_create(processing_unit, load_commands)
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :pinboard,
                                     event_action: :answered_question,
                                     user_id: processing_unit[:user_id],
@@ -222,6 +233,7 @@ module Lanalytics
         def transform_comment_punit_to_create(processing_unit, load_commands)
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :pinboard,
                                     event_action: :commented,
                                     user_id: processing_unit[:user_id],
@@ -233,6 +245,7 @@ module Lanalytics
         def transform_answer_accepted_punit_to_create(processing_unit, load_commands)
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :pinboard,
                                     event_action: :answer_accepted,
                                     user_id: processing_unit[:user_id],
@@ -244,6 +257,7 @@ module Lanalytics
         def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :course,
                                     event_action: :completed_course,
                                     user_id: processing_unit[:user_id],
@@ -265,6 +279,7 @@ module Lanalytics
           action = processing_unit[:deleted] ? :un_enrolled : :enrolled
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :course,
                                     event_action: action,
                                     user_id: processing_unit[:user_id],
@@ -275,6 +290,7 @@ module Lanalytics
         def transform_user_punit_to_create(processing_unit, load_commands)
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :user,
                                     event_action: :confirmed_user,
                                     user_id: processing_unit[:id],
@@ -285,6 +301,7 @@ module Lanalytics
           submission_time = processing_unit[:quiz_submission_time]&.to_time || Time.now
           transform_attrs_to_create load_commands,
                                     hit_type: :event,
+                                    data_source: :service,
                                     event_category: :quiz,
                                     event_action: :submitted_quiz,
                                     user_id: processing_unit[:user_id],
@@ -295,6 +312,11 @@ module Lanalytics
                                     custom_metric_1: (processing_unit[:points] / processing_unit[:max_points]) * 100,
                                     custom_metric_2: processing_unit[:attempt],
                                     custom_metric_3: submission_time - processing_unit[:quiz_access_time].to_time
+        end
+
+        def sanitize_uuid(id)
+          # Resources might have a dummy uuid, if not applicable in the context of the event
+          id unless id == DUMMY_UUID
         end
 
         def get_document_path(verb, course_id = nil, resource_id = nil)
@@ -308,7 +330,7 @@ module Lanalytics
             when :visited_learning_rooms
               "/courses/#{course_id}/learning_rooms"
             when :visited_announcements
-              "/courses/#{course_id}/announcements"
+              course_id.nil? ? "/news" : "/courses/#{course_id}/announcements"
             when :visited_recap
               "/courses/#{course_id}/recap"
             when :visited_dashboard
