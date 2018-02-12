@@ -30,7 +30,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
 
     expect(entity[:v].value).to eq 1
     expect(entity[:tid].value).to eq 'UA-424242'
-    expect(entity[:ds].value).to eq 'web'
+    expect(entity[:ds].value).to eq :web
     expect(entity[:t].value).to eq :event
     expect(entity[:ec].value).to eq :video
     expect(entity[:ea].value).to eq :video_play
@@ -75,29 +75,77 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
           timestamp: DateTime.now,
           with_result: {},
           in_context: {
-              platform: platform
+              runtime: runtime
           }
       }
     end
 
-    describe 'for Android platform' do
-      let(:platform) { 'Android' }
+    describe 'for Android runtime' do
+      let(:runtime) { 'Android' }
       it 'to app' do
-        expect(subject[:ds].value).to eq 'app'
+        expect(subject[:ds].value).to eq :app
       end
     end
 
-    describe 'for iOS platform' do
-      let(:platform) { 'iOS' }
+    describe 'for iOS runtime' do
+      let(:runtime) { 'iOS' }
       it 'to app' do
-        expect(subject[:ds].value).to eq 'app'
+        expect(subject[:ds].value).to eq :app
       end
     end
 
-    describe 'for Windows platform' do
-      let(:platform) { 'Windows' }
+    describe 'for Windows runtime' do
+      let(:runtime) { 'Chrome' }
       it 'to web' do
-        expect(subject[:ds].value).to eq 'web'
+        expect(subject[:ds].value).to eq :web
+      end
+    end
+  end
+
+  describe 'when transforming app events' do
+    let(:type) { 'exp_event' }
+    let(:processing_unit_data) do
+      {
+          user: {
+              uuid: SecureRandom.uuid
+          },
+          verb: {
+              type: 'VISITED_ITEM'
+          },
+          resource: {
+              uuid: SecureRandom.uuid,
+              type: 'item'
+          },
+          timestamp: DateTime.now,
+          with_result: {},
+          in_context: {
+              runtime: runtime,
+              build_version: build_version
+          }
+      }
+    end
+
+    describe 'with Android runtime' do
+      let(:runtime) { 'Android' }
+      let(:build_version) { '42' }
+
+      it 'sets app name correctly' do
+        expect(subject[:an].value).to eq 'Android'
+      end
+      it 'sets app version correctly' do
+        expect(subject[:av].value).to eq '42'
+      end
+    end
+
+    describe 'with iOS runtime' do
+      let(:runtime) { 'iOS' }
+      let(:build_version) { '42' }
+
+      it 'sets app name correctly' do
+        expect(subject[:an].value).to eq 'iOS'
+      end
+      it 'sets app version correctly' do
+        expect(subject[:av].value).to eq '42'
       end
     end
   end
@@ -283,7 +331,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       end
     end
 
-    describe 'visited_announcements' do
+    describe 'visited_announcements (course)' do
       let(:processing_unit_data) do
         {
             user: {
@@ -308,6 +356,34 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:dp].value).to eq "/courses/#{processing_unit[:resource][:uuid]}/announcements"
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:resource][:uuid]
+      end
+    end
+
+    describe 'visited_announcements (global)' do
+      let(:processing_unit_data) do
+        {
+            user: {
+                uuid: SecureRandom.uuid
+            },
+            verb: {
+                type: 'VISITED_ANNOUNCEMENTS'
+            },
+            resource: {
+                uuid: '00000000-0000-0000-0000-000000000000',
+                type: 'n/a'
+            },
+            timestamp: DateTime.now,
+            with_result: {},
+            in_context: {}
+        }
+      end
+
+      it 'is transformed correctly' do
+        expect(subject[:t].value).to eq :pageview
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:dp].value).to eq '/news'
+        expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
+        expect(subject[:cd2]&.value).to be_nil
       end
     end
 
@@ -391,12 +467,15 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :asked_question
       expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -413,12 +492,15 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :answered_question
       expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -435,6 +517,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :answer_accepted
@@ -442,6 +525,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
       expect(subject[:cd2].value).to eq processing_unit[:question_id]
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -459,6 +544,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :commented
@@ -466,6 +552,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
       expect(subject[:cd2].value).to eq processing_unit[:id]
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -482,11 +570,14 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :course
       expect(subject[:ea].value).to eq :enrolled
       expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -514,6 +605,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :course
       expect(subject[:ea].value).to eq :completed_course
@@ -521,6 +613,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:qt].value).to eq processing_unit[:updated_at].to_i
       expect(subject[:cm1].value).to eq processing_unit[:points][:percentage].round
       expect(subject[:cm5].value).to eq 0
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -535,11 +629,14 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :user
       expect(subject[:ea].value).to eq :confirmed_user
       expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:id])
       expect(subject[:qt].value).to eq processing_unit[:updated_at].to_i
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 
@@ -562,6 +659,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     end
 
     it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :quiz
       expect(subject[:ea].value).to eq :submitted_quiz
@@ -573,6 +671,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:cm1].value).to eq ((processing_unit[:points] / processing_unit[:max_points]) * 100).round
       expect(subject[:cm2].value).to eq processing_unit[:attempt]
       expect(subject[:cm3].value).to eq (processing_unit[:quiz_submission_time].to_time - processing_unit[:quiz_access_time].to_time).round
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
     end
   end
 end
