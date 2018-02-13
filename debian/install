@@ -24,6 +24,7 @@ config/lanalytics_sync.yml  etc/xikolo-learnanalytics/
 config/mnemosyne.yml        etc/xikolo-learnanalytics/
 config/rabbitmq.yml         etc/xikolo-learnanalytics/
 config/rserve.yml           etc/xikolo-learnanalytics/
+config/rserve.yml           etc/xikolo-learnanalytics/
 config/secrets.yml          etc/xikolo-learnanalytics/
 config/services.yml         etc/xikolo-learnanalytics/
 config/sidekiq.yml          etc/xikolo-learnanalytics/
