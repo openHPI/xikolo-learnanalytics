@@ -68,7 +68,7 @@ override_dh_link:
 
 	# Symlink all configuration files from etc into rails config directory
 	(cd ${PKGBASE}${PREFIX}/config/ && \
-		cp --symbolic-link ../../../../etc/${PACKAGE}/* .)
+		ln --symbolic ../../../../etc/${PACKAGE}/* .)
 
 	ln -s /etc/${PACKAGE}/environment.rb \
 		${PKGBASE}${PREFIX}/config/environments/puppet.rb
