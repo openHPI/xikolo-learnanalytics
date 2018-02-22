@@ -288,8 +288,10 @@ class Lanalytics::Clustering::Dimensions
 
     s1 = "select e.user_uuid, round(
         avg(
-          (e.in_context->>'points')::float /
-          (e.in_context->>'max_points')::float
+          case when (e.in_context->>'max_points')::float = 0 then 0
+            else (e.in_context->>'points')::float /
+                 (e.in_context->>'max_points')::float
+          end
         )::numeric
       ,3) as #{metric}_performance_metric
      from events as e, verbs as v
