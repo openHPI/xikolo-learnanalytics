@@ -11,8 +11,10 @@ SyslogIdentifier=xikolo-learnanalytics-sidekiq
 WorkingDirectory=/usr/lib/xikolo-learnanalytics
 
 Environment=RAILS_ENV=production
+Environment=WORKER=1
 Environment=CONCURRENCY=25
-ExecStart=/usr/bin/xikolo-learnanalytics sidekiq -c ${CONCURRENCY}
+Environment=ARGS=
+ExecStart=/usr/bin/xikolo-learnanalytics sidekiq --concurrency ${CONCURRENCY} --environment ${RAILS_ENV} ${ARGS}
 
 Restart=on-failure
 RestartSec=10s

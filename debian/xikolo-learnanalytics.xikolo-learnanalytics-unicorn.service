@@ -14,8 +14,11 @@ PIDFile=/run/xikolo-learnanalytics/unicorn.pid
 
 Environment=RAILS_ENV=production
 Environment=WORKER=4
-ExecStart=/usr/bin/xikolo-learnanalytics unicorn --config-file config/unicorn.rb
-ExecReload=/bin/kill -s SIGUSR2 $MAINPID
+Environment=CONCURRENCY=1
+Environment=LISTEN=/run/xikolo-learnanalytics/sock
+Environment=ARGS=
+ExecStart=/usr/bin/xikolo-learnanalytics unicorn --config-file config/unicorn.rb --pid /run/xikolo-learnanalytics/unicorn.pid --env ${RAILS_ENV} --listen ${LISTEN} ${ARGS}
+ExecReload=/bin/kill -USR2 $MAINPID
 ExecStop=/bin/kill -QUIT $MAINPID
 
 Restart=on-failure
