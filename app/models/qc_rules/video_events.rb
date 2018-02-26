@@ -47,15 +47,7 @@ module QcRules
     end
 
     def calculate_metrics(item)
-      video_events = Lanalytics::Metric::VideoEvents.query(
-        nil,
-        nil,
-        nil,
-        nil,
-        item['id'],
-        nil,
-        nil
-      )
+      video_events = Lanalytics::Metric::VideoEvents.query(resource_id: item['id'])
 
       start_pause_time = video_events.each_with_object({}) do |event, hash|
         pause_count = event[1]['pause'] || 0

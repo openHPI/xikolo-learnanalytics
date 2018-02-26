@@ -2,12 +2,16 @@ module Lanalytics
   module Metric
     class UserCourseCity < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
-        unescaped_query(user_id, course_id, start_time, end_time, resource_id, page, per_page).to_json
-      end
+      description 'Returns city with most activity.'
 
-      def self.unescaped_query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      optional_parameter :course_id, :user_id
+
+      exec do |params|
+        course_id = params[:course_id]
+        user_id = params[:user_id]
+
         conditions = []
+
         if course_id.present?
           conditions << {
             match: {
@@ -15,6 +19,7 @@ module Lanalytics
             }
           }
         end
+
         if user_id.present?
           conditions << {
             match: {
@@ -22,6 +27,7 @@ module Lanalytics
             }
           }
         end
+
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
@@ -40,10 +46,11 @@ module Lanalytics
             }
           }
         end
+
         if result['aggregations']['cities']['buckets'][0].present?
-          return result['aggregations']['cities']['buckets'][0]['key']
+          break result['aggregations']['cities']['buckets'][0]['key']
         else
-          return ''
+          break ''
         end
       end
 

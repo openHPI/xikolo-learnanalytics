@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ExpApiMetric
+    class ExpApiMetric < Base
 
       def self.datasource
         Lanalytics::Processing::DatasourceManager.datasource(datasource_name)

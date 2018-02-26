@@ -2,7 +2,12 @@ module Lanalytics
   module Metric
     class ItemVisits < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Total and unique user item visits; for last day, last 15 minutes (now) and overall.'
+
+      required_parameter :resource_id
+
+      exec do |params|
+        resource_id = params[:resource_id]
         total_item_visits = get_data resource_id, false, false
         total_item_visits_24 = get_data resource_id, true, false
         total_item_visits_now = get_data resource_id, false, true

@@ -2,7 +2,13 @@ module Lanalytics
   module Metric
     class LastVisitedItem < ExpApiMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Last visited item of user.'
+
+      required_parameter :user_id
+
+      optional_parameter :course_id
+
+      exec do |params|
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 1,
@@ -10,7 +16,7 @@ module Lanalytics
               bool: {
                 must: [
                   { match: { 'verb' => 'visited_item' } }
-                ] + all_filters(user_id, course_id, nil),
+                ] + all_filters(params[:user_id], params[:course_id], nil),
               }
             },
             sort: {

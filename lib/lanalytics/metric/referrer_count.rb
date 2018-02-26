@@ -2,14 +2,18 @@ module Lanalytics
   module Metric
     class ReferrerCount < ReferrerMetric
 
-      def self.query(user_id, course_id, start_time, end_time, resource_id, page, per_page)
+      description 'Top 25 referrer with count of given course.'
+
+      required_parameter :course_id
+
+      exec do |params|
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
             query: {
               bool: {
                 must: [
-                  { match: { 'course_id' => course_id } }
+                  { match: { 'course_id' => params[:course_id] } }
                 ]
               }
             },

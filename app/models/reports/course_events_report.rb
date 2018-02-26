@@ -74,14 +74,11 @@ module Reports
 
     def query_events(page, scroll_id)
       Lanalytics::Metric::CourseEvents.query(
-        nil,
-        course['id'],
-        course['start_date'],
-        course['end_date'],
-        nil,
-        page,
-        nil,
-        scroll_id
+        course_id: course['id'],
+        start_date: course['start_date'],
+        end_date: course['end_date'],
+        page: page,
+        scroll_id: scroll_id
       )
     end
 
