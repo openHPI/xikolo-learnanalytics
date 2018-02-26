@@ -72,7 +72,6 @@ module Reports
         i += 1
         @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
       end
-      Acfs.run
     end
 
     def transform_submission(row)

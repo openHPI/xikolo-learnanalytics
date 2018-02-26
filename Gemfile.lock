@@ -4,13 +4,6 @@ GEM
     accept_values_for (0.7.4)
       activemodel (>= 4.2, < 5.2)
       rspec (>= 2.0, < 4.0)
-    acfs (0.49.1)
-      actionpack (>= 4.2)
-      activemodel (>= 4.2)
-      activesupport (>= 4.2)
-      multi_json
-      rack
-      typhoeus (~> 1.0)
     actionmailer (4.2.10)
       actionpack (= 4.2.10)
       actionview (= 4.2.10)
@@ -364,27 +357,13 @@ GEM
       hashdiff
     webrobots (0.1.2)
     will_paginate (3.1.6)
-    xikolo-account (7.0.0)
-      acfs (~> 0.46)
-      activesupport
-      xikolo-file (~> 1.0)
-      xikolo-richtext (~> 3.0)
-    xikolo-common (2.4.0)
+    xikolo-common (2.4.1)
       activesupport
       addressable
       lograge (~> 0.3.5)
       railties
       restify
     xikolo-config (2.25)
-      activesupport
-    xikolo-course (9.9.1)
-      acfs (~> 0.42)
-      activesupport
-    xikolo-file (1.8.1)
-      acfs (~> 0.21, >= 0.21.1)
-      activesupport
-    xikolo-richtext (3.1.1)
-      acfs (~> 0.15)
       activesupport
     xikolo-sidekiq (1.0.0)
       railties (< 6)
@@ -396,7 +375,6 @@ PLATFORMS
 
 DEPENDENCIES
   accept_values_for
-  acfs (~> 0.49, >= 0.49.1)
   api-responder
   better_errors
   binding_of_caller
@@ -450,10 +428,8 @@ DEPENDENCIES
   validates_email_format_of
   webmock
   will_paginate
-  xikolo-account
   xikolo-common (~> 2.4)
   xikolo-config (~> 2.25)
-  xikolo-course (~> 9.9.0)
   xikolo-sidekiq
 
 BUNDLED WITH

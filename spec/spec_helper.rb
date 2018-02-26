@@ -26,7 +26,6 @@ require 'rspec/rails'
 require 'database_cleaner'
 require 'rspec/its'
 require 'sidekiq/testing'
-require 'acfs/rspec'
 require 'webmock/rspec'
 require 'rspec/collection_matchers'
 require 'paper_trail/frameworks/rspec'
@@ -52,8 +51,6 @@ end
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.infer_spec_type_from_file_location!
-  #config.order = 'random'
-
 
   config.around(:each) do |example|
     DatabaseCleaner.strategy = :truncation
@@ -64,19 +61,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with :truncation
   end
 
-  # Do not leak Acfs queue between specs
-=begin config.after(:each) do
-    Acfs.reset
-    Msgr.client.stop delete: true
-    TestPool.reset
-    Acfs::Stub.disable
-    DatabaseCleaner.clean
- end
-=end
   config.before :all do
-    #DatabaseCleaner.strategy = :truncation
-
-    Acfs::Stub.allow_requests = true
     Sidekiq::Worker.clear_all
   end
 
@@ -84,6 +69,7 @@ RSpec.configure do |config|
     Msgr.client.stop delete: true
     Msgr::TestPool.reset
   end
+
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin
