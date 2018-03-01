@@ -675,4 +675,53 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:uip].value).to eq ''
     end
   end
+
+  describe 'percentage helper' do
+    it 'returns correct result for valid arguments' do
+      percentage = @transformer.percentage 2, 5
+      expect(percentage).to eq 40
+    end
+
+    it 'returns nil if total is nil' do
+      percentage = @transformer.percentage 2, nil
+      expect(percentage).to be_nil
+    end
+
+    it 'returns nil if total is 0' do
+      percentage = @transformer.percentage 2, 0
+      expect(percentage).to be_nil
+    end
+
+    it 'returns nil if total not numeric' do
+      percentage = @transformer.percentage 2, '5'
+      expect(percentage).to be_nil
+    end
+
+    it 'returns nil if value not numeric' do
+      percentage = @transformer.percentage '2', 5
+      expect(percentage).to be_nil
+    end
+  end
+
+  describe 'safe_round helper' do
+    it 'returns correct result for valid arguments' do
+      value = @transformer.safe_round 42.42
+      expect(value).to eq 42
+    end
+
+    it 'returns nil if value is not numeric' do
+      value = @transformer.safe_round '42.42'
+      expect(value).to be_nil
+    end
+
+    it 'returns nil if value is Float::NAN' do
+      value = @transformer.safe_round Float::NAN
+      expect(value).to be_nil
+    end
+
+    it 'returns nil if value is BigDecimal::NAN' do
+      value = @transformer.safe_round BigDecimal::NAN
+      expect(value).to be_nil
+    end
+  end
 end
