@@ -325,8 +325,7 @@ module Lanalytics
         end
 
         def percentage(value, total)
-          return if value.nil? || total.nil? || total == 0
-          safe_round(value / total.to_f * 100)
+          safe_round(value / total.to_f * 100) if (value.is_a? Numeric) && (total.is_a? Numeric) && total != 0
         end
 
         def get_document_path(verb, course_id = nil, resource_id = nil)
