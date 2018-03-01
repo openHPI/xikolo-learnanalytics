@@ -44,13 +44,13 @@ module Lanalytics
         end
 
         def transform_attrs_to_create(load_commands, attrs)
-          return if Xikolo.config.google_analytics_tracking_id.nil?
+          return unless Xikolo.config.google_analytics['tracking_id'].present?
 
           geo_id = @geo_id_lookup.get(attrs[:user_location_country_code], attrs[:user_location_city])
           entity = Lanalytics::Processing::LoadORM::Entity.create(:google_analytics_hit) do
             # General properties
             with_attribute :v,       :int,     PROTOCOL_VERSION
-            with_attribute :tid,     :string,  Xikolo.config.google_analytics_tracking_id
+            with_attribute :tid,     :string,  Xikolo.config.google_analytics['tracking_id']
             with_attribute :ds,      :string,  attrs[:data_source]
             with_attribute :qt,      :int,     (attrs[:timestamp]&.to_time || Time.now).to_i
             with_attribute :t,       :string,  attrs[:hit_type]
