@@ -52,7 +52,7 @@ module Lanalytics
             with_attribute :v,       :int,     PROTOCOL_VERSION
             with_attribute :tid,     :string,  Xikolo.config.google_analytics_tracking_id
             with_attribute :ds,      :string,  attrs[:data_source]
-            with_attribute :qt,      :int,     attrs[:timestamp].to_time.to_i
+            with_attribute :qt,      :int,     (attrs[:timestamp]&.to_time || Time.now).to_i
             with_attribute :t,       :string,  attrs[:hit_type]
 
             # User properties
@@ -83,7 +83,7 @@ module Lanalytics
               with_attribute :ec,    :string,  attrs[:event_category]
               with_attribute :ea,    :string,  attrs[:event_action]
               with_attribute :el,    :string,  attrs[:event_label]
-              with_attribute :ev,    :int,     attrs[:event_value]&.round
+              with_attribute :ev,    :int,     attrs[:event_value]
             end
 
             # Content groups
@@ -103,7 +103,7 @@ module Lanalytics
 
               cm_attr = :"custom_metric_#{n}".to_sym
               unless attrs[cm_attr].nil?
-                with_attribute :"cm#{n}", :int,     attrs[cm_attr].round
+                with_attribute :"cm#{n}", :int,     attrs[cm_attr]
               end
             end
           end
@@ -141,8 +141,8 @@ module Lanalytics
                               app_name: in_context[:runtime],
                               app_version: in_context[:build_version],
                               user_agent: in_context[:user_agent],
-                              screen_width: in_context[:screen_width].to_i,
-                              screen_height: in_context[:screen_height].to_i,
+                              screen_width: in_context[:screen_width]&.to_i,
+                              screen_height: in_context[:screen_height]&.to_i,
                               user_location_country_code: in_context[:user_location_country_code],
                               user_location_city: in_context[:user_location_city]
           if attrs[:custom_dimension_1].nil?
@@ -162,14 +162,14 @@ module Lanalytics
               hit_type: :event,
               event_category: :video,
               event_action: verb.to_sym,
-              custom_metric_4: in_context[:current_time].to_f
+              custom_metric_4: safe_round(in_context[:current_time]&.to_f)
           }
           case verb
             when :video_seek
-              attrs[:custom_metric_4] = in_context[:old_current_time].to_f
-              attrs[:event_value] = in_context[:new_current_time].to_f
+              attrs[:custom_metric_4] = safe_round(in_context[:old_current_time]&.to_f)
+              attrs[:event_value] = safe_round(in_context[:new_current_time]&.to_f)
             when :video_change_speed
-              attrs[:event_value] = in_context[:new_speed].to_f * 10
+              attrs[:event_value] = safe_round(in_context[:new_speed].to_f * 10) unless in_context[:new_speed].nil?
             when :video_fullscreen
               attrs[:event_value] = in_context[:new_current_fullscreen] == 'true' ? 1 : 0
           end
@@ -184,7 +184,7 @@ module Lanalytics
                                        hit_type: :event,
                                        event_category: :lti,
                                        event_action: verb.to_sym,
-                                       custom_metric_1: (in_context[:points].to_f / in_context[:max_points].to_f) * 100
+                                       custom_metric_1: percentage(in_context[:points]&.to_f, in_context[:max_points]&.to_f)
         end
 
         def transform_pageviews_exp_stmt_to_create(exp_stmt, load_commands)
@@ -214,7 +214,7 @@ module Lanalytics
                                     timestamp: processing_unit[:created_at],
                                     custom_dimension_1: processing_unit[:course_id],
                                     custom_dimension_2: processing_unit[:video_id],
-                                    custom_metric_4: processing_unit[:video_timestamp]
+                                    custom_metric_4: safe_round(processing_unit[:video_timestamp])
         end
 
 
@@ -263,7 +263,7 @@ module Lanalytics
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:updated_at],
                                     custom_dimension_1: processing_unit[:course_id],
-                                    custom_metric_1: processing_unit[:points][:percentage],
+                                    custom_metric_1: safe_round(processing_unit[:points][:percentage]),
                                     custom_metric_5: processing_unit[:certificates][:certificate] ? 1 : 0
         end
 
@@ -309,14 +309,23 @@ module Lanalytics
                                     custom_dimension_1: processing_unit[:course_id],
                                     custom_dimension_2: processing_unit[:item_id],
                                     custom_dimension_3: processing_unit[:quiz_type],
-                                    custom_metric_1: (processing_unit[:points] / processing_unit[:max_points]) * 100,
-                                    custom_metric_2: processing_unit[:attempt],
-                                    custom_metric_3: submission_time - processing_unit[:quiz_access_time].to_time
+                                    custom_metric_1: percentage(processing_unit[:points], processing_unit[:max_points]),
+                                    custom_metric_2: safe_round(processing_unit[:attempt]),
+                                    custom_metric_3: safe_round(submission_time - (processing_unit[:quiz_access_time]&.to_time || 0))
         end
 
         def sanitize_uuid(id)
           # Resources might have a dummy uuid, if not applicable in the context of the event
           id unless id == DUMMY_UUID
+        end
+
+        def safe_round(value)
+          return if !(value.is_a? Numeric) || (((value.is_a? Float) || (value.is_a? BigDecimal)) && value.nan?)
+          value.round
+        end
+
+        def percentage(value, total)
+          safe_round(value / total.to_f * 100) if (value.is_a? Numeric) && (total.is_a? Numeric) && total != 0
         end
 
         def get_document_path(verb, course_id = nil, resource_id = nil)
