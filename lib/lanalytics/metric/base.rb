@@ -29,7 +29,7 @@ module Lanalytics
 
         def query(**params)
           unless (required_params - params.keys).empty?
-            raise ArgumentError, "Required parameter missing. Required: [#{required_params.join(', ')}]. Received: [#{params.keys.join(', ')}]."
+            raise ArgumentError, "Required parameter missing for #{self.to_s}. Required: [#{required_params.join(', ')}]. Received: [#{params.keys.join(', ')}]."
           end
 
           allowed_params = params.slice(*(required_params + optional_params))
