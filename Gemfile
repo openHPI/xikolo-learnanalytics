@@ -9,7 +9,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'rails-api'
 gem 'xikolo-common', '~> 2.4'
 
-gem 'xikolo-config', '~> 1.66'
+gem 'xikolo-config', '~> 2.25'
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
