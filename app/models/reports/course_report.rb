@@ -27,15 +27,17 @@ module Reports
           clustering_metrics = fetch_clustering_metrics(course)
         end
 
-        Xikolo::Course::Enrollment.each_item(
-          course_id: course['id'], per_page: 50, deleted: true
-        ) do |e, enrollments|
-          user = account_service.rel(:user).get(id: e.user_id).value!
+        Xikolo.paginate(
+          course_service.rel(:enrollments).get(
+            course_id: course['id'], per_page: 50, deleted: true
+          )
+        ) do |e, enrollment_page|
+          user = account_service.rel(:user).get(id: e['user_id']).value!
 
           Restify::Promise.new(
             user.rel(:profile).get,
             course_service.rel(:enrollments).get(
-              course_id: course['id'], user_id: e.user_id, deleted: true, learning_evaluation: true
+              course_id: course['id'], user_id: e['user_id'], deleted: true, learning_evaluation: true
             ).then { |array| array.first },
             pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
             course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id'])
@@ -141,13 +143,11 @@ module Reports
 
             index += 1
             @job.progress_to(
-              (course_index * enrollments.total_count) + index,
-              of: courses.count * enrollments.total_count
+              (course_index * enrollment_page.response.headers['X_TOTAL_COUNT']) + index,
+              of: courses.count * enrollment_page.response.headers['X_TOTAL_COUNT']
             )
           end.value!
         end
-
-        Acfs.run
       end
     end
 

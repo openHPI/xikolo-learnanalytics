@@ -4,6 +4,12 @@ describe CourseStatistic do
   let(:course_id) {'00000001-3300-4444-9999-000000000008'}
 
   before do
+    Stub.service(
+      :course,
+      course_url: '/courses/{id}',
+      stats_url: '/stats',
+      course_statistic_url: '/courses/{course_id}/statistic'
+    )
     Stub.request(
       :course, :get, "/courses/#{course_id}"
     ).to_return Stub.json(
@@ -44,7 +50,7 @@ describe CourseStatistic do
 
     Stub.service(
       :helpdesk,
-      statistics_url: 'http://localhost:4700/statistic{?course_id}'
+      statistics_url: '/statistic{?course_id}'
     )
     Stub.request(
       :helpdesk, :get, '/statistic',
@@ -70,7 +76,7 @@ describe CourseStatistic do
 
   describe '#calculate!' do
     let(:stats) { described_class.create(course_id: course_id) }
-    subject { stats.calculate! }
+    subject { stats.calculate!.value! }
 
     it 'creates a new version', versioning: true do
       expect {

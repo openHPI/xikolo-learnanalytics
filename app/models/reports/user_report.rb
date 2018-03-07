@@ -35,38 +35,42 @@ module Reports
 
         headers.concat ProfileFields.all_titles(@deanonymized)
 
-        headers.concat courses.values.map(&:course_code)
+        headers.concat courses.values.map { |course| course['course_code'] }
       end
     end
 
     def each_user
       index = 0
-      Xikolo::Account::User.each_item(confirmed: true, per_page: 500) do |user, users|
+      Xikolo.paginate(
+        account_service.rel(:users).get(
+          confirmed: true, per_page: 500
+        )
+      ) do |user, page|
         Restify::Promise.new(
-          account_service.rel(:user).get(id: user.id).then { |user|
-            user.rel(:profile).get
+          account_service.rel(:user).get(id: user['id']).then { |u|
+            u.rel(:profile).get
           },
           course_service.rel(:enrollments).get(
-            user_id: user.id, learning_evaluation: true, deleted: true, per_page: 200
+            user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
           )
         ) do |profile, enrollments|
-          values = [@deanonymized ? user.id : Digest::SHA256.hexdigest(user.id)]
+          values = [@deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id'])]
 
           if @deanonymized
             values += [
-              escape_csv_string(user.first_name),
-              escape_csv_string(user.last_name),
-              user.email
+              escape_csv_string(user['first_name']),
+              escape_csv_string(user['last_name']),
+              user['email']
             ]
           end
 
           user_top_country = top_country(user)
 
           values += [
-            user.language,
-            user.affiliated,
-            user.created_at,
-            user.born_at,
+            user['language'],
+            user['affiliated'],
+            user['created_at'],
+            user['born_at'],
             user_top_country,
             suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name },
             first_course(enrollments)
@@ -80,15 +84,13 @@ module Reports
           yield values
 
           index += 1
-          @job.progress_to(index, of: users.total_count)
+          @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
         end.value!
       end
-
-      Acfs.run
     end
 
     def top_country(user)
-      Lanalytics::Metric::UserCourseCountry.query(user_id: user.id)
+      Lanalytics::Metric::UserCourseCountry.query(user_id: user['id'])
     rescue
       ''
     end
@@ -103,7 +105,7 @@ module Reports
 
       return '' unless first_enrollment && courses.key?(first_enrollment['course_id'])
 
-      courses[first_enrollment['course_id']].course_code
+      courses.dig(first_enrollment['course_id'], 'course_code')
     end
 
     def user_course_states(enrollments)
@@ -137,10 +139,13 @@ module Reports
 
     def load_all_courses
       courses = {}
-      Xikolo::Course::Course.each_item(affiliated: 'true', public: 'true') do |course|
-        courses[course.id] = course
+      Xikolo.paginate(
+        course_service.rel(:courses).get(
+          affiliated: true, public: true
+        )
+      ) do |course|
+        courses[course['id']] = course
       end
-      Acfs.run
       courses
     end
 
