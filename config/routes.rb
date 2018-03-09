@@ -4,14 +4,6 @@ Rails.application.routes.draw do
 
     resources :system_info, only: [:show]
 
-    # deprecated, will be removed soon
-
-    get 'query', to: 'query#show', as: :query
-
-    get 'query/job_results',  to: 'query#job_results', as: :job_results
-    get 'query/available_cluster_dimensions', as: :available_cluster_dimensions
-    post 'query/clustering_job', to: 'query#clustering_job', as: :clustering_job
-
     # metrics
 
     get 'metrics/:name', to: 'metrics#show', as: :metric
