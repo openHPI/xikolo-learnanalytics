@@ -2,12 +2,12 @@ require 'spec_helper'
 require 'file_collection'
 
 class ReportStub
-  def initialize(job)
-    @job = job
+  def initialize(report_job)
+    @report_job = report_job
   end
 
   def files
-    FileCollection.new(@job.tmp_directory).tap { |files|
+    FileCollection.new(@report_job.tmp_directory).tap { |files|
       FileUtils.cp(
         Rails.root.join('spec', 'support', 'files', 'course-report-example.csv'),
         files.make('course-report-example.csv')
@@ -17,17 +17,17 @@ class ReportStub
 end
 
 describe CreateReportJob do
-  subject { described_class.new.perform(job.id, report_params) }
+  subject { described_class.new.perform(report_job.id, report_params) }
 
-  let!(:job) { FactoryBot.create :course_report_job }
+  let!(:report_job) { FactoryBot.create :report_job, :course_report }
   let(:report_params) { {} }
 
-  let(:report_stub) { ReportStub.new(job) }
+  let(:report_stub) { ReportStub.new(report_job) }
 
   context 'successful report generation' do
     let(:new_file_id) { SecureRandom.uuid }
     before do
-      allow_any_instance_of(Job).to receive(:generate!).and_return(report_stub)
+      allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
 
       Stub.service(
         :file,
@@ -52,8 +52,8 @@ describe CreateReportJob do
       )
     }
 
-    it 'marks the job as finished' do
-      expect { subject }.to change { job.reload.status }.from('pending').to('done')
+    it 'marks the report job as finished' do
+      expect { subject }.to change { report_job.reload.status }.from('pending').to('done')
     end
 
     it 'registers the ZIP file with the file service' do
@@ -68,7 +68,7 @@ describe CreateReportJob do
 
     it 'saves an expiry date for the file' do
       subject
-      expect(job.reload.file_expire_date.future?).to be true
+      expect(report_job.reload.file_expire_date.future?).to be true
     end
   end
 
@@ -77,13 +77,13 @@ describe CreateReportJob do
       allow_any_instance_of(Reports::CourseReport).to receive(:generate!).and_raise('Report failed')
     end
 
-    it 'marks the job as failed' do
-      expect { subject }.to change { job.reload.status }.from('pending').to('failing')
+    it 'marks the report job as failed' do
+      expect { subject }.to change { report_job.reload.status }.from('pending').to('failing')
     end
 
     it 'stores the exception trace in the database' do
       subject
-      expect(job.reload.error_text).to include 'Report failed'
+      expect(report_job.reload.error_text).to include 'Report failed'
     end
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204143247) do
+ActiveRecord::Schema.define(version: 20180309134418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,21 +98,6 @@ ActiveRecord::Schema.define(version: 20171204143247) do
     t.datetime "updated_at"
   end
 
-  create_table "jobs", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
-    t.string   "task_type"
-    t.string   "task_scope"
-    t.string   "status"
-    t.string   "job_params"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.uuid     "user_id"
-    t.uuid     "file_id"
-    t.datetime "file_expire_date"
-    t.integer  "progress"
-    t.string   "annotation"
-    t.text     "error_text"
-  end
-
   create_table "profile_fields", force: :cascade do |t|
     t.string   "name",                       null: false
     t.boolean  "sensitive",  default: false, null: false
@@ -163,6 +148,21 @@ ActiveRecord::Schema.define(version: 20171204143247) do
     t.datetime "updated_at"
     t.boolean  "is_active"
     t.boolean  "is_global"
+  end
+
+  create_table "report_jobs", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+    t.string   "task_type"
+    t.string   "task_scope"
+    t.string   "status"
+    t.string   "job_params"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.uuid     "user_id"
+    t.uuid     "file_id"
+    t.datetime "file_expire_date"
+    t.integer  "progress"
+    t.string   "annotation"
+    t.text     "error_text"
   end
 
   create_table "research_cases", force: :cascade do |t|

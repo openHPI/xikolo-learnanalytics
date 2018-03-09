@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :job do
+  factory :report_job do
     user_id 'b2157ab3-454b-0000-bb31-976b99cb016f'
     task_type 'course_report'
     task_scope ''
@@ -8,7 +8,7 @@ FactoryBot.define do
     progress 5
     error_text nil
 
-    factory :course_report_job do
+    trait :course_report do
       task_type 'course_report'
       task_scope '5c677063-e198-4fb8-a121-aaca9482d372'
     end

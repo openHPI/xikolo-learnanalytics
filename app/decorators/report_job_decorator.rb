@@ -1,4 +1,4 @@
-class JobDecorator < ApplicationDecorator
+class ReportJobDecorator < ApplicationDecorator
   delegate_all
 
   def as_json (**opts)
@@ -13,7 +13,7 @@ class JobDecorator < ApplicationDecorator
       progress: model.progress,
       annotation: model.annotation
     }.tap { |fields|
-      fields[:error_text] = model.error_text if job.failing?
+      fields[:error_text] = model.error_text if report_job.failing?
     }.as_json(**opts)
   end
 end

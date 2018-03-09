@@ -26,7 +26,10 @@ Rails.application.routes.draw do
 
     # reports
 
-    resources :jobs, only: [:index, :show, :create, :update]
+    # deprecated
+    resources :jobs, controller: :report_jobs, only: [:index, :show, :create, :update]
+
+    resources :report_jobs, only: [:index, :show, :create, :update]
 
     # statistics
 

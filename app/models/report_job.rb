@@ -1,4 +1,4 @@
-class Job < ActiveRecord::Base
+class ReportJob < ActiveRecord::Base
   validates_presence_of :user_id
   validates_presence_of :task_type
   validates_presence_of :task_scope, if: :scoped?
@@ -18,7 +18,7 @@ class Job < ActiveRecord::Base
 
   class << self
     def start(job_id)
-      Job.update job_id, status: 'started'
+      ReportJob.update job_id, status: 'started'
     end
   end
 
