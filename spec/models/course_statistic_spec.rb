@@ -76,7 +76,7 @@ describe CourseStatistic do
 
   describe '#calculate!' do
     let(:stats) { described_class.create(course_id: course_id) }
-    subject { stats.calculate!.value! }
+    subject { stats.calculate! }
 
     it 'creates a new version', versioning: true do
       expect {
