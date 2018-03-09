@@ -75,7 +75,7 @@ class CourseStatistic < ActiveRecord::Base
         comments_on_questions_in_learning_rooms: pinboard_stats['posts_in_collab_spaces'].to_i - pinboard_stats['threads_in_collab_spaces'].to_i,
         comments_on_questions_last_day_in_learning_rooms: pinboard_stats['posts_last_day_in_collab_spaces'].to_i - pinboard_stats['threads_last_day_in_collab_spaces'].to_i
       )
-    end
+    end.value!
   end
 
   def threads
