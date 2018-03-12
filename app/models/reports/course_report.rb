@@ -143,8 +143,8 @@ module Reports
 
             index += 1
             @job.progress_to(
-              (course_index * enrollment_page.response.headers['X_TOTAL_COUNT']) + index,
-              of: courses.count * enrollment_page.response.headers['X_TOTAL_COUNT']
+              (course_index * enrollment_page.response.headers['X_TOTAL_COUNT'].to_i) + index,
+              of: courses.count * enrollment_page.response.headers['X_TOTAL_COUNT'].to_i
             )
           end.value!
         end
