@@ -37,7 +37,7 @@ module Lanalytics
           }
         end['hits']['hits']
 
-        break { points: nil } if completed_statements.empty?
+        next { points: nil } if completed_statements.empty?
 
         { points: completed_statements.first['_source']['in_context']['points_achieved'] }
       end

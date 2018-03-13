@@ -9,7 +9,7 @@ module Lanalytics
       exec do |params|
         # uuid is probably base62 encoded, also in elastic
         tracking_id = UUID4.try_convert(params[:tracking_id])
-        break {} unless tracking_id
+        next {} unless tracking_id
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {

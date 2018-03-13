@@ -48,9 +48,9 @@ module Lanalytics
         end
 
         if result['aggregations']['cities']['buckets'][0].present?
-          break result['aggregations']['cities']['buckets'][0]['key']
+          result['aggregations']['cities']['buckets'][0]['key']
         else
-          break ''
+          ''
         end
       end
 
