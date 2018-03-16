@@ -4,6 +4,7 @@ module Reports
       super
 
       @deanonymized = options['deanonymized']
+      @extended = options['extended_flag']
       @combine_enrollment_info = options['combined_enrollment_info_flag']
     end
 
@@ -29,13 +30,20 @@ module Reports
           'Created',
           'Birth Date',
           'Top Country (Code)',
-          'Top Country (Name)',
-          'First Enrollment'
+          'Top Country (Name)'
         ]
 
         headers.concat ProfileFields.all_titles(@deanonymized)
 
-        headers.concat courses.values.map { |course| course['course_code'] }
+        if @extended
+          headers.concat [
+            'Primary Email Suspended',
+            'Global Announcements Subscribed',
+            'First Enrollment'
+          ]
+          headers.concat courses.values.map { |course| course['course_code'] }
+        end
+
       end
     end
 
@@ -46,47 +54,58 @@ module Reports
           confirmed: true, per_page: 500
         )
       ) do |user, page|
-        Restify::Promise.new(
-          account_service.rel(:user).get(id: user['id']).then { |u|
-            u.rel(:profile).get
-          },
-          course_service.rel(:enrollments).get(
-            user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
-          )
-        ) do |profile, enrollments|
-          values = [@deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id'])]
+        profile = user.rel(:profile).get.value!
+        values = [@deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id'])]
 
-          if @deanonymized
-            values += [
-              escape_csv_string(user['first_name']),
-              escape_csv_string(user['last_name']),
-              user['email']
-            ]
-          end
+        if @deanonymized
+          values += [
+            escape_csv_string(user['first_name']),
+            escape_csv_string(user['last_name']),
+            user['email']
+          ]
+        end
 
-          user_top_country = top_country(user)
+        user_top_country = top_country(user)
+
+        values += [
+          user['language'],
+          user['affiliated'] || '',
+          user['created_at'],
+          user['born_at'],
+          user_top_country,
+          suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name }
+        ]
+
+        profile_fields = ProfileFields.new(profile, @deanonymized)
+        values += profile_fields.values
+
+        if @extended
+          features, preferences, enrollments = Restify::Promise.new(
+            user.rel(:features).get,
+            user.rel(:preferences).get.then { |preferences| preferences['properties'] },
+            course_service.rel(:enrollments).get(
+              user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
+            )
+          ).value!
 
           values += [
-            user['language'],
-            user['affiliated'],
-            user['created_at'],
-            user['born_at'],
-            user_top_country,
-            suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name },
-            first_course(enrollments)
+            features.key?('primary_email_suspended') || '',
+            global_announcements_subscribed(preferences) || '',
+            first_course(enrollments),
+            *user_course_states(enrollments)
           ]
+        end
 
-          profile_fields = ProfileFields.new(profile, @deanonymized)
-          values += profile_fields.values
+        yield values
 
-          values += user_course_states(enrollments)
-
-          yield values
-
-          index += 1
-          @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
-        end.value!
+        index += 1
+        @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
       end
+    end
+
+    def global_announcements_subscribed(preferences)
+      preferences.fetch('notification.email.global', 'true') == 'true' &&
+        preferences.fetch('notification.email.news.announcement', 'true') == 'true'
     end
 
     def top_country(user)
