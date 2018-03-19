@@ -28,12 +28,12 @@ module Reports
         @reports_count += clusters.size
       end
 
-      csv_file 'EnrollmentReport_global', headers, &each_timeframe
+      csv_file "EnrollmentReport_#{@job.task_scope}_global", headers, &each_timeframe
 
       if @include_all_classifiers
         clusters.each do |cluster|
           @report_index += 1
-          csv_file "EnrollmentReport_#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}", headers(cluster), &each_timeframe(cluster)
+          csv_file "EnrollmentReport_#{@job.task_scope}_#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}", headers(cluster), &each_timeframe(cluster)
         end
       end
     end
