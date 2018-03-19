@@ -20,7 +20,7 @@ module Reports
 
     def csv_file(target, headers, &block)
       CSV.open(
-        files.make("#{target}_#{DateTime.now.strftime('%Y-%m-%d')}.csv"),
+        files.make("#{target}_#{DateTime.now.strftime('%Y-%m-%d')}_#{@job.id}.csv"),
         'wb'
       ) do |csv|
         csv << headers
