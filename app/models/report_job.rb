@@ -12,6 +12,7 @@ class ReportJob < ActiveRecord::Base
     'pinboard_report' => Reports::PinboardReport,
     'course_events_report' => Reports::CourseEventsReport,
     'enrollment_report' => Reports::EnrollmentReport,
+    'course_content_report' => Reports::CourseContentReport,
   }
 
   default_scope {order('updated_at DESC')}
