@@ -4,7 +4,7 @@ class CreateReportJob < ActiveJob::Base
   queue_as :default
 
   def perform(job_id, options = {})
-    job = Job.start(job_id)
+    job = ReportJob.start(job_id)
 
     begin
       zip_password = options.delete(:zip_password)

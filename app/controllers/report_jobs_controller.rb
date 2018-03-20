@@ -1,4 +1,4 @@
-class JobsController < ApplicationController
+class ReportJobsController < ApplicationController
   responders Responders::ApiResponder,
              Responders::DecorateResponder,
              Responders::HttpCacheResponder,
@@ -10,7 +10,7 @@ class JobsController < ApplicationController
   rfc6570_params index: [:job_params, :task_type, :user_id, :show_expired]
 
   def index
-    jobs = Job.all
+    jobs = ReportJob.all
     jobs.where! id: params[:id] if params[:id]
     jobs.where! user_id: params[:user_id] if params[:user_id]
     jobs.where! task_type: params[:task_type] if params[:task_type]
@@ -26,18 +26,18 @@ class JobsController < ApplicationController
   end
 
   def show
-    respond_with Job.find params[:id]
+    respond_with ReportJob.find params[:id]
   end
 
   def create
-    job = Job.create job_params.merge({status: 'requested'})
+    job = ReportJob.create job_params.merge({status: 'requested'})
     job.schedule options if job.valid?
 
     respond_with job
   end
 
   def update
-    respond_with Job.find(params[:id]).update_attributes(job_params)
+    respond_with ReportJob.find(params[:id]).update_attributes(job_params)
   end
 
   private

@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe 'Pinboard Report' do
-  let!(:report) { FactoryBot.create :job, :pinboard_report }
+  let!(:report_job) { FactoryBot.create :report_job, :pinboard_report }
 
-  subject { report.generate!(report_params) }
+  subject { report_job.generate!(report_params) }
   let(:report_params) { {} }
 
   around do |example|
-    report.with_tmp_directory(&example)
+    report_job.with_tmp_directory(&example)
   end
 
   before do
@@ -24,15 +24,15 @@ describe 'Pinboard Report' do
     )
 
     Stub.request(
-      :course, :get, "/courses/#{report.task_scope}"
+      :course, :get, "/courses/#{report_job.task_scope}"
     ).to_return Stub.json(
-      id: report.task_scope,
+      id: report_job.task_scope,
       course_code: 'report_course'
     )
 
     Stub.request(
       :pinboard, :get, '/questions',
-      query: { course_id: report.task_scope, per_page: 50 }
+      query: { course_id: report_job.task_scope, per_page: 50 }
     ).to_return Stub.json([])
   end
 
