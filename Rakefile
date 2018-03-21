@@ -16,8 +16,7 @@ end
 
 namespace :ci do
   desc 'Setup service for CI'
-  task setup: %w(db:drop db:create:all db:setup) do
-  end
+  task setup: %w[db:drop:all db:create:all db:schema:load]
 
   desc 'Run specs for CI'
   task spec: %w(^default) do
