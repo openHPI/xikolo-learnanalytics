@@ -4,6 +4,7 @@ module Reports
       super
 
       @deanonymized = options['deanonymized']
+      @include_collab_spaces = options.fetch('include_collab_spaces', false)
     end
 
     def generate!
@@ -188,10 +189,12 @@ module Reports
         {course_id: course['id']}
       ]
 
-      Xikolo.paginate(
-        collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
-      ) do |collab_space|
-        filters << {learning_room_id: collab_space['id']}
+      if @include_collab_spaces
+        Xikolo.paginate(
+          collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
+        ) do |collab_space|
+          filters << {learning_room_id: collab_space['id']}
+        end
       end
 
       filters
@@ -199,6 +202,10 @@ module Reports
 
     def course
       @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
+    end
+
+    def collabspace_service
+      @collabspace_service ||= Xikolo.api(:learning_room).value!
     end
 
     def course_service
