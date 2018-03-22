@@ -46,16 +46,16 @@ module Reports
     def each_post
       i = 0
 
-      each_thread do |thread, page|
-        pinboard_type = thread['discussion_flag'] ? 'discussion' : 'question'
-        yield transform_question(pinboard_type, thread)
+      each_topic do |topic, page|
+        pinboard_type = topic['discussion_flag'] ? 'discussion' : 'question'
+        yield transform_topic(pinboard_type, topic)
 
-        each_comment(thread, 'Question') do |row|
+        each_comment(topic, 'Question') do |row|
           yield row
         end
 
-        unless thread['discussion_flag']
-          each_answer(thread) do |row|
+        unless topic['discussion_flag']
+          each_answer(topic) do |row|
             yield row
           end
         end
@@ -65,36 +65,36 @@ module Reports
       end
     end
 
-    def transform_question(pinboard_type, question)
+    def transform_topic(pinboard_type, topic)
       [
-        question['id'],
+        topic['id'],
         pinboard_type,
-        question['title'],
-        question['text'].squish,
-        question['video_timestamp'],
-        question['video_id'],
-        user_id(question['user_id']),
-        question['created_at'],
-        question['updated_at'],
-        question['accepted_answer_id'],
-        question['course_id'],
-        question['learning_room_id'],
-        question['id'],
+        topic['title'],
+        topic['text'].squish,
+        topic['video_timestamp'],
+        topic['video_id'],
+        user_id(topic['user_id']),
+        topic['created_at'],
+        topic['updated_at'],
+        topic['accepted_answer_id'],
+        topic['course_id'],
+        topic['learning_room_id'],
+        topic['id'],
         '',
         '',
         '',
         '',
-        question['sentimental_value'],
-        question['sticky'],
-        question['deleted'],
-        question['closed'],
-        implicit_section_id(question['implicit_tags']),
-        implicit_item_id(question['implicit_tags'])
+        topic['sentimental_value'],
+        topic['sticky'],
+        topic['deleted'],
+        topic['closed'],
+        implicit_section_id(topic['implicit_tags']),
+        implicit_item_id(topic['implicit_tags'])
       ]
     end
 
-    def each_thread(&block)
-      thread_filters.each do |filters|
+    def each_topic(&block)
+      topic_filters.each do |filters|
         Xikolo.paginate(
           pinboard_service.rel(:questions).get(**filters, per_page: 50),
           &block
@@ -102,9 +102,9 @@ module Reports
       end
     end
 
-    def each_answer(question)
+    def each_answer(topic)
       pinboard_service.rel(:answers).get(
-        question_id: question['id'], per_page: 250
+        question_id: topic['id'], per_page: 250
       ).value!.each do |answer|
         yield [
           answer['id'],
@@ -184,7 +184,7 @@ module Reports
       tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Item' }&.dig('name')
     end
 
-    def thread_filters
+    def topic_filters
       filters = [
         {course_id: course['id']}
       ]
