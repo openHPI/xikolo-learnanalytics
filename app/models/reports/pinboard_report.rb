@@ -77,7 +77,7 @@ module Reports
         question['text'].squish,
         question['video_timestamp'],
         question['video_id'],
-        @deanonymized ? question['user_id'] : Digest::SHA256.hexdigest(question['user_id']),
+        user_id(question['user_id']),
         question['created_at'],
         question['updated_at'],
         question['accepted_answer_id'],
@@ -108,7 +108,7 @@ module Reports
           answer['text'].squish,
           '',
           '',
-          @deanonymized ? answer['user_id'] : Digest::SHA256.hexdigest(answer['user_id']),
+          user_id(answer['user_id']),
           answer['created_at'],
           answer['updated_at'],
           '',
@@ -144,10 +144,10 @@ module Reports
           comment['id'],
           'comment',
           '',
-          comment['text'].squish ,
+          comment['text'].squish,
           '',
           '',
-          @deanonymized ? comment['user_id'] : Digest::SHA256.hexdigest(comment['user_id']),
+          user_id(comment['user_id']),
           comment['created_at'],
           comment['updated_at'],
           '',
@@ -160,6 +160,14 @@ module Reports
           '',
           comment['sentimental_value'],
         ]
+      end
+    end
+
+    def user_id(id)
+      if @deanonymized
+        id
+      else
+        Digest::SHA256.hexdigest(id)
       end
     end
 
