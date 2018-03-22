@@ -45,21 +45,16 @@ module Reports
     def each_post
       i = 0
 
-      Xikolo.paginate(
-        pinboard_service.rel(:questions).get(
-          course_id: course['id'],
-          per_page: 50
-        )
-      ) do |question, page|
-        pinboard_type = question['discussion_flag'] ? 'discussion' : 'question'
-        yield transform_question(pinboard_type, question)
+      each_thread do |thread, page|
+        pinboard_type = thread['discussion_flag'] ? 'discussion' : 'question'
+        yield transform_question(pinboard_type, thread)
 
-        each_comment(question, 'Question') do |row|
+        each_comment(thread, 'Question') do |row|
           yield row
         end
 
-        unless question['discussion_flag']
-          each_answer(question) do |row|
+        unless thread['discussion_flag']
+          each_answer(thread) do |row|
             yield row
           end
         end
@@ -95,6 +90,15 @@ module Reports
         implicit_section_id(question['implicit_tags']),
         implicit_item_id(question['implicit_tags'])
       ]
+    end
+
+    def each_thread(&block)
+      thread_filters.each do |filters|
+        Xikolo.paginate(
+          pinboard_service.rel(:questions).get(**filters, per_page: 50),
+          &block
+        )
+      end
     end
 
     def each_answer(question)
@@ -177,6 +181,20 @@ module Reports
 
     def implicit_item_id(tags)
       tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Item' }&.dig('name')
+    end
+
+    def thread_filters
+      filters = [
+        {course_id: course['id']}
+      ]
+
+      Xikolo.paginate(
+        collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
+      ) do |collab_space|
+        filters << {learning_room_id: collab_space['id']}
+      end
+
+      filters
     end
 
     def course
