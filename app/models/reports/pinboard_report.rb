@@ -18,7 +18,6 @@ module Reports
     def headers
       %w[
         id
-        type
         title
         text
         video_timestamp
@@ -29,7 +28,7 @@ module Reports
         accepted_answer_id
         course_id
         learning_room_id
-        question_id
+        topic_id
         file_id
         commentable_id
         commentable_type
@@ -47,8 +46,7 @@ module Reports
       i = 0
 
       each_topic do |topic, page|
-        pinboard_type = topic['discussion_flag'] ? 'discussion' : 'question'
-        yield transform_topic(pinboard_type, topic)
+        yield transform_topic(topic)
 
         each_comment(topic, 'Question') do |row|
           yield row
@@ -65,10 +63,9 @@ module Reports
       end
     end
 
-    def transform_topic(pinboard_type, topic)
+    def transform_topic(topic)
       [
         topic['id'],
-        pinboard_type,
         topic['title'],
         topic['text'].squish,
         topic['video_timestamp'],
@@ -108,7 +105,6 @@ module Reports
       ).value!.each do |answer|
         yield [
           answer['id'],
-          'answer',
           '',
           answer['text'].squish,
           '',
@@ -147,7 +143,6 @@ module Reports
 
         yield [
           comment['id'],
-          'comment',
           '',
           comment['text'].squish,
           '',
