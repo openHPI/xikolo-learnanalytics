@@ -21,9 +21,17 @@ module Reports
       @reports_count = 1
       @report_index = 0
 
-      # we have to fetch these already for progress calculation
+      # we have to fetch these already for cluster grouping and progress calculation
       if @include_all_classifiers
-        @classifiers = course_service.rel(:classifiers).get.value!
+        paginator = Xikolo.paginate(
+          course_service.rel(:classifiers).get
+        )
+
+        @classifiers = []
+        paginator.each_page do |page|
+          @classifiers.concat page
+        end
+
         clusters = @classifiers.map { |c| c['cluster'] }.uniq
         @reports_count += clusters.size
       end
