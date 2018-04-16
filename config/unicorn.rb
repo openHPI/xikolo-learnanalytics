@@ -28,5 +28,5 @@ after_fork do |_server, _worker|
   defined?(ActiveRecord::Base) &&
     ActiveRecord::Base.establish_connection
 
-  defined?(Msgr) && Msgr.config[:autostart] && Msgr.start
+  defined?(Msgr) && Msgr.start
 end
