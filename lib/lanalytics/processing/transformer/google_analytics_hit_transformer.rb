@@ -56,7 +56,8 @@ module Lanalytics
             with_attribute :t,       :string,  attrs[:hit_type]
 
             # User properties
-            with_attribute :cid,     :string,  (Digest::SHA256.hexdigest attrs[:user_id])
+            with_attribute :uid,     :string,  (Digest::SHA256.hexdigest attrs[:user_id])
+            with_attribute :cid,     :string,  (Digest::SHA256.hexdigest attrs[:client_id]) unless attrs[:client_id].nil?
             with_attribute :ua,      :string,  attrs[:user_agent] || '' # Prevents GA from extracting user agent from HTTP request headers
             with_attribute :uip,     :string,  attrs[:user_ip] || '' # Prevents GA from extracting IP from HTTP request
             unless geo_id.nil?
@@ -103,7 +104,7 @@ module Lanalytics
 
               cm_attr = :"custom_metric_#{n}".to_sym
               unless attrs[cm_attr].nil?
-                with_attribute :"cm#{n}", :int,     attrs[cm_attr]
+                with_attribute :"cm#{n}", :float,   attrs[cm_attr]
               end
             end
           end
@@ -134,7 +135,8 @@ module Lanalytics
 
         def transform_exp_stmt_to_create(exp_stmt, load_commands, attrs)
           in_context = hash_keys_to_underscore(exp_stmt.in_context)
-          attrs = attrs.merge user_id: exp_stmt.user.uuid,
+          attrs = attrs.merge client_id: in_context[:client_id],
+                              user_id: exp_stmt.user.uuid,
                               timestamp: exp_stmt.timestamp,
                               user_ip: in_context[:user_ip],
                               data_source: (APP_RUNTIMES.include? in_context[:runtime]) ? :app : :web,
@@ -148,8 +150,12 @@ module Lanalytics
           if attrs[:custom_dimension_1].nil?
             attrs[:custom_dimension_1] = in_context[:course_id]
           end
-          unless exp_stmt.resource.type.downcase == :user
+          if exp_stmt.resource.type.downcase == :item
             attrs[:custom_dimension_2] = sanitize_uuid exp_stmt.resource.uuid
+            attrs[:custom_dimension_4] = in_context[:section_id]
+          end
+          if exp_stmt.resource.type.downcase == :question
+            attrs[:custom_dimension_5] = sanitize_uuid exp_stmt.resource.uuid
           end
 
           transform_attrs_to_create(load_commands, attrs)
@@ -162,16 +168,20 @@ module Lanalytics
               hit_type: :event,
               event_category: :video,
               event_action: verb.to_sym,
-              custom_metric_4: safe_round(in_context[:current_time]&.to_f)
+              custom_metric_4: in_context[:current_time]&.to_f
           }
           case verb
             when :video_seek
-              attrs[:custom_metric_4] = safe_round(in_context[:old_current_time]&.to_f)
-              attrs[:event_value] = safe_round(in_context[:new_current_time]&.to_f)
+              attrs[:custom_metric_4] = in_context[:old_current_time]&.to_f
+              if in_context[:new_current_time].present? && in_context[:old_current_time].present?
+                attrs[:event_label] = in_context[:new_current_time].to_f > in_context[:old_current_time].to_f ? :forward : :backward
+              end
+            when :video_change_quality
+              attrs[:event_label] = in_context[:new_quality]
             when :video_change_speed
-              attrs[:event_value] = safe_round(in_context[:new_speed].to_f * 10) unless in_context[:new_speed].nil?
+              attrs[:event_label] = in_context[:new_speed]
             when :video_fullscreen
-              attrs[:event_value] = in_context[:new_current_fullscreen] == 'true' ? 1 : 0
+              attrs[:event_label] = in_context[:new_current_fullscreen] == 'true' ? :enabled : :disabled
           end
 
           transform_exp_stmt_to_create exp_stmt, load_commands, attrs
@@ -196,9 +206,6 @@ module Lanalytics
               document_path: get_document_path(verb, course_id, sanitize_uuid(exp_stmt.resource.uuid)),
               custom_dimension_1: course_id
           }
-          if exp_stmt.resource.type.downcase == :item
-            attrs[:content_group_2] = in_context[:section_id]
-          end
 
           transform_exp_stmt_to_create exp_stmt, load_commands, attrs
 
@@ -214,7 +221,8 @@ module Lanalytics
                                     timestamp: processing_unit[:created_at],
                                     custom_dimension_1: processing_unit[:course_id],
                                     custom_dimension_2: processing_unit[:video_id],
-                                    custom_metric_4: safe_round(processing_unit[:video_timestamp])
+                                    custom_dimension_5: processing_unit[:id],
+                                    custom_metric_4: processing_unit[:video_timestamp]
         end
 
 
@@ -227,7 +235,7 @@ module Lanalytics
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
                                     custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_2: processing_unit[:question_id]
+                                    custom_dimension_5: processing_unit[:question_id]
         end
 
         def transform_comment_punit_to_create(processing_unit, load_commands)
@@ -239,7 +247,7 @@ module Lanalytics
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
                                     custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_2: processing_unit[:id]
+                                    custom_dimension_5: processing_unit[:commentable_id]
         end
 
         def transform_answer_accepted_punit_to_create(processing_unit, load_commands)
@@ -251,7 +259,7 @@ module Lanalytics
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
                                     custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_2: processing_unit[:question_id]
+                                    custom_dimension_5: processing_unit[:question_id]
         end
 
         def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
@@ -260,11 +268,11 @@ module Lanalytics
                                     data_source: :service,
                                     event_category: :course,
                                     event_action: :completed_course,
+                                    event_label: processing_unit[:certificates][:certificate] ? :with_certificate : :without_certificate,
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:updated_at],
                                     custom_dimension_1: processing_unit[:course_id],
-                                    custom_metric_1: safe_round(processing_unit[:points][:percentage]),
-                                    custom_metric_5: processing_unit[:certificates][:certificate] ? 1 : 0
+                                    custom_metric_1: processing_unit[:points][:percentage]
         end
 
         def transform_enrollment_punit_to_create(processing_unit, load_commands)
@@ -310,8 +318,8 @@ module Lanalytics
                                     custom_dimension_2: processing_unit[:item_id],
                                     custom_dimension_3: processing_unit[:quiz_type],
                                     custom_metric_1: percentage(processing_unit[:points], processing_unit[:max_points]),
-                                    custom_metric_2: safe_round(processing_unit[:attempt]),
-                                    custom_metric_3: safe_round(submission_time - (processing_unit[:quiz_access_time]&.to_time || 0))
+                                    custom_metric_2: processing_unit[:attempt],
+                                    custom_metric_3: submission_time - (processing_unit[:quiz_access_time]&.to_time || 0)
         end
 
         def sanitize_uuid(id)
@@ -319,13 +327,8 @@ module Lanalytics
           id unless id == DUMMY_UUID
         end
 
-        def safe_round(value)
-          return if !(value.is_a? Numeric) || (((value.is_a? Float) || (value.is_a? BigDecimal)) && value.nan?)
-          value.round
-        end
-
         def percentage(value, total)
-          safe_round(value / total.to_f * 100) if (value.is_a? Numeric) && (total.is_a? Numeric) && total != 0
+          value / total.to_f * 100 if (value.is_a? Numeric) && (total.is_a? Numeric) && total != 0
         end
 
         def get_document_path(verb, course_id = nil, resource_id = nil)

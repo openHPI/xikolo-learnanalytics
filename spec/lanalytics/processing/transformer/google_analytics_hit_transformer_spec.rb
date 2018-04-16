@@ -36,13 +36,13 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     expect(entity[:ea].value).to eq :video_play
     expect(entity[:qt].value).to eq 1414418348
     expect(entity[:sr].value).to eq '1920x1080'
-    expect(entity[:cid].value).to eq (Digest::SHA256.hexdigest '00000001-3100-4444-9999-000000000002')
+    expect(entity[:uid].value).to eq (Digest::SHA256.hexdigest '00000001-3100-4444-9999-000000000002')
     expect(entity[:ua].value).to eq 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
     expect(entity[:uip].value).to eq '141.89.225.126'
     expect(entity[:geoid].value).to eq '42'
     expect(entity[:cd1].value).to eq '00000002-3100-4444-9999-000000000002'
     expect(entity[:cd2].value).to eq '00000003-3100-4444-9999-000000000002'
-    expect(entity[:cm4].value).to eq 68
+    expect(entity[:cm4].value).to eq 67.698807
   end
 
   let(:load_commands) { [] }
@@ -153,7 +153,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
   describe 'exp_event' do
     let(:type) { 'exp_event' }
 
-    describe 'video_seek' do
+    describe 'video_seek (backward)' do
       let(:processing_unit_data) do
         {
             user: {
@@ -169,6 +169,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid,
                 new_current_time: '5',
                 old_current_time: '20'
@@ -180,12 +181,51 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:t].value).to eq :event
         expect(subject[:ec].value).to eq :video
         expect(subject[:ea].value).to eq :video_seek
-        expect(subject[:ev].value).to eq processing_unit[:in_context][:new_current_time].to_f.round
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:el].value).to eq :backward
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
         expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
-        expect(subject[:cm4].value).to eq processing_unit[:in_context][:old_current_time].to_f.round
+        expect(subject[:cm4].value).to eq processing_unit[:in_context][:old_current_time].to_f
+      end
+    end
+
+    describe 'video_seek (forward)' do
+      let(:processing_unit_data) do
+        {
+            user: {
+                uuid: SecureRandom.uuid
+            },
+            verb: {
+                type: 'VIDEO_SEEK'
+            },
+            resource: {
+                uuid: SecureRandom.uuid,
+                type: 'item'
+            },
+            timestamp: DateTime.now,
+            with_result: {},
+            in_context: {
+                client_id: SecureRandom.uuid,
+                course_id: SecureRandom.uuid,
+                new_current_time: '20',
+                old_current_time: '5'
+            }
+        }
+      end
+
+      it 'is transformed correctly' do
+        expect(subject[:t].value).to eq :event
+        expect(subject[:ec].value).to eq :video
+        expect(subject[:ea].value).to eq :video_seek
+        expect(subject[:el].value).to eq :forward
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
+        expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
+        expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
+        expect(subject[:cm4].value).to eq processing_unit[:in_context][:old_current_time].to_f
       end
     end
 
@@ -205,6 +245,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid,
                 current_time: '5',
                 new_speed: '1.7'
@@ -216,12 +257,13 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:t].value).to eq :event
         expect(subject[:ec].value).to eq :video
         expect(subject[:ea].value).to eq :video_change_speed
-        expect(subject[:ev].value).to eq (processing_unit[:in_context][:new_speed].to_f * 10).round
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:el].value).to eq processing_unit[:in_context][:new_speed]
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
         expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
-        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f.round
+        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f
       end
     end
 
@@ -241,6 +283,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid,
                 current_time: '5',
                 new_quality: 'hd'
@@ -252,15 +295,17 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:t].value).to eq :event
         expect(subject[:ec].value).to eq :video
         expect(subject[:ea].value).to eq :video_change_quality
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:el].value).to eq processing_unit[:in_context][:new_quality]
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
         expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
-        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f.round
+        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f
       end
     end
 
-    describe 'video_fullscreen' do
+    describe 'video_fullscreen (enable)' do
       let(:processing_unit_data) do
         {
             user: {
@@ -276,6 +321,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid,
                 current_time: '5',
                 new_current_fullscreen: 'true'
@@ -287,12 +333,51 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:t].value).to eq :event
         expect(subject[:ec].value).to eq :video
         expect(subject[:ea].value).to eq :video_fullscreen
-        expect(subject[:ev].value).to eq 1
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:el].value).to eq :enabled
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
         expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
-        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f.round
+        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f
+      end
+    end
+
+    describe 'video_fullscreen (disable)' do
+      let(:processing_unit_data) do
+        {
+            user: {
+                uuid: SecureRandom.uuid
+            },
+            verb: {
+                type: 'VIDEO_FULLSCREEN'
+            },
+            resource: {
+                uuid: SecureRandom.uuid,
+                type: 'item'
+            },
+            timestamp: DateTime.now,
+            with_result: {},
+            in_context: {
+                client_id: SecureRandom.uuid,
+                course_id: SecureRandom.uuid,
+                current_time: '5',
+                new_current_fullscreen: 'false'
+            }
+        }
+      end
+
+      it 'is transformed correctly' do
+        expect(subject[:t].value).to eq :event
+        expect(subject[:ec].value).to eq :video
+        expect(subject[:ea].value).to eq :video_fullscreen
+        expect(subject[:el].value).to eq :disabled
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
+        expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
+        expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
+        expect(subject[:cm4].value).to eq processing_unit[:in_context][:current_time].to_f
       end
     end
 
@@ -312,6 +397,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid,
                 points: '5',
                 max_points: '10'
@@ -323,11 +409,12 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:t].value).to eq :event
         expect(subject[:ec].value).to eq :lti
         expect(subject[:ea].value).to eq :submitted_lti
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
         expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
-        expect(subject[:cm1].value).to eq ((processing_unit[:in_context][:points].to_f / processing_unit[:in_context][:max_points].to_f) * 100).round
+        expect(subject[:cm1].value).to eq (processing_unit[:in_context][:points].to_f / processing_unit[:in_context][:max_points].to_f) * 100
       end
     end
 
@@ -346,13 +433,16 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             },
             timestamp: DateTime.now,
             with_result: {},
-            in_context: {}
+            in_context: {
+                client_id: SecureRandom.uuid,
+            }
         }
       end
 
       it 'is transformed correctly' do
         expect(subject[:t].value).to eq :pageview
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:dp].value).to eq "/courses/#{processing_unit[:resource][:uuid]}/announcements"
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:resource][:uuid]
@@ -374,13 +464,16 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             },
             timestamp: DateTime.now,
             with_result: {},
-            in_context: {}
+            in_context: {
+                client_id: SecureRandom.uuid
+            }
         }
       end
 
       it 'is transformed correctly' do
         expect(subject[:t].value).to eq :pageview
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:dp].value).to eq '/news'
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd2]&.value).to be_nil
@@ -403,6 +496,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid,
                 section_id: SecureRandom.uuid
             }
@@ -411,12 +505,13 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
 
       it 'is transformed correctly' do
         expect(subject[:t].value).to eq :pageview
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:dp].value).to eq "/courses/#{processing_unit[:in_context][:course_id]}/item/#{processing_unit[:resource][:uuid]}"
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
         expect(subject[:cd2].value).to eq processing_unit[:resource][:uuid]
-        expect(subject[:cg2].value).to eq processing_unit[:in_context][:section_id]
+        expect(subject[:cd4].value).to eq processing_unit[:in_context][:section_id]
       end
     end
 
@@ -436,6 +531,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
             timestamp: DateTime.now,
             with_result: {},
             in_context: {
+                client_id: SecureRandom.uuid,
                 course_id: SecureRandom.uuid
             }
         }
@@ -445,7 +541,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         expect(subject[:t].value).to eq :event
         expect(subject[:ec].value).to eq :navigation
         expect(subject[:ea].value).to eq :navigated_next_item
-        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
+        expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:in_context][:client_id])
+        expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user][:uuid])
         expect(subject[:qt].value).to eq processing_unit[:timestamp].to_i
         expect(subject[:cd1].value).to eq processing_unit[:in_context][:course_id]
       end
@@ -471,9 +568,10 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :asked_question
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
+      expect(subject[:cd5].value).to eq processing_unit[:id]
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
@@ -486,6 +584,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         id: '00000002-3500-4444-9999-000000000001',
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
+        question_id: SecureRandom.uuid,
         technical: false,
         created_at: Time.now
       }
@@ -496,9 +595,10 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :answered_question
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
+      expect(subject[:cd5].value).to eq processing_unit[:question_id]
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
@@ -521,10 +621,10 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :answer_accepted
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
-      expect(subject[:cd2].value).to eq processing_unit[:question_id]
+      expect(subject[:cd5].value).to eq processing_unit[:question_id]
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
@@ -538,6 +638,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
         text: 'Text',
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
+        commentable_id: SecureRandom.uuid,
         technical: false,
         created_at: Time.now
       }
@@ -548,10 +649,10 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :pinboard
       expect(subject[:ea].value).to eq :commented
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:created_at].to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
-      expect(subject[:cd2].value).to eq processing_unit[:id]
+      expect(subject[:cd5].value).to eq processing_unit[:commentable_id]
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
@@ -574,14 +675,51 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :course
       expect(subject[:ea].value).to eq :enrolled
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
   end
 
-  describe 'enrollment_completed' do
+  describe 'enrollment_completed (with certificate)' do
+    let(:type) { 'enrollment_completed' }
+    let(:processing_unit_data) do
+      {
+          id: '00000003-3500-4444-9999-000000000001',
+          user_id: SecureRandom.uuid,
+          course_id: SecureRandom.uuid,
+          updated_at: Time.now,
+          points: {
+              achieved: 156.2,
+              maximal: 180.0,
+              percentage: 86.8
+          },
+          certificates: {
+              confirmation_of_participation: true,
+              record_of_achievement: false,
+              certificate: true
+          },
+          completed: true,
+          quantile: 0.88
+      }
+    end
+
+    it 'is transformed correctly' do
+      expect(subject[:ds].value).to eq :service
+      expect(subject[:t].value).to eq :event
+      expect(subject[:ec].value).to eq :course
+      expect(subject[:ea].value).to eq :completed_course
+      expect(subject[:el].value).to eq :with_certificate
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:qt].value).to eq processing_unit[:updated_at].to_i
+      expect(subject[:cm1].value).to eq processing_unit[:points][:percentage]
+      expect(subject[:ua].value).to eq ''
+      expect(subject[:uip].value).to eq ''
+    end
+  end
+
+  describe 'enrollment_completed (without certificate)' do
     let(:type) { 'enrollment_completed' }
     let(:processing_unit_data) do
       {
@@ -609,10 +747,10 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :course
       expect(subject[:ea].value).to eq :completed_course
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:el].value).to eq :without_certificate
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:updated_at].to_i
-      expect(subject[:cm1].value).to eq processing_unit[:points][:percentage].round
-      expect(subject[:cm5].value).to eq 0
+      expect(subject[:cm1].value).to eq processing_unit[:points][:percentage]
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
@@ -633,7 +771,7 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :user
       expect(subject[:ea].value).to eq :confirmed_user
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:id])
       expect(subject[:qt].value).to eq processing_unit[:updated_at].to_i
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
@@ -663,14 +801,14 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       expect(subject[:t].value).to eq :event
       expect(subject[:ec].value).to eq :quiz
       expect(subject[:ea].value).to eq :submitted_quiz
-      expect(subject[:cid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
+      expect(subject[:uid].value).to eq (Digest::SHA256.hexdigest processing_unit[:user_id])
       expect(subject[:qt].value).to eq processing_unit[:quiz_submission_time].to_time.to_i
       expect(subject[:cd1].value).to eq processing_unit[:course_id]
       expect(subject[:cd2].value).to eq processing_unit[:item_id]
       expect(subject[:cd3].value).to eq processing_unit[:quiz_type]
-      expect(subject[:cm1].value).to eq ((processing_unit[:points] / processing_unit[:max_points]) * 100).round
+      expect(subject[:cm1].value).to eq (processing_unit[:points] / processing_unit[:max_points]) * 100
       expect(subject[:cm2].value).to eq processing_unit[:attempt]
-      expect(subject[:cm3].value).to eq (processing_unit[:quiz_submission_time].to_time - processing_unit[:quiz_access_time].to_time).round
+      expect(subject[:cm3].value).to eq processing_unit[:quiz_submission_time].to_time - processing_unit[:quiz_access_time].to_time
       expect(subject[:ua].value).to eq ''
       expect(subject[:uip].value).to eq ''
     end
@@ -700,28 +838,6 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     it 'returns nil if value not numeric' do
       percentage = @transformer.percentage '2', 5
       expect(percentage).to be_nil
-    end
-  end
-
-  describe 'safe_round helper' do
-    it 'returns correct result for valid arguments' do
-      value = @transformer.safe_round 42.42
-      expect(value).to eq 42
-    end
-
-    it 'returns nil if value is not numeric' do
-      value = @transformer.safe_round '42.42'
-      expect(value).to be_nil
-    end
-
-    it 'returns nil if value is Float::NAN' do
-      value = @transformer.safe_round Float::NAN
-      expect(value).to be_nil
-    end
-
-    it 'returns nil if value is BigDecimal::NAN' do
-      value = @transformer.safe_round BigDecimal::NAN
-      expect(value).to be_nil
     end
   end
 end
