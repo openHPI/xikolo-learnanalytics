@@ -23,7 +23,8 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   libcurl3,
-  ruby2.3
+  ruby2.3,
+  zip
 Description: Xikolo Learn Analytics Service
  .
  TODO
