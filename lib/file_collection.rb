@@ -20,9 +20,12 @@ class FileCollection
 
   def zip(password)
     path = "#{File.basename(@files.first[0], '.*')}.zip"
-    password = password.present? ? "--password #{password}" : ''
 
-    system "zip #{password} #{path} #{names.join(' ')}", chdir: @base_path
+    if password.present?
+      system 'zip', '--password', password, path, *names, chdir: @base_path
+    else
+      system 'zip', path, *names, chdir: @base_path
+    end
 
     raise "Zipping files failed: #{$?}" if $?.exitstatus > 0
 
