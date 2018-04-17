@@ -15,9 +15,15 @@ module Lanalytics
         result = datasource.exec do |client|
           query_must = all_filters(user_id, course_id, nil)
 
-          query_must << [
-            { match: { 'verb' => 'share_button_click' } }
-          ]
+          query_must << {
+            bool: {
+              minimum_should_match: 1,
+              should: [
+                { match: { 'verb' => 'share_button_click' } },
+                { match: { 'verb' => 'share_course' } }
+              ]
+            }
+          }
 
           query = {
             size: 0,
