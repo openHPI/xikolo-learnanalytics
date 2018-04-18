@@ -30,7 +30,8 @@ module Reports
           'Created',
           'Birth Date',
           'Top Country (Code)',
-          'Top Country (Name)'
+          'Top Country (Name)',
+          'Top City'
         ]
 
         headers.concat ProfileFields.all_titles(@deanonymized)
@@ -73,7 +74,8 @@ module Reports
           user['created_at'],
           user['born_at'],
           user_top_country,
-          suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name }
+          suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name },
+          top_city(user)
         ]
 
         profile_fields = ProfileFields.new(profile, @deanonymized)
@@ -110,6 +112,12 @@ module Reports
 
     def top_country(user)
       Lanalytics::Metric::UserCourseCountry.query(user_id: user['id'])
+    rescue
+      ''
+    end
+
+    def top_city(user)
+      Lanalytics::Metric::UserCourseCity.query(user_id: user['id'])
     rescue
       ''
     end
