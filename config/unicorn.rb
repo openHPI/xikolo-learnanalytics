@@ -9,10 +9,8 @@ preload_app true
 check_client_connection false
 
 before_fork do |server, _worker|
-  defined?(ActiveRecord::Base) &&
-    ActiveRecord::Base.connection.disconnect!
-
-  defined?(Msgr) && Msgr.client.stop
+  ActiveRecord::Base.connection.disconnect!
+  Msgr.client.stop
 
   old_pid = "#{server.pid}.oldbin"
   if File.exist?(old_pid) && server.pid != old_pid
@@ -25,8 +23,6 @@ before_fork do |server, _worker|
 end
 
 after_fork do |_server, _worker|
-  defined?(ActiveRecord::Base) &&
-    ActiveRecord::Base.establish_connection
-
-  defined?(Msgr) && Msgr.start
+  ActiveRecord::Base.establish_connection
+  Msgr.start unless ENV['NOMSGR']
 end
