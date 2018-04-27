@@ -9,7 +9,7 @@ Xikolo::Lanalytics.rake = true
 
 begin
   require 'geminabox/rake'
-  Geminabox::Rake.install host: 'https://gemuser:K6c1mcRWtrTQepS6aI8HRXc7DPoRYXbG@dev.xikolo.de/gems/',
+  Geminabox::Rake.install host: 'https://gemuser:QiKLoxr2rfPDisUmEYA9gnJGaLiWTuvW@dev.xikolo.de/gems/',
                           dir: '.', namespace: 'lanalytics-model'
 rescue LoadError
 end
