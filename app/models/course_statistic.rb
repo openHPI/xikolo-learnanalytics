@@ -34,18 +34,42 @@ class CourseStatistic < ActiveRecord::Base
       end
 
       update(
-        course_name: course['title'],
-        course_code: course['course_code'],
         course_id: course['id'],
+        course_code: course['course_code'],
+        course_name: course['title'],
         course_status: course['status'],
+        start_date: course['start_date']&.to_datetime,
+        end_date: course['end_date']&.to_datetime,
+        hidden: course['hidden'],
+        days_since_coursestart: days_since_course_start,
+        updated_at: DateTime.now,
+
+        # enrollments
         total_enrollments: course_stats['enrollments'],
-        no_shows: extended_course_stats['no_shows'],
         current_enrollments: course_stats['current_enrollments'],
+        enrollments_per_day: enrollments_per_day,
+        new_users: extended_course_stats['new_users'],
+
         enrollments_last_day: course_stats['last_day_enrollments'],
         enrollments_at_course_start: extended_course_stats['student_enrollments_at_start'],
-        enrollments_at_course_middle_netto: extended_course_stats['student_enrollments_at_middle'],
-        enrollments_at_course_middle: extended_course_stats['student_enrollments_at_middle_netto'],
+        enrollments_at_course_start_netto: extended_course_stats['student_enrollments_at_start_netto'],
+        enrollments_at_course_middle: extended_course_stats['student_enrollments_at_middle'],
+        enrollments_at_course_middle_netto: extended_course_stats['student_enrollments_at_middle_netto'],
         enrollments_at_course_end: extended_course_stats['student_enrollments_at_end'],
+        enrollments_at_course_end_netto: extended_course_stats['student_enrollments_at_end_netto'],
+
+        shows: extended_course_stats['shows'],
+        shows_at_middle: extended_course_stats['shows_at_middle'],
+        shows_at_end: extended_course_stats['shows_at_end'],
+        no_shows: extended_course_stats['no_shows'],
+        no_shows_at_middle: extended_course_stats['no_shows_at_middle'],
+        no_shows_at_end: extended_course_stats['no_shows_at_end'],
+
+        # success
+        certificates: extended_course_stats['certificates_count'],
+        completion_rate: completion_rate,
+
+        # pinboard
         questions: pinboard_stats['threads'].to_i,
         questions_last_day: pinboard_stats['threads_last_day'].to_i,
         answers: 0,
@@ -54,18 +78,6 @@ class CourseStatistic < ActiveRecord::Base
         comments_on_answers_last_day: 0,
         comments_on_questions: pinboard_stats['posts'].to_i - pinboard_stats['threads'].to_i,
         comments_on_questions_last_day: pinboard_stats['posts_last_day'].to_i - pinboard_stats['threads_last_day'].to_i,
-        certificates: extended_course_stats['certificates_count'],
-        helpdesk_tickets: ticket_stats['ticket_count'],
-        helpdesk_tickets_last_day: ticket_stats['ticket_count_last_day'],
-        start_date: course['start_date']&.to_datetime,
-        end_date: course['end_date']&.to_datetime,
-        new_users: extended_course_stats['new_users'],
-        updated_at: DateTime.now,
-        completion_rate: completion_rate,
-        consumption_rate: 0, # Consumption rate needs to be calculated properly
-        enrollments_per_day: enrollments_per_day,
-        hidden: course['hidden'],
-        days_since_coursestart: days_since_course_start,
         questions_in_learning_rooms: pinboard_stats['threads_in_collab_spaces'].to_i,
         questions_last_day_in_learning_rooms: pinboard_stats['threads_last_day_in_collab_spaces'].to_i,
         answers_in_learning_rooms: 0,
@@ -73,7 +85,11 @@ class CourseStatistic < ActiveRecord::Base
         comments_on_answers_in_learning_rooms: 0,
         comments_on_answers_last_day_in_learning_rooms: 0,
         comments_on_questions_in_learning_rooms: pinboard_stats['posts_in_collab_spaces'].to_i - pinboard_stats['threads_in_collab_spaces'].to_i,
-        comments_on_questions_last_day_in_learning_rooms: pinboard_stats['posts_last_day_in_collab_spaces'].to_i - pinboard_stats['threads_last_day_in_collab_spaces'].to_i
+        comments_on_questions_last_day_in_learning_rooms: pinboard_stats['posts_last_day_in_collab_spaces'].to_i - pinboard_stats['threads_last_day_in_collab_spaces'].to_i,
+
+        # helpdesk
+        helpdesk_tickets: ticket_stats['ticket_count'],
+        helpdesk_tickets_last_day: ticket_stats['ticket_count_last_day'],
       )
     end.value!
   end
