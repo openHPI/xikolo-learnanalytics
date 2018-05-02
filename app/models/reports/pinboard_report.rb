@@ -4,6 +4,7 @@ module Reports
       super
 
       @deanonymized = options['deanonymized']
+      @include_collab_spaces = options.fetch('include_collab_spaces', false)
     end
 
     def generate!
@@ -17,7 +18,6 @@ module Reports
     def headers
       %w[
         id
-        type
         title
         text
         video_timestamp
@@ -28,7 +28,7 @@ module Reports
         accepted_answer_id
         course_id
         learning_room_id
-        question_id
+        topic_id
         file_id
         commentable_id
         commentable_type
@@ -45,21 +45,15 @@ module Reports
     def each_post
       i = 0
 
-      Xikolo.paginate(
-        pinboard_service.rel(:questions).get(
-          course_id: course['id'],
-          per_page: 50
-        )
-      ) do |question, page|
-        pinboard_type = question['discussion_flag'] ? 'discussion' : 'question'
-        yield transform_question(pinboard_type, question)
+      each_topic do |topic, page|
+        yield transform_topic(topic)
 
-        each_comment(question, 'Question') do |row|
+        each_comment(topic, 'Question') do |row|
           yield row
         end
 
-        unless question['discussion_flag']
-          each_answer(question) do |row|
+        unless topic['discussion_flag']
+          each_answer(topic) do |row|
             yield row
           end
         end
@@ -69,46 +63,53 @@ module Reports
       end
     end
 
-    def transform_question(pinboard_type, question)
+    def transform_topic(topic)
       [
-        question['id'],
-        pinboard_type,
-        question['title'],
-        question['text'].squish,
-        question['video_timestamp'],
-        question['video_id'],
-        @deanonymized ? question['user_id'] : Digest::SHA256.hexdigest(question['user_id']),
-        question['created_at'],
-        question['updated_at'],
-        question['accepted_answer_id'],
-        question['course_id'],
-        question['learning_room_id'],
-        question['id'],
+        topic['id'],
+        topic['title'],
+        topic['text'].squish,
+        topic['video_timestamp'],
+        topic['video_id'],
+        user_id(topic['user_id']),
+        topic['created_at'],
+        topic['updated_at'],
+        topic['accepted_answer_id'],
+        topic['course_id'],
+        topic['learning_room_id'],
+        topic['id'],
         '',
         '',
         '',
         '',
-        question['sentimental_value'],
-        question['sticky'],
-        question['deleted'],
-        question['closed'],
-        implicit_section_id(question['implicit_tags']),
-        implicit_item_id(question['implicit_tags'])
+        topic['sentimental_value'],
+        topic['sticky'],
+        topic['deleted'],
+        topic['closed'],
+        implicit_section_id(topic['implicit_tags']),
+        implicit_item_id(topic['implicit_tags'])
       ]
     end
 
-    def each_answer(question)
+    def each_topic(&block)
+      topic_filters.each do |filters|
+        Xikolo.paginate(
+          pinboard_service.rel(:questions).get(**filters, per_page: 50),
+          &block
+        )
+      end
+    end
+
+    def each_answer(topic)
       pinboard_service.rel(:answers).get(
-        question_id: question['id'], per_page: 250
+        question_id: topic['id'], per_page: 250
       ).value!.each do |answer|
         yield [
           answer['id'],
-          'answer',
           '',
           answer['text'].squish,
           '',
           '',
-          @deanonymized ? answer['user_id'] : Digest::SHA256.hexdigest(answer['user_id']),
+          user_id(answer['user_id']),
           answer['created_at'],
           answer['updated_at'],
           '',
@@ -142,12 +143,11 @@ module Reports
 
         yield [
           comment['id'],
-          'comment',
           '',
-          comment['text'].squish ,
+          comment['text'].squish,
           '',
           '',
-          @deanonymized ? comment['user_id'] : Digest::SHA256.hexdigest(comment['user_id']),
+          user_id(comment['user_id']),
           comment['created_at'],
           comment['updated_at'],
           '',
@@ -163,6 +163,14 @@ module Reports
       end
     end
 
+    def user_id(id)
+      if @deanonymized
+        id
+      else
+        Digest::SHA256.hexdigest(id)
+      end
+    end
+
     def implicit_section_id(tags)
       tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Section' }&.dig('name')
     end
@@ -171,8 +179,28 @@ module Reports
       tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Item' }&.dig('name')
     end
 
+    def topic_filters
+      filters = [
+        {course_id: course['id']}
+      ]
+
+      if @include_collab_spaces
+        Xikolo.paginate(
+          collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
+        ) do |collab_space|
+          filters << {learning_room_id: collab_space['id']}
+        end
+      end
+
+      filters
+    end
+
     def course
       @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
+    end
+
+    def collabspace_service
+      @collabspace_service ||= Xikolo.api(:learning_room).value!
     end
 
     def course_service
