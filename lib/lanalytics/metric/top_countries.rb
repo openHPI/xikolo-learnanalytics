@@ -4,7 +4,7 @@ module Lanalytics
 
       description 'Returns top 100 countries.'
 
-      required_parameter :course_id
+      optional_parameter :course_id
 
       exec do |params|
         course_id = params[:course_id]
@@ -17,47 +17,52 @@ module Lanalytics
         end
 
         result = datasource.exec do |client|
-          client.search index: datasource.index, body: {
-            size: 0,
-            query: {
-              bool: {
-                must: [
-                  { match: { 'in_context.course_id' => course_id } }
-                ]
-              }
-            },
-            aggregations: {
-              countries: {
-                terms: {
-                  field: 'in_context.user_location_country_code',
-                  size: 100
-                },
-                aggregations: {
-                  ucount: {
-                    cardinality: {
-                      field: 'user.resource_uuid'
-                    }
-                  },
-                  mobile: {
-                    filter: {
-                      bool: {
-                        must: { exists: { field: 'in_context.runtime' } },
-                        should: mobile_conditions,
-                        minimum_should_match: 1
+          body = {
+              size: 0,
+              aggregations: {
+                  countries: {
+                      terms: {
+                          field: 'in_context.user_location_country_code',
+                          size: 100
+                      },
+                      aggregations: {
+                          ucount: {
+                              cardinality: {
+                                  field: 'user.resource_uuid'
+                              }
+                          },
+                          mobile: {
+                              filter: {
+                                  bool: {
+                                      must: { exists: { field: 'in_context.runtime' } },
+                                      should: mobile_conditions,
+                                      minimum_should_match: 1
+                                  }
+                              },
+                              aggs: {
+                                  count: {
+                                      cardinality: {
+                                          field: 'user.resource_uuid'
+                                      }
+                                  }
+                              }
+                          }
                       }
-                    },
-                    aggs: {
-                      count: {
-                        cardinality: {
-                          field: 'user.resource_uuid'
-                        }
-                      }
-                    }
                   }
-                }
               }
-            }
           }
+
+          if course_id.present?
+            body[:query] = {
+                bool: {
+                    must: [
+                        { match: { 'course_id' => course_id } }
+                    ]
+                }
+            }
+          end
+
+          client.search index: datasource.index, body: body
         end
 
         processed_result = []

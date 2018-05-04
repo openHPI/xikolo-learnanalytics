@@ -1,10 +1,10 @@
 module Lanalytics
   module Metric
-    class ReferrerCount < ReferrerMetric
+    class TopReferrers < ReferrerMetric
 
-      description 'Counts all referrers'
+      description 'Top 25 referrer with count.'
 
-      optional_parameter :course_id
+      optional_parameter :course_id, :group_hosts
 
       exec do |params|
         result = datasource.exec do |client|
@@ -12,8 +12,9 @@ module Lanalytics
               size: 0,
               aggregations: {
                   referrer: {
-                      value_count: {
-                          field: 'referrer'
+                      terms: {
+                          field: 'referrer',
+                          size: 25
                       }
                   }
               }
@@ -31,7 +32,17 @@ module Lanalytics
 
           client.search index: datasource.index, body: body
         end
-        { count: result['aggregations']['referrer']['value'] }
+
+        result_set = {}
+        result['aggregations']['referrer']['buckets'].each do |item|
+          referrer = item['key']
+          if params[:group_hosts].presence
+            referrer = referrer.split('/').first
+          end
+          result_set[referrer] = 0 if result_set[referrer].nil?
+          result_set[referrer] += item['doc_count']
+        end
+        result_set
       end
 
     end
