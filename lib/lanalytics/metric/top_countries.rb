@@ -17,8 +17,13 @@ module Lanalytics
         end
 
         result = datasource.exec do |client|
-          body = {
+          client.search index: datasource.index, body: {
               size: 0,
+              query: {
+                  bool: {
+                      must: all_filters(nil, course_id, nil)
+                  }
+              },
               aggregations: {
                   countries: {
                       terms: {
@@ -51,18 +56,6 @@ module Lanalytics
                   }
               }
           }
-
-          if course_id.present?
-            body[:query] = {
-                bool: {
-                    must: [
-                        { match: { 'course_id' => course_id } }
-                    ]
-                }
-            }
-          end
-
-          client.search index: datasource.index, body: body
         end
 
         processed_result = []
