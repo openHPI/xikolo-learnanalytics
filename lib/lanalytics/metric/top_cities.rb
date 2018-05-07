@@ -17,38 +17,56 @@ module Lanalytics
         end
 
         result = datasource.exec do |client|
-          body = {
+          client.search index: datasource.index, body: {
               size: 0,
+              query: {
+                  bool: {
+                      must: [
+                          { exists: { field: 'in_context.user_location_country_code' } },
+                          { exists: { field: 'in_context.user_location_city' } },
+                      ] + (all_filters(nil, course_id, nil)),
+                      must_not: [
+                          { term: { 'in_context.user_location_country_code': '' } },
+                          { term: { 'in_context.user_location_city': '' } }
+                      ]
+                  }
+              },
               aggregations: {
-                  countries: {
+                  city_country: {
                       terms: {
-                          field: 'in_context.user_location_country_code',
+                          script: 'doc["in_context.user_location_country_code"].value + ":" + doc["in_context.user_location_city"].value',
                           size: 100
                       },
                       aggregations: {
                           cities: {
                               terms: {
-                                  field: 'in_context.user_location_city',
-                                  size: 100
+                                  field: 'in_context.user_location_city'
                               },
                               aggregations: {
-                                  ucount: {
-                                      cardinality: {
-                                          field: 'user.resource_uuid'
-                                      }
-                                  },
-                                  mobile: {
-                                      filter: {
-                                          bool: {
-                                              must: { exists: { field: 'in_context.runtime' } },
-                                              should: mobile_conditions,
-                                              minimum_should_match: 1
-                                          }
+                                  countries: {
+                                      terms: {
+                                          field: 'in_context.user_location_country_code'
                                       },
-                                      aggs: {
-                                          count: {
+                                      aggregations: {
+                                          ucount: {
                                               cardinality: {
                                                   field: 'user.resource_uuid'
+                                              }
+                                          },
+                                          mobile: {
+                                              filter: {
+                                                  bool: {
+                                                      must: { exists: { field: 'in_context.runtime' } },
+                                                      should: mobile_conditions,
+                                                      minimum_should_match: 1
+                                                  }
+                                              },
+                                              aggs: {
+                                                  count: {
+                                                      cardinality: {
+                                                          field: 'user.resource_uuid'
+                                                      }
+                                                  }
                                               }
                                           }
                                       }
@@ -59,37 +77,25 @@ module Lanalytics
                   }
               }
           }
-
-          if course_id.present?
-            body[:query] = {
-                bool: {
-                    must: [
-                        { match: { 'course_id' => course_id } }
-                    ]
-                }
-            }
-          end
-
-          client.search index: datasource.index, body: body
         end
 
         processed_result = []
         # process result
-        result['aggregations']['countries']['buckets'].each do |country_item|
-          country_item['cities']['buckets'].each do |city_item|
-            begin
-              result_subitem = {}
-              result_subitem[:city_name] = city_item['key']
-              result_subitem[:country_code] = country_item['key']
-              result_subitem[:country_code_iso3] = IsoCountryCodes.find(country_item['key']).alpha3
-              result_subitem[:total_activity] = city_item['doc_count']
-              result_subitem[:distinct_users] = city_item['ucount']['value']
-              result_subitem[:activity_per_user] = city_item['ucount']['value'] != 0 ? city_item['doc_count'] / city_item['ucount']['value'] : 0
-              result_subitem[:mobile_users] = city_item['mobile']['count']['value']
-              result_subitem[:mobile_usage] = city_item['ucount']['value'] != 0 ? city_item['mobile']['count']['value'].to_f / city_item['ucount']['value'].to_f : 0
-              processed_result << result_subitem
-            rescue IsoCountryCodes::UnknownCodeError
-            end
+        result['aggregations']['city_country']['buckets'].each do |bucket_item|
+          city_item = bucket_item['cities']['buckets'].first
+          country_item = city_item['countries']['buckets'].first
+          begin
+            result_subitem = {}
+            result_subitem[:city_name] = city_item['key'].capitalize
+            result_subitem[:country_code] = country_item['key']
+            result_subitem[:country_code_iso3] = IsoCountryCodes.find(country_item['key']).alpha3
+            result_subitem[:total_activity] = country_item['doc_count']
+            result_subitem[:distinct_users] = country_item['ucount']['value']
+            result_subitem[:activity_per_user] = country_item['ucount']['value'] != 0 ? country_item['doc_count'] / country_item['ucount']['value'] : 0
+            result_subitem[:mobile_users] = country_item['mobile']['count']['value']
+            result_subitem[:mobile_usage] = country_item['ucount']['value'] != 0 ? country_item['mobile']['count']['value'].to_f / country_item['ucount']['value'].to_f : 0
+            processed_result << result_subitem
+          rescue IsoCountryCodes::UnknownCodeError
           end
         end
         processed_result.sort_by { |i| i[:distinct_users] }.reverse
