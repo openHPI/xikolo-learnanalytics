@@ -5,7 +5,6 @@ class CourseStatisticDecorator < ApplicationDecorator
     {
       id: model.id,
       course_code: model.course_code,
-      course_name: model.course_name,
       course_id: model.course_id,
       course_status: model.course_status,
       start_date: model.start_date,

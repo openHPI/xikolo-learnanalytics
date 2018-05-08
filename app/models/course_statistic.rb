@@ -36,7 +36,6 @@ class CourseStatistic < ActiveRecord::Base
       update(
         course_id: course['id'],
         course_code: course['course_code'],
-        course_name: course['title'],
         course_status: course['status'],
         start_date: course['start_date']&.to_datetime,
         end_date: course['end_date']&.to_datetime,

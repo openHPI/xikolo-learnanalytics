@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180502155839) do
+ActiveRecord::Schema.define(version: 20180508121557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,7 +27,6 @@ ActiveRecord::Schema.define(version: 20180502155839) do
   end
 
   create_table "course_statistics", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
-    t.string   "course_name"
     t.string   "course_code"
     t.string   "course_status"
     t.uuid     "course_id"
