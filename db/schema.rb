@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180309134418) do
+ActiveRecord::Schema.define(version: 20180508121557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,16 +27,14 @@ ActiveRecord::Schema.define(version: 20180309134418) do
   end
 
   create_table "course_statistics", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
-    t.string   "course_name"
     t.string   "course_code"
     t.string   "course_status"
     t.uuid     "course_id"
     t.integer  "total_enrollments"
-    t.float    "no_shows"
+    t.integer  "no_shows"
     t.integer  "current_enrollments"
     t.integer  "enrollments_last_day"
     t.integer  "enrollments_at_course_start"
-    t.integer  "enrollments_at_course_middle_netto"
     t.integer  "enrollments_at_course_middle"
     t.integer  "enrollments_at_course_end"
     t.integer  "questions"
@@ -51,7 +49,6 @@ ActiveRecord::Schema.define(version: 20180309134418) do
     t.integer  "helpdesk_tickets"
     t.integer  "helpdesk_tickets_last_day"
     t.float    "completion_rate"
-    t.float    "consumption_rate"
     t.datetime "start_date"
     t.datetime "end_date"
     t.integer  "new_users"
@@ -68,6 +65,14 @@ ActiveRecord::Schema.define(version: 20180309134418) do
     t.integer  "comments_on_answers_last_day_in_learning_rooms"
     t.integer  "comments_on_questions_in_learning_rooms"
     t.integer  "comments_on_questions_last_day_in_learning_rooms"
+    t.integer  "enrollments_at_course_start_netto"
+    t.integer  "enrollments_at_course_middle_netto"
+    t.integer  "enrollments_at_course_end_netto"
+    t.integer  "shows"
+    t.integer  "shows_at_middle"
+    t.integer  "shows_at_end"
+    t.integer  "no_shows_at_middle"
+    t.integer  "no_shows_at_end"
   end
 
   create_table "datasource_accesses", force: :cascade do |t|
