@@ -35,7 +35,7 @@ describe CourseStatistic do
       student_enrollments_by_day: nil,
       student_enrollments_at_start: 0,
       student_enrollments_at_middle: 1,
-      student_enrollments_at_middle_netto: 5,
+      student_enrollments_at_middle_netto: 1,
       shows: 5,
       no_shows: 4,
       certificates_count: 10,
@@ -88,7 +88,6 @@ describe CourseStatistic do
       subject { super(); stats }
 
       its(:course_id) { should eq course_id }
-      its(:course_name) { should eq 'SAP Course' }
       its(:course_status) { should eq 'active' }
       its(:no_shows) { should eq 4.0 }
       its(:total_enrollments) { should eq 200 }

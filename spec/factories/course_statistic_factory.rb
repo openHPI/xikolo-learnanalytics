@@ -6,7 +6,6 @@ FactoryBot.define do
       after(:create) do |stat|
         # We use update here so that a first version is stored by PaperTrail
         stat.update(
-          course_name: 'SAP Course',
           course_status: 'active',
           no_shows: 4.0,
           total_enrollments: 200,
