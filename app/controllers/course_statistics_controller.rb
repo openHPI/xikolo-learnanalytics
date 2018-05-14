@@ -25,4 +25,10 @@ class CourseStatisticsController < ApplicationController
     # incoming id is a course_id!
     respond_with CourseStatistic.find_by! course_id: params[:id]
   end
+
+  def decorate(res)
+    return res.map{ |item| decorate item } if res.kind_of?(Array)
+    return res.decorate if res.respond_to? :decorate
+    res
+  end
 end
