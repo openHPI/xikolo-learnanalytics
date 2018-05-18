@@ -1,0 +1,4 @@
+script:
+  - bundle install --without development production integration
+  - bundle exec rake ci:setup
+  - bundle exec rspec -r rspec/teamcity -f Spec::Runner::Formatter::TeamcityFormatter

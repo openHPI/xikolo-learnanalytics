@@ -85,10 +85,12 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rspec-rails'
-  gem 'rspec-collection_matchers'
   gem 'factory_bot_rails', '~> 4.0'
+  gem 'rspec', '~> 3.7'
+  gem 'rspec-collection_matchers'
   gem 'rspec-its'
+  gem 'rspec-rails'
+  gem 'rspec-teamcity', require: false
 end
 
 group :test do
