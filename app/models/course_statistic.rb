@@ -137,7 +137,7 @@ class CourseStatistic < ActiveRecord::Base
         .versions
         .where("(object->>'course_id')= ?", course_id)
         .between(DateTime.parse(start_date), end_date || DateTime.now)
-        .map{ |version| new(version.object.select{ |entry| attribute_names.index(entry) }) }
+        .map(&:reify)
     end
   end
 end
