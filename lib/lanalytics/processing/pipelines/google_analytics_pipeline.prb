@@ -28,6 +28,5 @@ create_ga_pipeline('xikolo.pinboard.comment.create', :comment, create_action, ge
 
 create_ga_pipeline('xikolo.course.enrollment.create', :enrollment, create_action, geo_id_lookup)
 create_ga_pipeline('xikolo.course.enrollment.update', :enrollment, update_action, geo_id_lookup)
-create_ga_pipeline('xikolo.course.enrollment.completed', :enrollment_completed, create_action, geo_id_lookup)
 
 create_ga_pipeline('xikolo.submission.submission.create', :submission, create_action, geo_id_lookup)
