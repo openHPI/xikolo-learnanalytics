@@ -262,19 +262,6 @@ module Lanalytics
                                     custom_dimension_5: processing_unit[:question_id]
         end
 
-        def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
-          transform_attrs_to_create load_commands,
-                                    hit_type: :event,
-                                    data_source: :service,
-                                    event_category: :course,
-                                    event_action: :completed_course,
-                                    event_label: processing_unit[:certificates][:certificate] ? :with_certificate : :without_certificate,
-                                    user_id: processing_unit[:user_id],
-                                    timestamp: processing_unit[:updated_at],
-                                    custom_dimension_1: processing_unit[:course_id],
-                                    custom_metric_1: processing_unit[:points][:percentage]
-        end
-
         def transform_enrollment_punit_to_create(processing_unit, load_commands)
           save_enrollment(processing_unit, load_commands)
         end
