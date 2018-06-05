@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class TopCountriesEs < ExpApiMetric
+      include Lanalytics::Helper::PercentageHelper
 
       description 'Returns top 100 countries.'
 
@@ -25,6 +26,11 @@ module Lanalytics
                   }
               },
               aggregations: {
+                  ucount: {
+                      cardinality: {
+                          field: 'user.resource_uuid'
+                      }
+                  },
                   countries: {
                       terms: {
                           field: 'in_context.user_location_country_code',
@@ -60,6 +66,7 @@ module Lanalytics
 
         processed_result = []
         # process result
+        total_users = result['aggregations']['ucount']['value']
         result['aggregations']['countries']['buckets'].each do |item|
           begin
             result_subitem = {}
@@ -67,6 +74,7 @@ module Lanalytics
             result_subitem[:country_code_iso3] = IsoCountryCodes.find(item['key']).alpha3
             result_subitem[:total_activity] = item['doc_count']
             result_subitem[:distinct_users] = item['ucount']['value']
+            result_subitem[:relative_users] = result_subitem[:distinct_users].percent_of(total_users)
             result_subitem[:activity_per_user] = item['ucount']['value'] != 0 ? item['doc_count'] / item['ucount']['value'] : 0
             result_subitem[:mobile_users] = item['mobile']['count']['value']
             result_subitem[:mobile_usage] = item['ucount']['value'] != 0 ? item['mobile']['count']['value'].to_f / item['ucount']['value'].to_f : 0

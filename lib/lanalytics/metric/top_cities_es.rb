@@ -1,6 +1,7 @@
 module Lanalytics
   module Metric
     class TopCitiesEs < ExpApiMetric
+      include Lanalytics::Helper::PercentageHelper
 
       description 'Returns top 100 cities.'
 
@@ -21,50 +22,64 @@ module Lanalytics
               size: 0,
               query: {
                   bool: {
-                      must: [
-                          { exists: { field: 'in_context.user_location_country_code' } },
-                          { exists: { field: 'in_context.user_location_city' } },
-                      ] + (all_filters(nil, course_id, nil)),
-                      must_not: [
-                          { term: { 'in_context.user_location_country_code': '' } },
-                          { term: { 'in_context.user_location_city': '' } }
-                      ]
+                      must: all_filters(nil, course_id, nil)
                   }
               },
               aggregations: {
-                  city_country: {
-                      terms: {
-                          script: 'doc["in_context.user_location_country_code"].value + ":" + doc["in_context.user_location_city"].value',
-                          size: 100
+                  ucount: {
+                      cardinality: {
+                          field: 'user.resource_uuid'
+                      }
+                  },
+                  with_city: {
+                      filter: {
+                          bool: {
+                              must: [
+                                  { exists: { field: 'in_context.user_location_country_code' } },
+                                  { exists: { field: 'in_context.user_location_city' } }
+                              ],
+                              must_not: [
+                                  { term: { 'in_context.user_location_country_code': '' } },
+                                  { term: { 'in_context.user_location_city': '' } }
+                              ]
+                          }
                       },
                       aggregations: {
-                          cities: {
+                          city_country: {
                               terms: {
-                                  field: 'in_context.user_location_city'
+                                  script: 'doc["in_context.user_location_country_code"].value + ":" + doc["in_context.user_location_city"].value',
+                                  size: 100
                               },
                               aggregations: {
-                                  countries: {
+                                  cities: {
                                       terms: {
-                                          field: 'in_context.user_location_country_code'
+                                          field: 'in_context.user_location_city'
                                       },
                                       aggregations: {
-                                          ucount: {
-                                              cardinality: {
-                                                  field: 'user.resource_uuid'
-                                              }
-                                          },
-                                          mobile: {
-                                              filter: {
-                                                  bool: {
-                                                      must: { exists: { field: 'in_context.runtime' } },
-                                                      should: mobile_conditions,
-                                                      minimum_should_match: 1
-                                                  }
+                                          countries: {
+                                              terms: {
+                                                  field: 'in_context.user_location_country_code'
                                               },
-                                              aggs: {
-                                                  count: {
+                                              aggregations: {
+                                                  ucount: {
                                                       cardinality: {
                                                           field: 'user.resource_uuid'
+                                                      }
+                                                  },
+                                                  mobile: {
+                                                      filter: {
+                                                          bool: {
+                                                              must: { exists: { field: 'in_context.runtime' } },
+                                                              should: mobile_conditions,
+                                                              minimum_should_match: 1
+                                                          }
+                                                      },
+                                                      aggs: {
+                                                          count: {
+                                                              cardinality: {
+                                                                  field: 'user.resource_uuid'
+                                                              }
+                                                          }
                                                       }
                                                   }
                                               }
@@ -81,7 +96,8 @@ module Lanalytics
 
         processed_result = []
         # process result
-        result['aggregations']['city_country']['buckets'].each do |bucket_item|
+        total_users = result['aggregations']['ucount']['value']
+        result['aggregations']['with_city']['city_country']['buckets'].each do |bucket_item|
           city_item = bucket_item['cities']['buckets'].first
           country_item = city_item['countries']['buckets'].first
           begin
@@ -91,6 +107,7 @@ module Lanalytics
             result_subitem[:country_code_iso3] = IsoCountryCodes.find(country_item['key']).alpha3
             result_subitem[:total_activity] = country_item['doc_count']
             result_subitem[:distinct_users] = country_item['ucount']['value']
+            result_subitem[:relative_users] = result_subitem[:distinct_users].percent_of(total_users)
             result_subitem[:activity_per_user] = country_item['ucount']['value'] != 0 ? country_item['doc_count'] / country_item['ucount']['value'] : 0
             result_subitem[:mobile_users] = country_item['mobile']['count']['value']
             result_subitem[:mobile_usage] = country_item['ucount']['value'] != 0 ? country_item['mobile']['count']['value'].to_f / country_item['ucount']['value'].to_f : 0
