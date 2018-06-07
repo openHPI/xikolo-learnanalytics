@@ -61,13 +61,38 @@ module Lanalytics
 
         processed_result = {}
 
-        # total platforms
+        desktop_web = 0
+        mobile_web = 0
+        mobile_app = 0
+        tv_app = 0
+
+        mobile_web_platforms = [
+          'android',
+          'ios',
+          'ios (ipad)',
+          'ios (iphone)',
+          'ios (ipod)',
+          'windows phone',
+          'blackberry',
+          'firefox os'
+        ]
+        mobile_app_runtimes = ['android', 'ios']
+        tv_app_runtimes = ['tvos']
+
+        # total activity
         total_activity = 0
         result['aggregations']['platforms']['buckets'].each { |item| total_activity += item['doc_count'] }
 
         # process platforms
         platforms = []
         result['aggregations']['platforms']['buckets'].each do |platform|
+          # count web usage
+          if mobile_web_platforms.include? platform['key'].downcase
+            mobile_web += platform['doc_count']
+          else
+            desktop_web += platform['doc_count']
+          end
+
           result_subitem = {}
           result_subitem[:platform] = platform['key']
           result_subitem[:total_activity] = platform['doc_count']
@@ -94,21 +119,15 @@ module Lanalytics
         platforms.sort_by! { |i| i[:total_activity] }.reverse!
         processed_result[:platforms] = platforms
 
-        # total runtimes
-        total_activity = 0
-        result['aggregations']['runtimes']['buckets'].each { |item| total_activity += item['doc_count'] }
-
         # process runtimes
         runtimes = []
-        mobile = 0
-        web = 0
-        mobile_runtimes = ['android', 'ios']
         result['aggregations']['runtimes']['buckets'].each do |runtime|
-          # count mobile and web usage
-          if mobile_runtimes.include? runtime['key'].downcase
-            mobile += runtime['doc_count']
-          else
-            web += runtime['doc_count']
+          # count app usage
+          if mobile_app_runtimes.include? runtime['key'].downcase
+            mobile_app += runtime['doc_count']
+            mobile_web -= runtime['doc_count']
+          elsif tv_app_runtimes.include? runtime['key'].downcase
+            tv_app += runtime['doc_count']
           end
 
           result_subitem = {}
@@ -123,45 +142,34 @@ module Lanalytics
         processed_result[:runtimes] = runtimes
 
         # evaluate behavior
-        state = 'unknown'
-        usage = []
-        # mobile and web is used
-        if mobile > 0 and web > 0
-          state = 'mixed'
-          usage << {
-            category: 'mobile',
-            total_activity: mobile,
-            relative_activity: mobile.percent_of(total_activity)
+        usage = [
+          {
+            category: 'desktop web',
+            total_activity: desktop_web,
+            relative_activity: desktop_web.percent_of(total_activity)
+          },
+          {
+            category: 'mobile web',
+            total_activity: mobile_web,
+            relative_activity: mobile_web.percent_of(total_activity)
+          },
+          {
+            category: 'mobile app',
+            total_activity: mobile_app,
+            relative_activity: mobile_app.percent_of(total_activity)
+          },
+          {
+            category: 'tv app',
+            total_activity: tv_app,
+            relative_activity: tv_app.percent_of(total_activity)
           }
-          usage << {
-            category: 'web',
-            total_activity: web,
-            relative_activity: web.percent_of(total_activity)
-          }
-        # only mobile used
-        elsif mobile > 0
-          state = 'mobile'
-          usage << {
-            category: 'mobile',
-            total_activity: mobile,
-            relative_activity: mobile.percent_of(total_activity)
-          }
-        # only web used
-        elsif web > 0
-          state = 'web'
-          usage << {
-            category: 'web',
-            total_activity: web,
-            relative_activity: web.percent_of(total_activity)
-          }
-        end
+        ]
 
         # sort usage
         usage.sort_by! { |i| i[:total_activity] }.reverse!
 
         # add behavior
         behavior = {
-          state: state,
           usage: usage
         }
         processed_result[:behavior] = behavior

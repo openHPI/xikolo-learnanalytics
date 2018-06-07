@@ -4,7 +4,8 @@ module Reports
       super
 
       @deanonymized = options['deanonymized']
-      @extended = options['extended_flag']
+      @include_analytics_metrics = options['include_analytics_metrics']
+      @include_profile = options['include_profile']
       @include_sections = true
       @include_all_quizzes = options['include_all_quizzes']
     end
@@ -23,7 +24,7 @@ module Reports
 
         # these metrics are fetched for all users at once from postgres
         # needs more memory but much faster performance
-        if @extended
+        if @include_analytics_metrics
           clustering_metrics = fetch_clustering_metrics(course)
         end
 
@@ -35,13 +36,11 @@ module Reports
           user = account_service.rel(:user).get(id: e['user_id']).value!
 
           Restify::Promise.new(
-            user.rel(:profile).get,
             course_service.rel(:enrollments).get(
               course_id: course['id'], user_id: e['user_id'], deleted: true, learning_evaluation: true
             ).then { |array| array.first },
-            pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']),
-            course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id'])
-          ) do |profile, enrollment, stat_pinboard, progresses|
+            pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id'])
+          ) do |enrollment, stat_pinboard|
             course_start_date = as_date(course['start_date'])
             birth_compare_date = course_start_date || DateTime.now
             enrollment_date = as_date(enrollment['created_at'])
@@ -67,31 +66,36 @@ module Reports
               ]
             end
 
+            if @include_profile
+              profile = user.rel(:profile).get.value!
+              profile_fields = ProfileFields.new(profile, @deanonymized)
+              values += profile_fields.values
+            end
+
             # get elasticsearch / postgres metrics per user
-            if @extended
+            if @include_analytics_metrics
               user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id']) || ''
               user_course_city = fetch_metric('UserCourseCity', course['id'], user['id']) || ''
               device_usage = fetch_device_usage(course['id'], user['id'])
-              course_activity = fetch_metric('CourseActivity', course['id'], user['id']) || {}
               last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
 
               values += [
                 user_course_country,
                 suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_course_country).name },
                 user_course_city,
-                device_usage[:state],
-                device_usage[:web],
-                device_usage[:mobile],
-                course_activity[:count] || '',
+                device_usage['desktop web'],
+                device_usage['mobile web'],
+                device_usage['mobile app'],
                 last_visited_item.dig('resource', 'resource_uuid') || '',
                 last_visited_item.dig('timestamp') || '',
                 clustering_metrics.dig(user['id'], 'sessions') || '',
                 clustering_metrics.dig(user['id'], 'average_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'total_session_duration') || '',
+                clustering_metrics.dig(user['id'], 'unique_video_play_activity') || '',
+                clustering_metrics.dig(user['id'], 'unique_video_downloads_activity') || '',
+                clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity') || '',
                 clustering_metrics.dig(user['id'], 'forum_activity') || '',
                 clustering_metrics.dig(user['id'], 'forum_observation') || '',
-                clustering_metrics.dig(user['id'], 'video_player_activity') || '',
-                clustering_metrics.dig(user['id'], 'download_activity') || '',
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '',
               ]
             end
@@ -102,9 +106,6 @@ module Reports
             else
               values << ''
             end
-
-            profile_fields = ProfileFields.new(profile, @deanonymized)
-            values += profile_fields.values
 
             values += [
               stat_pinboard['posts'],
@@ -124,6 +125,8 @@ module Reports
 
             # For each section, append visit percentage and total graded points
             if @include_sections
+              progresses = course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id']).value!
+
               progresses.pop # Last progress element is for the entire course
 
               values += progresses.map { |section| section.dig('visits', 'percentage') }
@@ -175,16 +178,9 @@ module Reports
 
       result = {}
 
-      if device_usage
-        result[:state] = device_usage[:behavior][:state]
-        device_usage[:behavior][:usage].each do |usage|
-          result[usage[:category].to_sym] = usage[:total_activity].to_s
-        end
-      else
-        result[:state] = 'unknown'
+      device_usage[:behavior][:usage].each do |usage|
+        result[usage[:category]] = usage[:total_activity].to_s
       end
-      result[:mobile] = '0' unless result.key?(:mobile)
-      result[:web] = '0' unless result.key?(:web)
 
       result
     end
@@ -197,7 +193,7 @@ module Reports
     end
 
     def fetch_clustering_metrics(course)
-      return {} unless @extended
+      return {} unless @include_analytics_metrics
 
       clustering_metrics = %w[
         sessions
@@ -205,8 +201,9 @@ module Reports
         total_session_duration
         forum_activity
         forum_observation
-        video_player_activity
-        download_activity
+        unique_video_play_activity
+        unique_video_downloads_activity
+        unique_slide_downloads_activity
         quiz_performance
       ]
       result = Lanalytics::Clustering::Dimensions.query(course['id'], clustering_metrics, nil)
@@ -247,33 +244,34 @@ module Reports
           ]
         end
 
-        if @extended
+        if @include_profile
+          headers.concat ProfileFields.all_titles(@deanonymized)
+        end
+
+        if @include_analytics_metrics
           headers.concat [
             'Top Country (Code)',
             'Top Country (Name)',
             'Top City',
-            'Device Usage',
-            'Web Usage',
-            'Mobile Usage',
-            'Course Activity',
+            'Desktop Web Activity',
+            'Mobile Web Activity',
+            'Mobile App Activity',
             'Last Visited Item',
             'Last Visited Item Timestamp',
             'Sessions',
             'Avg. Session Duration',
             'Total Session Duration',
+            'Video Play Activity',
+            'Video Downloads Activity',
+            'Slide Downloads Activity',
             'Forum Activity',
             'Forum Observation',
-            'Video Player Activity',
-            'Download Activity',
             'Quiz Performance'
           ]
         end
 
-        headers << 'Enrollment Delta in Days'
-
-        headers.concat ProfileFields.all_titles(@deanonymized)
-
         headers.concat [
+          'Enrollment Delta in Days',
           'Forum Posts',
           'Forum Threads',
           'Points Achieved',
