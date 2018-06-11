@@ -1,18 +1,10 @@
 module Lanalytics
   module Metric
-    class DownloadActivity < Base
+    class DownloadActivity < ClusteringMetric
 
       description 'The sum of download-related events.'
 
-      optional_parameter :user_id, :course_id
-
-      exec do |params|
-        Lanalytics::Clustering::Dimensions.query(
-          params[:course_id],
-          ['download_activity'],
-          [params[:user_id]]
-        ).first['download_activity'].to_i
-      end
+      dimension_name 'download_activity'
 
     end
   end

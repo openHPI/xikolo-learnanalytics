@@ -2,12 +2,12 @@ module Lanalytics
   module Metric
     class ReferrerMetric < Base
 
-      def self.datasource
-        Lanalytics::Processing::DatasourceManager.datasource(datasource_name)
+      def self.datasource_keys
+        %w(referral)
       end
 
-      def self.datasource_name
-        'referral'
+      def self.datasource
+        datasources.first
       end
 
     end

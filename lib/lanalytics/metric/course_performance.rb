@@ -1,18 +1,10 @@
 module Lanalytics
   module Metric
-    class CoursePerformance < Base
+    class CoursePerformance < ClusteringMetric
 
       description 'Achieved course performance (points achieved / max points).'
 
-      optional_parameter :user_id, :course_id
-
-      exec do |params|
-        Lanalytics::Clustering::Dimensions.query(
-          params[:course_id],
-          ['course_performance'],
-          [params[:user_id]]
-        ).first['course_performance'].to_i
-      end
+      dimension_name 'course_performance'
 
     end
   end

@@ -2,12 +2,12 @@ module Lanalytics
   module Metric
     class ExpApiMetric < Base
 
-      def self.datasource
-        Lanalytics::Processing::DatasourceManager.datasource(datasource_name)
+      def self.datasource_keys
+        %w(exp_api_elastic)
       end
 
-      def self.datasource_name
-        'exp_api_elastic'
+      def self.datasource
+        datasources.first
       end
 
       def self.all_filters(user_id, course_id, resource_id)

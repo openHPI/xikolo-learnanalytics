@@ -1,18 +1,10 @@
 module Lanalytics
   module Metric
-    class ForumActivity < Base
+    class ForumActivity < ClusteringMetric
 
       description 'The sum of textual forum contribution and forum observation.'
 
-      optional_parameter :user_id, :course_id
-
-      exec do |params|
-        Lanalytics::Clustering::Dimensions.query(
-          params[:course_id],
-          ['forum_activity'],
-          [params[:user_id]]
-        ).first['forum_activity'].to_i
-      end
+      dimension_name 'forum_activity'
 
     end
   end

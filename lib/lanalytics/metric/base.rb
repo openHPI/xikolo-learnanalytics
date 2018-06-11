@@ -12,7 +12,7 @@ module Lanalytics
           .to_enum(:each_child)
           .map { |i| i.basename.to_s.split('.').first.camelize }
           .sort
-          .reject { |c| %w(Base ExpApiMetric ExpApiCountMetric CombinedMetric ReferrerMetric).include? c }
+          .reject { |c| %w(Base ExpApiMetric ExpApiCountMetric CombinedMetric ReferrerMetric ClusteringMetric).include? c }
       end
 
     end
@@ -55,6 +55,18 @@ module Lanalytics
 
         def optional_parameter(*params)
           @optional_params = params
+        end
+
+        def datasource_keys
+          @datasource_keys ||= []
+        end
+
+        def datasources
+          datasource_keys.map{ |key| Lanalytics::Processing::DatasourceManager.datasource(key) }
+        end
+
+        def available?
+          datasources.all?{ |ds| ds.present? && ds.ping }
         end
 
       end
