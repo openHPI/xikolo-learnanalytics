@@ -1,16 +1,14 @@
 module Lanalytics
   module Metric
     class DeviceUsageCount < ExpApiMetric
+      extend Lanalytics::Helper::ClientUsageHelper
 
       description 'Counts the web, mobile and mixed device usage per user.'
 
       optional_parameter :course_id, :resource_id
 
       exec do |params|
-        # array of mobile runtimes
-        mobile_runtimes = %w(Android iOS)
-
-        mobile_conditions = mobile_runtimes.map do |runtime|
+        mobile_conditions = mobile_app_runtimes.map do |runtime|
           { match: { 'in_context.runtime' => runtime } }
         end
 
