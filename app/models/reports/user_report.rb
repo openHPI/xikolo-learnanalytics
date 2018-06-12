@@ -4,8 +4,12 @@ module Reports
       super
 
       @deanonymized = options['deanonymized']
-      @extended = options['extended_flag']
-      @combine_enrollment_info = options['combined_enrollment_info_flag']
+      @include_top_location = options['include_top_location']
+      @include_profile = options['include_profile']
+      @include_primary_email_suspended = options['include_primary_email_suspended']
+      @include_global_ann_subscribed = options['include_global_ann_subscribed']
+      @include_enrollment_evaluation = options['include_enrollment_evaluation']
+      @combine_enrollment_info = options['combine_enrollment_info']
     end
 
     def generate!
@@ -28,20 +32,31 @@ module Reports
           'Language',
           'Affiliated',
           'Created',
-          'Birth Date',
-          'Top Country (Code)',
-          'Top Country (Name)',
-          'Top City'
+          'Birth Date'
         ]
 
-        headers.concat ProfileFields.all_titles(@deanonymized)
-
-        if @extended
+        if @include_top_location
           headers.concat [
-            'Primary Email Suspended',
-            'Global Announcements Subscribed',
-            'First Enrollment'
+            'Top Country (Code)',
+            'Top Country (Name)',
+            'Top City'
           ]
+        end
+
+        if @include_profile
+          headers.concat ProfileFields.all_titles(@deanonymized)
+        end
+
+        if @include_primary_email_suspended
+          headers.concat ['Primary Email Suspended']
+        end
+
+        if @include_global_ann_subscribed
+          headers.concat ['Global Announcements Subscribed']
+        end
+
+        if @include_enrollment_evaluation
+          headers.concat ['First Enrollment']
           headers.concat courses.values.map { |course| course['course_code'] }
         end
 
@@ -55,7 +70,6 @@ module Reports
           confirmed: true, per_page: 500
         )
       ) do |user, page|
-        profile = user.rel(:profile).get.value!
         values = [@deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id'])]
 
         if @deanonymized
@@ -66,33 +80,46 @@ module Reports
           ]
         end
 
-        user_top_country = top_country(user)
-
         values += [
           user['language'],
           user['affiliated'] || '',
           user['created_at'],
-          user['born_at'],
-          user_top_country,
-          suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name },
-          top_city(user)
+          user['born_at']
         ]
 
-        profile_fields = ProfileFields.new(profile, @deanonymized)
-        values += profile_fields.values
+        if @include_top_location
+          user_top_country = top_country(user)
+          user_top_city = top_city(user)
 
-        if @extended
-          features, preferences, enrollments = Restify::Promise.new(
-            user.rel(:features).get,
-            user.rel(:preferences).get.then { |preferences| preferences['properties'] },
-            course_service.rel(:enrollments).get(
-              user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
-            )
+          values += [
+            user_top_country,
+            suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_top_country).name },
+            user_top_city
+          ]
+        end
+
+        if @include_profile
+          profile = user.rel(:profile).get.value!
+          profile_fields = ProfileFields.new(profile, @deanonymized)
+          values += profile_fields.values
+        end
+
+        if @include_primary_email_suspended
+          features = user.rel(:features).get.value!
+          values += [features.key?('primary_email_suspended') || '']
+        end
+
+        if @include_global_ann_subscribed
+          preferences = user.rel(:preferences).get.then { |preferences| preferences['properties'] }.value!
+          values += [global_announcements_subscribed(preferences) || '']
+        end
+
+        if @include_enrollment_evaluation
+          enrollments = course_service.rel(:enrollments).get(
+            user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
           ).value!
 
           values += [
-            features.key?('primary_email_suspended') || '',
-            global_announcements_subscribed(preferences) || '',
             first_course(enrollments),
             *user_course_states(enrollments)
           ]

@@ -37,7 +37,10 @@ class Lanalytics::Clustering::Dimensions
     'platform_exploration',
     'survey_submissions',
     'download_activity',
+      'unique_video_downloads_activity',
+      'unique_slide_downloads_activity',
     'video_player_activity',
+      'unique_video_play_activity',
     'forum_activity',
       'textual_forum_contribution',
       'forum_observation',
@@ -386,6 +389,32 @@ class Lanalytics::Clustering::Dimensions
     s1 + s2 + s3 + s4
   end
 
+  def self.unique_video_downloads_activity(course_uuid, user_uuids = nil)
+    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_video_downloads_activity
+     from events as e, verbs as v, resources as r
+     where e.verb_id = v.id
+     and (v.verb = 'downloaded_sd_video' or
+          v.verb = 'downloaded_hd_video' or
+          v.verb = 'downloaded_hls_video')
+     and e.resource_id = r.id "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = user_uuids.present? ? userfilter_query(user_uuids, true) : ""
+    s4 = " group by e.user_uuid"
+    s1 + s2 + s3 + s4
+  end
+
+  def self.unique_slide_downloads_activity(course_uuid, user_uuids = nil)
+    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_slide_downloads_activity
+     from events as e, verbs as v, resources as r
+     where e.verb_id = v.id
+     and v.verb = 'downloaded_slides'
+     and e.resource_id = r.id "
+    s2 = course_uuid.present? ? " and in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = user_uuids.present? ? userfilter_query(user_uuids, true) : ""
+    s4 = " group by e.user_uuid"
+    s1 + s2 + s3 + s4
+  end
+
   def self.video_player_activity(course_uuid, user_uuids = nil)
     s1 = "select e.user_uuid, count(*) as video_player_activity_metric
      from events as e, verbs as v
@@ -398,6 +427,20 @@ class Lanalytics::Clustering::Dimensions
           v.verb = 'video_change_speed' or
           v.verb = 'video_change_size' or
           v.verb = 'video_seek')
+     group by e.user_uuid"
+    s1 + s2 + s3 + s4
+  end
+
+  def self.unique_video_play_activity(course_uuid, user_uuids = nil)
+    # Counts number of unique videos played
+
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as unique_video_play_activity
+     from events as e, verbs as v, resources as r
+     where e.verb_id = v.id
+     and e.resource_id = r.id "
+    s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
+    s3 = user_uuids.present? ? userfilter_query(user_uuids, true) : ""
+    s4 = " and v.verb = 'video_play'
      group by e.user_uuid"
     s1 + s2 + s3 + s4
   end
