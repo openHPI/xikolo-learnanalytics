@@ -1,0 +1,22 @@
+# Google Analytics Configuration
+
+common: &common
+  datasource_adapter: 'GoogleAnalyticsDatasource'
+  key: 'google_analytics'
+  name: 'Google Analytics'
+  description: 'Access web analytics metrics using Google Analytics'
+
+development:
+  <<: *common
+
+test:
+  <<: *common
+
+integration:
+  <<: *common
+
+staging:
+  <<: *common
+
+production:
+  <<: *common

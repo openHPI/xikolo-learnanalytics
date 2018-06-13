@@ -33,6 +33,12 @@ gem 'pg'
 gem 'elasticsearch'
 gem 'elasticsearch-transport'
 
+# Google Analytics Reporting API
+gem 'google-api-client', '~> 0.19.7'
+
+# Check availability of Google Analytics API
+gem 'net-ping', '~> 1.7', '>= 1.7.8'
+
 gem 'rest-client'
 gem 'multi_json'
 
