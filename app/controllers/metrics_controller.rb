@@ -4,22 +4,31 @@ class MetricsController < ApplicationController
 
   def show
     name = params[:name]
+    metric = Lanalytics::Metric.resolve(name)
 
-    if Lanalytics::Metric.resolve(name).nil?
+    if metric.nil?
       metric_not_found_error
       return
     end
 
-    render json: Lanalytics::Metric.resolve(name).query(metric_params)
+    unless metric.available?
+      metric_not_available_error
+      return
+    end
+
+    render json: metric.query(metric_params)
   end
 
   def index
     render(json: Lanalytics::Metric.all.map { |name|
+      metric = Lanalytics::Metric.resolve(name)
       {
         name: name.underscore,
-        description: Lanalytics::Metric.resolve(name).desc,
-        required_params: Lanalytics::Metric.resolve(name).required_params,
-        optional_params: Lanalytics::Metric.resolve(name).optional_params
+        available: metric.available?,
+        datasources: metric.datasource_keys,
+        description: metric.desc,
+        required_params: metric.required_params,
+        optional_params: metric.optional_params
       }
     })
   end
@@ -34,6 +43,14 @@ class MetricsController < ApplicationController
     render json: {
       error: {
         name: "The metric name must be one of #{Lanalytics::Metric.all.join(', ')}"
+      }
+    }, status: 422
+  end
+
+  def metric_not_available_error
+    render json: {
+      error: {
+        name: 'The metric is not available'
       }
     }, status: 422
   end

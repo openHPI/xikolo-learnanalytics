@@ -1,18 +1,10 @@
 module Lanalytics
   module Metric
-    class Sessions < Base
+    class Sessions < ClusteringMetric
 
       description 'The number of consecutive event streams where individual events have no wider gap than 30 minutes.'
 
-      optional_parameter :user_id, :course_id
-
-      exec do |params|
-        Lanalytics::Clustering::Dimensions.query(
-          params[:course_id],
-          ['sessions'],
-          [params[:user_id]]
-        ).first['sessions'].to_i
-      end
+      dimension_name 'sessions'
 
     end
   end

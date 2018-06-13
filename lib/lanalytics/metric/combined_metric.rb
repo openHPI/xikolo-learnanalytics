@@ -2,6 +2,10 @@ module Lanalytics
   module Metric
     class CombinedMetric < Base
 
+      def self.datasource_keys
+        dep_metrics.flat_map{ |metric| metric[:class].datasource_keys }.uniq
+      end
+
       def self.query_dependent(**params)
         dep_metrics.each_with_object({}) do |metric, results|
           results[metric[:class].name.demodulize] = metric[:class].query(params)[:count] * (metric[:weight] || 1)
