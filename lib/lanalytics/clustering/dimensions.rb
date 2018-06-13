@@ -390,7 +390,7 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.unique_video_downloads_activity(course_uuid, user_uuids = nil)
-    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_video_downloads_activity
+    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_video_downloads_activity_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
      and (v.verb = 'downloaded_sd_video' or
@@ -404,7 +404,7 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.unique_slide_downloads_activity(course_uuid, user_uuids = nil)
-    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_slide_downloads_activity
+    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_slide_downloads_activity_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
      and v.verb = 'downloaded_slides'
@@ -434,7 +434,7 @@ class Lanalytics::Clustering::Dimensions
   def self.unique_video_play_activity(course_uuid, user_uuids = nil)
     # Counts number of unique videos played
 
-    s1 = "select e.user_uuid, count(distinct(r.uuid)) as unique_video_play_activity
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as unique_video_play_activity_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
      and e.resource_id = r.id "
