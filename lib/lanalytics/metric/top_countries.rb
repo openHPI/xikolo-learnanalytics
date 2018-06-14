@@ -6,7 +6,7 @@ module Lanalytics
 
       process_result do |result|
         result.map do |item|
-          item.slice :country_code, :country_code_iso3, :distinct_users
+          item.slice :country_code, :country_code_iso3, :distinct_users, :relative_users
         end
       end
 
