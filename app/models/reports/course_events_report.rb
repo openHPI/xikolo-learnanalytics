@@ -4,6 +4,7 @@ module Reports
       super
 
       @deanonymized = options['deanonymized']
+      @verb = options['verb']
     end
 
     def generate!
@@ -15,7 +16,7 @@ module Reports
     private
 
     def headers
-      ['Course ID', 'User', 'Verb', 'Resource', 'Timestamp', 'Context', 'Type', 'Title', 'Section']
+      ['User ID', 'Verb', 'Resource ID', 'Timestamp', 'Context', 'Type', 'Item', 'Section']
     end
 
     # Handle each course event, prepare it for CSV output and yield it to the caller
@@ -26,7 +27,10 @@ module Reports
       each_page do |page|
         page[:data].each do |row|
           # Skip deprecated events
-          next if row[:verb] == 'VISITED'
+          next if %w(
+            VISITED
+            VIEWED_PAGE
+          ).include? row[:verb]
 
           yield transform(row)
         end
@@ -54,20 +58,14 @@ module Reports
     # Transform one event's data for output to the CSV file
     def transform(row)
       # De-anonymize the user ID, if required
-      row[:user] = @deanonymized ? row[:user] : Digest::SHA256.hexdigest(row[:user])
+      row[:user_id] = @deanonymized ? row[:user_id] : Digest::SHA256.hexdigest(row[:user_id])
 
       # We add three more columns with information related to course items
-      row[:type] = ''
-      row[:title] = ''
-      row[:section] = ''
+      item = items[row[:resource_id]] || items[JSON.parse(row[:context])['item_id']] || {}
+      row[:type] = item['content_type']
+      row[:item] = item['title']
 
-      # For item visit events, we can even fill these fields :-)
-      if row[:verb] == 'VISITED_ITEM'
-        item = items[row[:resource]] || {}
-        row[:type] = item['content_type']
-        row[:title] = item['title']
-        row[:section] = sections.dig(item['section_id'], 'title')
-      end
+      row[:section] = sections.dig(item['section_id'], 'title')
 
       row.values
     end
@@ -77,6 +75,7 @@ module Reports
         course_id: course['id'],
         start_date: course['start_date'],
         end_date: course['end_date'],
+        verb: @verb,
         page: page,
         scroll_id: scroll_id
       )
