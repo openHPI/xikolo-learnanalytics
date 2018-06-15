@@ -2,6 +2,7 @@ module Lanalytics
   module Metric
     class DeviceUsage < ExpApiMetric
       include Lanalytics::Helper::PercentageHelper
+      extend Lanalytics::Helper::ClientUsageHelper
 
       description 'Returns the used platforms and runtimes, as well as an aggregated behavior state, which is either web, mobile or mixed.'
 
@@ -66,19 +67,6 @@ module Lanalytics
         mobile_app = 0
         tv_app = 0
 
-        mobile_web_platforms = [
-          'android',
-          'ios',
-          'ios (ipad)',
-          'ios (iphone)',
-          'ios (ipod)',
-          'windows phone',
-          'blackberry',
-          'firefox os'
-        ]
-        mobile_app_runtimes = ['android', 'ios']
-        tv_app_runtimes = ['tvos']
-
         # total activity
         total_activity = 0
         result['aggregations']['platforms']['buckets'].each { |item| total_activity += item['doc_count'] }
@@ -87,7 +75,7 @@ module Lanalytics
         platforms = []
         result['aggregations']['platforms']['buckets'].each do |platform|
           # count web usage
-          if mobile_web_platforms.include? platform['key'].downcase
+          if mobile_platforms.include? platform['key'].downcase
             mobile_web += platform['doc_count']
           else
             desktop_web += platform['doc_count']
