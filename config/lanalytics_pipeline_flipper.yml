@@ -15,7 +15,6 @@ development:
   pipelines:
     - exp_api_pipeline.prb
     - referrer_pipeline.prb
-    - google_analytics_pipeline.prb
 
 test:
   <<: *common

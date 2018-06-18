@@ -10,7 +10,7 @@ module Lanalytics
         MIN_REPORT_DATE = Date.new(2005, 1, 1)
         AUTH_SCOPE = 'https://www.googleapis.com/auth/analytics.readonly'
 
-        attr_reader :client_email, :private_key, :view_id
+        attr_reader :client_email, :private_key, :view_id, :tracking_id
 
         def initialize(ga_config)
           super(ga_config)
@@ -18,6 +18,9 @@ module Lanalytics
         end
 
         def setup
+          if tracking_id.blank?
+            raise 'Google Analytics tracking ID is not set. Plz have a look at the configuration ...'
+          end
           if view_id.blank?
             raise 'Google Analytics view ID is not set. Plz have a look at the configuration ...'
           end

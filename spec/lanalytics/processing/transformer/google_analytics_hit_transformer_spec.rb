@@ -7,9 +7,11 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     @load_commands = []
     @pipeline_ctx = OpenStruct.new processing_action: :CREATE
 
+    @datasource = double('GoogleAnalyticsDatasource')
+    allow(@datasource).to receive(:tracking_id).and_return('UA-424242')
     @geo_id_lookup = double('GoogleAnalyticsGeoIdLookup')
     allow(@geo_id_lookup).to receive(:get).and_return('42')
-    @transformer = Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(@geo_id_lookup)
+    @transformer = Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(@datasource, @geo_id_lookup)
   end
 
   it 'should transform processing unit to (LoadORM) entity' do
