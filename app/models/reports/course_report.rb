@@ -26,6 +26,16 @@ module Reports
         # needs more memory but much faster performance
         if @include_analytics_metrics
           clustering_metrics = fetch_clustering_metrics(course)
+
+          video_count ||= course_service.rel(:items).get(
+            course_id: course['id'],
+            content_type: 'video',
+            was_available: true
+          ).value!.count
+
+          start_date =  Date.parse(course['start_date'])
+          end_date =    Date.parse(course['end_date'] || Date.now)
+          course_days = (end_date - start_date).to_i
         end
 
         Xikolo.paginate(
@@ -92,9 +102,13 @@ module Reports
                 clustering_metrics.dig(user['id'], 'average_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'total_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'unique_video_play_activity') || '',
+                percentage(clustering_metrics.dig(user['id'], 'unique_video_play_activity'), of: video_count) || '',
                 clustering_metrics.dig(user['id'], 'unique_video_downloads_activity') || '',
+                percentage(clustering_metrics.dig(user['id'], 'unique_video_downloads_activity'), of: video_count) || '',
                 clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity') || '',
+                percentage(clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity'), of: video_count) || '',
                 clustering_metrics.dig(user['id'], 'forum_activity') || '',
+                clustering_metrics.dig(user['id'], 'forum_activity').to_f / course_days || '',
                 clustering_metrics.dig(user['id'], 'forum_observation') || '',
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '',
               ]
@@ -262,9 +276,13 @@ module Reports
             'Avg. Session Duration',
             'Total Session Duration',
             'Video Play Activity',
+            'Video Play Activity (Percentage)',
             'Video Downloads Activity',
+            'Video Downloads Activity (Percentage)',
             'Slide Downloads Activity',
+            'Slide Downloads Activity (Percentage)',
             'Forum Activity',
+            'Forum Activity per Day',
             'Forum Observation',
             'Quiz Performance'
           ]
@@ -369,6 +387,11 @@ module Reports
         .map { |e| as_date(e['created_at']) }
         .compact
         .none? { |date| date < compare_date }
+    end
+
+    def percentage(n, of:)
+      return if n.blank? || of == 0
+      format("%.2f", n.to_f / of.to_f * 100.0)
     end
 
     def account_service
