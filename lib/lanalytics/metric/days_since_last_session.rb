@@ -2,6 +2,7 @@ module Lanalytics
   module Metric
     class DaysSinceLastSession < GoogleAnalyticsMetric
       include Lanalytics::Helper::PercentageHelper
+      extend Lanalytics::Helper::GoogleAnalyticsBucketHelper
 
       description 'The number of sessions broken down to the number of days since last session'
 

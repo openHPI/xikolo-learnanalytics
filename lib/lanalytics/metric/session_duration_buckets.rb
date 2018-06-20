@@ -2,6 +2,7 @@ module Lanalytics
   module Metric
     class SessionDurationBuckets < GoogleAnalyticsMetric
       include Lanalytics::Helper::PercentageHelper
+      extend Lanalytics::Helper::GoogleAnalyticsBucketHelper
 
       description 'The number of sessions broken down to buckets of session durations'
 
