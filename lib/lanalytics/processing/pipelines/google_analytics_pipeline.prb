@@ -1,4 +1,5 @@
 def create_ga_pipeline(route, extractor_type, processing_action, geo_id_lookup)
+  datasource = Lanalytics::Processing::DatasourceManager.datasource('google_analytics')
   pipeline_for(route, :google_analytics, processing_action) do
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
@@ -6,7 +7,7 @@ def create_ga_pipeline(route, extractor_type, processing_action, geo_id_lookup)
     transformer Lanalytics::Processing::Transformer::GeoinfoFinder.new
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new(anonymize_ip: true)
     # Important to be the last transformer, since it creates Entities and Attributes
-    transformer Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(geo_id_lookup)
+    transformer Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(datasource, geo_id_lookup)
 
     loader Lanalytics::Processing::Loader::AmqLoader.new('xikolo.lanalytics.google_analytics_hits')
   end
