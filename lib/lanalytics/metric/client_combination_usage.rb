@@ -6,7 +6,7 @@ module Lanalytics
 
       description 'Returns the number of users for any combination of client types'
 
-      optional_parameter :course_id, :item_id
+      optional_parameter :course_id, :item_id, :start_date, :end_date
 
       exec do |params|
         # Build filters for different client types
@@ -55,19 +55,32 @@ module Lanalytics
           [key, aggregation]
         end.to_h
 
-        result = datasource.exec do |client|
-          client.search index: datasource.index, body: {
-            size: 0,
-            query: {
-              bool: {
-                must: [
-                  { exists: { field: 'in_context.platform' } },
-                  { exists: { field: 'in_context.runtime' } }
-                ] + all_filters(nil, params[:course_id], params[:item_id])
+        query = {
+          size: 0,
+          query: {
+            bool: {
+              must: [
+                { exists: { field: 'in_context.platform' } },
+                { exists: { field: 'in_context.runtime' } }
+              ] + all_filters(nil, params[:course_id], params[:item_id])
+            }
+          },
+          aggregations: aggregations
+        }
+        
+        if params[:start_date].present? and params[:end_date].present?
+          query[:query][:bool][:filter] = {
+            range: {
+              timestamp: {
+                gte: DateTime.parse(params[:start_date]).iso8601,
+                lte: DateTime.parse(params[:end_date]).iso8601
               }
-            },
-            aggregations: aggregations
+            }
           }
+        end
+
+        result = datasource.exec do |client|
+          client.search index: datasource.index, body: query
         end
 
         # Compute intersections
