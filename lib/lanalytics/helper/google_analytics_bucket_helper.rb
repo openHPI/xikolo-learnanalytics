@@ -1,5 +1,5 @@
 module Lanalytics::Helper::GoogleAnalyticsBucketHelper
-  def self.histogram_bucket_labels(bucket_boundaries)
+  def histogram_bucket_labels(bucket_boundaries)
     labels = bucket_boundaries.map.with_index do |boundary, index|
       if index == bucket_boundaries.size - 1
         "#{boundary}+"
