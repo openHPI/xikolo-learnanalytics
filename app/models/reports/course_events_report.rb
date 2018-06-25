@@ -60,6 +60,8 @@ module Reports
       # De-anonymize the user ID, if required
       row[:user_id] = @deanonymized ? row[:user_id] : Digest::SHA256.hexdigest(row[:user_id])
 
+      row[:context] = @deanonymized ? row[:context].to_json : row[:context].except('user_ip', 'user_agent').to_json
+
       # We add three more columns with information related to course items
       item = items[row[:resource_id]] || items[JSON.parse(row[:context])['item_id']] || {}
       row[:type] = item['content_type']

@@ -71,7 +71,7 @@ module Lanalytics
               verb: item['_source']['verb'],
               resource_id: item['_source']['resource']['resource_uuid'],
               timestamp:  item['_source']['timestamp'],
-              context: item['_source']['in_context'].to_json
+              context: item['_source']['in_context']
           }
           processed_result << ev
         end
