@@ -59,26 +59,7 @@ FactoryBot.define do
     self_url "http://localhost:3100/users/00000001-3100-4444-9999-000000000001"
     blurb_url "http://localhost:3100/users/00000001-3100-4444-9999-000000000001/blurb"
     affiliated false
-  end
-
-  factory :amqp_user_with_ipv4, class: Hash do
-    id "00000001-3100-4444-9999-000000000001"
-    full_name "Kevin Cool Jr."
-    admin false
-    language "en"
-    born_at "1985-04-24T00:00:00.000Z"
-    created_at "2014-10-20T19:56:31.268Z"
-    in_context({"user_ip"=>"141.89.225.126"})
-  end
-
-  factory :amqp_user_with_ipv6, class: Hash do
-    id "00000001-3100-4444-9999-000000000001"
-    full_name "Kevin Cool Jr."
-    admin false
-    language "en"
-    born_at "1985-04-24T00:00:00.000Z"
-    created_at "2014-10-20T19:56:31.268Z"
-    in_context({"user_ip"=>"2001:638:807:204::8d59:e17e"})
+    in_context({"user_ip"=>"141.89.225.126", "user_agent"=>"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.25 Safari/537.36"})
   end
 
 factory :amqp_user_with_fields, class: Hash do

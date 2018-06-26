@@ -39,8 +39,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     expect(entity[:qt].value).to eq 1414418348
     expect(entity[:sr].value).to eq '1920x1080'
     expect(entity[:uid].value).to eq (Digest::SHA256.hexdigest '00000001-3100-4444-9999-000000000002')
-    expect(entity[:ua].value).to eq 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
-    expect(entity[:uip].value).to eq '141.89.225.126'
+    expect(entity[:ua].value).to eq ''
+    expect(entity[:uip].value).to eq ''
     expect(entity[:geoid].value).to eq '42'
     expect(entity[:cd1].value).to eq '00000002-3100-4444-9999-000000000002'
     expect(entity[:cd2].value).to eq '00000003-3100-4444-9999-000000000002'
