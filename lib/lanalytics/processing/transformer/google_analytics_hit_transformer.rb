@@ -58,8 +58,8 @@ module Lanalytics
             # User properties
             with_attribute :uid,     :string,  (Digest::SHA256.hexdigest attrs[:user_id])
             with_attribute :cid,     :string,  (Digest::SHA256.hexdigest attrs[:client_id]) unless attrs[:client_id].nil?
-            with_attribute :ua,      :string,  attrs[:user_agent] || '' # Prevents GA from extracting user agent from HTTP request headers
-            with_attribute :uip,     :string,  attrs[:user_ip] || '' # Prevents GA from extracting IP from HTTP request
+            with_attribute :ua,      :string,  '' # Prevents GA from extracting user agent from HTTP request headers
+            with_attribute :uip,     :string,  '' # Prevents GA from extracting IP from HTTP request
             unless geo_id.nil?
               with_attribute :geoid, :string,  geo_id
             end
@@ -138,11 +138,9 @@ module Lanalytics
           attrs = attrs.merge client_id: in_context[:client_id],
                               user_id: exp_stmt.user.uuid,
                               timestamp: exp_stmt.timestamp,
-                              user_ip: in_context[:user_ip],
                               data_source: (APP_RUNTIMES.include? in_context[:runtime]) ? :app : :web,
                               app_name: in_context[:runtime],
                               app_version: in_context[:build_version],
-                              user_agent: in_context[:user_agent],
                               screen_width: in_context[:screen_width]&.to_i,
                               screen_height: in_context[:screen_height]&.to_i,
                               user_location_country_code: in_context[:user_location_country_code],
