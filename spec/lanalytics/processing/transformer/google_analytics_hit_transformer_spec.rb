@@ -1,17 +1,27 @@
 require 'rails_helper'
 
 describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
+  let(:datasource) do
+    datasource = double('GoogleAnalyticsDatasource')
+    allow(datasource).to receive(:tracking_id).and_return('UA-424242')
+    allow(datasource).to receive(:custom_dimension_index) do |name|
+      [:course_id, :item_id, :quiz_type, :section_id, :question_id].index(name) + 1
+    end
+    allow(datasource).to receive(:custom_metric_index) do |name|
+      [:points_percentage, :quiz_attempt, :quiz_needed_time, :video_time].index(name) + 1
+    end
+    datasource
+  end
+
   before(:each) do
     @original_event = FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
     @processing_units = [Lanalytics::Processing::Unit.new(:exp_event, @original_event)]
     @load_commands = []
     @pipeline_ctx = OpenStruct.new processing_action: :CREATE
 
-    @datasource = double('GoogleAnalyticsDatasource')
-    allow(@datasource).to receive(:tracking_id).and_return('UA-424242')
     @geo_id_lookup = double('GoogleAnalyticsGeoIdLookup')
     allow(@geo_id_lookup).to receive(:get).and_return('42')
-    @transformer = Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(@datasource, @geo_id_lookup)
+    @transformer = Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer.new(datasource, @geo_id_lookup)
   end
 
   it 'should transform processing unit to (LoadORM) entity' do
