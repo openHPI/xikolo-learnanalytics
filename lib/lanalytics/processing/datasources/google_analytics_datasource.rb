@@ -80,7 +80,12 @@ module Lanalytics
             { name: :item_id, scope: :hit },
             { name: :quiz_type, scope: :hit },
             { name: :section_id, scope: :hit },
-            { name: :question_id, scope: :hit }
+            { name: :question_id, scope: :hit },
+            { name: :platform, scope: :session },
+            { name: :platform_version, scope: :session },
+            { name: :runtime, scope: :session },
+            { name: :runtime_version, scope: :session },
+            { name: :device, scope: :session }
           ]
         end
 
