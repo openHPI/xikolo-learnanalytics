@@ -62,7 +62,7 @@ module Lanalytics
       end
 
       def self.get_ordered_item_ids(course_id)
-        Rails.cache.fetch("ordered_item_ids/#{course_id}", expires_in: 1.hour) do
+        Rails.cache.fetch("ordered_item_ids/#{course_id}", expires_in: 1.day) do
           sections_index = get_sections(course_id).map { |section| [section['id'], section] }.to_h
           ordered_items = get_items(course_id).sort_by { |item| [sections_index[item['section_id']]['position'], item['position']] }
           ordered_items.map { |item| item['id'] }
