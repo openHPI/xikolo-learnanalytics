@@ -27,7 +27,7 @@ module Lanalytics
         total_visits = result[:rows].map {|row| [row['ga:dimension2'], row['ga:pageviews']]}.to_h
 
         # Backjump visits per course item
-        result = request_reports(queried_item_ids.map do |item_id|
+        result = request_reports(total_visits.keys.map do |item_id|
           succeeding_item_ids = ordered_item_ids.drop(ordered_item_ids.index(item_id) + 1)
           next if succeeding_item_ids.empty?
 
