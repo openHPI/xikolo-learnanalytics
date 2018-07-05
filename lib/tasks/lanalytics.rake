@@ -75,4 +75,14 @@ namespace :lanalytics do
     printer.print(:path => "./tmp/profiling", :profile => "profile")
   end
 
+  task sync_ga_custom_definitions: :environment do
+    datasource = Lanalytics::Processing::DatasourceManager.datasource('google_analytics')
+    if datasource.nil?
+      Rails.logger.info 'GoogleAnalyticsDatasource is not configured'
+      next
+    end
+
+    datasource.sync_custom_definitions
+  end
+
 end
