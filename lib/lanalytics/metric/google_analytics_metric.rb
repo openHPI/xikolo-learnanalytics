@@ -23,12 +23,12 @@ module Lanalytics
         }]
       end
 
-      def custom_dimension(name)
+      def self.custom_dimension(name)
         index = datasource.custom_dimension_index name
         "ga:dimension#{index}".to_sym
       end
 
-      def custom_metric(name)
+      def self.custom_metric(name)
         index = datasource.custom_metric_index name
         "ga:metric#{index}".to_sym
       end
