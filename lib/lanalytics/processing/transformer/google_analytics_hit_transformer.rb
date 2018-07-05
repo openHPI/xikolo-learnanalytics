@@ -97,14 +97,14 @@ module Lanalytics
 
             # Custom dimensions and metrics
             (1..20).each do |n|
-              cd_attr = "custom_dimension_#{n}".to_sym
+              cd_attr = "cd#{n}".to_sym
               unless attrs[cd_attr].nil?
-                with_attribute :"cd#{n}", :string,  attrs[cd_attr]
+                with_attribute cd_attr, :string,  attrs[cd_attr]
               end
 
-              cm_attr = :"custom_metric_#{n}".to_sym
+              cm_attr = "cm#{n}".to_sym
               unless attrs[cm_attr].nil?
-                with_attribute :"cm#{n}", :float,   attrs[cm_attr]
+                with_attribute cm_attr, :float,   attrs[cm_attr]
               end
             end
           end
@@ -145,15 +145,15 @@ module Lanalytics
                               screen_height: in_context[:screen_height]&.to_i,
                               user_location_country_code: in_context[:user_location_country_code],
                               user_location_city: in_context[:user_location_city]
-          if attrs[:custom_dimension_1].nil?
-            attrs[:custom_dimension_1] = in_context[:course_id]
+          if attrs[custom_dimension(:course_id)].nil?
+            attrs[custom_dimension(:course_id)] = in_context[:course_id]
           end
           if exp_stmt.resource.type.downcase == :item
-            attrs[:custom_dimension_2] = sanitize_uuid exp_stmt.resource.uuid
-            attrs[:custom_dimension_4] = in_context[:section_id]
+            attrs[custom_dimension(:item_id)] = sanitize_uuid exp_stmt.resource.uuid
+            attrs[custom_dimension(:section_id)] = in_context[:section_id]
           end
           if exp_stmt.resource.type.downcase == :question
-            attrs[:custom_dimension_5] = sanitize_uuid exp_stmt.resource.uuid
+            attrs[custom_dimension(:question_id)] = sanitize_uuid exp_stmt.resource.uuid
           end
 
           transform_attrs_to_create(load_commands, attrs)
@@ -166,11 +166,11 @@ module Lanalytics
               hit_type: :event,
               event_category: :video,
               event_action: verb.to_sym,
-              custom_metric_4: in_context[:current_time]&.to_f
+              custom_metric(:video_time) => in_context[:current_time]&.to_f
           }
           case verb
             when :video_seek
-              attrs[:custom_metric_4] = in_context[:old_current_time]&.to_f
+              attrs[custom_metric(:video_time)] = in_context[:old_current_time]&.to_f
               if in_context[:new_current_time].present? && in_context[:old_current_time].present?
                 attrs[:event_label] = in_context[:new_current_time].to_f > in_context[:old_current_time].to_f ? :forward : :backward
               end
@@ -192,7 +192,7 @@ module Lanalytics
                                        hit_type: :event,
                                        event_category: :lti,
                                        event_action: verb.to_sym,
-                                       custom_metric_1: percentage(in_context[:points]&.to_f, in_context[:max_points]&.to_f)
+                                       custom_metric(:points_percentage) => percentage(in_context[:points]&.to_f, in_context[:max_points]&.to_f)
         end
 
         def transform_pageviews_exp_stmt_to_create(exp_stmt, load_commands)
@@ -202,7 +202,7 @@ module Lanalytics
           attrs = {
               hit_type: :pageview,
               document_path: get_document_path(verb, course_id, sanitize_uuid(exp_stmt.resource.uuid)),
-              custom_dimension_1: course_id
+              custom_dimension(:course_id) => course_id
           }
 
           transform_exp_stmt_to_create exp_stmt, load_commands, attrs
@@ -217,10 +217,10 @@ module Lanalytics
                                     event_action: :asked_question,
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
-                                    custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_2: processing_unit[:video_id],
-                                    custom_dimension_5: processing_unit[:id],
-                                    custom_metric_4: processing_unit[:video_timestamp]
+                                    custom_dimension(:course_id) => processing_unit[:course_id],
+                                    custom_dimension(:item_id) => processing_unit[:video_id],
+                                    custom_dimension(:question_id) => processing_unit[:id],
+                                    custom_metric(:video_time) => processing_unit[:video_timestamp]
         end
 
 
@@ -232,8 +232,8 @@ module Lanalytics
                                     event_action: :answered_question,
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
-                                    custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_5: processing_unit[:question_id]
+                                    custom_dimension(:course_id) => processing_unit[:course_id],
+                                    custom_dimension(:question_id) => processing_unit[:question_id]
         end
 
         def transform_comment_punit_to_create(processing_unit, load_commands)
@@ -244,8 +244,8 @@ module Lanalytics
                                     event_action: :commented,
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
-                                    custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_5: processing_unit[:commentable_id]
+                                    custom_dimension(:course_id) => processing_unit[:course_id],
+                                    custom_dimension(:question_id) => processing_unit[:commentable_id]
         end
 
         def transform_answer_accepted_punit_to_create(processing_unit, load_commands)
@@ -256,8 +256,8 @@ module Lanalytics
                                     event_action: :answer_accepted,
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
-                                    custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_5: processing_unit[:question_id]
+                                    custom_dimension(:course_id) => processing_unit[:course_id],
+                                    custom_dimension(:question_id) => processing_unit[:question_id]
         end
 
         def transform_enrollment_punit_to_create(processing_unit, load_commands)
@@ -277,7 +277,7 @@ module Lanalytics
                                     event_action: action,
                                     user_id: processing_unit[:user_id],
                                     timestamp: processing_unit[:created_at],
-                                    custom_dimension_1: processing_unit[:course_id]
+                                    custom_dimension(:course_id) => processing_unit[:course_id]
         end
 
         def transform_user_punit_to_create(processing_unit, load_commands)
@@ -299,12 +299,22 @@ module Lanalytics
                                     event_action: :submitted_quiz,
                                     user_id: processing_unit[:user_id],
                                     timestamp: submission_time,
-                                    custom_dimension_1: processing_unit[:course_id],
-                                    custom_dimension_2: processing_unit[:item_id],
-                                    custom_dimension_3: processing_unit[:quiz_type],
-                                    custom_metric_1: percentage(processing_unit[:points], processing_unit[:max_points]),
-                                    custom_metric_2: processing_unit[:attempt],
-                                    custom_metric_3: submission_time - (processing_unit[:quiz_access_time]&.to_time || 0)
+                                    custom_dimension(:course_id) => processing_unit[:course_id],
+                                    custom_dimension(:item_id) => processing_unit[:item_id],
+                                    custom_dimension(:quiz_type) => processing_unit[:quiz_type],
+                                    custom_metric(:points_percentage) => percentage(processing_unit[:points], processing_unit[:max_points]),
+                                    custom_metric(:quiz_attempt) => processing_unit[:attempt],
+                                    custom_metric(:quiz_needed_time) => submission_time - (processing_unit[:quiz_access_time]&.to_time || 0)
+        end
+
+        def custom_dimension(name)
+          index = @datasource.custom_dimension_index name
+          "cd#{index}".to_sym
+        end
+
+        def custom_metric(name)
+          index = @datasource.custom_metric_index name
+          "cm#{index}".to_sym
         end
 
         def sanitize_uuid(id)

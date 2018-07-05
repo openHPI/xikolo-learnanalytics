@@ -23,12 +23,22 @@ module Lanalytics
         }]
       end
 
+      def custom_dimension(name)
+        index = datasource.custom_dimension_index name
+        "ga:dimension#{index}".to_sym
+      end
+
+      def custom_metric(name)
+        index = datasource.custom_metric_index name
+        "ga:metric#{index}".to_sym
+      end
+
       def self.course_filter(course_id)
         return {} if course_id.nil?
         {
           filters: [
             {
-              dimension_name: 'ga:dimension1',
+              dimension_name: custom_dimension(:course_id),
               operator: 'EXACT',
               expressions: [course_id]
             }
@@ -41,7 +51,7 @@ module Lanalytics
         {
           filters: [
             {
-              dimension_name: 'ga:dimension2',
+              dimension_name: custom_dimension(:item_id),
               operator: 'EXACT',
               expressions: [item_id]
             }
