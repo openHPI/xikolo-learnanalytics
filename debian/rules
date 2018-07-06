@@ -67,8 +67,13 @@ override_dh_link:
 	dh_link -a
 
 	# Symlink all configuration files from etc into rails config directory
+	# even symlink (currenlty non-existing) service-specific xikolo.yml
+	# an administrator should be able to make specific overrides without
+	# further adjustments
 	(cd ${PKGBASE}${PREFIX}/config/ && \
-		ln --symbolic ../../../../etc/${PACKAGE}/* .)
+		ln --symbolic ../../../../etc/${PACKAGE}/* \
+			../../../../etc/${PACKAGE}/xikolo.yml \
+			.)
 
 	ln -s /etc/${PACKAGE}/environment.rb \
 		${PKGBASE}${PREFIX}/config/environments/puppet.rb
