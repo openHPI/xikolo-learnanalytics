@@ -327,7 +327,8 @@ module Reports
     def course_sections
       @course_sections ||= course_service.rel(:sections).get(
         course_id: course['id'],
-        published: true
+        published: true,
+        include_alternatives: true
       ).value!
     end
 
