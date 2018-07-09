@@ -66,7 +66,7 @@ class ReportJob < ActiveRecord::Base
   end
 
   def tmp_directory
-    Xikolo.config.data_dir.join('tmp', id)
+    Rails.root.join('tmp', id)
   end
 
   def with_tmp_directory

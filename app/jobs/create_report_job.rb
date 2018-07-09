@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'xikolo/s3'
 
 class CreateReportJob < ActiveJob::Base
   queue_as :default
@@ -29,33 +30,33 @@ class CreateReportJob < ActiveJob::Base
   private
 
   def publish_file(job, path)
-    expire_date = 7.days.from_now
-
-    job.finish_with(
-      file_id: upload_file(path, expire_date, job.user_id, job.task_scope),
-      file_expire_date: expire_date
-    )
+    job.finish_with upload_file(path, job.id)
+  rescue => error
+    trace = "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
+    job.fail_with("Report could not be stored:\n#{trace}")
   end
 
-  def upload_file(file_path, expire_date, user_id, scope)
-    file_name = File.basename(file_path)
-    file_attrs = {
-      name: file_name,
-      path: File.join('reports', file_name),
-      size: file_path.size,
-      description: nil,
-      user_id: user_id,
-      mime_type: 'application/zip'
+  def upload_file(file_path, job_id)
+    # which bucket should we use:
+    bucket = Xikolo::S3.bucket_for(:reports)
+    # upload report:
+    object = bucket.put_object(
+      key: 'reports/' + job_id + '/' + File.basename(file_path),
+      body: open(file_path),
+      acl: 'private',
+      content_type: 'application/zip',
+      metadata: {
+        'job-id' => job_id
+      }
+    )
+
+    # we expect the S3 object to be deleted after 7 days
+    # lets generate a presigned-download url for this durtain and
+    # define this as file expire date:
+    valid_duration = 604800 # one week
+    {
+      file_expire_date: valid_duration.seconds.from_now,
+      download_url: object.presigned_url(:get, expires_in: valid_duration)
     }
-    file_attrs[:course_id] = scope if scope
-    file_attrs[:expire_at] = expire_date if expire_date
-
-    record = Xikolo.api(:file).value!.rel(:uploaded_files).post(file_attrs).value!
-
-    target_dir = Xikolo.config.data_dir.join('reports')
-    FileUtils.mkpath target_dir
-    FileUtils.move file_path, target_dir.join(file_name)
-
-    record['id']
   end
 end

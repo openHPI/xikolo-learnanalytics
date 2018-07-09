@@ -39,6 +39,3 @@
 /config/initializers/integration*
 /config/services.integration.yml
 config/xikolo.integration.yml
-
-# Data directory for tests
-spec/support/data_dir/*

@@ -8,6 +8,7 @@ class ReportJobDecorator < ApplicationDecorator
       status: model.status,
       job_params: model.job_params,
       file_id: model.file_id,
+      download_url: model.download_url,
       file_expire_date: model.file_expire_date,
       user_id: model.user_id,
       progress: model.progress,
