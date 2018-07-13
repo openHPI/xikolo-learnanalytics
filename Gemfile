@@ -5,6 +5,9 @@ ruby '~> 2.5.0'
 gem 'rails', '~> 4.2.5'
 gem 'rails-api'
 
+# 1.8.3+ does not compile
+gem 'nokogiri', '< 1.8.3'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 
@@ -31,7 +34,7 @@ gem 'msgr', '~> 1.0'
 gem 'connection_pool'
 
 # Different database adapters to store the data
-gem 'pg'
+gem 'pg', '< 1.0' # Rails 4.2 requires < 1.0
 gem 'elasticsearch'
 gem 'elasticsearch-transport'
 
