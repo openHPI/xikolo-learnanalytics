@@ -30,3 +30,14 @@ namespace :qc do
     puts "finished"
   end
 end
+
+namespace :elastic do
+  desc 'Create elasticsearch index and mapping (index must not exist)'
+  task setup: :environment do
+    client       = Elasticsearch::Interface.client
+    index        = Elasticsearch::Interface.index
+    mapping      = Elasticsearch::Interface.mapping
+    mapping_json = ActiveSupport::JSON.encode mapping
+    client.perform_request 'PUT', index, {}, mapping_json
+  end
+end
