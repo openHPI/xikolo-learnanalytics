@@ -49,8 +49,6 @@ module Lanalytics
           @analyticsv3_client.authorization = credentials
 
           @ping_client = Net::Ping::TCP.new URI.parse(@reporting_client.root_url).host, 80
-
-          sync_custom_definitions
         end
 
         def adoption_date
@@ -109,6 +107,11 @@ module Lanalytics
           index + 1
         end
 
+        def sync_custom_definitions
+          sync_custom_dimensions
+          sync_custom_metrics
+        end
+
         def exec
           return unless block_given?
           yield @reporting_client, @analyticsv3_client
@@ -124,11 +127,6 @@ module Lanalytics
         end
 
         private
-
-        def sync_custom_definitions
-          sync_custom_dimensions
-          sync_custom_metrics
-        end
 
         def sync_custom_dimensions
           existing_dimensions = @analyticsv3_client.list_custom_dimensions(account_id, tracking_id).items
