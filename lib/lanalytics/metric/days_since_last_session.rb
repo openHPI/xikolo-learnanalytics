@@ -37,17 +37,19 @@ module Lanalytics
           ]
         })
 
-        processed_result = {}
+        processed_result = { buckets: [] }
 
         total_sessions = result[:totals]['ga:sessions']
-        bucket_sessions = result[:rows].map{ |row| [row['ga:daysSinceLastSession'], row['ga:sessions'] ] }.to_h
-        processed_result[:buckets] = buckets_labels.map do |bucket_label|
-          sessions = bucket_sessions[bucket_label].nil? ? 0 : bucket_sessions[bucket_label]
-          {
-            days_since_last_session: bucket_label,
-            total_sessions: sessions,
-            relative_sessions: sessions.percent_of(total_sessions)
-          }
+        unless total_sessions.zero?
+          bucket_sessions = result[:rows].map{ |row| [row['ga:daysSinceLastSession'], row['ga:sessions'] ] }.to_h
+          processed_result[:buckets] = buckets_labels.map do |bucket_label|
+            sessions = bucket_sessions[bucket_label].nil? ? 0 : bucket_sessions[bucket_label]
+            {
+              days_since_last_session: bucket_label,
+              total_sessions: sessions,
+              relative_sessions: sessions.percent_of(total_sessions)
+            }
+          end
         end
 
         processed_result
