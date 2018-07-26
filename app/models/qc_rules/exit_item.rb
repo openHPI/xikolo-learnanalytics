@@ -15,20 +15,20 @@ module QcRules
       all_items = get_items course
       metric_results = calculate_metric(course)[:items].map{ |item| [item[:item_id], item] }.to_h
       all_items.select{ |item| !last_in_section?(all_items, item) }.each do |item|
-        page_views = metric_results.dig item.id, :total_pageviews
-        exit_rate = metric_results.dig item.id, :relative_exits
+        page_views = metric_results.dig item['id'], :total_pageviews
+        exit_rate = metric_results.dig item['id'], :relative_exits
         next if page_views.nil? || exit_rate.nil?
 
         if page_views > config['page_view_threshold'] && exit_rate > config['low_threshold']
-          @rule.alerts_for(course_id: course.id)
-            .with_data(resource_id: item.id)
+          @rule.alerts_for(course_id: course['id'])
+            .with_data(resource_id: item['id'])
             .open!(
               severity: severity(exit_rate),
               annotation: "#{exit_rate.round(2)}% of item visits are the last action within a session."
             )
         else
-          @rule.alerts_for(course_id: course.id)
-            .with_data(resource_id: item.id)
+          @rule.alerts_for(course_id: course['id'])
+            .with_data(resource_id: item['id'])
             .close!
         end
       end
@@ -50,14 +50,14 @@ module QcRules
     end
 
     def last_in_section?(all_items, item)
-      all_items.none?{ |other_item| other_item.section_id == item.section_id && other_item.position > item.position }
+      all_items.none?{ |other_item| other_item['section_id'] == item['section_id'] && other_item['position'] > item['position'] }
     end
 
     def get_items(course)
       items = []
       Xikolo.paginate(
         Xikolo.api(:course).value!.rel(:items).get(
-          course_id: course.id,
+          course_id: course['id'],
           published: true
         )
       ) do |item|
