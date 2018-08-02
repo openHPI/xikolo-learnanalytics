@@ -144,7 +144,12 @@ module Lanalytics
                               screen_width: in_context[:screen_width]&.to_i,
                               screen_height: in_context[:screen_height]&.to_i,
                               user_location_country_code: in_context[:user_location_country_code],
-                              user_location_city: in_context[:user_location_city]
+                              user_location_city: in_context[:user_location_city],
+                              custom_dimension(:platform) => in_context[:platform],
+                              custom_dimension(:platform_version) => in_context[:platform_version],
+                              custom_dimension(:runtime) => in_context[:runtime],
+                              custom_dimension(:runtime_version) => in_context[:runtime_version],
+                              custom_dimension(:device) => in_context[:device]
           if attrs[custom_dimension(:course_id)].nil?
             attrs[custom_dimension(:course_id)] = in_context[:course_id]
           end

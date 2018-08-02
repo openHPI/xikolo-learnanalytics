@@ -5,7 +5,8 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
     datasource = double('GoogleAnalyticsDatasource')
     allow(datasource).to receive(:tracking_id).and_return('UA-424242')
     allow(datasource).to receive(:custom_dimension_index) do |name|
-      [:course_id, :item_id, :quiz_type, :section_id, :question_id].index(name) + 1
+      [:course_id, :item_id, :quiz_type, :section_id, :question_id, :platform,
+       :platform_version, :runtime, :runtime_version, :device].index(name) + 1
     end
     allow(datasource).to receive(:custom_metric_index) do |name|
       [:points_percentage, :quiz_attempt, :quiz_needed_time, :video_time].index(name) + 1
@@ -159,6 +160,52 @@ describe Lanalytics::Processing::Transformer::GoogleAnalyticsHitTransformer do
       it 'sets app version correctly' do
         expect(subject[:av].value).to eq '42'
       end
+    end
+  end
+
+  describe 'when transforming event with device information' do
+    let(:type) { 'exp_event' }
+    let(:runtime) { 'Chrome' }
+    let(:runtime_version) { '68' }
+    let(:platform) { 'Macintosh' }
+    let(:platform_version) { '10.13.4' }
+    let(:device) { 'Apple Macbook Air' }
+    let(:processing_unit_data) do
+      {
+        user: {
+          uuid: SecureRandom.uuid
+        },
+        verb: {
+          type: 'VISITED_ITEM'
+        },
+        resource: {
+          uuid: SecureRandom.uuid,
+          type: 'item'
+        },
+        timestamp: DateTime.now,
+        with_result: {},
+        in_context: {
+          runtime: runtime,
+          runtime_version: runtime_version,
+          platform: platform,
+          platform_version: platform_version,
+          device: device
+        }
+      }
+    end
+
+    it 'sets platform correctly' do
+      expect(subject[:cd6].value).to eq platform
+      expect(subject[:cd7].value).to eq platform_version
+    end
+
+    it 'sets runtime_version correctly' do
+      expect(subject[:cd8].value).to eq runtime
+      expect(subject[:cd9].value).to eq runtime_version
+    end
+
+    it 'sets device correctly' do
+      expect(subject[:cd10].value).to eq device
     end
   end
 
