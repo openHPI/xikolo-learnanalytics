@@ -422,7 +422,7 @@ GEM
       lograge (~> 0.3.5)
       railties
       restify
-    xikolo-config (2.33)
+    xikolo-config (2.35)
       activesupport
       addressable (~> 2.0)
     xikolo-sidekiq (1.0.0)
@@ -495,7 +495,7 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-common (~> 2.4)
-  xikolo-config (~> 2.25)
+  xikolo-config (~> 2.35)
   xikolo-sidekiq
 
 RUBY VERSION
