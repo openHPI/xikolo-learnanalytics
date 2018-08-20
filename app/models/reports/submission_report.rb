@@ -90,6 +90,12 @@ module Reports
       ]
 
       values + all_quiz_questions.flat_map { |key, question|
+        # Special case: Essay questions do not have answer objects, thus the
+        # following +map+ would have no effect.
+        if question[:answers].empty?
+          next [row[:questions][key][:freetext_answer]]
+        end
+
         # For each question, we add an empty column (for the quiz question)
         # and one column for each possible answer.
         [''] + question[:answers].map { |answer|
