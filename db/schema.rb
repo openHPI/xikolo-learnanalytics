@@ -160,7 +160,6 @@ ActiveRecord::Schema.define(version: 20180829124453) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.uuid     "user_id"
-    t.uuid     "file_id"
     t.datetime "file_expire_date"
     t.integer  "progress"
     t.string   "annotation"

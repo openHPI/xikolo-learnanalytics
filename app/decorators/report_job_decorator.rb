@@ -7,7 +7,6 @@ class ReportJobDecorator < ApplicationDecorator
       task_scope: model.task_scope,
       status: model.status,
       job_params: model.job_params,
-      file_id: model.file_id,
       download_url: model.download_url,
       file_expire_date: model.file_expire_date,
       user_id: model.user_id,
