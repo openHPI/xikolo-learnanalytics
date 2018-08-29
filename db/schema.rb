@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180628190323) do
+ActiveRecord::Schema.define(version: 20180829124453) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,15 +83,12 @@ ActiveRecord::Schema.define(version: 20180628190323) do
     t.datetime "accessed_at",      default: '1970-01-01 00:00:00', null: false
   end
 
-  create_table "datasources", id: false, force: :cascade do |t|
-    t.string "key",         null: false
+  create_table "datasources", primary_key: "key", force: :cascade do |t|
     t.string "name"
     t.text   "description"
     t.text   "settings"
     t.string "type"
   end
-
-  add_index "datasources", ["key"], name: "index_datasources_on_key", unique: true, using: :btree
 
   create_table "events", force: :cascade do |t|
     t.string   "user_uuid"
@@ -178,12 +175,10 @@ ActiveRecord::Schema.define(version: 20180628190323) do
     t.string   "description"
   end
 
-  create_table "research_cases_users", id: false, force: :cascade do |t|
-    t.integer "research_case_id"
-    t.integer "user_id"
+  create_table "research_cases_users", primary_key: ["research_case_id", "user_id"], force: :cascade do |t|
+    t.integer "research_case_id", null: false
+    t.integer "user_id",          null: false
   end
-
-  add_index "research_cases_users", ["research_case_id", "user_id"], name: "index_research_cases_users_on_research_case_id_and_user_id", using: :btree
 
   create_table "resources", force: :cascade do |t|
     t.string   "uuid"
