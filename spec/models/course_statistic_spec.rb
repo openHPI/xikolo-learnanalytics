@@ -72,6 +72,20 @@ describe CourseStatistic do
       questions: 500,
       questions_last_day: 50
     )
+
+    Stub.service(
+      :certificate,
+      open_badge_statistics_url: '/open_badge_statistics{?course_id}'
+    )
+    Stub.request(
+      :certificate, :get, '/open_badge_statistics',
+      query: { course_id: course_id }
+    ).to_return Stub.json(
+      issued: 1000
+    )
+
+    stub_request(:get, 'http://localhost:9200/_count')
+      .to_return(status: 200)
   end
 
   describe '#calculate!' do

@@ -52,6 +52,11 @@ class CourseStatisticDecorator < ApplicationDecorator
       # helpdesk
       helpdesk_tickets: model.helpdesk_tickets,
       helpdesk_tickets_last_day: helpdesk_tickets_last_day,
+
+      # open badges
+      badge_issues: model.badge_issues,
+      badge_downloads: model.badge_downloads,
+      badge_shares: model.badge_shares,
     }.as_json(**opts)
   end
 end
