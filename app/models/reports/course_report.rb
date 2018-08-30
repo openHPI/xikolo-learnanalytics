@@ -124,8 +124,6 @@ module Reports
             values += [
               stat_pinboard['posts'],
               stat_pinboard['threads'],
-              enrollment.dig('points', 'achieved'),
-              enrollment.dig('points', 'percentage'),
               enrollment.dig('certificates', 'confirmation_of_participation') || '',
               enrollment.dig('certificates', 'record_of_achievement') || '',
               enrollment.dig('certificates', 'certificate') || '',
@@ -134,7 +132,9 @@ module Reports
               enrollment['quantile'] || '',
               enrollment['quantile'].present? ? calculate_top_performance(enrollment['quantile']) : '',
               enrollment.dig('visits', 'visited'),
-              enrollment.dig('visits', 'percentage')
+              enrollment.dig('visits', 'percentage'),
+              enrollment.dig('points', 'achieved'),
+              enrollment.dig('points', 'percentage')
             ]
 
             # For each section, append visit percentage and total graded points
@@ -143,11 +143,19 @@ module Reports
 
               progresses.pop # Last progress element is for the entire course
 
+              values += progresses.map { |section| section.dig('visits', 'user') }
               values += progresses.map { |section| section.dig('visits', 'percentage') }
               values += progresses.map { |section|
                 main_points = section.dig('main_exercises', 'graded_points').to_f.round(2)
                 bonus_points = section.dig('bonus_exercises', 'graded_points').to_f.round(2)
                 main_points + bonus_points
+              }
+              values += progresses.map { |section|
+                main_points = section.dig('main_exercises', 'graded_points').to_f.round(2)
+                bonus_points = section.dig('bonus_exercises', 'graded_points').to_f.round(2)
+                points = main_points + bonus_points
+                max_points = section.dig('main_exercises', 'max_points').to_f.round(2)
+                (points / max_points * 100).round(2)
               }
             end
 
@@ -292,22 +300,24 @@ module Reports
           'Enrollment Delta in Days',
           'Forum Posts',
           'Forum Threads',
-          'Points Achieved',
-          'Points Percentage',
           'Confirmation of Participation',
           'Record of Achievement',
           'Qualified Certificate',
           'Course Completed',
-          'Course Deleted',
+          'Un-enrolled',
           'Quantile',
           'Top Performance',
           'Items Visited',
-          'Visited Items Percentage'
+          'Items Visited Percentage',
+          'Points',
+          'Points Percentage'
         ]
 
         if @include_sections
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Percentage (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Items Visited (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Items Visited Percentage (Section)" }
           headers.concat course_sections.map { |s| "#{s['title'].titleize} Points (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Points Percentage (Section)" }
         end
 
         headers.concat quiz_column_headers
