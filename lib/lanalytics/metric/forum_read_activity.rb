@@ -1,8 +1,8 @@
 module Lanalytics
   module Metric
-    class ForumActivity < ExpApiMetric
+    class ForumReadActivity < ExpApiMetric
 
-      description 'Total number of all forum events and its unique users.'
+      description 'Total number of forum read events and its unique users.'
 
       optional_parameter :course_id, :user_id
 
@@ -19,10 +19,7 @@ module Lanalytics
                       should: [
                         { match: { 'verb' => 'visited_pinboard' } },
                         { match: { 'verb' => 'visited_question' } },
-                        { match: { 'verb' => 'toggled_subscription' } },
-                        { match: { 'verb' => 'asked_question' } },
-                        { match: { 'verb' => 'answered_question' } },
-                        { match: { 'verb' => 'commented' } }
+                        { match: { 'verb' => 'toggled_subscription' } }
                       ]
                     }
                   }

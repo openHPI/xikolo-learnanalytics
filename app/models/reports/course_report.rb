@@ -88,6 +88,8 @@ module Reports
               user_course_city = fetch_metric('UserCourseCity', course['id'], user['id']) || ''
               device_usage = fetch_device_usage(course['id'], user['id'])
               last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
+              forum_activity = fetch_metric('ForumActivity', course['id'], user['id'])&.dig(:total)
+              forum_read_activity = fetch_metric('ForumReadActivity', course['id'], user['id'])&.dig(:total)
 
               values += [
                 user_course_country,
@@ -107,9 +109,9 @@ module Reports
                 percentage(clustering_metrics.dig(user['id'], 'unique_video_downloads_activity'), of: video_count) || '',
                 clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity') || '',
                 percentage(clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity'), of: video_count) || '',
-                clustering_metrics.dig(user['id'], 'forum_activity') || '',
-                clustering_metrics.dig(user['id'], 'forum_activity').to_f / course_days || '',
-                clustering_metrics.dig(user['id'], 'forum_observation') || '',
+                forum_activity,
+                forum_activity.to_f / course_days,
+                forum_read_activity,
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '',
               ]
             end
@@ -232,8 +234,6 @@ module Reports
         sessions
         average_session_duration
         total_session_duration
-        forum_activity
-        forum_observation
         unique_video_play_activity
         unique_video_downloads_activity
         unique_slide_downloads_activity
@@ -302,7 +302,7 @@ module Reports
             'Slide Downloads Activity (Percentage)',
             'Forum Activity',
             'Forum Activity per Day',
-            'Forum Observation',
+            'Forum Read Activity',
             'Quiz Performance'
           ]
         end
