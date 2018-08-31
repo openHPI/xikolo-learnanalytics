@@ -141,22 +141,33 @@ module Reports
             if @include_sections
               progresses = course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id']).value!
 
-              progresses.pop # Last progress element is for the entire course
+              values += course_sections.map do |s|
+                progresses.find { |p| p['resource_id'] == s['id'] }&.dig('visits', 'user')
+              end
 
-              values += progresses.map { |section| section.dig('visits', 'user') }
-              values += progresses.map { |section| section.dig('visits', 'percentage') }
-              values += progresses.map { |section|
-                main_points = section.dig('main_exercises', 'graded_points').to_f.round(2)
-                bonus_points = section.dig('bonus_exercises', 'graded_points').to_f.round(2)
-                main_points + bonus_points
-              }
-              values += progresses.map { |section|
-                main_points = section.dig('main_exercises', 'graded_points').to_f.round(2)
-                bonus_points = section.dig('bonus_exercises', 'graded_points').to_f.round(2)
-                points = main_points + bonus_points
-                max_points = section.dig('main_exercises', 'max_points').to_f.round(2)
-                (points / max_points * 100).round(2)
-              }
+              values += course_sections.map do |s|
+                progresses.find { |p| p['resource_id'] == s['id'] }&.dig('visits', 'percentage')
+              end
+
+              values += course_sections.map do |s|
+                p = progresses.find { |p| p['resource_id'] == s['id'] }
+                if p
+                  main_points = p.dig('main_exercises', 'graded_points').to_f.round(2)
+                  bonus_points = p.dig('bonus_exercises', 'graded_points').to_f.round(2)
+                  main_points + bonus_points
+                end
+              end
+
+              values += course_sections.map do |s|
+                p = progresses.find { |p| p['resource_id'] == s['id'] }
+                if p
+                  main_points = p.dig('main_exercises', 'graded_points').to_f.round(2)
+                  bonus_points = p.dig('bonus_exercises', 'graded_points').to_f.round(2)
+                  points = main_points + bonus_points
+                  max_points = p.dig('main_exercises', 'max_points').to_f.round(2)
+                  (points / max_points * 100).round(2)
+                end
+              end
             end
 
             all_submissions = all_user_submissions(user['id'])
