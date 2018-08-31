@@ -50,6 +50,8 @@ module Reports
         submission_hash[:user_name] = escape_csv_string(user['full_name'])
         submission_hash[:user_email] = user['email']
 
+        submission_hash[:points] = submission['points']
+
         quiz_service.rel(:quiz_submission_questions).get(
           quiz_submission_id: submission['id'], per_page: 250
         ).value!.each do |submission_question|
