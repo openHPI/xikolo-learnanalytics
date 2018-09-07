@@ -43,7 +43,7 @@ class ReportJobsController < ApplicationController
   private
 
   def job_params
-    params.permit(:task_type, :task_scope, :job_params, :file_id, :file_expire_date, :user_id)
+    params.permit(:task_type, :task_scope, :job_params, :user_id)
   end
 
   def options

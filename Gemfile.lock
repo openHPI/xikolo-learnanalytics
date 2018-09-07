@@ -45,13 +45,13 @@ GEM
       activesupport
     arel (6.0.4)
     aws-eventstream (1.0.1)
-    aws-partitions (1.96.0)
-    aws-sdk-core (3.22.1)
+    aws-partitions (1.100.0)
+    aws-sdk-core (3.24.1)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.6.0)
+    aws-sdk-kms (1.7.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
     aws-sdk-s3 (1.17.0)
@@ -425,6 +425,10 @@ GEM
     xikolo-config (2.35)
       activesupport
       addressable (~> 2.0)
+    xikolo-s3 (1.0.0)
+      aws-sdk-s3 (~> 1.16)
+      uuid4
+      xikolo-common
     xikolo-sidekiq (1.0.0)
       railties (< 6)
       redis-namespace (~> 1)
@@ -436,7 +440,6 @@ PLATFORMS
 DEPENDENCIES
   accept_values_for
   api-responder
-  aws-sdk-s3
   better_errors
   binding_of_caller
   browser
@@ -496,6 +499,7 @@ DEPENDENCIES
   will_paginate
   xikolo-common (~> 2.4)
   xikolo-config (~> 2.35)
+  xikolo-s3 (~> 1.0)
   xikolo-sidekiq
 
 RUBY VERSION
