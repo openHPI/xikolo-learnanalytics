@@ -313,6 +313,18 @@
             "variant": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
+            },
+            "new_objective": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "old_objective": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "objectives_modal_context": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             }
           }
         },
