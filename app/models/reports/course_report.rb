@@ -167,7 +167,8 @@ module Reports
                   bonus_points = p.dig('bonus_exercises', 'graded_points').to_f.round(2)
                   points = main_points + bonus_points
                   max_points = p.dig('main_exercises', 'max_points').to_f.round(2)
-                  (points / max_points * 100).round(2)
+                  percentage = (points / max_points * 100).round(2)
+                  percentage&.nan? ? nil : percentage
                 end
               end
             end
