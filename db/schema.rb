@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180829124453) do
+ActiveRecord::Schema.define(version: 20180830145513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,6 +73,9 @@ ActiveRecord::Schema.define(version: 20180829124453) do
     t.integer  "shows_at_end"
     t.integer  "no_shows_at_middle"
     t.integer  "no_shows_at_end"
+    t.integer  "badge_issues",                                     default: 0
+    t.integer  "badge_downloads",                                  default: 0
+    t.integer  "badge_shares",                                     default: 0
   end
 
   create_table "datasource_accesses", force: :cascade do |t|

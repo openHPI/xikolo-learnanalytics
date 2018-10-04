@@ -9,8 +9,9 @@ class CourseStatistic < ActiveRecord::Base
       course_service.rel(:stats).get(course_id: course['id'], key: 'extended'),
       course_service.rel(:stats).get(course_id: course['id'], key: 'enrollments_by_day'),
       Xikolo.api(:pinboard).value!.rel(:statistic).get(id: course['id']),
-      Xikolo.api(:helpdesk).value!.rel(:statistics).get(course_id: course['id'])
-    ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats|
+      Xikolo.api(:helpdesk).value!.rel(:statistics).get(course_id: course['id']),
+      Xikolo.api(:certificate).value!.rel(:open_badge_statistics).get(course_id: course['id'])
+    ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats, badge_stats|
 
       if extended_course_stats['certificates_count'] > 0 and (extended_course_stats['student_enrollments_at_middle_netto'].to_f - extended_course_stats['no_shows']) > 0
         completion_rate = extended_course_stats['certificates_count'] / (extended_course_stats['student_enrollments_at_middle_netto'] - extended_course_stats['no_shows']).to_f
@@ -89,6 +90,11 @@ class CourseStatistic < ActiveRecord::Base
         # helpdesk
         helpdesk_tickets: ticket_stats['ticket_count'],
         helpdesk_tickets_last_day: ticket_stats['ticket_count_last_day'],
+
+        # open badges
+        badge_issues: badge_stats['issued'].to_i,
+        badge_downloads: Lanalytics::Metric::BadgeDownloadCount.query(course_id: course['id'])[:count].to_i,
+        badge_shares: Lanalytics::Metric::BadgeShareCount.query(course_id: course['id'])[:count].to_i,
       )
     end.value!
   end
