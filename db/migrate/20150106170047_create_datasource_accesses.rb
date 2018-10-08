@@ -1,4 +1,4 @@
-class CreateDatasourceAccesses < ActiveRecord::Migration
+class CreateDatasourceAccesses < ActiveRecord::Migration[4.2]
   def change
     create_table :datasource_accesses do |t|
       t.integer :user_id

@@ -1,4 +1,4 @@
-class AddAnnotationCode < ActiveRecord::Migration
+class AddAnnotationCode < ActiveRecord::Migration[4.2]
   def change
     change_table :jobs do |t|
       t.string :annotation

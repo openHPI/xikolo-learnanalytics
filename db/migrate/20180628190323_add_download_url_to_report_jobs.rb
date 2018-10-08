@@ -1,4 +1,4 @@
-class AddDownloadUrlToReportJobs < ActiveRecord::Migration
+class AddDownloadUrlToReportJobs < ActiveRecord::Migration[4.2]
   def change
     add_column :report_jobs, :download_url, :string
   end

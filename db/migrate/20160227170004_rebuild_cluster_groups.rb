@@ -1,4 +1,4 @@
-class RebuildClusterGroups < ActiveRecord::Migration
+class RebuildClusterGroups < ActiveRecord::Migration[4.2]
   def change
     if ActiveRecord::Base.connection.table_exists? 'cluster_groups'
       drop_table :cluster_groups

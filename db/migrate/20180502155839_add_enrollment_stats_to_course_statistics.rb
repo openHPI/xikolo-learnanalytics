@@ -1,4 +1,4 @@
-class AddEnrollmentStatsToCourseStatistics < ActiveRecord::Migration
+class AddEnrollmentStatsToCourseStatistics < ActiveRecord::Migration[4.2]
   def change
     add_column :course_statistics, :enrollments_at_course_start_netto, :integer
     add_column :course_statistics, :enrollments_at_course_middle_netto, :integer

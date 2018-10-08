@@ -1,4 +1,4 @@
-class AddCourseStatistics < ActiveRecord::Migration
+class AddCourseStatistics < ActiveRecord::Migration[4.2]
   def change
     create_table :course_statistics, id: :uuid do |t|
       t.string :course_name
