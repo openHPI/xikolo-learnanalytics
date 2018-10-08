@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -17,7 +16,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "cluster_groups", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "cluster_groups", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "name"
     t.jsonb    "user_uuids"
     t.jsonb    "cluster_results"
@@ -26,7 +25,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "updated_at"
   end
 
-  create_table "course_statistics", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "course_statistics", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "course_code"
     t.string   "course_status"
     t.uuid     "course_id"
@@ -86,7 +85,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "accessed_at",      default: '1970-01-01 00:00:00', null: false
   end
 
-  create_table "datasources", primary_key: "key", force: :cascade do |t|
+  create_table "datasources", primary_key: "key", id: :string, force: :cascade do |t|
     t.string "name"
     t.text   "description"
     t.text   "settings"
@@ -101,6 +100,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.jsonb    "with_result"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index "((in_context ->> 'course_id'::text))", name: "events_in_context_course_id", using: :btree
   end
 
   create_table "profile_fields", force: :cascade do |t|
@@ -111,7 +111,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "updated_at",                 null: false
   end
 
-  create_table "qc_alert_statuses", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "qc_alert_statuses", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid     "qc_alert_id"
     t.uuid     "user_id"
     t.boolean  "ignored"
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "updated_at"
   end
 
-  create_table "qc_alerts", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "qc_alerts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid     "qc_rule_id"
     t.string   "status"
     t.uuid     "course_id"
@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.boolean  "is_global_ignored", default: false, null: false
   end
 
-  create_table "qc_course_statuses", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "qc_course_statuses", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid     "qc_rule_id"
     t.uuid     "course_id"
     t.string   "status"
@@ -141,13 +141,13 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "updated_at"
   end
 
-  create_table "qc_recommendations", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "qc_recommendations", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid     "qc_alert_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "qc_rules", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "qc_rules", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "worker"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.boolean  "is_global"
   end
 
-  create_table "report_jobs", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "report_jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string   "task_type"
     t.string   "task_scope"
     t.string   "status"
@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "updated_at"
   end
 
-  create_table "teacher_actions", id: :uuid, default: "uuid_generate_v4()", force: :cascade do |t|
+  create_table "teacher_actions", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid     "cluster_group_id"
     t.uuid     "author_id"
     t.uuid     "richtext_id"
@@ -208,9 +208,8 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "username"
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
   end
-
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
 
   create_table "verbs", force: :cascade do |t|
     t.string   "verb"
@@ -225,8 +224,7 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.string   "whodunnit"
     t.datetime "created_at"
     t.json     "object"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
   end
-
-  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
 end

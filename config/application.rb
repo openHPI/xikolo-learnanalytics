@@ -9,6 +9,7 @@ Bundler.require(*Rails.groups)
 module Xikolo::Lanalytics
   class Application < Rails::Application
     config.api_only = true
+    config.autoload_paths += %W(#{config.root}/lib)
   end
 
   def self.rake?
