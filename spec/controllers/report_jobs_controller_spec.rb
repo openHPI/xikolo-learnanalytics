@@ -27,7 +27,7 @@ describe ReportJobsController do
       let!(:report_job_2) { FactoryBot.create(:report_job, :course_report, user_id: '00000001-3100-4444-9999-000000000001') }
       let!(:report_job_3) { FactoryBot.create(:report_job, :course_report, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f') }
 
-      subject { get :index, user_id: '00000001-3100-4444-9999-000000000001' }
+      subject { get :index, params: {user_id: '00000001-3100-4444-9999-000000000001'} }
 
       it { is_expected.to have_http_status :ok }
 
@@ -39,7 +39,7 @@ describe ReportJobsController do
   end
 
   describe '#create' do
-    subject { post :create, params }
+    subject { post :create, params: params }
 
     it { is_expected.to have_http_status :created }
 
@@ -61,13 +61,13 @@ describe ReportJobsController do
   end
 
   describe '#update' do
-    subject { patch :update, id: report_job.id, report_job: params }
+    subject { patch :update, params: {id: report_job.id, report_job: params} }
 
     it { is_expected.to have_http_status :no_content }
   end
 
   describe '#show' do
-    subject { get :show, id: report_job.id }
+    subject { get :show, params: {id: report_job.id} }
 
     it { is_expected.to have_http_status :ok }
   end

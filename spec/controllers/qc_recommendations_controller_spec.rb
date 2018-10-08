@@ -14,7 +14,7 @@ describe QcRecommendationsController do
 
   end
   describe '#show' do
-    let(:action) { -> { get :show, id: recommendation.id } }
+    let(:action) { -> { get :show, params: {id: recommendation.id} } }
     before { action.call }
 
     context 'response' do

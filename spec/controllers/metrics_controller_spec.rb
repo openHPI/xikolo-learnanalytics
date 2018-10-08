@@ -23,7 +23,7 @@ describe MetricsController, type: :controller do
       Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
-    let(:action) { -> { post :show, params } }
+    let(:action) { -> { post :show, params: params } }
 
     context 'count' do
       it 'queries the metric, if available' do

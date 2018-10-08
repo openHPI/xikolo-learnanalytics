@@ -27,7 +27,7 @@ describe QcRulesController, type: :controller do
   end
 
   describe '#show' do
-    subject { get :show, id: qc_rule.id }
+    subject { get :show, params: {id: qc_rule.id} }
 
     it { is_expected.to have_http_status 200 }
 
@@ -38,7 +38,7 @@ describe QcRulesController, type: :controller do
   end
 
   describe '#update' do
-    subject { patch :update, id: qc_rule.id, is_active: true }
+    subject { patch :update, params: {id: qc_rule.id, is_active: true} }
 
     it 'should update the rule' do
       expect { subject }.to change { qc_rule.reload.is_active }.from(false).to(true)
