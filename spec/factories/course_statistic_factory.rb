@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :course_statistic do
-    course_id '00000001-3300-4444-9999-000000000006'
+    course_id { '00000001-3300-4444-9999-000000000006' }
 
     trait :calculated do
       after(:create) do |stat|
