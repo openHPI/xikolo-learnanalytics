@@ -11,8 +11,7 @@ class WebAppChannel < Channel
   end
 
   def as_json
-    super.as_json.merge(url: @url,
-                               usage_doc: @usage_doc)
+    super.as_json.merge(url: @url, usage_doc: @usage_doc)
   end
 
   def self.load(json)
