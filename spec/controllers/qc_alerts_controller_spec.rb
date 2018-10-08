@@ -8,7 +8,6 @@ describe QcAlertsController do
   let(:json) { JSON.parse response.body }
   let(:default_params) { {format: 'json'} }
 
-
   describe '#index' do
     subject { get :index, params }
     let(:params) { {} }
