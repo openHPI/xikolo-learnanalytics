@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'xikolo/s3'
 
-class CreateReportJob < ActiveJob::Base
+class CreateReportJob < ApplicationJob
   queue_as :default
 
   def perform(job_id, options = {})
