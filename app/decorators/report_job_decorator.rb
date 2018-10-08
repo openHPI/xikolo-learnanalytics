@@ -1,7 +1,7 @@
 class ReportJobDecorator < ApplicationDecorator
   delegate_all
 
-  def as_json (**opts)
+  def as_json(opts = {})
     { id: model.id,
       task_type: model.task_type,
       task_scope: model.task_scope,
@@ -14,6 +14,6 @@ class ReportJobDecorator < ApplicationDecorator
       annotation: model.annotation
     }.tap { |fields|
       fields[:error_text] = model.error_text if report_job.failing?
-    }.as_json(**opts)
+    }.as_json(opts)
   end
 end
