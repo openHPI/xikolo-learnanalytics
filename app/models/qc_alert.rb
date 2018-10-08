@@ -1,4 +1,4 @@
-class QcAlert < ActiveRecord::Base
+class QcAlert < ApplicationRecord
   has_many :qc_alert_statuses
   has_many :qc_course_statuses
   belongs_to :qc_rule

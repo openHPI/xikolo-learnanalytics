@@ -5,5 +5,4 @@ class WebDocumentationChannel < Channel
     super(name, usage, documentation_url)
     @documentation = documentation
   end
-
 end

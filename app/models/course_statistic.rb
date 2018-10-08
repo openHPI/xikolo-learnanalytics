@@ -1,4 +1,4 @@
-class CourseStatistic < ActiveRecord::Base
+class CourseStatistic < ApplicationRecord
   has_paper_trail
 
   def calculate!

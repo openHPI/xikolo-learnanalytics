@@ -1,3 +1,3 @@
-class Verb < ActiveRecord::Base
+class Verb < ApplicationRecord
   has_many :events
 end

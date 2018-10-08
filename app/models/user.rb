@@ -1,6 +1,4 @@
-class User < ActiveRecord::Base
-  authenticates_with_sorcery!
-
+class User < ApplicationRecord
   has_and_belongs_to_many :research_cases
   has_many :datasource_accesses
   has_many :accessed_datasources, through: :datasource_accesses, source: :datasource

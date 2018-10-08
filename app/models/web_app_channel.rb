@@ -11,17 +11,15 @@ class WebAppChannel < Channel
   end
 
   def as_json
-    return super.as_json.merge(url: @url,
+    super.as_json.merge(url: @url,
                                usage_doc: @usage_doc)
   end
 
   def self.load(json)
-    
     json = JSON.load(json.to_str)
     
     json['usage_doc'] ||= ''
     name, usage, documentation_url, url, usage_doc = json['name'], json['usage'], json['documentation_url'], json['url'], json['usage_doc']
     return self.new(name, usage, documentation_url, url, usage_doc)
   end
-
 end
