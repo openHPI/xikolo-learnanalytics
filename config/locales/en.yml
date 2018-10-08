@@ -20,10 +20,4 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-
-  shared:
-    message_failure: 'Sorry, something went wrong.'
-
-    help:
-      link: 'Help'
-      headline: 'Lanalytics - Support'
+  hello: "Hello world"
