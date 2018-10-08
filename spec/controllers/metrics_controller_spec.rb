@@ -31,7 +31,7 @@ describe MetricsController, type: :controller do
             .to receive(:available?).and_return(true)
         expect(Lanalytics::Metric::PinboardActivity)
           .to receive(:query)
-          .with(ActionController::Parameters.new({ user_id: user_id, course_id: course_id, start_date: start_date, end_date: end_date }))
+          .with({ user_id: user_id, course_id: course_id, start_date: start_date, end_date: end_date })
         action.call
       end
 

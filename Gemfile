@@ -2,7 +2,7 @@ source 'https://gemuser:QiKLoxr2rfPDisUmEYA9gnJGaLiWTuvW@dev.xikolo.de/gems/'
 ruby '~> 2.5.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.0'
+gem 'rails', '~> 5.2.0'
 
 # 1.8.3+ does not compile
 gem 'nokogiri', '< 1.8.3'
@@ -93,6 +93,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'listen'
   gem 'factory_bot_rails', '~> 4.0'
   gem 'rspec', '~> 3.7'
   gem 'rspec-collection_matchers'
