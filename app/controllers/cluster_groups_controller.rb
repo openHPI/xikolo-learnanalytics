@@ -1,8 +1,5 @@
 class ClusterGroupsController < ApplicationController
 
-  # TODO: Secure controller
-  skip_before_action :require_login
-
   def show
     group = find_cluster_group
 

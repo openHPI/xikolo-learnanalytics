@@ -23,7 +23,6 @@ gem 'rails-rfc6570', '~> 2.3'
 gem 'mnemosyne-ruby', '~> 1.3'
 
 gem 'forgery'
-gem 'sorcery' # Authentication ...
 gem 'validates_email_format_of'
 
 # Connecting to RabbitMQ

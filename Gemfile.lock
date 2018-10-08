@@ -67,7 +67,6 @@ GEM
       aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.3)
     base62-rb (0.3.1)
-    bcrypt (3.1.12)
     better_errors (2.5.0)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -123,7 +122,7 @@ GEM
     factory_bot_rails (4.11.1)
       factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
-    faraday (0.12.2)
+    faraday (0.15.3)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
     forgery (0.7.0)
@@ -171,7 +170,7 @@ GEM
       multi_json (>= 1.2)
     jmespath (1.4.0)
     json (1.8.6)
-    jwt (1.5.6)
+    jwt (2.1.0)
     kgio (2.11.2)
     link_header (0.0.8)
     little-plugger (1.1.4)
@@ -217,7 +216,6 @@ GEM
       bunny (>= 1.4, < 3.0)
       multi_json
     multi_json (1.13.1)
-    multi_xml (0.6.0)
     multipart-post (2.0.0)
     mustermann (1.0.3)
     nesty (1.0.2)
@@ -230,13 +228,6 @@ GEM
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     ntlm-http (0.1.1)
-    oauth (0.5.4)
-    oauth2 (1.4.0)
-      faraday (>= 0.8, < 0.13)
-      jwt (~> 1.0)
-      multi_json (~> 1.3)
-      multi_xml (~> 0.5)
-      rack (>= 1.2, < 3)
     os (1.0.0)
     paginate-responder (1.7.0)
       rack-link_headers (>= 2.2)
@@ -387,10 +378,6 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.4)
       tilt (~> 2.0)
-    sorcery (0.12.0)
-      bcrypt (~> 3.1)
-      oauth (~> 0.4, >= 0.4.4)
-      oauth2 (~> 1.0, >= 0.8.0)
     spring (2.0.2)
       activesupport (>= 4.2)
     sprockets (3.7.2)
@@ -500,7 +487,6 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   sidekiq-cron
   simplecov
-  sorcery
   spring
   unicorn
   uuid4
