@@ -36,7 +36,7 @@ class MetricsController < ApplicationController
   private
 
   def metric_params
-    params.except(:format, :controller, :action, :name).symbolize_keys
+    params.except(:format, :controller, :action, :name)
   end
 
   def metric_not_found_error

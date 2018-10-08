@@ -18,7 +18,7 @@ Rails.application.configure do
 
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      'Cache-Control' => 'public, max-age=172800'
+      'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
     }
   else
     config.action_controller.perform_caching = false
@@ -37,14 +37,6 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
-  # Debug mode disables concatenation and preprocessing of assets.
-  # This option may cause significant delays in view rendering with a large
-  # number of complex assets.
-  config.assets.debug = true
-
-  # Suppress logger output for asset requests.
-  config.assets.quiet = true
-
   config.log_level = :info
 
   # Raises error for missing translations
@@ -52,5 +44,5 @@ Rails.application.configure do
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
-  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end
