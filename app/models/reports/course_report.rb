@@ -364,10 +364,21 @@ module Reports
     def quizzes
       return [] unless @include_all_quizzes
 
-      @quizzes ||= course_service.rel(:items).get(
-        course_id: course['id'],
-        content_type: 'quiz'
-      ).value!.select { |q| %w(main selftest bonus).include? q['exercise_type'] }
+      if @quizzes.nil?
+        @quizzes = []
+        Xikolo.paginate(
+          course_service.rel(:items).get(
+            course_id: course['id'],
+            content_type: 'quiz'
+          )
+        ) do |quiz|
+          if %w(main selftest bonus).include? quiz['exercise_type']
+            @quizzes.append(quiz)
+          end
+        end
+      end
+
+      @quizzes
     end
 
     def all_user_submissions(user_id)
