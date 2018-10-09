@@ -1,4 +1,4 @@
 class Event < ApplicationRecord
-  belongs_to :verb
-  belongs_to :resource
+  belongs_to :verb, optional: true
+  belongs_to :resource, optional: true
 end
