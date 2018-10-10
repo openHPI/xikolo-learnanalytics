@@ -57,6 +57,10 @@
             "confirmation_of_participation": {
               "type": "boolean"
             },
+            "context_id": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
             "course_id": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
@@ -123,6 +127,10 @@
             "new_current_time": {
               "type": "float"
             },
+            "new_objective": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
             "new_quality": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
@@ -138,8 +146,16 @@
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
+            "objectives_modal_context": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
             "old_current_time": {
               "type": "float"
+            },
+            "old_objective": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "old_quality": {
               "type": "keyword",
@@ -311,18 +327,6 @@
               "type": "text"
             },
             "variant": {
-              "type": "keyword",
-              "normalizer": "keyword_lowercase"
-            },
-            "new_objective": {
-              "type": "keyword",
-              "normalizer": "keyword_lowercase"
-            },
-            "old_objective": {
-              "type": "keyword",
-              "normalizer": "keyword_lowercase"
-            },
-            "objectives_modal_context": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             }

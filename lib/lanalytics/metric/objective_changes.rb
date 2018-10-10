@@ -1,13 +1,13 @@
 module Lanalytics
   module Metric
-    class LearningObjectiveChanges < ExpApiMetric
+    class ObjectiveChanges < ExpApiMetric
 
       description 'Number of changes between objectives by pairs of objectives.'
 
-      optional_parameter :context_id, :user_id
+      optional_parameter :course_id, :user_id
 
       exec do |params|
-        context_id = params[:context_id]
+        course_id = params[:course_id]
         user_id = params[:user_id]
 
         result = datasource.exec do |client|
@@ -20,8 +20,8 @@ module Lanalytics
             query_must << { match: { 'user.resource_uuid' => user_id } }
           end
 
-          if context_id.present?
-            query_must << { match: { 'in_context.context_id' => context_id } }
+          if course_id.present?
+            query_must << { match: { 'in_context.context_id' => course_id } }
           end
 
           body = {
