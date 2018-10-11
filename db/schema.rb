@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180830145513) do
+ActiveRecord::Schema.define(version: 20181011093123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +75,8 @@ ActiveRecord::Schema.define(version: 20180830145513) do
     t.integer  "badge_issues",                                     default: 0
     t.integer  "badge_downloads",                                  default: 0
     t.integer  "badge_shares",                                     default: 0
+    t.integer  "active_users_last_day",                            default: 0
+    t.integer  "active_users_last_7days",                          default: 0
   end
 
   create_table "datasource_accesses", force: :cascade do |t|

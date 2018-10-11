@@ -84,8 +84,15 @@ describe CourseStatistic do
       issued: 1000
     )
 
+    # elasticsearch
     stub_request(:get, 'http://localhost:9200/_count')
       .to_return(status: 200)
+    stub_request(:get, 'http://localhost:9200/_search')
+      .to_return(
+        status: 200,
+        headers: {'Content-Type' => 'application/json'},
+        body: { aggregations: { distinct_user_count: { value: 42 } } }.to_json
+      )
   end
 
   describe '#calculate!' do
