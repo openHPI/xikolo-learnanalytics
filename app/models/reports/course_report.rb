@@ -34,7 +34,7 @@ module Reports
           ).value!.count
 
           start_date =  Date.parse(course['start_date'])
-          end_date =    Date.parse(course['end_date'] || Date.today)
+          end_date =    course['end_date'].present? ? Date.parse(course['end_date']) : Date.today
           course_days = (end_date - start_date).to_i
         end
 
