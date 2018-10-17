@@ -8,9 +8,8 @@ describe QcAlertsController do
   let(:json) { JSON.parse response.body }
   let(:default_params) { {format: 'json'} }
 
-
   describe '#index' do
-    subject { get :index, params }
+    subject { get :index, params: params }
     let(:params) { {} }
 
     it { is_expected.to have_http_status 200 }
@@ -82,13 +81,13 @@ describe QcAlertsController do
   end
 
   describe '#show' do
-    subject { get :show, id: alert1.id }
+    subject { get :show, params: {id: alert1.id} }
 
     it { is_expected.to have_http_status 200 }
   end
 
   describe '#create' do
-    subject { post :create, qc_alert: { severity: 'high', status: 'active', qc_rule_id: rule2.id } }
+    subject { post :create, params: {qc_alert: { severity: 'high', status: 'active', qc_rule_id: rule2.id }} }
 
     it { is_expected.to have_http_status 201 }
 
@@ -98,7 +97,7 @@ describe QcAlertsController do
   end
 
   describe '#ignore' do
-    subject { post :ignore, params }
+    subject { post :ignore, params: params }
     let(:params) { {} }
 
     describe 'with alert ID' do

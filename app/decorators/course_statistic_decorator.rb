@@ -1,7 +1,7 @@
 class CourseStatisticDecorator < ApplicationDecorator
   delegate_all
 
-  def as_json (**opts)
+  def as_json(opts = {})
     {
       id: model.id,
       course_code: model.course_code,
@@ -57,6 +57,6 @@ class CourseStatisticDecorator < ApplicationDecorator
       badge_issues: model.badge_issues,
       badge_downloads: model.badge_downloads,
       badge_shares: model.badge_shares,
-    }.as_json(**opts)
+    }.as_json(opts)
   end
 end

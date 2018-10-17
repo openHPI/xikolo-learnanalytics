@@ -2,8 +2,7 @@ source 'https://gemuser:QiKLoxr2rfPDisUmEYA9gnJGaLiWTuvW@dev.xikolo.de/gems/'
 ruby '~> 2.5.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.5'
-gem 'rails-api'
+gem 'rails', '~> 5.2.0'
 
 # 1.8.3+ does not compile
 gem 'nokogiri', '< 1.8.3'
@@ -18,13 +17,12 @@ gem 'xikolo-s3', '~> 1.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'restify', '~> 1.4'
-gem 'rails-rfc6570', '~> 0.3'
+gem 'restify', '~> 1.8'
+gem 'rails-rfc6570', '~> 2.3'
 
 gem 'mnemosyne-ruby', '~> 1.3'
 
 gem 'forgery'
-gem 'sorcery' # Authentication ...
 gem 'validates_email_format_of'
 
 # Connecting to RabbitMQ
@@ -33,7 +31,7 @@ gem 'msgr', '~> 1.0'
 gem 'connection_pool'
 
 # Different database adapters to store the data
-gem 'pg', '< 1.0' # Rails 4.2 requires < 1.0
+gem 'pg', '~> 1.1'
 gem 'elasticsearch'
 gem 'elasticsearch-transport'
 
@@ -67,7 +65,6 @@ gem 'uuid4'
 gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
 
 gem 'responders'
-gem 'api-responder'
 gem 'decorate-responder'
 gem 'will_paginate'
 gem 'paginate-responder'
@@ -96,6 +93,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'listen'
   gem 'factory_bot_rails', '~> 4.0'
   gem 'rspec', '~> 3.7'
   gem 'rspec-collection_matchers'

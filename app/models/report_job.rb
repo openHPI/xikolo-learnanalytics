@@ -1,4 +1,4 @@
-class ReportJob < ActiveRecord::Base
+class ReportJob < ApplicationRecord
   validates_presence_of :user_id
   validates_presence_of :task_type
   validates_presence_of :task_scope, if: :scoped?

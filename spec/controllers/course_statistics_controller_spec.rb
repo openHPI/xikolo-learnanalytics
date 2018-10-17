@@ -6,7 +6,7 @@ describe CourseStatisticsController do
   let(:course_id) {'00000001-3300-4444-9999-000000000006'}
 
   describe '#index' do
-    subject { get :index, params }
+    subject { get :index, params: params }
     let(:params) { {} }
 
     it { is_expected.to have_http_status :ok }
@@ -42,7 +42,7 @@ describe CourseStatisticsController do
   end
 
   describe '#show' do
-    subject { get :show, id: course_id }
+    subject { get :show, params: {id: course_id} }
     before { FactoryBot.create :course_statistic, :calculated }
 
     it { is_expected.to have_http_status :ok }

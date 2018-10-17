@@ -1,8 +1,6 @@
 class SystemInfoController < ApplicationController
   respond_to :json
 
-  skip_before_action :require_login
-
   def show
     deb_version = ENV['DEB_VERSION'] ||
                   "0.0+t#{Time.now.utc.strftime('%Y%m%d%H%M')}+b0-1"

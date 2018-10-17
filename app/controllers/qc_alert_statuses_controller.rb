@@ -1,6 +1,5 @@
 class QcAlertStatusesController < ApplicationController
-  responders Responders::ApiResponder,
-             Responders::DecorateResponder,
+  responders Responders::DecorateResponder,
              Responders::HttpCacheResponder,
              Responders::PaginateResponder
 

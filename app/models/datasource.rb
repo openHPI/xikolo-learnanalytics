@@ -1,4 +1,4 @@
-class Datasource < ActiveRecord::Base
+class Datasource < ApplicationRecord
 
   serialize :settings, Hash
   attr_reader :channels

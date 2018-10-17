@@ -1,4 +1,4 @@
-class AddCollabSpaceStatsToCourseStatistics < ActiveRecord::Migration
+class AddCollabSpaceStatsToCourseStatistics < ActiveRecord::Migration[4.2]
   def change
     rename_column :course_statistics, :total_questions, :questions
     rename_column :course_statistics, :total_answers, :answers

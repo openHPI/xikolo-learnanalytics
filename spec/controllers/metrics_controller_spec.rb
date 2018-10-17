@@ -1,6 +1,7 @@
-require 'rails_helper'
+require 'spec_helper'
 
-RSpec.describe MetricsController, type: :controller do
+describe MetricsController, type: :controller do
+  let(:default_params) { { format: 'json' } }
   let(:user_id) { SecureRandom.uuid }
   let(:course_id) { SecureRandom.uuid }
   let(:start_date) { 2.weeks.ago.to_s }
@@ -22,7 +23,7 @@ RSpec.describe MetricsController, type: :controller do
       Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
     end
 
-    let(:action) { -> { post :show, params } }
+    let(:action) { -> { post :show, params: params } }
 
     context 'count' do
       it 'queries the metric, if available' do

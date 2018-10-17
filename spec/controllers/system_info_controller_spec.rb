@@ -8,7 +8,7 @@ describe SystemInfoController, type: :controller do
     let(:deb_version) { nil }
     before do
       ENV['DEB_VERSION'] = deb_version
-      get :show, id: -1, format: 'json'
+      get :show, params: {id: -1}, format: 'json'
     end
     after do
       ENV.delete 'DEB_VERSION'

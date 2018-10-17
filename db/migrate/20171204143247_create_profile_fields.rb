@@ -1,4 +1,4 @@
-class CreateProfileFields < ActiveRecord::Migration
+class CreateProfileFields < ActiveRecord::Migration[4.2]
   def change
     create_table :profile_fields do |t|
       t.string :name, null: false

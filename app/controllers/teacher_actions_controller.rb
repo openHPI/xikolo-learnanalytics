@@ -1,8 +1,4 @@
 class TeacherActionsController < ApplicationController
-
-  # TODO: Secure controller
-  skip_before_action :require_login
-
   def index
     actions = TeacherAction.where(
       cluster_group_id: teacher_action_params[:cluster_group_id]

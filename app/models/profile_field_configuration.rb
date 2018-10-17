@@ -1,5 +1,5 @@
 # report configuration for custom fields from account service
-class ProfileFieldConfiguration < ActiveRecord::Base
+class ProfileFieldConfiguration < ApplicationRecord
 
   self.table_name = 'profile_fields'
 

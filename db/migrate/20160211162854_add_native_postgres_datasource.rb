@@ -1,4 +1,4 @@
-class AddNativePostgresDatasource < ActiveRecord::Migration
+class AddNativePostgresDatasource < ActiveRecord::Migration[4.2]
   def change
     create_table :events do |t|
       t.string :user_uuid

@@ -18,7 +18,7 @@ if defined?(Rails::Server) && !Xikolo::Lanalytics.rake?
       # If it is defined as an Active-Record Class ...
       if Object.const_defined?(datasource_class_name)
         datasource_activerecord_class = Object.const_get(datasource_class_name)
-        datasource_ar_entity = datasource_activerecord_class.create(
+        datasource_activerecord_class.create(
           key: datasource.key,
           name: datasource.name,
           description: datasource.description,
@@ -36,5 +36,4 @@ if defined?(Rails::Server) && !Xikolo::Lanalytics.rake?
       )
     end
   end
-
 end
