@@ -12,7 +12,19 @@ module Lanalytics
           .to_enum(:each_child)
           .map { |i| i.basename.to_s.split('.').first.camelize }
           .sort
-          .reject { |c| %w(Base ExpApiMetric ExpApiCountMetric CombinedMetric ReferrerMetric ClusteringMetric FallbackMetric GoogleAnalyticsMetric).include? c }
+          .reject do |c|
+            %w(
+              Base
+              ExpApiMetric
+              ExpApiCountMetric
+              CombinedMetric
+              ReferrerMetric
+              ClusteringMetric
+              FallbackMetric
+              GoogleAnalyticsMetric
+              ExpApiPostgresMetric
+            ).include? c
+          end
       end
 
     end

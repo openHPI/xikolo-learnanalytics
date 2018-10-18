@@ -1,0 +1,133 @@
+module Lanalytics
+  module Metric
+    class SectionConversions < ExpApiPostgresMetric
+
+      description 'Calculate nodes and links to display every users\' item visits from section to section as a sankey diagram'
+
+      required_parameter :course_id
+
+      exec do |params|
+        course_id = params[:course_id]
+
+        course_service = Xikolo.api(:course).value!
+
+        # get course
+        course = course_service.rel(:course).get(id: course_id).value!
+
+        # start and end date are required and course has to be started
+        next if course['start_date'].blank? || course['end_date'].blank? || course['start_date'].to_datetime.future?
+
+        # get all sections for course
+        sections = []
+        Xikolo.paginate(
+          course_service.rel(:sections).get(
+            course_id: course_id,
+            published: true,
+            include_alternatives: false
+          )
+        ) do |section|
+          sections.append(section)
+        end
+
+        # get all items for course
+        items = []
+        Xikolo.paginate(
+          course_service.rel(:items).get(course_id: course_id)
+        ) do |item|
+          items.append(item)
+        end
+
+        # get unique item visit count per user and section
+        # example: [ { user_id: '123', section_id: '321', item_count: 3 } ]
+        query = "
+          SELECT e.user_uuid as user_id, e.in_context->>'section_id' as section_id, COUNT(DISTINCT r.uuid) as item_count
+          FROM events as e, verbs as v, resources as r
+          WHERE e.verb_id = v.id
+            AND e.resource_id = r.id
+            AND e.in_context->>'course_id' = '#{course_id}'
+            AND v.verb = 'visited_item'
+            AND (e.in_context->>'section_id') IS NOT NULL
+          GROUP BY user_id, section_id
+        "
+        item_visit_counts = perform_query(query)
+
+        # prepare required section data
+        section_count = sections.size
+        section_data = sections.map do |section|
+          [
+            section['id'],
+            {
+              position: section['position'],
+              item_count: items.select { |item| item['section_id'] == section['id'] }.size
+            }
+          ]
+        end.to_h
+
+        # calculate for all users (hash key) the visited percentage for all sections (hash value as array, where index is section position)
+        # example: { 'user_id_123' => [1, 0.2, 0.1, 0, 0] }
+        item_visit_percentage = {}
+        item_visit_counts.each do |result|
+          unless item_visit_percentage.key? result['user_id']
+            item_visit_percentage[result['user_id']] = Array.new(section_count, 0)
+          end
+          section = section_data[result['section_id']]
+          item_visit_percentage[result['user_id']][section[:position] - 1] = result['item_count'].to_f / section[:item_count].to_f
+        end
+
+        # inverse sorted buckets
+        buckets = [1, 0.8, 0.6, 0.4, 0.2, 0]
+        bucket_for = Proc.new do |value|
+          next 0 if value == buckets.first
+          buckets.select { |threshold| threshold >= value }.size
+        end
+
+        # calculate links for all nodes, where source and target (hash key) are mapped to a number of user (hash value)
+        # example: { [1, 3] => 6 }
+        # nodes are defined based on buckets, which represent a certain visited percentage threshold
+        # source and target point to nodes, whereby a node is referenced by its implicit order
+        # the implicit order is defined by the bucket index and section index
+        source_target_values = {}
+        item_visit_percentage.values.each do |user_values|
+          user_values.zip(user_values.drop(1)).each_with_index do |(a, b), index|
+            # the index of b is the index of a + 1 (the next section)
+            next if b.nil?
+
+            key = [
+              index * buckets.size - 1 + bucket_for.call(a),         # source node
+              (index + 1) * buckets.size - 1 + bucket_for.call(b)    # target node
+            ]
+            unless source_target_values.key? key
+              source_target_values[key] = 0
+            end
+
+            source_target_values[key] += 1
+          end
+        end
+
+        # build final nodes and links data structure, which is optimized for the visualization
+        nodes = sections.each_with_index.flat_map do |_, s_i|
+          buckets.each_with_index.map do |threshold, b_i|
+            {
+              name: threshold,
+              id: "section-#{s_i}-bucket-#{b_i}"
+            }
+          end
+        end
+
+        links = source_target_values.map do |(source, target), value|
+          {
+            source: source,
+            target: target,
+            value: value
+          }
+        end
+
+        {
+          nodes: nodes,
+          links: links
+        }
+      end
+
+    end
+  end
+end
