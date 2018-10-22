@@ -47,6 +47,8 @@ module Lanalytics
             AND e.in_context->>'course_id' = '#{course_id}'
             AND v.verb = 'visited_item'
             AND (e.in_context->>'section_id') IS NOT NULL
+            AND e.created_at >= '#{Date.parse(course['start_date']).iso8601}'::date
+            AND e.created_at <= '#{Date.parse(course['end_date']).iso8601}'::date
           GROUP BY user_id, section_id
         "
         item_visit_counts = perform_query(query)
@@ -78,7 +80,7 @@ module Lanalytics
         buckets = [1, 0.8, 0.6, 0.4, 0.2, 0]
         bucket_for = Proc.new do |value|
           next 0 if value == buckets.first
-          buckets.select { |threshold| threshold >= value }.size
+          buckets.select { |threshold| threshold > value }.size
         end
 
         # calculate links for all nodes, where source and target (hash key) are mapped to a number of user (hash value)
@@ -87,15 +89,28 @@ module Lanalytics
         # source and target point to nodes, whereby a node is referenced by its implicit order
         # the implicit order is defined by the bucket index and section index
         source_target_values = {}
+
+        # provide some empty links to show nodes with no source and target for a better visualization
+        (section_count - 1).times do |s_i|
+          (buckets.size + 1).times do |b_i|
+            key = [
+              s_i * (buckets.size + 1) + b_i,         # source node
+              (s_i + 1) * (buckets.size + 1) + b_i    # target node
+            ]
+            source_target_values[key] = 0
+          end
+        end
+
         item_visit_percentage.values.each do |user_values|
           user_values.zip(user_values.drop(1)).each_with_index do |(a, b), index|
             # the index of b is the index of a + 1 (the next section)
             next if b.nil?
 
             key = [
-              index * buckets.size - 1 + bucket_for.call(a),         # source node
-              (index + 1) * buckets.size - 1 + bucket_for.call(b)    # target node
+              index * (buckets.size + 1) + bucket_for.call(a),         # source node
+              (index + 1) * (buckets.size + 1) + bucket_for.call(b)    # target node
             ]
+
             unless source_target_values.key? key
               source_target_values[key] = 0
             end
@@ -106,9 +121,18 @@ module Lanalytics
 
         # build final nodes and links data structure, which is optimized for the visualization
         nodes = sections.each_with_index.flat_map do |_, s_i|
-          buckets.each_with_index.map do |threshold, b_i|
+          (0...(buckets.size + 1)).map do |b_i|
+            if b_i == 0
+              name = "#{sprintf('%.2f', buckets[b_i])}"
+            elsif b_i == buckets.size
+              name = "#{sprintf('%.2f', buckets[b_i - 1])}"
+            elsif b_i == buckets.size - 1
+              name = "#{sprintf('%.2f', buckets[b_i - 1] - 0.01)}-#{sprintf('%.2f', buckets[b_i] + 0.01)}"
+            else
+              name = "#{sprintf('%.2f', buckets[b_i - 1] - 0.01)}-#{sprintf('%.2f', buckets[b_i])}"
+            end
             {
-              name: threshold,
+              name: name,
               id: "section-#{s_i}-bucket-#{b_i}"
             }
           end
