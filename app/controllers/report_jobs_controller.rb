@@ -14,7 +14,7 @@ class ReportJobsController < ApplicationController
     jobs.where! user_id: params[:user_id] if params[:user_id]
     jobs.where! task_type: params[:task_type] if params[:task_type]
     if params[:show_expired].blank? or !params[:show_expired]
-      jobs.where!("file_expire_date >= ? OR file_expire_date IS NULL", DateTime.now())
+      jobs.where!("file_expire_date >= ? OR file_expire_date IS NULL", DateTime.now)
       jobs.where!(
           "status = 'failed' and created_at >= '#{(Time.now - 5.days).utc.iso8601}' " + \
           "OR updated_at >= '#{(Time.now - 3.days).utc.iso8601}'"
@@ -46,6 +46,6 @@ class ReportJobsController < ApplicationController
   end
 
   def options
-    params['options'].is_a?(Hash) ? params['options'] : {}
+    params['options'].is_a?(ActionController::Parameters) ? params['options'].to_unsafe_h : {}
   end
 end
