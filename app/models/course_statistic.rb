@@ -65,6 +65,17 @@ class CourseStatistic < ApplicationRecord
         no_shows_at_middle: extended_course_stats['no_shows_at_middle'],
         no_shows_at_end: extended_course_stats['no_shows_at_end'],
 
+        # active users
+        active_users_last_day: Lanalytics::Metric::ActiveUserCount.query(
+          course_id: course['id'],
+          start_date: (DateTime.now - 1.day).iso8601(3)
+        )[:active_users].to_i,
+
+        active_users_last_7days: Lanalytics::Metric::ActiveUserCount.query(
+          course_id: course['id'],
+          start_date: (DateTime.now - 7.days).iso8601(3)
+        )[:active_users].to_i,
+
         # success
         certificates: extended_course_stats['certificates_count'],
         completion_rate: completion_rate,

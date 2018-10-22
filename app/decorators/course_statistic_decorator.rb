@@ -35,6 +35,10 @@ class CourseStatisticDecorator < ApplicationDecorator
       no_shows_at_middle: model.no_shows_at_middle,
       no_shows_at_end: model.no_shows_at_end,
 
+      # active users
+      active_users_last_day: model.active_users_last_day,
+      active_users_last_7days: model.active_users_last_7days,
+
       # success
       certificates: model.certificates,
       completion_rate: model.completion_rate,
