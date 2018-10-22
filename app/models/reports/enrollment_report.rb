@@ -9,7 +9,8 @@ module Reports
       @end_month = options['end_month'].to_i
       @end_year = options['end_year'].to_i
 
-      @sliding_window_in_months = options['sliding_window_in_months'].to_i
+      @window_in_months = options['window_in_months'].to_i
+      @sliding_window = options['sliding_window']
 
       @include_active_users = options['include_active_users']
       @include_all_classifiers = options['include_all_classifiers']
@@ -86,15 +87,28 @@ module Reports
       Proc.new do |&block|
         start_date = Date.new(@start_year, @start_month, 1)
         end_date = Date.new(@end_year, @end_month, 1)
+
         timeframe_count = (end_date.year * 12 + end_date.month) - (start_date.year * 12 + start_date.month) + 1
+
+        unless @sliding_window
+          timeframe_count = (timeframe_count / @window_in_months.to_f).ceil
+        end
+
         timeframe_index = 0
+        fixed_interval_index = -1
 
         (@start_year..@end_year).each do |year|
           (1..12).each do |month|
             next if (year == @start_year && month < @start_month) || (year == @end_year && month > @end_month)
 
+            fixed_interval_index += 1
+
+            unless @sliding_window
+              next if fixed_interval_index % @window_in_months != 0
+            end
+
             current_start_date = Date.new(year, month, 1).to_s
-            current_end_date = (Date.new(year, month, 1) + @sliding_window_in_months.month).to_s
+            current_end_date = (Date.new(year, month, 1) + @window_in_months.month).to_s
 
             values = [
               current_start_date,
