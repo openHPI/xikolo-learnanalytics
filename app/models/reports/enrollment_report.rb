@@ -26,8 +26,11 @@ module Reports
         @classifiers = []
         Xikolo.paginate(
           course_service.rel(:classifiers).get
-        ).each_page do |page|
-          @classifiers.concat page
+        ) do |classifier|
+          # filter classifiers only if explicitly configured
+          if Xikolo.config.reportable_classifiers.nil? || Xikolo.config.reportable_classifiers.include?(classifier['cluster'])
+            @classifiers.append(classifier)
+          end
         end
         clusters = @classifiers.map { |c| c['cluster'] }.uniq
         @reports_count += clusters.size
