@@ -3,9 +3,11 @@ require 'file_collection'
 
 module Reports
   class Base
-    def initialize(job, _options = {})
+    def initialize(job, options = {})
       # Subclasses can override this method if they need access to the additional options
       @job = job
+
+      @machine_headers = options['machine_headers']
     end
 
     def files
@@ -23,7 +25,11 @@ module Reports
         files.make("#{target}_#{DateTime.now.strftime('%Y-%m-%d')}_#{@job.id}.csv"),
         'wb'
       ) do |csv|
-        csv << headers
+        if @machine_headers
+          csv << headers.map(&:underscore)
+        else
+          csv << headers
+        end
 
         block.call do |row|
           csv << row
