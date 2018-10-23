@@ -139,42 +139,56 @@ module Reports
               enrollment.dig('points', 'percentage')
             ]
 
-            # For each section, append visit percentage and total graded points
+            # For each section, append visit percentage and points percentage
             if @include_sections
               progresses = course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id']).value!
 
               values += course_sections.map do |s|
-                progresses.find { |p| p['resource_id'] == s['id'] }&.dig('visits', 'user')
-              end
-
-              values += course_sections.map do |s|
-                progresses.find { |p| p['resource_id'] == s['id'] }&.dig('visits', 'percentage')
-              end
-
-              values += course_sections.map do |s|
                 p = progresses.find { |p| p['resource_id'] == s['id'] }
                 if p
-                  main_points = p.dig('main_exercises', 'graded_points').to_f.round(2)
-                  bonus_points = p.dig('bonus_exercises', 'graded_points').to_f.round(2)
-                  main_points + bonus_points
+                  total =   p.dig('visits', 'total').to_f
+                  n =       p.dig('visits', 'user').to_f
+                  percentage n, of: total
                 end
               end
 
               values += course_sections.map do |s|
                 p = progresses.find { |p| p['resource_id'] == s['id'] }
                 if p
-                  main_points = p.dig('main_exercises', 'graded_points').to_f.round(2)
-                  bonus_points = p.dig('bonus_exercises', 'graded_points').to_f.round(2)
-                  points = main_points + bonus_points
-                  max_points = p.dig('main_exercises', 'max_points').to_f.round(2)
-                  percentage = (points / max_points * 100).round(2)
-                  percentage&.nan? ? nil : percentage
+                  total =   p.dig('selftest_exercises', 'max_points').to_f
+                  n =       p.dig('selftest_exercises', 'graded_points').to_f
+                  percentage n, of: total
+                end
+              end
+
+              values += course_sections.map do |s|
+                p = progresses.find { |p| p['resource_id'] == s['id'] }
+                if p
+                  total =   p.dig('main_exercises', 'max_points').to_f
+                  n =       p.dig('main_exercises', 'graded_points').to_f
+                  percentage n, of: total
+                end
+              end
+
+              values += course_sections.map do |s|
+                p = progresses.find { |p| p['resource_id'] == s['id'] }
+                if p
+                  total =   p.dig('bonus_exercises', 'max_points').to_f
+                  n =       p.dig('bonus_exercises', 'graded_points').to_f
+                  percentage n, of: total
                 end
               end
             end
 
             all_submissions = all_user_submissions(user['id'])
-            values += quizzes.map { |q| all_submissions.dig(q['content_id'], 'points') || 0 }
+            values += quizzes.map do |q|
+              s = all_submissions[q['content_id']]
+              if s
+                total =   q['max_points'].to_f
+                n =       s['points'].to_f + s['fudge_points'].to_f
+                percentage n, of: total
+              end
+            end
 
             values += [course['course_code']]
 
@@ -326,10 +340,10 @@ module Reports
         ]
 
         if @include_sections
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Items Visited (Section)" }
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Items Visited Percentage (Section)" }
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Points (Section)" }
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Points Percentage (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Visited Percentage (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Self-tests Percentage (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Assignments Percentage (Section)" }
+          headers.concat course_sections.map { |s| "#{s['title'].titleize} Bonus Percentage (Section)" }
         end
 
         headers.concat quiz_column_headers
@@ -357,7 +371,7 @@ module Reports
     def quiz_column_headers
       quizzes.map { |q|
         section = course_sections.find { |s| s['id'] == q['section_id'] } || {'title' => ''}
-        "#{section['title'].titleize} - #{q['title'].titleize} Points (Quiz)"
+        "#{section['title'].titleize} - #{q['title'].titleize} Percentage (Quiz)"
       }
     end
 
@@ -425,7 +439,7 @@ module Reports
 
     def percentage(n, of:)
       return if n.blank? || of == 0
-      format("%.2f", n.to_f / of.to_f * 100.0)
+      format("%.4f", n.to_f / of.to_f)
     end
 
     def account_service
