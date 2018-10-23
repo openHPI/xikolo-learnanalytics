@@ -32,7 +32,8 @@ module QcRules
 
     def check_for_difficult_selftest(quiz_item)
       quiz_service.rel(:quiz_submission_statistic).get(
-        id: quiz_item['content_id']
+        id: quiz_item['content_id'],
+        embed: 'questions'
       ).value!['questions'].each do |question|
         question.each do |question_id, submissions|
           next if submissions['count'] <= config['minimum_submissions']
