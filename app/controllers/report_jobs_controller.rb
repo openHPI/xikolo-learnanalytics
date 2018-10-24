@@ -39,6 +39,13 @@ class ReportJobsController < ApplicationController
     respond_with ReportJob.find(params[:id]).update_attributes(job_params)
   end
 
+  def destroy
+    job = ReportJob.find(params[:id])
+    respond_with job.destroy
+  rescue ReportJob::ReportJobRunningError => e
+    render json: { error: e.message }, status: :conflict
+  end
+
   private
 
   def job_params

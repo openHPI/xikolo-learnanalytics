@@ -7,8 +7,10 @@ roles:
     - lanalytics.alert.ignore.own
   lanalytics.report.admin:
     - lanalytics.report.create
+    - lanalytics.report.delete
   lanalytics.report.inspector:
     - lanalytics.report.create.anonymous
+    - lanalytics.report.delete
   lanalytics.rule.admin:
     - lanalytics.rule.manage
 

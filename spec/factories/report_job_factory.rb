@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :report_job do
     user_id     { 'b2157ab3-454b-0000-bb31-976b99cb016f' }
     task_type   { 'course_report' }
-    task_scope  { '' }
+    task_scope  { 'foobar' }
     status      { 'pending' }
     job_params  { '' }
     progress    { 5 }
