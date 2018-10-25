@@ -40,7 +40,8 @@
               "normalizer": "keyword_lowercase"
             },
             "certificate": {
-              "type": "boolean"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "client_id": {
               "type": "keyword",
@@ -55,7 +56,8 @@
               "normalizer": "keyword_lowercase"
             },
             "confirmation_of_participation": {
-              "type": "boolean"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "context_id": {
               "type": "keyword",
@@ -231,16 +233,20 @@
               "type": "float"
             },
             "received_certificate": {
-              "type": "boolean"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "received_confirmation_of_participation": {
-              "type": "boolean"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "received_record_of_achievement": {
-              "type": "boolean"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "record_of_achievement": {
-              "type": "boolean"
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "runtime": {
               "type": "keyword",
@@ -263,8 +269,7 @@
               "type": "integer"
             },
             "sd_video": {
-              "type": "keyword",
-              "normalizer": "keyword_lowercase"
+              "type": "boolean"
             },
             "section_id": {
               "type": "keyword",
