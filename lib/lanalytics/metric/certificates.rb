@@ -1,0 +1,79 @@
+module Lanalytics
+  module Metric
+    class Certificates < ExpApiMetric
+
+      description 'Returns the number of gained certificates.'
+
+      optional_parameter :course_id
+
+      exec do |params|
+        course_id = params[:course_id]
+
+        body = {
+          size: 0,
+          query: {
+            bool: {
+              must: [
+                { match: { 'verb' => 'completed_course' } }
+              ]
+            }
+          },
+          aggs: {
+            timestamp: {
+              top_hits: {
+                sort: [
+                  { timestamp: { order: 'desc' } }
+                ],
+                _source: [
+                  'timestamp'
+                ],
+                size: 1
+              }
+            }
+          }
+        }
+
+        if course_id
+          body[:query][:bool][:must].append({ match: { 'in_context.course_id' => course_id } })
+        end
+
+        types = %w(record_of_achievement confirmation_of_participation certificate)
+
+        types.each do |type|
+          body[:aggs][type] = {
+            filter: {
+              bool: {
+                must: [
+                  { match: { "in_context.received_#{type}" => 'true' } }
+                ]
+              }
+            },
+            aggs: {
+              user: {
+                cardinality: {
+                  field: 'user.resource_uuid'
+                }
+              }
+            }
+          }
+        end
+
+        result = datasource.exec do |client|
+          client.search index: datasource.index, body: body
+        end
+
+        certificates = {
+          generated_at: result.dig('aggregations', 'timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
+          certificates: {}
+        }
+
+        types.each do |type|
+          certificates[:certificates][type] = result.dig('aggregations', type, 'user', 'value')
+        end
+
+        certificates.tap { |it| it[:certificates]['qualified_certificate'] = it[:certificates].delete('certificate') }
+      end
+
+    end
+  end
+end
