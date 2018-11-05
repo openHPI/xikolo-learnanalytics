@@ -52,6 +52,13 @@ RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.infer_spec_type_from_file_location!
 
+  config.before do
+    stub_request(:any, /lanalytics\.xikolo\.tld/)
+      .to_rack(Xikolo::Lanalytics::Application)
+    stub_request(:any, /test\.host/)
+      .to_rack(Xikolo::Lanalytics::Application)
+  end
+
   config.around(:each) do |example|
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.cleaning(&example)

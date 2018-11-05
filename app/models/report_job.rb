@@ -33,6 +33,17 @@ class ReportJob < ApplicationRecord
     }
   end
 
+  def destroy
+    raise ReportJobRunningError if status == 'started'
+    super
+  end
+
+  class ReportJobRunningError < StandardError
+    def message
+      'Cannot delete running job'
+    end
+  end
+
   def progress_to(part, of:)
     # Prevent division by zero
     return if of == 0
