@@ -18,19 +18,7 @@ module Lanalytics
               ]
             }
           },
-          aggs: {
-            timestamp: {
-              top_hits: {
-                sort: [
-                  { timestamp: { order: 'desc' } }
-                ],
-                _source: [
-                  'timestamp'
-                ],
-                size: 1
-              }
-            }
-          }
+          aggs: {}
         }
 
         if course_id
@@ -62,16 +50,13 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        certificates = {
-          generated_at: result.dig('aggregations', 'timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
-          certificates: {}
-        }
+        certificates = {}
 
         types.each do |type|
-          certificates[:certificates][type] = result.dig('aggregations', type, 'user', 'value')
+          certificates[type] = result.dig('aggregations', type, 'user', 'value')
         end
 
-        certificates.tap { |it| it[:certificates]['qualified_certificate'] = it[:certificates].delete('certificate') }
+        certificates.tap { |it| it['qualified_certificate'] = it.delete('certificate') }
       end
 
     end
