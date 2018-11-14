@@ -1,10 +1,10 @@
 module Reports
   class PinboardReport < Base
-    def initialize(job, options = {})
+    def initialize(job)
       super
 
-      @deanonymized = options['deanonymized']
-      @include_collab_spaces = options.fetch('include_collab_spaces', false)
+      @deanonymized = job.options['deanonymized']
+      @include_collab_spaces = job.options.fetch('include_collab_spaces', false)
     end
 
     def generate!

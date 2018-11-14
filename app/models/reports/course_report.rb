@@ -1,13 +1,13 @@
 module Reports
   class CourseReport < Base
-    def initialize(job, options = {})
+    def initialize(job)
       super
 
-      @deanonymized = options['deanonymized']
-      @include_analytics_metrics = options['include_analytics_metrics']
-      @include_profile = options['include_profile']
+      @deanonymized = job.options['deanonymized']
+      @include_analytics_metrics = job.options['include_analytics_metrics']
+      @include_profile = job.options['include_profile']
       @include_sections = true
-      @include_all_quizzes = options['include_all_quizzes']
+      @include_all_quizzes = job.options['include_all_quizzes']
     end
 
     def generate!

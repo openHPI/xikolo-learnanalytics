@@ -1,9 +1,9 @@
 module Reports
   class SubmissionReport < Base
-    def initialize(job, options = {})
+    def initialize(job)
       super
 
-      @deanonymized = options['deanonymized']
+      @deanonymized = job.options['deanonymized']
     end
 
     def generate!

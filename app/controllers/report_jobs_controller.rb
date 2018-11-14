@@ -30,7 +30,7 @@ class ReportJobsController < ApplicationController
 
   def create
     job = ReportJob.create job_params.merge({status: 'requested'})
-    job.schedule options if job.valid?
+    job.schedule if job.valid?
 
     respond_with job
   end
@@ -49,7 +49,7 @@ class ReportJobsController < ApplicationController
   private
 
   def job_params
-    params.permit(:task_type, :task_scope, :job_params, :user_id)
+    params.permit(:task_type, :task_scope, :job_params, :user_id, options: {})
   end
 
   def options

@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe 'Pinboard Report' do
-  let!(:report_job) { FactoryBot.create :report_job, :pinboard_report }
+  let!(:report_job) { FactoryBot.create :report_job, :pinboard_report, options: {'include_collab_spaces' => true} }
 
-  subject { report_job.generate!(report_params) }
-  let(:report_params) { {'include_collab_spaces' => true} }
+  subject { report_job.generate! }
 
   around do |example|
     report_job.with_tmp_directory(&example)

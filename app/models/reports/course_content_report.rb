@@ -1,7 +1,7 @@
 module Reports
   class CourseContentReport < Base
 
-    def initialize(job, options = {})
+    def initialize(job)
       super
     end
 

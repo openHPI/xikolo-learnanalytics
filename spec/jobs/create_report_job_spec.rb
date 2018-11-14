@@ -17,10 +17,9 @@ class ReportStub
 end
 
 describe CreateReportJob do
-  subject { described_class.new.perform(report_job.id, report_params) }
+  subject { described_class.new.perform(report_job.id) }
 
   let!(:report_job) { FactoryBot.create :report_job, :course_report }
-  let(:report_params) { {} }
 
   let(:report_stub) { ReportStub.new(report_job) }
 
