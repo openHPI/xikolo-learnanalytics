@@ -37,9 +37,22 @@ module Lanalytics
               }
             },
             aggs: {
-              user: {
-                cardinality: {
-                  field: 'user.resource_uuid'
+              course: {
+                terms: {
+                  field: 'in_context.course_id',
+                  size: 1_000_000
+                },
+                aggs: {
+                  user: {
+                    cardinality: {
+                      field: 'user.resource_uuid'
+                    }
+                  }
+                }
+              },
+              total: {
+                sum_bucket: {
+                  buckets_path: "course>user"
                 }
               }
             }
@@ -53,7 +66,7 @@ module Lanalytics
         certificates = {}
 
         types.each do |type|
-          certificates[type] = result.dig('aggregations', type, 'user', 'value')
+          certificates[type] = result.dig('aggregations', type, 'total', 'value').to_i
         end
 
         certificates.tap { |it| it['qualified_certificate'] = it.delete('certificate') }
