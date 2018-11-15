@@ -45,7 +45,8 @@ module Lanalytics
                 aggs: {
                   user: {
                     cardinality: {
-                      field: 'user.resource_uuid'
+                      field: 'user.resource_uuid',
+                      precision_threshold: 40_000
                     }
                   }
                 }
