@@ -79,7 +79,6 @@ module Lanalytics
           both_dismissed_count: result.dig('aggregations', 'grouped_by_user', 'buckets')&.size
         }
       end
-
     end
   end
 end
