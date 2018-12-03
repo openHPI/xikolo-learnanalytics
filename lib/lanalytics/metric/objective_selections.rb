@@ -48,7 +48,8 @@ module Lanalytics
               by_user: {
                 terms: {
                   field: 'user.resource_uuid',
-                  order: {_count: 'desc'}
+                  order: {_count: 'desc'},
+                  size: 30000
                 },
                 aggs: {
                   current_objective: {

@@ -55,7 +55,6 @@ module Lanalytics
           end
         }
       end
-
     end
   end
 end
