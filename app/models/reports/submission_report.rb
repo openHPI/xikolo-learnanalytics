@@ -25,7 +25,9 @@ module Reports
       end
 
       headers.concat [
-        'Submitted On',
+        'Accessed At',
+        'Submitted At',
+        'Submit Duration',
         'Points',
       ]
 
@@ -43,7 +45,9 @@ module Reports
         )
       ) do |submission, page|
         submission_hash = Hash.new{ |h,k| h[k] = Hash.new(&h.default_proc) }
-        submission_hash[:created_at] = DateTime.parse(submission['quiz_submission_time'])
+        submission_hash[:accessed_at] = DateTime.parse(submission['quiz_access_time'])
+        submission_hash[:submitted_at] = DateTime.parse(submission['quiz_submission_time'])
+        submission_hash[:submit_duration] = submission_hash[:submitted_at].to_i - submission_hash[:accessed_at].to_i
         submission_hash[:user_id] = submission['user_id']
 
         user = account_service.rel(:user).get(id: submission['user_id']).value!
@@ -87,7 +91,9 @@ module Reports
       end
 
       values += [
-        row[:created_at],
+        row[:accessed_at],
+        row[:submitted_at],
+        row[:submit_duration],
         row[:points],
       ]
 
