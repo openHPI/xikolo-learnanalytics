@@ -3,11 +3,11 @@ require 'file_collection'
 
 module Reports
   class Base
-    def initialize(job, options = {})
+    def initialize(job)
       # Subclasses can override this method if they need access to the additional options
       @job = job
 
-      @machine_headers = options['machine_headers']
+      @machine_headers = job.options['machine_headers']
     end
 
     def files

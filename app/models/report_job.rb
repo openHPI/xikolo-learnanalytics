@@ -23,12 +23,12 @@ class ReportJob < ApplicationRecord
     end
   end
 
-  def schedule(options)
-    CreateReportJob.perform_later(id, options)
+  def schedule
+    CreateReportJob.perform_later(id)
   end
 
-  def generate!(options)
-    REPORT_CLASSES.fetch(task_type).new(self, options).tap { |report|
+  def generate!
+    REPORT_CLASSES.fetch(task_type).new(self).tap { |report|
       report.generate!
     }
   end
@@ -57,7 +57,8 @@ class ReportJob < ApplicationRecord
   def finish_with(attributes)
     update attributes.merge(
       status: 'done',
-      progress: 100
+      progress: 100,
+      options: options.except('zip_password')
     )
 
     notify

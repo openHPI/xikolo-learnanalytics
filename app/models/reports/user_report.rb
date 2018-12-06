@@ -1,15 +1,15 @@
 module Reports
   class UserReport < Base
-    def initialize(job, options = {})
+    def initialize(job)
       super
 
-      @deanonymized = options['deanonymized']
-      @include_top_location = options['include_top_location']
-      @include_profile = options['include_profile']
-      @include_primary_email_suspended = options['include_primary_email_suspended']
-      @include_global_ann_subscribed = options['include_global_ann_subscribed']
-      @include_enrollment_evaluation = options['include_enrollment_evaluation']
-      @combine_enrollment_info = options['combine_enrollment_info']
+      @deanonymized = job.options['deanonymized']
+      @include_top_location = job.options['include_top_location']
+      @include_profile = job.options['include_profile']
+      @include_primary_email_suspended = job.options['include_primary_email_suspended']
+      @include_global_ann_subscribed = job.options['include_global_ann_subscribed']
+      @include_enrollment_evaluation = job.options['include_enrollment_evaluation']
+      @combine_enrollment_info = job.options['combine_enrollment_info']
     end
 
     def generate!

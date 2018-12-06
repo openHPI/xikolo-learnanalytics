@@ -1,19 +1,19 @@
 module Reports
   class EnrollmentReport < Base
 
-    def initialize(job, options = {})
+    def initialize(job)
       super
 
-      @start_month = options['start_month'].to_i
-      @start_year = options['start_year'].to_i
-      @end_month = options['end_month'].to_i
-      @end_year = options['end_year'].to_i
+      @start_month = job.options['start_month'].to_i
+      @start_year = job.options['start_year'].to_i
+      @end_month = job.options['end_month'].to_i
+      @end_year = job.options['end_year'].to_i
 
-      @window_in_months = options['window_in_months'].to_i
-      @sliding_window = options['sliding_window']
+      @window_in_months = job.options['window_in_months'].to_i
+      @sliding_window = job.options['sliding_window']
 
-      @include_active_users = options['include_active_users']
-      @include_all_classifiers = options['include_all_classifiers']
+      @include_active_users = job.options['include_active_users']
+      @include_all_classifiers = job.options['include_all_classifiers']
     end
 
     def generate!

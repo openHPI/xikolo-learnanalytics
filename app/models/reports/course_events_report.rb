@@ -1,10 +1,10 @@
 module Reports
   class CourseEventsReport < Base
-    def initialize(job, options = {})
+    def initialize(job)
       super
 
-      @deanonymized = options['deanonymized']
-      @verb = options['verb']
+      @deanonymized = job.options['deanonymized']
+      @verb = job.options['verb']
     end
 
     def generate!

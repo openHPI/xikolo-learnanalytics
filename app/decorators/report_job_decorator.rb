@@ -10,6 +10,7 @@ class ReportJobDecorator < ApplicationDecorator
       download_url: model.download_url,
       file_expire_date: model.file_expire_date,
       user_id: model.user_id,
+      options: model.options,
       progress: model.progress,
       annotation: model.annotation
     }.tap { |fields|

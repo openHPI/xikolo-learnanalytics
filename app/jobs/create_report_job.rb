@@ -4,15 +4,15 @@ require 'xikolo/s3'
 class CreateReportJob < ApplicationJob
   queue_as :default
 
-  def perform(job_id, options = {})
+  def perform(job_id)
     job = ReportJob.start(job_id)
 
     begin
-      zip_password = options.delete(:zip_password)
+      zip_password = job.options['zip_password']
 
       job.with_tmp_directory do
         # Let the reporter do its work (i.e. generate a bunch of files)
-        report = job.generate!(options)
+        report = job.generate!
 
         # Zip up the generated files
         zip_file = report.files.zip(zip_password)
