@@ -12,6 +12,13 @@ class CourseStatistic < ApplicationRecord
       Xikolo.api(:helpdesk).value!.rel(:statistics).get(course_id: course['id']),
       Xikolo.api(:certificate).value!.rel(:open_badge_statistics).get(course_id: course['id'])
     ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats, badge_stats|
+
+      if extended_course_stats['certificates_count'] > 0 and (extended_course_stats['student_enrollments_at_middle_netto'].to_f - extended_course_stats['no_shows']) > 0
+        completion_rate = extended_course_stats['certificates_count'] / (extended_course_stats['student_enrollments_at_middle_netto'] - extended_course_stats['no_shows']).to_f
+      else
+        completion_rate = 0
+      end
+
       days_since_course_start = course['start_date'] && (Date.today - course['start_date'].to_date).to_i
 
       enrollments_per_day = []
@@ -25,20 +32,6 @@ class CourseStatistic < ApplicationRecord
 
           day_stats ? day_stats[1] : 0
         end
-      end
-
-      certificates = Lanalytics::Metric::Certificates.query(course_id: course['id'])
-
-      if certificates['record_of_achievement'] > 0 && extended_course_stats['shows_at_middle'] > 0
-        completion_rate = certificates['record_of_achievement'] / extended_course_stats['shows_at_middle'].to_f
-      else
-        completion_rate = 0
-      end
-
-      if certificates['confirmation_of_participation'] > 0 && extended_course_stats['shows'] > 0
-        consumption_rate = certificates['confirmation_of_participation'] / extended_course_stats['shows'].to_f
-      else
-        consumption_rate = 0
       end
 
       update(
@@ -84,11 +77,8 @@ class CourseStatistic < ApplicationRecord
         )[:active_users].to_i,
 
         # success
-        roa_count: certificates['record_of_achievement'],
-        cop_count: certificates['confirmation_of_participation'],
-        qc_count: certificates['qualified_certificate'],
+        certificates: extended_course_stats['certificates_count'],
         completion_rate: completion_rate,
-        consumption_rate: consumption_rate,
 
         # pinboard
         questions: pinboard_stats['threads'].to_i,

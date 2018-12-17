@@ -40,11 +40,8 @@ class CourseStatisticDecorator < ApplicationDecorator
       active_users_last_7days: model.active_users_last_7days,
 
       # success
-      roa_count: model.roa_count,
-      cop_count: model.cop_count,
-      qc_count: model.qc_count,
+      certificates: model.certificates,
       completion_rate: model.completion_rate,
-      consumption_rate: model.consumption_rate,
 
       # pinboard
       threads: model.threads,
