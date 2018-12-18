@@ -13,7 +13,7 @@ module Lanalytics
           Lanalytics::Clustering::Dimensions.query(
             params[:course_id],
             [name],
-            [params[:user_id]]
+            [params[:user_id]].compact
           ).first[name].to_i
         end
       end

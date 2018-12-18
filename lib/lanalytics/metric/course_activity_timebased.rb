@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class CourseActivityTimebased < ExpApiMetric
 
-      description 'Returns course statistics time-based.'
+      description 'Returns the course activities within the specified time span grouped by the day of week and hour of the day.'
 
       required_parameter :start_date, :end_date
 
@@ -35,29 +35,43 @@ module Lanalytics
               timestamps: {
                 date_histogram: {
                   field: 'timestamp',
-                  interval: user_id.present? ? 'day' : 'hour',
-                  min_doc_count: 0
+                  interval: user_id.present? ? '1h' : '1d',
+                  min_doc_count: 0,
+                  extended_bounds: {
+                    min: DateTime.parse(start_date).iso8601,
+                    max: DateTime.parse(end_date).iso8601
+                  }
                 }
               }
             }
           }
         end
-        convert_to_timestamps(result.with_indifferent_access[:aggregations][:timestamps][:buckets])
+
+        activities_by_wday result.dig('aggregations', 'timestamps', 'buckets')
       end
 
-      def self.convert_to_timestamps(buckets)
-        # Convert to a hash of timestamps and quantity
-        # (needed for cal-heatmap)
-        Hash[
-          buckets.map do |bucket|
-            [
-              Time.parse(bucket[:key_as_string].to_s[0..-4]).to_i,
-              bucket[:doc_count]
-            ]
-          end
-        ]
+      def self.activities_by_wday(buckets)
+        # Convert to a hash of days/hours and quantity
+        # Format day0: { hour0: quantity, hour1: quantity }
+        # For weekdays, 0 is Sunday
+        buckets.each_with_object({}) do |bucket, hours|
+          time = Time.parse bucket['key_as_string']
+          hours[time.hour] ||= wday_scaffold
+          hours[time.hour][time.wday] += bucket['doc_count']
+        end
       end
 
+      def self.wday_scaffold
+        {
+          0 => 0,
+          1 => 0,
+          2 => 0,
+          3 => 0,
+          4 => 0,
+          5 => 0,
+          6 => 0,
+        }
+      end
     end
   end
 end
