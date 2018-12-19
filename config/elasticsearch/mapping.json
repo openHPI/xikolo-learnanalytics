@@ -222,6 +222,9 @@
             "quiz_access_time": {
               "type": "date"
             },
+            "quiz_submission_deadline": {
+              "type": "date"
+            },
             "quiz_submission_time": {
               "type": "date"
             },
@@ -290,6 +293,9 @@
             },
             "text": {
               "type": "text"
+            },
+            "estimated_time_effort": {
+              "type": "integer"
             },
             "user_agent": {
               "type": "text"

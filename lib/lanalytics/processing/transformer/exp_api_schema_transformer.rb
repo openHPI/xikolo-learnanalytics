@@ -292,10 +292,12 @@ module Lanalytics
                                       quiz_access_time: processing_unit[:quiz_access_time],
                                       quiz_submission_time: processing_unit[:quiz_submission_time],
                                       quiz_version_at: processing_unit[:quiz_version_at],
+                                      quiz_submission_deadline: processing_unit[:quiz_submission_deadline],
                                       quiz_type: processing_unit[:quiz_type],
                                       attempt: processing_unit[:attempt],
                                       points: processing_unit[:points],
-                                      max_points: processing_unit[:max_points]
+                                      max_points: processing_unit[:max_points],
+                                      estimated_time_effort: processing_unit[:estimated_time_effort]
                                     }
         end
 
