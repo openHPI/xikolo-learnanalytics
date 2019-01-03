@@ -24,6 +24,7 @@ override_dh_clean:
 
 override_dh_auto_build:
 	$(RUBY) -S gem install bundler \
+		-v '~> 1.0' \
 		--no-ri --no-rdoc \
 		--install-dir $(GEM_PATH) \
 		--bindir bin
