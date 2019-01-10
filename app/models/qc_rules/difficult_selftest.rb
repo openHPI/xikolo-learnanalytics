@@ -40,13 +40,12 @@ module QcRules
 
           if too_many_wrong?(submissions)
             quiz_question = quiz_service.rel(:question).get(id: question_id).value!
-            question_title = richtext_service.rel(:rich_text).get(id: quiz_question['question_rtid']).value!
 
             @rule.alerts_for(course_id: course['id'])
               .with_data(resource_id: question_id)
               .open!(
                 severity: 'medium',
-                annotation: "Question: '#{question_title['markup'][0...20]}[..]'",
+                annotation: "Question: '#{quiz_question['text'][0...20]}[..]'",
                 qc_alert_data: {'quiz_item_id' => quiz_item['id']}
               )
           else
@@ -90,10 +89,6 @@ module QcRules
 
     def quiz_service
       @quiz_service ||= Xikolo.api(:quiz).value!
-    end
-
-    def richtext_service
-      @richtext_service ||= Xikolo.api(:richtext).value!
     end
 
     def config

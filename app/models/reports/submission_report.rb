@@ -130,8 +130,7 @@ module Reports
       ).value!
 
       quiz_questions.each do |quiz_question|
-        q_richtext = richtext_service.rel(:rich_text).get(id: quiz_question['question_rtid']).value!
-        hash[quiz_question['id']][:question_text] = q_richtext['markup']
+        hash[quiz_question['id']][:question_text] = quiz_question['text']
 
         hash[quiz_question['id']][:answers] = []
 
@@ -141,11 +140,10 @@ module Reports
             per_page: 250
           )
         ) do |quiz_answer|
-          a_richtext = richtext_service.rel(:rich_text).get(id: quiz_answer['answer_rtid']).value!
           hash[quiz_question['id']][:answers] << {
             id: quiz_answer['id'],
             position: quiz_answer['position'],
-            answer_text: a_richtext['markup']
+            answer_text: quiz_answer['text'],
           }
         end
 
@@ -169,10 +167,6 @@ module Reports
 
     def quiz_service
       @quiz_service ||= Xikolo.api(:quiz).value!
-    end
-
-    def richtext_service
-      @richtext_service ||= Xikolo.api(:richtext).value!
     end
   end
 end
