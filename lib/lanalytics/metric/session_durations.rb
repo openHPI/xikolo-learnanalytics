@@ -30,9 +30,9 @@ module Lanalytics
 
         row = result[:rows].first
         {
-            total_sessions: row['ga:sessions'],
-            total_session_duration: row['ga:sessionDuration'],
-            avg_session_duration: row['ga:avgSessionDuration']
+          total_sessions: row['ga:sessions'],
+          total_session_duration: row['ga:sessionDuration'],
+          avg_session_duration: row['ga:avgSessionDuration']
         }
       end
     end
