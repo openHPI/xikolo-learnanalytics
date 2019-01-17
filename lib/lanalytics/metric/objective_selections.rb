@@ -2,7 +2,7 @@ module Lanalytics
   module Metric
     class ObjectiveSelections < ExpApiMetric
 
-      description 'Learning objective measures including the number of users with objective, selections by objective, number of changes between objectives, and distribution of selected objectives.'
+      description 'Learning objective measures including the number of users with objective, selections by objective, average number of objectives, and distribution of selected objectives.'
 
       optional_parameter :course_id, :user_id
 
@@ -83,7 +83,7 @@ module Lanalytics
         total_selections_by_objective = result.dig('aggregations', 'by_objective', 'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e['doc_count']
         end
-        changes_per_user = result.dig('aggregations', 'by_user', 'buckets')&.map  { |b| b['doc_count'] - 1 }
+        objectives_per_user = result.dig('aggregations', 'by_user', 'buckets')&.map  { |b| b['doc_count'] }
         initial_objectives = result.dig('aggregations', 'by_objective', 'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e.dig('initial_objectives', 'doc_count')
         end
@@ -100,8 +100,8 @@ module Lanalytics
           total_selections: result.dig('hits', 'total'),
           # Count total selections (by objective_id)
           total_selections_by_objective: total_selections_by_objective,
-          # Average number of changes between objectives per user
-          avg_objective_changes_per_user: changes_per_user.present? ? (changes_per_user.reduce(:+) / changes_per_user.size.to_f) : nil,
+          # Average number of objectives per user
+          avg_objectives_per_user: objectives_per_user.present? ? (objectives_per_user.reduce(:+) / objectives_per_user.size.to_f) : nil,
           # Count how often an objective was selected as first objective
           initial_objectives: initial_objectives,
           # Count the number of initial selections per modal context in which they were selected (infobox, popup, progress)

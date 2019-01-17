@@ -20,6 +20,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [{ match: { verb: 'SUBMITTED_QUIZ' } }] + all_filters(user_id, course_id, nil),
+                must_not: [{ term: { 'in_context.quiz_type': 'survey' } }],
                 filter: {
                   range: {
                     timestamp: {
