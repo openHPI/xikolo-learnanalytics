@@ -61,7 +61,6 @@ class ReportJob < ApplicationRecord
       options: options.except('zip_password')
     )
 
-    notify
     self
   end
 
@@ -90,20 +89,5 @@ class ReportJob < ApplicationRecord
 
   def scoped?
     task_type != 'user_report' && task_type != 'unconfirmed_user_report'
-  end
-
-  private
-
-  def notify
-    Xikolo.api(:notification).value!.rel(:events).post(
-      key: 'reporting_finished',
-      payload: {
-        type: task_type,
-        annotation: annotation,
-        state: status
-      },
-      public: false,
-      subscribers: [user_id]
-    ).value!
   end
 end
