@@ -19,11 +19,11 @@ module Lanalytics
                   { bool: {
                     minimum_should_match: 1,
                     should: [
-                      { match: { verb: 'ASKED_QUESTION' } },
-                      { match: { verb: 'ANSWERED_QUESTION' } },
-                      { match: { verb: 'COMMENTED' } },
-                      { match: { verb: 'VISITED_PINBOARD' } },
-                      { match: { verb: 'VISITED_QUESTION' } }
+                      { match: { 'verb' => 'asked_question' } },
+                      { match: { 'verb' => 'answered_question' } },
+                      { match: { 'verb' => 'commented' } },
+                      { match: { 'verb' => 'visited_pinboard' } },
+                      { match: { 'verb' => 'visited_question' } }
                     ]}
                   }
                 ],
