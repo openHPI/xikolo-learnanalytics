@@ -25,7 +25,7 @@ module Lanalytics
                       source:  "(#{duration_script} / 1000) < params.three_hours",
                       lang: "painless",
                       params: {
-                        three_hours: 108000
+                        three_hours: 10800
                       }
                     }
                   }
