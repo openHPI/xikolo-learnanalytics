@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_18_101622) do
+ActiveRecord::Schema.define(version: 2019_01_07_095857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,10 +44,13 @@ ActiveRecord::Schema.define(version: 2018_12_18_101622) do
     t.integer "comments_on_answers_last_day"
     t.integer "comments_on_questions"
     t.integer "comments_on_questions_last_day"
-    t.integer "certificates"
+    t.integer "roa_count"
+    t.integer "cop_count"
+    t.integer "qc_count"
+    t.float "completion_rate"
+    t.float "consumption_rate"
     t.integer "helpdesk_tickets"
     t.integer "helpdesk_tickets_last_day"
-    t.float "completion_rate"
     t.datetime "start_date"
     t.datetime "end_date"
     t.integer "new_users"
