@@ -22,7 +22,7 @@ class ProfileFields
 
   def values
     fields.map do |f|
-      f['type'] == 'CustomTextField' ? "\"#{f.dig('values', 0)}\"" : f.dig('values', 0)
+      f['type'] == 'CustomTextField' ? "\"#{f.dig('values', 0)}\"" : f.dig('values')&.join(';')
     end
   end
 
