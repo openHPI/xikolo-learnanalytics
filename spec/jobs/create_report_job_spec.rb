@@ -26,14 +26,6 @@ describe CreateReportJob do
   context 'successful report generation' do
     before do
       allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
-
-      Stub.service(
-        :notification,
-        events_url: '/events'
-      )
-      Stub.request(
-        :notification, :post, '/events'
-      ).to_return Stub.response(status: 201)
     end
     let(:s3_stubs) do
       {
@@ -57,14 +49,6 @@ describe CreateReportJob do
   context 'error during report upload' do
     before do
       allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
-
-      Stub.service(
-        :notification,
-        events_url: '/events'
-      )
-      Stub.request(
-        :notification, :post, '/events'
-      ).to_return Stub.response(status: 201)
     end
     let(:s3_stubs) do
       {
