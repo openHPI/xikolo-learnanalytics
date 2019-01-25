@@ -42,11 +42,21 @@ describe ProfileFields do
       'values' => %w(12345678)
     }
   }
+  let!(:languages) {
+    {
+      'name' =>'languages',
+      'title' => {
+        'en' => 'Languages'
+      },
+      'type' => 'CustomSelectField',
+      'values' => %w(de en fr)
+    }
+  }
 
   let!(:profile) do
     {
       'user_id' => '9b954287-672a-4c49-8d07-d4c3d8d70d19',
-      'fields' => [full_name, gender, city, sap_id]
+      'fields' => [full_name, gender, city, sap_id, languages]
     }
   end
 
@@ -62,12 +72,12 @@ describe ProfileFields do
 
     context 'anonymized' do
       let(:deanonymized) { false }
-      it { is_expected.to match_array [gender, city] }
+      it { is_expected.to match_array [gender, city, languages] }
     end
 
     context 'deanonymized' do
       let(:deanonymized) { true }
-      it { is_expected.to match_array [full_name, gender, city] }
+      it { is_expected.to match_array [full_name, gender, city, languages] }
     end
   end
 
@@ -76,12 +86,12 @@ describe ProfileFields do
 
     context 'anonymized' do
       let(:deanonymized) { false }
-      it { is_expected.to match_array %w(male "Berlin") }
+      it { is_expected.to match_array %w(male "Berlin" de;en;fr) }
     end
 
     context 'deanonymized' do
       let(:deanonymized) { true }
-      it { is_expected.to match_array %w(male "Max\ Muster" "Berlin") }
+      it { is_expected.to match_array %w(male "Max\ Muster" "Berlin" de;en;fr) }
     end
   end
 
@@ -90,12 +100,12 @@ describe ProfileFields do
 
     context 'anonymized' do
       let(:deanonymized) { false }
-      it { is_expected.to match_array %w(Gender City) }
+      it { is_expected.to match_array %w(Gender City Languages) }
     end
 
     context 'deanonymized' do
       let(:deanonymized) { true }
-      it { is_expected.to match_array %w(Full\ Name Gender City) }
+      it { is_expected.to match_array %w(Full\ Name Gender City Languages) }
     end
   end
 
