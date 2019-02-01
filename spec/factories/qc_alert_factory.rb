@@ -4,6 +4,7 @@ FactoryBot.define do
     course_id   { '00000001-3300-4444-9999-000000000001' }
     severity    { 'low' }
     annotation  { '' }
+    status      { 'open' }
 
     trait :other_course do
       course_id { '00000001-3300-4444-9999-000000000002' }
