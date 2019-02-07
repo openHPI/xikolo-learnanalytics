@@ -13,6 +13,7 @@ class ReportJob < ApplicationRecord
     'course_events_report' => Reports::CourseEventsReport,
     'enrollment_report' => Reports::EnrollmentReport,
     'course_content_report' => Reports::CourseContentReport,
+    'overall_course_summary_report' => Reports::OverallCourseSummaryReport,
   }
 
   default_scope {order('updated_at DESC')}
@@ -88,6 +89,10 @@ class ReportJob < ApplicationRecord
   end
 
   def scoped?
-    task_type != 'user_report' && task_type != 'unconfirmed_user_report'
+    %w(
+      user_report
+      unconfirmed_user_report
+      overall_course_summary_report
+    ).exclude? task_type
   end
 end
