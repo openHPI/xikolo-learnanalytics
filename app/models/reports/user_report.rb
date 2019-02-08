@@ -8,6 +8,7 @@ module Reports
       @include_profile = job.options['include_profile']
       @include_primary_email_suspended = job.options['include_primary_email_suspended']
       @include_global_ann_subscribed = job.options['include_global_ann_subscribed']
+      @include_last_activity = job.options['include_last_activity']
       @include_enrollment_evaluation = job.options['include_enrollment_evaluation']
       @combine_enrollment_info = job.options['combine_enrollment_info']
     end
@@ -53,6 +54,10 @@ module Reports
 
         if @include_global_ann_subscribed
           headers.concat ['Global Announcements Subscribed']
+        end
+
+        if @include_last_activity
+          headers.concat ['Last Activity']
         end
 
         if @include_enrollment_evaluation
@@ -114,6 +119,12 @@ module Reports
           values += [global_announcements_subscribed(preferences) || '']
         end
 
+        if @include_last_activity
+          values += [
+            last_activity(user)&.dig('timestamp')
+          ]
+        end
+
         if @include_enrollment_evaluation
           enrollments = course_service.rel(:enrollments).get(
             user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
@@ -145,6 +156,12 @@ module Reports
 
     def top_city(user)
       Lanalytics::Metric::UserCourseCity.query(user_id: user['id'])
+    rescue
+      ''
+    end
+
+    def last_activity(user)
+      Lanalytics::Metric::LastActivity.query(user_id: user['id'])
     rescue
       ''
     end
