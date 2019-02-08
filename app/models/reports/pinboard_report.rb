@@ -28,6 +28,7 @@ module Reports
         accepted_answer_id
         course_id
         learning_room_id
+        learning_room_title
         topic_id
         file_id
         commentable_id
@@ -38,7 +39,9 @@ module Reports
         deleted
         closed
         section_id
+        section_title
         item_id
+        item_title
       ]
     end
 
@@ -64,6 +67,18 @@ module Reports
     end
 
     def transform_topic(topic)
+      section_id = implicit_section_id(topic['implicit_tags'])
+      item_id = implicit_item_id(topic['implicit_tags'])
+
+      section_title = sections \
+        .find { |section| section['id'] == section_id }&.dig('title')
+      item_title = items \
+        .find { |item| item['id'] == item_id }&.dig('title')
+
+      learning_room_id = topic['learning_room_id']
+      learning_room_title = collab_spaces \
+        .find { |space| space['id'] == learning_room_id }&.dig('name')
+
       [
         topic['id'],
         topic['title'],
@@ -75,7 +90,8 @@ module Reports
         topic['updated_at'],
         topic['accepted_answer_id'],
         topic['course_id'],
-        topic['learning_room_id'],
+        learning_room_id,
+        learning_room_title,
         topic['id'],
         '',
         '',
@@ -85,8 +101,10 @@ module Reports
         topic['sticky'],
         topic['deleted'],
         topic['closed'],
-        implicit_section_id(topic['implicit_tags']),
-        implicit_item_id(topic['implicit_tags'])
+        section_id,
+        section_title,
+        item_id,
+        item_title,
       ]
     end
 
@@ -112,6 +130,7 @@ module Reports
           user_id(answer['user_id']),
           answer['created_at'],
           answer['updated_at'],
+          '',
           '',
           '',
           '',
@@ -153,6 +172,7 @@ module Reports
           '',
           '',
           '',
+          '',
           question_id,
           '',
           comment['commentable_id'],
@@ -185,11 +205,7 @@ module Reports
       ]
 
       if @include_collab_spaces
-        Xikolo.paginate(
-          collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
-        ) do |collab_space|
-          filters << {learning_room_id: collab_space['id']}
-        end
+        collab_spaces.each { |space| filters << {learning_room_id: space['id']} }
       end
 
       filters
@@ -197,6 +213,42 @@ module Reports
 
     def course
       @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
+    end
+
+    def sections
+      @sections ||= begin
+        sections = []
+        Xikolo.paginate(
+          course_service.rel(:sections).get(course_id: course['id'])
+        ) do |section|
+          sections << section
+        end
+        sections
+      end
+    end
+
+    def items
+      @items ||= begin
+        items = []
+        Xikolo.paginate(
+          course_service.rel(:items).get(course_id: course['id'])
+        ) do |item|
+          items << item
+        end
+        items
+      end
+    end
+
+    def collab_spaces
+      @collab_spaces ||= begin
+        collab_spaces = []
+        Xikolo.paginate(
+          collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
+        ) do |space|
+          collab_spaces << space
+        end
+        collab_spaces
+      end
     end
 
     def collabspace_service
