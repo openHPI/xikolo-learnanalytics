@@ -5,6 +5,7 @@ module Reports
 
       @deanonymized = job.options['deanonymized']
       @include_collab_spaces = job.options.fetch('include_collab_spaces', false)
+      @include_permission_groups = job.options.fetch('include_permission_groups', false)
     end
 
     def generate!
@@ -16,7 +17,7 @@ module Reports
     private
 
     def headers
-      %w[
+      headers = %w[
         id
         title
         text
@@ -27,8 +28,8 @@ module Reports
         updated_at
         accepted_answer_id
         course_id
-        learning_room_id
-        learning_room_title
+        collab_space_id
+        collab_space_title
         topic_id
         file_id
         commentable_id
@@ -43,6 +44,15 @@ module Reports
         item_id
         item_title
       ]
+
+      if @include_permission_groups
+        headers.concat %w[
+          user_global_groups
+          user_course_groups
+        ]
+      end
+
+      headers
     end
 
     def each_post
@@ -75,11 +85,11 @@ module Reports
       item_title = items \
         .find { |item| item['id'] == item_id }&.dig('title')
 
-      learning_room_id = topic['learning_room_id']
-      learning_room_title = collab_spaces \
-        .find { |space| space['id'] == learning_room_id }&.dig('name')
+      collab_space_id = topic['learning_room_id']
+      collab_space_title = collab_spaces \
+        .find { |space| space['id'] == collab_space_id }&.dig('name')
 
-      [
+      values = [
         topic['id'],
         topic['title'],
         topic['text'].squish,
@@ -90,8 +100,8 @@ module Reports
         topic['updated_at'],
         topic['accepted_answer_id'],
         topic['course_id'],
-        learning_room_id,
-        learning_room_title,
+        collab_space_id,
+        collab_space_title,
         topic['id'],
         '',
         '',
@@ -106,6 +116,22 @@ module Reports
         item_id,
         item_title,
       ]
+
+      if @include_permission_groups
+        global_groups = user_global_groups \
+                          .groups_for_user(topic['user_id']) \
+                          .join(';')
+        course_groups = user_course_groups \
+                          .groups_for_user(topic['user_id']) \
+                          .join(';')
+
+        values.concat [
+          global_groups,
+          course_groups,
+        ]
+      end
+
+      values
     end
 
     def each_topic(&block)
@@ -243,7 +269,7 @@ module Reports
       @collab_spaces ||= begin
         collab_spaces = []
         Xikolo.paginate(
-          collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
+          collab_space_service.rel(:collab_spaces).get(course_id: course['id'])
         ) do |space|
           collab_spaces << space
         end
@@ -251,8 +277,16 @@ module Reports
       end
     end
 
-    def collabspace_service
-      @collabspace_service ||= Xikolo.api(:learning_room).value!
+    def user_global_groups
+      @user_global_groups ||= UserGroups::GlobalGroups.new
+    end
+
+    def user_course_groups
+      @user_course_groups ||= UserGroups::CourseGroups.new(course['course_code'])
+    end
+
+    def collab_space_service
+      @collab_space_service ||= Xikolo.api(:collabspace).value!
     end
 
     def course_service
