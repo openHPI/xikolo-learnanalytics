@@ -115,9 +115,7 @@ module Reports
         end
 
         if @include_enrollment_evaluation
-          enrollments = course_service.rel(:enrollments).get(
-            user_id: user['id'], learning_evaluation: true, deleted: true, per_page: 200
-          ).value!
+          enrollments = load_all_user_enrollments(user['id'])
 
           values += [
             first_course(enrollments),
@@ -201,6 +199,21 @@ module Reports
         courses[course['id']] = course
       end
       courses
+    end
+
+    def load_all_user_enrollments(user_id)
+      enrollments = []
+      Xikolo.paginate(
+        course_service.rel(:enrollments).get(
+          user_id: user_id,
+          learning_evaluation: true,
+          deleted: true,
+          per_page: 200
+        )
+      ) do |enrollment|
+        enrollments << enrollment
+      end
+      enrollments
     end
 
     def account_service
