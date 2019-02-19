@@ -6,8 +6,9 @@ module Reports
       @deanonymized = job.options['deanonymized']
       @include_top_location = job.options['include_top_location']
       @include_profile = job.options['include_profile']
-      @include_primary_email_suspended = job.options['include_primary_email_suspended']
-      @include_global_ann_subscribed = job.options['include_global_ann_subscribed']
+      @include_consents = job.options['include_consents']
+      @include_features = job.options['include_features']
+      @include_email_subscriptions = job.options['include_email_subscriptions']
       @include_last_activity = job.options['include_last_activity']
       @include_enrollment_evaluation = job.options['include_enrollment_evaluation']
       @combine_enrollment_info = job.options['combine_enrollment_info']
@@ -48,12 +49,19 @@ module Reports
           headers.concat ProfileFields.all_titles(@deanonymized)
         end
 
-        if @include_primary_email_suspended
-          headers.concat ['Primary Email Suspended']
+        if @include_consents
+          headers.concat treatments.map { |t| "Consent: #{t.name}" }
         end
 
-        if @include_global_ann_subscribed
-          headers.concat ['Global Announcements Subscribed']
+        if @include_features
+          headers.concat Xikolo.config.reportable_features&.map { |f| "Feature: #{f}" }
+        end
+
+        if @include_email_subscriptions
+          headers.concat [
+            'Global Announcements Subscribed',
+            'Course Announcements Subscribed',
+          ]
         end
 
         if @include_last_activity
@@ -109,14 +117,24 @@ module Reports
           values += profile_fields.values
         end
 
-        if @include_primary_email_suspended
-          features = user.rel(:features).get.value!
-          values += [features.key?('primary_email_suspended') || '']
+        if @include_consents
+          consents = user.rel(:consents).get.value!
+          values += treatments.map do |t|
+            consents.find { |c| c['name'] == t['name'] }&.dig('consented') || ''
+          end
         end
 
-        if @include_global_ann_subscribed
+        if @include_features
+          features = user.rel(:features).get.value!
+          values += Xikolo.config.reportable_features&.map { |f| features.key?(f) || '' }
+        end
+
+        if @include_email_subscriptions
           preferences = user.rel(:preferences).get.then { |preferences| preferences['properties'] }.value!
-          values += [global_announcements_subscribed(preferences) || '']
+          values += [
+            global_announcements_subscribed(preferences) || '',
+            course_announcements_subscribed(preferences) || '',
+          ]
         end
 
         if @include_last_activity
@@ -144,6 +162,11 @@ module Reports
     def global_announcements_subscribed(preferences)
       preferences.fetch('notification.email.global', 'true') == 'true' &&
         preferences.fetch('notification.email.news.announcement', 'true') == 'true'
+    end
+
+    def course_announcements_subscribed(preferences)
+      preferences.fetch('notification.email.global', 'true') == 'true' &&
+        preferences.fetch('notification.email.course.announcement', 'true') == 'true'
     end
 
     def top_country(user)
@@ -231,6 +254,10 @@ module Reports
         enrollments << enrollment
       end
       enrollments
+    end
+
+    def treatments
+      @treatments ||= account_service.rel(:treatments).get.value!
     end
 
     def account_service
