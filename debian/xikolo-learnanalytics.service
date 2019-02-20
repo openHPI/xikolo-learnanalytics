@@ -6,6 +6,8 @@ After=network.target
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/true
+ExecReload=/bin/systemctl try-reload-or-restart xikolo-learnanalytics-unicorn.service
+ExecReload=/bin/systemctl try-reload-or-restart xikolo-learnanalytics-sidekiq.service
 WorkingDirectory=/usr/lib/xikolo-learnanalytics
 
 [Install]
