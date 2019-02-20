@@ -91,6 +91,7 @@ module Reports
       Xikolo.paginate(
         course_service.rel(:courses).get(
           exclude_external: true,
+          affiliated: true,
           per_page: 500
         )
       ) do |course, page|
