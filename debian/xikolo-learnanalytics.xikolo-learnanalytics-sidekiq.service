@@ -17,7 +17,7 @@ Environment=ARGS=
 ExecStart=/usr/bin/xikolo-learnanalytics sidekiq --concurrency ${CONCURRENCY} --environment ${RAILS_ENV} ${ARGS}
 
 Restart=on-failure
-RestartSec=10s
+RestartSec=60s
 
 ProtectSystem=full
 PrivateTmp=true

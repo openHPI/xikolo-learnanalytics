@@ -22,7 +22,7 @@ ExecReload=/bin/kill -USR2 $MAINPID
 ExecStop=/bin/kill -QUIT $MAINPID
 
 Restart=on-failure
-RestartSec=10s
+RestartSec=60s
 
 ProtectSystem=full
 PrivateTmp=true
