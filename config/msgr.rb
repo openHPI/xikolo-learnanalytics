@@ -21,7 +21,8 @@ route 'xikolo.account.user.destroy', to: 'Lanalytics#destroy'
 # ------------------- Course Domain Entities -------------------
 route 'xikolo.course.course.create', to: 'Lanalytics#create'
 route 'xikolo.course.course.update', to: 'Lanalytics#update'
-route 'xikolo.course.course.destroy', to: 'Lanalytics#destroy'
+
+route 'xikolo.course.course.update', to: 'QcAlert#update_course'
 
 route 'xikolo.course.item.create', to: 'Lanalytics#create'
 route 'xikolo.course.item.update', to: 'Lanalytics#update'
@@ -78,5 +79,3 @@ route 'xikolo.lanalytics.google_analytics_hits', to: 'GoogleAnalyticsHit#emit', 
 
 # If you want to know how the routes look like, you can puts them with the following line:x
 # puts @routes.inspect
-
-route 'xikolo.pinboard.report.new', to: 'qc_alert#pinboard_report'
