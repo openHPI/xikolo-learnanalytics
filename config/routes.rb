@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     # statistics
 
     resources :course_statistics, only: [:index, :show]
+    resources :section_conversions, param: :course_id, only: [:show]
 
     # qc rules
 

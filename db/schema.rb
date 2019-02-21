@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_07_095857) do
+ActiveRecord::Schema.define(version: 2019_02_21_103609) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -193,6 +194,11 @@ ActiveRecord::Schema.define(version: 2019_01_07_095857) do
     t.string "resource_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "section_conversions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "course_id"
+    t.jsonb "data"
   end
 
   create_table "teacher_actions", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
