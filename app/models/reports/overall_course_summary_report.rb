@@ -40,6 +40,7 @@ module Reports
         'RoA Threshold',
         'Proctored',
         'On-Demand',
+        'Peer Assessment',
         'Collab Space',
         'Teleboard',
         'Rating Stars',
@@ -123,6 +124,7 @@ module Reports
           course['roa_threshold_percentage'],
           course['proctored'],
           course['on_demand'],
+          peer_assessment_type(course['id']),
           course['has_collab_space'],
           course['has_teleboard'],
           course['rating_stars'],
@@ -197,8 +199,27 @@ module Reports
       end
     end
 
+    def peer_assessment_type(course_id)
+      pa_type = ''
+      Xikolo.paginate(
+        course_service.rel(:items).get(
+          course_id: course_id,
+          content_type: 'peer_assessment'
+        )
+      ) do |item|
+        break if pa_type == 'team'
+        pa = peerassessment_service.rel(:peer_assessment).get(id: item['content_id']).value!
+        pa_type = pa['is_team_assessment'] ? 'team' : 'solo'
+      end
+      pa_type
+    end
+
     def course_service
       @course_service ||= Xikolo.api(:course).value!
+    end
+
+    def peerassessment_service
+      @peerassessment_service ||= Xikolo.api(:peerassessment).value!
     end
 
   end
