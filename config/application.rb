@@ -27,6 +27,10 @@ module Xikolo::Lanalytics
     config.api_only = true
 
     config.action_controller.default_protect_from_forgery = false
+
+    config.generators do |g|
+      g.orm :active_record, primary_key_type: :uuid
+    end
   end
 
   def self.rake?
