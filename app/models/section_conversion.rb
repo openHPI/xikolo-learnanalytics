@@ -7,10 +7,10 @@ class SectionConversion < ApplicationRecord
   end
 
   def created_at
-    versions.first.created_at
+    versions.first&.created_at
   end
 
   def updated_at
-    version&.created_at || versions.last.created_at
+    version&.created_at || versions.last&.created_at
   end
 end
