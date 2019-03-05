@@ -14,5 +14,3 @@ xikolo.course.course.create: &XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
   - Lanalytics::Processing::Processor::LoggerProcessor.new
 xikolo.course.course.update:
   *XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
-xikolo.course.course.destroy:
-  *XIKOLO_COURSE_COURSE_PROCESSING_CHAIN
