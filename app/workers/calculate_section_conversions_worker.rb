@@ -21,9 +21,7 @@ class CalculateSectionConversionsWorker
   end
 
   def calculate!(course_id)
-    SectionConversion.find_or_create_by(course_id: course_id).tap do |conversions|
-      conversions.calculate!
-    end
+    SectionConversion.find_or_create_by(course_id: course_id).tap(&:calculate!)
   end
 
   def course_service

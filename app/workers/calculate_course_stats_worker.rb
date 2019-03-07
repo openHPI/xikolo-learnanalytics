@@ -23,9 +23,7 @@ class CalculateCourseStatsWorker
   end
 
   def gather_stats!(course_id)
-    CourseStatistic.find_or_create_by(course_id: course_id).tap do |stat|
-      stat.calculate!
-    end
+    CourseStatistic.find_or_create_by(course_id: course_id).tap(&:calculate!)
   end
 
   def notify!
