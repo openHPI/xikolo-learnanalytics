@@ -73,7 +73,9 @@ module Lanalytics
             item_visit_percentage[result['user_id']] = Array.new(section_count, 0)
           end
           section = section_data[result['section_id']]
-          item_visit_percentage[result['user_id']][section[:position] - 1] = result['item_count'].to_f / section[:item_count].to_f
+          if section.present?
+            item_visit_percentage[result['user_id']][section[:position] - 1] = result['item_count'].to_f / section[:item_count].to_f
+          end
         end
 
         # inverse sorted buckets
