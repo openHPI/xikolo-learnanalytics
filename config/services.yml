@@ -14,6 +14,7 @@ development: &dev
     news: <%= ENV['XIKOLO_SERVICE_NEWS'] || 'http://localhost:4300' %>
     helpdesk: <%= ENV['XIKOLO_SERVICE_HELPDESK'] || 'http://localhost:4700' %>
     learning_room: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
+    collabspace: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
     progress: <%= ENV['XIKOLO_SERVICE_PROGRESS'] || 'http://localhost:4900' %>
     lti: <%= ENV['XIKOLO_SERVICE_LTI'] || 'http://localhost:5000' %>
     game: <%= ENV['XIKOLO_SERVICE_GAME'] || 'http://localhost:5100' %>

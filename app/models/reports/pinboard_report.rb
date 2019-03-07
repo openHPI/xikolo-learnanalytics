@@ -5,6 +5,7 @@ module Reports
 
       @deanonymized = job.options['deanonymized']
       @include_collab_spaces = job.options.fetch('include_collab_spaces', false)
+      @include_permission_groups = job.options.fetch('include_permission_groups', false)
     end
 
     def generate!
@@ -16,7 +17,7 @@ module Reports
     private
 
     def headers
-      %w[
+      headers = %w[
         id
         title
         text
@@ -27,7 +28,8 @@ module Reports
         updated_at
         accepted_answer_id
         course_id
-        learning_room_id
+        collab_space_id
+        collab_space_title
         topic_id
         file_id
         commentable_id
@@ -38,8 +40,19 @@ module Reports
         deleted
         closed
         section_id
+        section_title
         item_id
+        item_title
       ]
+
+      if @include_permission_groups
+        headers.concat %w[
+          user_global_groups
+          user_course_groups
+        ]
+      end
+
+      headers
     end
 
     def each_post
@@ -64,7 +77,19 @@ module Reports
     end
 
     def transform_topic(topic)
-      [
+      section_id = implicit_section_id(topic['implicit_tags'])
+      item_id = implicit_item_id(topic['implicit_tags'])
+
+      section_title = sections \
+        .find { |section| section['id'] == section_id }&.dig('title')
+      item_title = items \
+        .find { |item| item['id'] == item_id }&.dig('title')
+
+      collab_space_id = topic['learning_room_id']
+      collab_space_title = collab_spaces \
+        .find { |space| space['id'] == collab_space_id }&.dig('name')
+
+      values = [
         topic['id'],
         topic['title'],
         topic['text'].squish,
@@ -75,7 +100,8 @@ module Reports
         topic['updated_at'],
         topic['accepted_answer_id'],
         topic['course_id'],
-        topic['learning_room_id'],
+        collab_space_id,
+        collab_space_title,
         topic['id'],
         '',
         '',
@@ -85,9 +111,27 @@ module Reports
         topic['sticky'],
         topic['deleted'],
         topic['closed'],
-        implicit_section_id(topic['implicit_tags']),
-        implicit_item_id(topic['implicit_tags'])
+        section_id,
+        section_title,
+        item_id,
+        item_title,
       ]
+
+      if @include_permission_groups
+        global_groups = user_global_groups \
+                          .groups_for_user(topic['user_id']) \
+                          .join(';')
+        course_groups = user_course_groups \
+                          .groups_for_user(topic['user_id']) \
+                          .join(';')
+
+        values.concat [
+          global_groups,
+          course_groups,
+        ]
+      end
+
+      values
     end
 
     def each_topic(&block)
@@ -112,6 +156,7 @@ module Reports
           user_id(answer['user_id']),
           answer['created_at'],
           answer['updated_at'],
+          '',
           '',
           '',
           '',
@@ -153,6 +198,7 @@ module Reports
           '',
           '',
           '',
+          '',
           question_id,
           '',
           comment['commentable_id'],
@@ -185,11 +231,7 @@ module Reports
       ]
 
       if @include_collab_spaces
-        Xikolo.paginate(
-          collabspace_service.rel(:collab_spaces).get(course_id: course['id'])
-        ) do |collab_space|
-          filters << {learning_room_id: collab_space['id']}
-        end
+        collab_spaces.each { |space| filters << {learning_room_id: space['id']} }
       end
 
       filters
@@ -199,8 +241,52 @@ module Reports
       @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
     end
 
-    def collabspace_service
-      @collabspace_service ||= Xikolo.api(:learning_room).value!
+    def sections
+      @sections ||= begin
+        sections = []
+        Xikolo.paginate(
+          course_service.rel(:sections).get(course_id: course['id'])
+        ) do |section|
+          sections << section
+        end
+        sections
+      end
+    end
+
+    def items
+      @items ||= begin
+        items = []
+        Xikolo.paginate(
+          course_service.rel(:items).get(course_id: course['id'])
+        ) do |item|
+          items << item
+        end
+        items
+      end
+    end
+
+    def collab_spaces
+      @collab_spaces ||= begin
+        collab_spaces = []
+        Xikolo.paginate(
+          collab_space_service.rel(:collab_spaces).get(course_id: course['id'])
+        ) do |space|
+          collab_spaces << space
+        end
+        collab_spaces
+      end
+    end
+
+    def user_global_groups
+      @user_global_groups ||= UserGroups::GlobalGroups.new
+    end
+
+    def user_course_groups
+      @user_course_groups ||= UserGroups::CourseGroups.new(course['course_code'])
+    end
+
+    def collab_space_service
+      @collab_space_service ||= Xikolo.api(:collabspace).value!
     end
 
     def course_service
