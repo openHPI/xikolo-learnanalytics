@@ -6,6 +6,7 @@ module Reports
       @deanonymized = job.options['deanonymized']
       @include_top_location = job.options['include_top_location']
       @include_profile = job.options['include_profile']
+      @include_auth = job.options['include_auth']
       @include_consents = job.options['include_consents']
       @include_features = job.options['include_features']
       @include_email_subscriptions = job.options['include_email_subscriptions']
@@ -49,12 +50,16 @@ module Reports
           headers.concat ProfileFields.all_titles(@deanonymized)
         end
 
+        if @include_auth && @deanonymized
+          headers.concat Xikolo.config.reportable_authorizations.map { |k, v| "Auth: #{k}.#{v}" }
+        end
+
         if @include_consents
           headers.concat treatments.map { |t| "Consent: #{t.name}" }
         end
 
         if @include_features
-          headers.concat Xikolo.config.reportable_features&.map { |f| "Feature: #{f}" }
+          headers.concat Xikolo.config.reportable_features.map { |f| "Feature: #{f}" }
         end
 
         if @include_email_subscriptions
@@ -117,6 +122,16 @@ module Reports
           values += profile_fields.values
         end
 
+        if @include_auth && @deanonymized
+          authorizations = account_service.rel(:authorizations).get(user: user['id']).value!
+          values += Xikolo.config.reportable_authorizations.map do |provider, attr|
+            authorizations
+              .select { |auth| auth['provider'] == provider }
+              .map { |auth| auth['info']&.dig(*attr.split('.')) }
+              .join(',')
+          end
+        end
+
         if @include_consents
           consents = user.rel(:consents).get.value!
           values += treatments.map do |t|
@@ -126,7 +141,7 @@ module Reports
 
         if @include_features
           features = user.rel(:features).get.value!
-          values += Xikolo.config.reportable_features&.map { |f| features.key?(f) || '' }
+          values += Xikolo.config.reportable_features.map { |f| features.key?(f) || '' }
         end
 
         if @include_email_subscriptions
