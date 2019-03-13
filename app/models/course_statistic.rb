@@ -170,6 +170,7 @@ class CourseStatistic < ApplicationRecord
     def last_version_at(course_id, date)
       find_by!(course_id: course_id)
         .versions
+        .where("(object->>'course_id')= ?", course_id)
         .preceding(DateTime.parse(date).end_of_day + 1.day, true)
         .last
         .reify
@@ -178,6 +179,7 @@ class CourseStatistic < ApplicationRecord
     def last_version(course_id)
       find_by!(course_id: course_id)
         .versions
+        .where("(object->>'course_id')= ?", course_id)
         .last
         .reify
     end
