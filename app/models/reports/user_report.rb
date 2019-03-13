@@ -205,16 +205,11 @@ module Reports
       course_states = enrollments.each_with_object({}) do |enrollment, states|
         if @combine_enrollment_info
           # '': not enrolled
-          # e: enrolled
-          # v: visited
-          # p: achieved points
-          # c: completed
-          # r: RoA
-          state = 'e'
+          state = 'e' # enrolled
           state = 'v' if enrollment.dig('visits', 'visited').to_f > 0
-          state = 'p' if enrollment.dig('points', 'percentage').to_f > 0
-          state = 'c' if enrollment['completed']
-          state = 'r' if enrollment.dig('certificates', 'record_of_achievement')
+          state = 'cc' if enrollment['completed']
+          state = 'cop' if enrollment.dig('certificates', 'confirmation_of_participation')
+          state = 'roa' if enrollment.dig('certificates', 'record_of_achievement')
           states[enrollment['course_id']] = state
         else
           states[enrollment['course_id']] = enrollment.dig('points', 'percentage')
