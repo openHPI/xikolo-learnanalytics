@@ -22,11 +22,11 @@ describe 'Pinboard Report' do
     )
 
     Stub.service(
-      :learning_room,
+      :collabspace,
       collab_spaces_url: '/collab_spaces'
     )
     Stub.request(
-      :learning_room, :get, '/collab_spaces',
+      :collabspace, :get, '/collab_spaces',
       query: { course_id: report_job.task_scope }
     ).to_return Stub.json([
       {id: collab_space_id}
