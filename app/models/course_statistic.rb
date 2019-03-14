@@ -162,7 +162,7 @@ class CourseStatistic < ApplicationRecord
     def versions_for(course_id, start_date, end_date = nil)
       find_by!(course_id: course_id)
         .versions
-        .where("(object->>'course_id')= ?", course_id)
+        .where.not(object: nil)
         .between(DateTime.parse(start_date), end_date || DateTime.now)
         .map(&:reify)
     end
@@ -170,7 +170,7 @@ class CourseStatistic < ApplicationRecord
     def last_version_at(course_id, date)
       find_by!(course_id: course_id)
         .versions
-        .where("(object->>'course_id')= ?", course_id)
+        .where.not(object: nil)
         .preceding(DateTime.parse(date).end_of_day + 1.day, true)
         .last
         .reify
@@ -179,7 +179,7 @@ class CourseStatistic < ApplicationRecord
     def last_version(course_id)
       find_by!(course_id: course_id)
         .versions
-        .where("(object->>'course_id')= ?", course_id)
+        .where.not(object: nil)
         .last
         .reify
     end
