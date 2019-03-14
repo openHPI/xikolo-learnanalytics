@@ -46,12 +46,9 @@ ActiveRecord::Schema.define(version: 2019_02_21_103609) do
     t.integer "comments_on_questions"
     t.integer "comments_on_questions_last_day"
     t.integer "roa_count"
-    t.integer "cop_count"
-    t.integer "qc_count"
-    t.float "completion_rate"
-    t.float "consumption_rate"
     t.integer "helpdesk_tickets"
     t.integer "helpdesk_tickets_last_day"
+    t.float "completion_rate"
     t.datetime "start_date"
     t.datetime "end_date"
     t.integer "new_users"
@@ -81,6 +78,9 @@ ActiveRecord::Schema.define(version: 2019_02_21_103609) do
     t.integer "badge_shares", default: 0
     t.integer "active_users_last_day", default: 0
     t.integer "active_users_last_7days", default: 0
+    t.integer "cop_count"
+    t.integer "qc_count"
+    t.float "consumption_rate"
   end
 
   create_table "datasource_accesses", id: :serial, force: :cascade do |t|
