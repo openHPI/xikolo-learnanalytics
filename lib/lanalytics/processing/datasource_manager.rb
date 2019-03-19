@@ -20,7 +20,7 @@ module Lanalytics
         datasource = datasource_class.new(datasource_config)
 
         Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
-        Rails.logger.info "The datasource config '#{filename}' loaded into DatasourceManager"
+        Rails.logger.debug "The datasource config '#{filename}' loaded into DatasourceManager"
       end
 
       def self.add_datasource(datasource)

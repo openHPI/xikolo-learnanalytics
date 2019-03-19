@@ -18,7 +18,7 @@ Rails.application.configure do
   config.serve_static_files = false
 
   # Set to :debug to see everything in the log.
-  config.log_level = :debug
+  config.log_level = :info
   Rails.logger = Logger.new(STDOUT)
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to

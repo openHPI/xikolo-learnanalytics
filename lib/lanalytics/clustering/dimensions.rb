@@ -83,8 +83,8 @@ class Lanalytics::Clustering::Dimensions
     result = loader.execute_sql(query)
     duration = Time.now - start_time
 
-    Sidekiq.logger.info { "[Performance] - Data extraction took: #{duration}" }
-    Rails.logger.info { "[Performance] - Data extraction took: #{duration}" }
+    Sidekiq.logger.debug { "[Performance] - Data extraction took: #{duration}" }
+    Rails.logger.debug { "[Performance] - Data extraction took: #{duration}" }
 
     result
   end

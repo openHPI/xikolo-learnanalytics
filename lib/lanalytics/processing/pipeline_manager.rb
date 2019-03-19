@@ -44,7 +44,7 @@ module Lanalytics
         #   @pipelines[schema][processing_action][name] = ProfilingPipeline.new(pipeline.pipeline.name, pipeline.schema, pipeline.processing_action, pipeline.extractors, pipeline.transformers, pipeline.loaders)
         # end
 
-        Rails.logger.info { "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'" }
+        Rails.logger.debug { "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'" }
       end
 
       def pipeline_for(name, schema, processing_action, &block)
@@ -60,7 +60,7 @@ module Lanalytics
         #   @pipelines[schema][processing_action][name] = ProfilingPipeline.new(name, schema, processing_action, &block)
         # end
 
-        Rails.logger.info { "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'" }
+        Rails.logger.debug { "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'" }
       end
 
       # -----------------------
