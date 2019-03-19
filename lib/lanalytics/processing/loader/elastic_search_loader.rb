@@ -42,7 +42,7 @@ module Lanalytics
           end
 
           # Log what will be written to elastic search
-          Rails.logger.info { "[ELASTIC SEARCH WRITE] - #{indexing_hash}" }
+          Rails.logger.debug { "[ELASTIC SEARCH WRITE] - #{indexing_hash}" }
 
           @elastic_datasource.exec do |client|
             client.index indexing_hash

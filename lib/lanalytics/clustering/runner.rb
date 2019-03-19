@@ -37,8 +37,8 @@ class Lanalytics::Clustering::Runner
     results = cluster_with_dimensions_data(dimensions_data, dimensions.length, num_centers)
     end_time = Time.now
 
-    Sidekiq.logger.info { "[Performance] - Clustering took: #{end_time - start_time} seconds" }
-    Rails.logger.info { "[Performance] - Clustering took: #{end_time - start_time} seconds" }
+    Sidekiq.logger.debug { "[Performance] - Clustering took: #{end_time - start_time} seconds" }
+    Rails.logger.debug { "[Performance] - Clustering took: #{end_time - start_time} seconds" }
 
     results
   end

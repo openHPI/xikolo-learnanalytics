@@ -23,7 +23,7 @@ module Lanalytics
           message = create_command.entity.all_non_nil_attributes.map{ |attr| [attr.name, attr.value] }.to_h
 
           # Log what will be sent to AMQ
-          Rails.logger.info "[AMQ LOADER PUBLISH] - #{message} to route #{@route}"
+          Rails.logger.debug "[AMQ LOADER PUBLISH] - #{message} to route #{@route}"
 
           Msgr.publish message, to: @route
         end

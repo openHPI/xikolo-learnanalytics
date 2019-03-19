@@ -37,7 +37,7 @@ module Lanalytics
           end
   
           # Log how many hits are sent to Google Analytics
-          Rails.logger.info "[GOOGLE ANALYTICS FLUSH] - sent #{hits.size} hits"
+          Rails.logger.debug "[GOOGLE ANALYTICS FLUSH] - sent #{hits.size} hits"
   
           begin
             response = @conn.post do |req|
