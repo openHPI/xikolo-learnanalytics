@@ -46,7 +46,15 @@
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
+            "certificate_type": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
             "client_id": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "codeocean_user_id": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
@@ -58,7 +66,14 @@
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
+            "completed": {
+              "type": "boolean"
+            },
             "confirmation_of_participation": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "content_type": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
@@ -66,9 +81,18 @@
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
+            "correct": {
+              "type": "boolean"
+            },
+            "correct_count": {
+              "type": "integer"
+            },
             "course_id": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
+            },
+            "current_fullscreen": {
+              "type": "boolean"
             },
             "current_orientation": {
               "type": "keyword",
@@ -95,6 +119,9 @@
             "dialog": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
+            },
+            "free_space": {
+              "type": "long"
             },
             "exercise": {
               "type": "keyword",
@@ -129,8 +156,15 @@
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
+            "new_current_fullscreen": {
+              "type": "boolean"
+            },
             "new_current_time": {
               "type": "float"
+            },
+            "new_dual_stream_status": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "new_objective": {
               "type": "keyword",
@@ -148,6 +182,14 @@
               "type": "float"
             },
             "new_state": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "new_subtitle_language": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "new_transcript_language": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
@@ -172,6 +214,14 @@
             },
             "old_speed": {
               "type": "float"
+            },
+            "onboarding_group": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "onboarding_step": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
             },
             "platform": {
               "type": "keyword",
@@ -219,6 +269,12 @@
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
+            "questions_count": {
+              "type": "integer"
+            },
+            "questions_total": {
+              "type": "integer"
+            },
             "quiz_access_time": {
               "type": "date"
             },
@@ -238,6 +294,10 @@
             "ratio": {
               "type": "float"
             },
+            "recap_session_id": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
             "received_certificate": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
@@ -251,6 +311,10 @@
               "normalizer": "keyword_lowercase"
             },
             "record_of_achievement": {
+              "type": "keyword",
+              "normalizer": "keyword_lowercase"
+            },
+            "referer": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
             },
@@ -288,11 +352,17 @@
             "slides": {
               "type": "boolean"
             },
+            "stopped_by_user": {
+              "type": "boolean"
+            },
             "technical": {
               "type": "boolean"
             },
             "text": {
               "type": "text"
+            },
+            "total_space": {
+              "type": "long"
             },
             "estimated_time_effort": {
               "type": "integer"
@@ -343,6 +413,24 @@
             "variant": {
               "type": "keyword",
               "normalizer": "keyword_lowercase"
+            },
+            "video_download_pref": {
+              "type": "integer"
+            },
+            "video_size": {
+              "type": "integer"
+            },
+            "video_timestamp": {
+              "type": "integer"
+            },
+            "window_height": {
+              "type": "integer"
+            },
+            "window_width": {
+              "type": "integer"
+            },
+            "wrong_count": {
+              "type": "integer"
             }
           }
         },
