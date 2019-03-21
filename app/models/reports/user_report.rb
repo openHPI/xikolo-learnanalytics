@@ -128,6 +128,7 @@ module Reports
             authorizations
               .select { |auth| auth['provider'] == provider }
               .map { |auth| auth['info']&.dig(*attr.split('.')) }
+              .compact
               .join(',')
           end
         end
