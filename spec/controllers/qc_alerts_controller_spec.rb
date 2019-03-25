@@ -1,10 +1,12 @@
 require 'spec_helper'
 
 describe QcAlertsController do
-  let(:rule) { FactoryBot.create :qc_rule }
+  let(:rule1) { FactoryBot.create :qc_rule }
   let(:rule2) { FactoryBot.create :qc_rule }
-  let!(:alert1) { FactoryBot.create :qc_alert, qc_rule_id: rule.id }
+  
+  let!(:alert1) { FactoryBot.create :qc_alert, qc_rule_id: rule1.id }
   let!(:alert2) { FactoryBot.create :qc_alert, :other_course, qc_rule_id: rule2.id }
+  
   let(:json) { JSON.parse response.body }
   let(:default_params) { {format: 'json'} }
 
@@ -14,66 +16,68 @@ describe QcAlertsController do
 
     it { is_expected.to have_http_status 200 }
 
-    context 'with ignored alerts' do
-      # Ignore alert1
-      before { FactoryBot.create :qc_alert_status, qc_alert_id: alert1.id, ignored: true }
+    it 'should show all alerts' do
+      subject
+      expect(json).to have(2).items
+    end
 
-      it { is_expected.to have_http_status 200 }
+    context 'with global ignored alerts' do
+      let!(:alert3) { FactoryBot.create :qc_alert, qc_rule_id: rule1.id, is_global_ignored: true }
 
-      it 'should only show alerts that have not been ignored' do
+      it 'should only show alerts that have not been globally ignored' do
+        subject
+        expect(json).to have(2).items
+        expect(json).not_to include(include('id' => alert3.id))
+      end
+    end
+
+    context 'filter by course' do
+      let(:params) { { course_id: alert1.course_id } }
+
+      it 'should only show alerts for this course' do
         subject
         expect(json).to have(1).item
-        expect(json.first).to eq(QcAlertDecorator.new(alert2).as_json(api_version: 1).stringify_keys)
+        expect(json.first).to eq(QcAlertDecorator.new(alert1).as_json(api_version: 1).stringify_keys)
       end
     end
 
     describe 'filter by user' do
-      let(:params) { { user_id: filter_user_id } }
-      let(:filter_user_id) { '00000001-3100-4444-9999-000000000002' }
+      let!(:alert3) { FactoryBot.create :qc_alert, qc_rule_id: rule1.id }
+      let!(:alert4) { FactoryBot.create :qc_alert, qc_rule_id: rule2.id }
 
-      context 'with a notification for one user' do
-        # Notify the user about alert1
-        before { FactoryBot.create :qc_alert_status, user_id: filter_user_id, qc_alert_id: alert1.id, ignored: false }
+      let(:user_id) { '00000001-3100-4444-9999-000000000002' }
+
+      let(:params) { { user_id: user_id } }
+
+      context 'with a ignore status' do
+        before { FactoryBot.create :qc_alert_status, user_id: user_id, qc_alert_id: alert3.id, ignored: true }
+        before { FactoryBot.create :qc_alert_status, user_id: user_id, qc_alert_id: alert4.id, ignored: false }
 
         it { is_expected.to have_http_status 200 }
 
-        it 'should only show alerts for that user' do
+        it 'should only show not ignored alerts for current user' do
           subject
-          expect(json).to have(1).item
-          expect(json.first).to eq(QcAlertDecorator.new(alert1).as_json(api_version: 1).stringify_keys)
-        end
-      end
-
-      context 'with two more alerts and another user' do
-        let!(:alert3) { FactoryBot.create(:qc_alert, {qc_rule_id: rule.id}) }
-        let!(:alert4) { FactoryBot.create(:qc_alert, {qc_rule_id: rule2.id}) }
-        let(:other_user_id) { '00000001-3100-4444-9999-000000000003' }
-
-        context 'with two alert statuses for different users' do
-          before do
-            FactoryBot.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: filter_user_id, ignored: false)
-            FactoryBot.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: other_user_id, ignored: false)
-          end
-
-          it { is_expected.to have_http_status 200 }
-
-          it 'should only show alerts for specified user' do
-            subject
-            expect(json).to have(1).item
-          end
+          expect(json).to have(3).item
+          expect(json).not_to include(include('id' => alert3.id))
         end
 
-        context 'with two alert statuses' do
-          before do
-            FactoryBot.create(:qc_alert_status, qc_alert_id: alert3.id, user_id: filter_user_id, ignored: false)
-            FactoryBot.create(:qc_alert_status, qc_alert_id: alert4.id, user_id: filter_user_id, ignored: true)
-          end
+        context 'with alerts for another user' do
+          let(:other_user_id) { '00000001-3100-4444-9999-000000000003' }
 
-          it { is_expected.to have_http_status 200 }
+          context 'with two alert statuses for another user' do
+            before do
+              FactoryBot.create :qc_alert_status, qc_alert_id: alert2.id, user_id: other_user_id, ignored: true
+              FactoryBot.create :qc_alert_status, qc_alert_id: alert3.id, user_id: other_user_id, ignored: true
+              FactoryBot.create :qc_alert_status, qc_alert_id: alert4.id, user_id: other_user_id, ignored: false
+            end
 
-          it 'should only show not-ignored alerts' do
-            subject
-            expect(json).to have(1).item
+            it { is_expected.to have_http_status 200 }
+
+            it 'should only show not ignored alerts for current user' do
+              subject
+              expect(json).to have(3).items
+              expect(json).not_to include(include('id' => alert3.id))
+            end
           end
         end
       end

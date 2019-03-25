@@ -7,12 +7,10 @@ class QcAlertsController < ApplicationController
 
   rfc6570_params index: [:user_id, :course_id, :global_ignored]
   def index
-    alerts = QcAlert.left_joins(:qc_alert_statuses)
-    alerts.where!(qc_alert_statuses: {ignored: [false, nil]})
-    alerts.where!(is_global_ignored: [false, nil]) unless params[:global_ignored]
-    alerts.where!(qc_alert_statuses: {user_id: params[:user_id]}) if params[:user_id]
-
-    alerts.where!(course_id: params[:course_id]) if params[:course_id]
+    alerts = QcAlert.all
+    alerts = alerts.where(course_id: params[:course_id]) if params[:course_id]
+    alerts = alerts.where(is_global_ignored: [false, nil]) unless params[:global_ignored]
+    alerts = alerts.for_user(params[:user_id]) if params[:user_id]
 
     respond_with alerts
   end
@@ -49,14 +47,14 @@ class QcAlertsController < ApplicationController
 private
 
   def qc_alert_params
-    params.permit( :qc_rule_id, :status, :severity, :course_id, :annotation, :is_global_ignored)
+    params.permit(:qc_rule_id, :status, :severity, :course_id, :annotation, :is_global_ignored)
   end
 
   def qc_alert_statuses_params
-    params.permit( :qc_alert_id, :user_id, :ignored, :ack, :muted)
+    params.permit(:qc_alert_id, :user_id, :ignored, :ack, :muted)
   end
 
   def qc_course_statuses_params
-    params.permit( :qc_rule_id, :course_id, :status)
+    params.permit(:qc_rule_id, :course_id, :status)
   end
 end
