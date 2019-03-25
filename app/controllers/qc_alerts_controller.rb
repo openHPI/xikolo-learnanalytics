@@ -7,12 +7,12 @@ class QcAlertsController < ApplicationController
 
   rfc6570_params index: [:user_id, :course_id, :global_ignored]
   def index
-    alerts = QcAlert.joins('LEFT OUTER JOIN qc_alert_statuses ON qc_alerts.id = qc_alert_statuses.qc_alert_id')
-    alerts.where!('qc_alert_statuses.ignored is FALSE OR qc_alert_statuses.ignored is NULL')
-    alerts.where!('is_global_ignored is FALSE OR is_global_ignored is NULL') unless params[:global_ignored]
-    alerts.where!('qc_alert_statuses.user_id = ?', params[:user_id]) if params[:user_id]
+    alerts = QcAlert.left_joins(:qc_alert_statuses)
+    alerts.where!(qc_alert_statuses: {ignored: [false, nil]})
+    alerts.where!(is_global_ignored: [false, nil]) unless params[:global_ignored]
+    alerts.where!(qc_alert_statuses: {user_id: params[:user_id]}) if params[:user_id]
 
-    alerts.where!('qc_alerts.course_id = ?', params[:course_id]) if params[:course_id]
+    alerts.where!(course_id: params[:course_id]) if params[:course_id]
 
     respond_with alerts
   end
@@ -28,7 +28,7 @@ class QcAlertsController < ApplicationController
       respond_with qc_alert_status
 
     elsif params[:qc_rule_id] && params[:course_id]
-      qc_course_status = QcCourseStatus.create qc_course_status_params.merge({status: 'ignored'})
+      qc_course_status = QcCourseStatus.create qc_course_statuses_params.merge({status: 'ignored'})
       qc_course_status.save
       respond_with qc_course_status
     end
@@ -56,7 +56,7 @@ private
     params.permit( :qc_alert_id, :user_id, :ignored, :ack, :muted)
   end
 
-  def qc_course_status_params
+  def qc_course_statuses_params
     params.permit( :qc_rule_id, :course_id, :status)
   end
 end
