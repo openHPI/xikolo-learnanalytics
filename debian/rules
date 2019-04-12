@@ -11,8 +11,8 @@ PACKAGE=$(shell dh_listpackages)
 PKGBASE=$(CURDIR)/debian/${PACKAGE}
 PREFIX=/usr/lib/${PACKAGE}
 
-export RUBY=/usr/bin/ruby2.5
-export GEM_PATH=vendor/bundle/ruby/2.5.0
+export RUBY=/usr/bin/ruby2.6
+export GEM_PATH=vendor/bundle/ruby/2.6.0
 
 
 override_dh_clean:
@@ -25,7 +25,7 @@ override_dh_clean:
 override_dh_auto_build:
 	$(RUBY) -S gem install bundler \
 		-v '~> 1.0' \
-		--no-ri --no-rdoc \
+		--no-document \
 		--install-dir $(GEM_PATH) \
 		--bindir bin
 

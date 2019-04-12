@@ -14,8 +14,8 @@ Build-Depends:
   libxslt1-dev,
   libz-dev,
   pkg-config,
-  ruby2.5,
-  ruby2.5-dev
+  ruby2.6,
+  ruby2.6-dev
 
 Package: xikolo-learnanalytics
 Architecture: any
@@ -23,7 +23,7 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   libcurl3,
-  ruby2.5,
+  ruby2.6,
   zip
 Description: Xikolo Learn Analytics Service
  .
