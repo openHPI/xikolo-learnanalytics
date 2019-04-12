@@ -14,6 +14,7 @@ Environment=RAILS_ENV=production
 Environment=WORKER=1
 Environment=CONCURRENCY=25
 Environment=ARGS=
+Environment=MALLOC_ARENA_MAX=2
 ExecStart=/usr/bin/xikolo-learnanalytics sidekiq --concurrency ${CONCURRENCY} --environment ${RAILS_ENV} ${ARGS}
 
 Restart=on-failure
