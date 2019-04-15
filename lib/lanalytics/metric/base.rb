@@ -78,7 +78,7 @@ module Lanalytics
         end
 
         def available?
-          datasources.all?{ |ds| ds.present? && ds.ping }
+          datasources.all?{ |ds| ds.present? && Rails.cache.fetch("ds_availability/#{ds.key}/", expires_in: 2.minutes) { ds.ping } }
         end
 
       end
