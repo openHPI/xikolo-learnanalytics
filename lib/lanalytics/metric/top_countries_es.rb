@@ -10,13 +10,6 @@ module Lanalytics
       exec do |params|
         course_id = params[:course_id]
 
-        # array of mobile runtimes
-        mobile_runtimes = %w(Android iOS)
-
-        mobile_conditions = mobile_runtimes.map do |runtime|
-          { match: { 'in_context.runtime' => runtime } }
-        end
-
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
               size: 0,
@@ -41,22 +34,6 @@ module Lanalytics
                               cardinality: {
                                   field: 'user.resource_uuid'
                               }
-                          },
-                          mobile: {
-                              filter: {
-                                  bool: {
-                                      must: { exists: { field: 'in_context.runtime' } },
-                                      should: mobile_conditions,
-                                      minimum_should_match: 1
-                                  }
-                              },
-                              aggs: {
-                                  count: {
-                                      cardinality: {
-                                          field: 'user.resource_uuid'
-                                      }
-                                  }
-                              }
                           }
                       }
                   }
@@ -72,12 +49,8 @@ module Lanalytics
             result_subitem = {}
             result_subitem[:country_code] = item['key']
             result_subitem[:country_code_iso3] = IsoCountryCodes.find(item['key']).alpha3
-            result_subitem[:total_activity] = item['doc_count']
             result_subitem[:distinct_users] = item['ucount']['value']
             result_subitem[:relative_users] = result_subitem[:distinct_users].percent_of(total_users)
-            result_subitem[:activity_per_user] = item['ucount']['value'] != 0 ? item['doc_count'] / item['ucount']['value'] : 0
-            result_subitem[:mobile_users] = item['mobile']['count']['value']
-            result_subitem[:mobile_usage] = item['ucount']['value'] != 0 ? item['mobile']['count']['value'].to_f / item['ucount']['value'].to_f : 0
             processed_result << result_subitem
           rescue IsoCountryCodes::UnknownCodeError
           end
