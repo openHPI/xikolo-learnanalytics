@@ -51,7 +51,7 @@ module Reports
         end
 
         if @include_auth && @deanonymized
-          headers.concat Xikolo.config.reportable_authorizations.map { |k, v| "Auth: #{k}.#{v}" }
+          headers.concat Xikolo.config.reportable_auth_fields.map { |f| "Auth: #{f}" }
         end
 
         if @include_consents
@@ -124,10 +124,10 @@ module Reports
 
         if @include_auth && @deanonymized
           authorizations = account_service.rel(:authorizations).get(user: user['id']).value!
-          values += Xikolo.config.reportable_authorizations.map do |provider, attr|
+          values += Xikolo.config.reportable_auth_fields.map do |f|
             authorizations
-              .select { |auth| auth['provider'] == provider }
-              .map { |auth| auth['info']&.dig(*attr.split('.')) }
+              .select { |auth| auth['provider'] == f.split('.').first }
+              .map { |auth| auth.dig(*f.split('.').drop(1)) }
               .compact
               .join(',')
           end
