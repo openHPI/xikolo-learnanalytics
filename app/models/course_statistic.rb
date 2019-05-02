@@ -4,13 +4,13 @@ class CourseStatistic < ApplicationRecord
   def calculate!
     course = course_service.rel(:course).get(id: course_id).value!
 
-    Restify::Promise.new(
-      course_service.rel(:course_statistic).get(course_id: course['id']),
-      course_service.rel(:stats).get(course_id: course['id'], key: 'extended'),
-      course_service.rel(:stats).get(course_id: course['id'], key: 'enrollments_by_day'),
-      Xikolo.api(:pinboard).value!.rel(:statistic).get(id: course['id']),
-      Xikolo.api(:helpdesk).value!.rel(:statistics).get(course_id: course['id']),
-      Xikolo.api(:certificate).value!.rel(:open_badge_statistics).get(course_id: course['id'])
+    Xikolo::RetryingPromise.new(
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { course_service.rel(:course_statistic).get(course_id: course['id']) },
+      Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) { course_service.rel(:stats).get(course_id: course['id'], key: 'extended') },
+      Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) { course_service.rel(:stats).get(course_id: course['id'], key: 'enrollments_by_day') },
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { pinboard_service.rel(:statistic).get(id: course['id']) },
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { helpdesk_service.rel(:statistics).get(course_id: course['id']) },
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { certificate_service.rel(:open_badge_statistics).get(course_id: course['id']) }
     ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats, badge_stats|
       days_since_course_start = course['start_date'] && (Date.today - course['start_date'].to_date).to_i
 
@@ -156,6 +156,18 @@ class CourseStatistic < ApplicationRecord
 
   def course_service
     @course_service ||= Xikolo.api(:course).value!
+  end
+
+  def pinboard_service
+    @pinboard_service ||= Xikolo.api(:pinboard).value!
+  end
+
+  def helpdesk_service
+    @helpdesk_service ||= Xikolo.api(:helpdesk).value!
+  end
+
+  def certificate_service
+    @certificate_service ||= Xikolo.api(:certificate).value!
   end
 
   class << self
