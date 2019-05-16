@@ -1,5 +1,7 @@
 module Xikolo
   class Retryable
+    attr_reader :max_retries, :wait
+
     def initialize(max_retries:, wait:, &promise_block)
       @max_retries = max_retries
       @wait = wait

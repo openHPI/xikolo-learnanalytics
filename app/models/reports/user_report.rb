@@ -83,10 +83,14 @@ module Reports
 
     def each_user
       index = 0
-      Xikolo.paginate(
-        account_service.rel(:users).get(
-          confirmed: true, per_page: 500
-        )
+      Xikolo::RestifyHelper.retryable_paginate(
+        Xikolo::Retryable.new(
+          max_retries: 3, wait: 60.seconds
+        ) do
+          account_service.rel(:users).get(
+            confirmed: true, per_page: 500
+          )
+        end
       ) do |user, page|
         values = [@deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id'])]
 
