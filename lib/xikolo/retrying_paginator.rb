@@ -1,5 +1,5 @@
 module Xikolo
-  class RetryablePaginator
+  class RetryingPaginator
     def initialize(max_retries:, wait:, &request)
       @max_retries = max_retries
       @wait = wait
