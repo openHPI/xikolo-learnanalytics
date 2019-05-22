@@ -1,8 +1,11 @@
 module Xikolo
   class RetryablePaginator
-    def initialize(retryable)
-      @retryable  = retryable
-      @first_page = RetryingPromise.new(retryable)
+    def initialize(max_retries:, wait:, &request)
+      @max_retries = max_retries
+      @wait = wait
+      @request = request
+
+      @first_page = start(&request)
     end
 
     def each_item(&block)
@@ -21,13 +24,20 @@ module Xikolo
 
         break unless current_page.rel?(:next)
 
-        current_page = RetryingPromise.new(
-          Retryable.new(
-            max_retries: @retryable.max_retries,
-            wait: @retryable.wait
-          ) { current_page.rel(:next).get }
-        ).value!.first
+        current_page = start { current_page.rel(:next).get }.value!.first
       end
+    end
+
+    private
+
+    def start(&request_blk)
+      RetryingPromise.new(
+        Retryable.new(
+          max_retries: @max_retries,
+          wait: @wait,
+          &request_blk
+        )
+      )
     end
   end
 end

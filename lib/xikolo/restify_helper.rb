@@ -1,13 +1,7 @@
 module Xikolo
   class RestifyHelper
-    def self.retryable_paginate(retryable, &block)
-      paginator = RetryablePaginator.new(retryable)
-
-      if block_given?
-        paginator.each_item(&block)
-      else
-        paginator
-      end
+    def self.retryable_paginate(**opts, &block)
+      RetryablePaginator.new(**opts, &block)
     end
   end
 end
