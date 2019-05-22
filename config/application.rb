@@ -31,6 +31,12 @@ module Xikolo::Lanalytics
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
     end
+
+    initializer 'xikolo-patches' do
+      require 'ext/xikolo/common/paginate_with_retries'
+
+      ::Xikolo.send :extend, Xikolo::Common::PaginateWithRetries
+    end
   end
 
   def self.rake?
