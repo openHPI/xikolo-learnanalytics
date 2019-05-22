@@ -23,7 +23,7 @@ module Xikolo
 
       values = @dependencies.map(&:value!)
 
-      @task.present? ? @task.call(*values) : values
+      @task ? @task.call(*values) : values
     end
   end
 end
