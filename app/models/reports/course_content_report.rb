@@ -32,11 +32,11 @@ module Reports
     def each_item
       index = 0
 
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:items).get(
           course_id: course['id'], per_page: 500
         )
-      ) do |item, page|
+      end.each_item do |item, page|
         section = sections.find { |section| section['id'] == item['section_id'] }
 
         values = [

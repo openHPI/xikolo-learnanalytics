@@ -83,11 +83,9 @@ module Reports
 
     def each_user
       index = 0
-      Xikolo.paginate(
-        account_service.rel(:users).get(
-          confirmed: true, per_page: 500
-        )
-      ) do |user, page|
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+        account_service.rel(:users).get(confirmed: true, per_page: 500)
+      end.each_item do |user, page|
         values = [@deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id'])]
 
         if @deanonymized
@@ -242,11 +240,11 @@ module Reports
 
     def load_all_courses
       courses = {}
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:courses).get(
           affiliated: true, public: true
         )
-      ) do |course|
+      end.each_item do |course|
         courses[course['id']] = course
       end
       courses
@@ -254,14 +252,14 @@ module Reports
 
     def load_all_user_enrollments(user_id)
       enrollments = []
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:enrollments).get(
           user_id: user_id,
           learning_evaluation: true,
           deleted: true,
           per_page: 200
         )
-      ) do |enrollment|
+      end.each_item do |enrollment|
         enrollments << enrollment
       end
       enrollments

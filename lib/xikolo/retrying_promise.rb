@@ -21,7 +21,9 @@ module Xikolo
         break if @dependencies.all?(&:success?)
       end
 
-      @task&.call(*@dependencies.map(&:value!))
+      values = @dependencies.map(&:value!)
+
+      @task ? @task.call(*values) : values
     end
   end
 end

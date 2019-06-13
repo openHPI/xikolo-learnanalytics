@@ -38,12 +38,12 @@ module Reports
 
     def each_submission
       i = 0
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         quiz_service.rel(:quiz_submissions).get(
           quiz_id: @job.task_scope,
           only_submitted: true
         )
-      ) do |submission, page|
+      end.each_item do |submission, page|
         submission_hash = Hash.new{ |h,k| h[k] = Hash.new(&h.default_proc) }
         submission_hash[:accessed_at] = DateTime.parse(submission['quiz_access_time'])
         submission_hash[:submitted_at] = DateTime.parse(submission['quiz_submission_time'])
@@ -134,12 +134,12 @@ module Reports
 
         hash[quiz_question['id']][:answers] = []
 
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           quiz_service.rel(:answers).get(
             question_id: quiz_question['id'],
             per_page: 250
           )
-        ) do |quiz_answer|
+        end.each_item do |quiz_answer|
           hash[quiz_question['id']][:answers] << {
             id: quiz_answer['id'],
             position: quiz_answer['position'],

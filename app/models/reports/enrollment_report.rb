@@ -25,9 +25,9 @@ module Reports
       # we have to fetch these already for cluster grouping and progress calculation
       if @include_all_classifiers
         @classifiers = []
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:classifiers).get
-        ) do |classifier|
+        end.each_item do |classifier|
           # filter classifiers only if explicitly configured
           if Xikolo.config.reportable_classifiers.nil? || Xikolo.config.reportable_classifiers.include?(classifier['cluster'])
             @classifiers.append(classifier)

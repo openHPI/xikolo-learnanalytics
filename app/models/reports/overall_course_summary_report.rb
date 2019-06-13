@@ -94,13 +94,13 @@ module Reports
     def each_course
       index = 0
 
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:courses).get(
           exclude_external: true,
           affiliated: true,
           per_page: 500
         )
-      ) do |course, page|
+      end.each_item do |course, page|
         values = [
           course['id'],
           course['course_code'],
@@ -201,12 +201,12 @@ module Reports
 
     def peer_assessment_type(course_id)
       pa_type = ''
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:items).get(
           course_id: course_id,
           content_type: 'peer_assessment'
         )
-      ) do |item|
+      end.each_item do |item|
         break if pa_type == 'team'
         pa = peerassessment_service.rel(:peer_assessment).get(id: item['content_id']).value!
         pa_type = pa['is_team_assessment'] ? 'team' : 'solo'
