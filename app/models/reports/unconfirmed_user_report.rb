@@ -24,11 +24,11 @@ module Reports
     def each_user
       index = 0
 
-      Xikolo.paginate(
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         account_service.rel(:users).get(
           confirmed: false, per_page: 500
         )
-      ) do |user, page|
+      end.each_item do |user, page|
         values = [
           user['id'],
           escape_csv_string(user['first_name']),

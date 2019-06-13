@@ -136,10 +136,9 @@ module Reports
 
     def each_topic(&block)
       topic_filters.each do |filters|
-        Xikolo.paginate(
-          pinboard_service.rel(:questions).get(**filters, per_page: 50),
-          &block
-        )
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+          pinboard_service.rel(:questions).get(**filters, per_page: 50)
+        end.each_item(&block)
       end
     end
 
@@ -244,9 +243,9 @@ module Reports
     def sections
       @sections ||= begin
         sections = []
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:sections).get(course_id: course['id'])
-        ) do |section|
+        end.each_item do |section|
           sections << section
         end
         sections
@@ -256,9 +255,9 @@ module Reports
     def items
       @items ||= begin
         items = []
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:items).get(course_id: course['id'])
-        ) do |item|
+        end.each_item do |item|
           items << item
         end
         items
@@ -268,9 +267,9 @@ module Reports
     def collab_spaces
       @collab_spaces ||= begin
         collab_spaces = []
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           collab_space_service.rel(:collab_spaces).get(course_id: course['id'])
-        ) do |space|
+        end.each_item do |space|
           collab_spaces << space
         end
         collab_spaces

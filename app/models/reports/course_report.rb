@@ -38,11 +38,11 @@ module Reports
           course_days = (end_date - start_date).to_i
         end
 
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:enrollments).get(
             course_id: course['id'], per_page: 50, deleted: true
           )
-        ) do |e, enrollment_page|
+        end.each_item do |e, enrollment_page|
           user = account_service.rel(:user).get(id: e['user_id']).value!
 
           Restify::Promise.new(
@@ -380,12 +380,12 @@ module Reports
 
       if @quizzes.nil?
         @quizzes = []
-        Xikolo.paginate(
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:items).get(
             course_id: course['id'],
             content_type: 'quiz'
           )
-        ) do |quiz|
+        end.each_item do |quiz|
           if %w(main selftest bonus).include? quiz['exercise_type']
             @quizzes.append(quiz)
           end
