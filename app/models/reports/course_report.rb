@@ -45,12 +45,15 @@ module Reports
         end.each_item do |e, enrollment_page|
           user = account_service.rel(:user).get(id: e['user_id']).value!
 
-          Restify::Promise.new(
-            course_service.rel(:enrollments).get(
-              course_id: course['id'], user_id: e['user_id'], deleted: true, learning_evaluation: true
-            ).then { |array| array.first },
-            pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id'])
-          ) do |enrollment, stat_pinboard|
+          Xikolo::RetryingPromise.new(
+            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) {
+              course_service.rel(:enrollments).get(
+                course_id: course['id'], user_id: e['user_id'], deleted: true, learning_evaluation: true
+              )
+            },
+            Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']) }
+          ) do |enrollments, stat_pinboard|
+            enrollment = enrollments.first
             course_start_date = as_date(course['start_date'])
             birth_compare_date = course_start_date || DateTime.now
             enrollment_date = as_date(enrollment['created_at'])

@@ -134,10 +134,14 @@ module Reports
     end
 
     def fetch_data(start_date, end_date, c_id = nil)
-      stats = course_service.rel(:enrollment_stats).get(
-        start_date: start_date,
-        end_date: end_date,
-        classifier_id: c_id
+      stats, * = Xikolo::RetryingPromise.new(
+        Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) {
+          course_service.rel(:enrollment_stats).get(
+            start_date: start_date,
+            end_date: end_date,
+            classifier_id: c_id
+          )
+        }
       ).value!
 
       values = [
