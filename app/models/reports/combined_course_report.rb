@@ -22,7 +22,7 @@ module Reports
     def courses
       @courses ||= course_service.rel(:courses).get(
         cat_id: @job.task_scope,
-        affiliated: true
+        groups: 'any'
       ).value!
     end
 

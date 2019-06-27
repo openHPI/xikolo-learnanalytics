@@ -32,7 +32,6 @@ module Reports
         'Channel',
         'Records Released',
         'Forum is Locked',
-        'Affiliated only',
         'Invitation only',
         'CoP Enabled',
         'CoP Threshold',
@@ -97,7 +96,7 @@ module Reports
       Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:courses).get(
           exclude_external: true,
-          affiliated: true,
+          groups: 'any',
           per_page: 500
         )
       end.each_item do |course, page|
@@ -116,7 +115,6 @@ module Reports
           escape_csv_string(course['channel_name']),
           course['records_released'],
           course['forum_is_locked'],
-          course['affiliated'],
           course['invite_only'],
           course['cop_enabled'],
           course['cop_threshold_percentage'],

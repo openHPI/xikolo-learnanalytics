@@ -242,7 +242,8 @@ module Reports
       courses = {}
       Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:courses).get(
-          affiliated: true, public: true
+          groups: 'any',
+          public: true
         )
       end.each_item do |course|
         courses[course['id']] = course

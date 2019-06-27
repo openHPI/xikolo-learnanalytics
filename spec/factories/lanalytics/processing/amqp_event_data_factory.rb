@@ -30,7 +30,6 @@ FactoryBot.define do
     alternative_teacher_text  { '' }
     external_course_url       { '' }
     forum_is_locked           { false }
-    affiliated                { false }
     hidden                    { false }
     welcome_mail              { '' }
   end
