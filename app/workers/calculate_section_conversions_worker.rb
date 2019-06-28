@@ -12,7 +12,7 @@ class CalculateSectionConversionsWorker
   def each_course
     Xikolo.paginate(
       course_service.rel(:courses).get(
-        affiliated: true
+        groups: 'any'
       )
     ) do |course|
       next if course['status'] == 'preparation' or course['external_course_url'].present?

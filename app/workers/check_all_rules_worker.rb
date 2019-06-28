@@ -8,7 +8,10 @@ class CheckAllRulesWorker
 
     # Course-specific rules
     Xikolo.paginate(
-      course_service.rel(:courses).get(affiliated: true, public: true)
+      course_service.rel(:courses).get(
+        groups: 'any',
+        public: true
+      )
     ) do |course|
       # We might want to run checks for external courses too later, so we fetch them
       next if course['external_course_url'].present?

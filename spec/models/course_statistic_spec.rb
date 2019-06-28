@@ -15,7 +15,7 @@ describe CourseStatistic do
     ).to_return Stub.json(
       id: course_id,
       title: 'SAP Course',
-      affiliated: true,
+      groups: ['affiliated'],
       status: 'active',
       start_date: 10.days.ago.iso8601
     )

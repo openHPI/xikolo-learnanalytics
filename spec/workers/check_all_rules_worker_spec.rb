@@ -14,7 +14,7 @@ describe CheckAllRulesWorker do
     )
     Stub.request(
       :course, :get, '/courses',
-      query: { affiliated: 'true', public: 'true' }
+      query: { groups: 'any', public: 'true' }
     ).to_return Stub.json([
       {id: 1, external_course_url: nil},
       {id: 2, external_course_url: nil},

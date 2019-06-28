@@ -15,7 +15,7 @@ describe CalculateCourseStatsWorker do
     )
     Stub.request(
       :course, :get, '/courses',
-      query: { affiliated: 'true' }
+      query: { groups: 'any' }
     ).to_return Stub.json([
       { id: active_course1, status: 'active', external_course_url: nil },
       { id: preparation_course, status: 'preparation', external_course_url: nil },
