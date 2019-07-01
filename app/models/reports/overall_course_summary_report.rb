@@ -39,6 +39,8 @@ module Reports
         'RoA Threshold',
         'Proctored',
         'On-Demand',
+        'Sections',
+        'Published Sections',
         'Peer Assessment',
         'Collab Space',
         'Teleboard',
@@ -100,6 +102,8 @@ module Reports
           per_page: 500
         )
       end.each_item do |course, page|
+        sections = sections(course['id'])
+
         values = [
           course['id'],
           course['course_code'],
@@ -122,6 +126,8 @@ module Reports
           course['roa_threshold_percentage'],
           course['proctored'],
           course['on_demand'],
+          sections.size,
+          sections.select(&:published).size,
           peer_assessment_type(course['id']),
           course['has_collab_space'],
           course['has_teleboard'],
@@ -195,6 +201,16 @@ module Reports
       else
         nil
       end
+    end
+
+    def sections(course_id)
+      sections = []
+      Xikolo.paginate_with_retries(max_retries: 3, wait: 20.seconds) do
+        course_service.rel(:sections).get(course_id: course_id)
+      end.each_item do |section|
+        sections << section
+      end
+      sections
     end
 
     def peer_assessment_type(course_id)
