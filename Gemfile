@@ -78,14 +78,12 @@ gem 'paper_trail'
 gem 'redis-activesupport'
 
 group :development do
+  gem 'bundler', '~> 2.0'
   gem 'spring' # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'os'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'meta_request'
-
-  # To release the lanalytics-model gem
-  gem 'geminabox-rake', '~> 1.1'
 
   gem 'ruby-prof' # To do performance evaluation
 
