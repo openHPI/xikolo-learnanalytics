@@ -185,7 +185,7 @@ class CourseStatistic < ApplicationRecord
         .where.not(object: nil)
         .preceding(DateTime.parse(date).end_of_day + 1.day, true)
         .last
-        .reify
+        &.reify
     end
 
     def last_version(course_id)
@@ -193,7 +193,7 @@ class CourseStatistic < ApplicationRecord
         .versions
         .where.not(object: nil)
         .last
-        .reify
+        &.reify
     end
   end
 end
