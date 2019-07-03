@@ -7,13 +7,6 @@ Rails.application.load_tasks
 
 Xikolo::Lanalytics.rake = true
 
-begin
-  require 'geminabox/rake'
-  Geminabox::Rake.install host: 'https://gemuser:QiKLoxr2rfPDisUmEYA9gnJGaLiWTuvW@dev.xikolo.de/gems/',
-                          dir: '.', namespace: 'lanalytics-model'
-rescue LoadError
-end
-
 namespace :ci do
   desc 'Setup service for CI'
   task setup: %w[ci:env db:drop:all db:create:all db:schema:load]
