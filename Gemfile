@@ -4,6 +4,8 @@ ruby '~> 2.6.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.0'
 
+gem 'bundler', '~> 2.0'
+
 # 1.8.3+ does not compile
 gem 'nokogiri', '< 1.8.3'
 
@@ -78,7 +80,6 @@ gem 'paper_trail'
 gem 'redis-activesupport'
 
 group :development do
-  gem 'bundler', '~> 2.0'
   gem 'spring' # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'os'
   gem 'better_errors'
