@@ -12,14 +12,14 @@ PKGBASE=$(CURDIR)/debian/${PACKAGE}
 PREFIX=/usr/lib/${PACKAGE}
 
 export RUBY=/usr/bin/ruby2.6
-export GEM_PATH=vendor/bundle/ruby/2.6.0
+export GEM_PATH=vendor/ruby/2.6.0
 
 
 override_dh_clean:
 	dh_clean
 
 	rm -rf .bundle
-	rm -rf vendor/bundle
+	rm -rf vendor/ruby
 
 
 override_dh_auto_build:
@@ -33,7 +33,7 @@ override_dh_auto_build:
 	$(RUBY) -S bin/bundle config build.nokogiri --use-system-libraries
 
 	$(RUBY) -S bin/bundle install \
-		--path vendor/bundle \
+		--path vendor \
 		--deployment \
 		--frozen \
 		--clean \
@@ -61,6 +61,7 @@ override_dh_auto_build:
 	$(RUBY) -S erb \
 		prefix=${PREFIX} \
 		version=${DEB_VERSION} \
+		gempath=${PREFIX}/${GEM_PATH} \
 		debian/${PACKAGE}.sh.erb >> bin/${PACKAGE}
 
 
