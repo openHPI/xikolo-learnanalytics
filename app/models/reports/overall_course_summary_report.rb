@@ -11,7 +11,13 @@ module Reports
     end
 
     def generate!
-      csv_file 'OverallCourseSummaryReport', headers, &method(:each_course)
+      file_name = 'OverallCourseSummaryReport'
+      if @include_statistics && end_date
+        file_name = "#{end_date}_#{file_name}"
+        @job.update(annotation: end_date)
+      end
+
+      csv_file file_name, headers, &method(:each_course)
     end
 
     private
