@@ -132,7 +132,6 @@ GEM
     fugit (1.2.0)
       et-orbi (~> 1.1, >= 1.1.8)
       raabro (~> 1.1)
-    geoip (1.6.4)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     google-api-client (0.19.8)
@@ -185,6 +184,7 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
+    maxminddb (0.1.22)
     mechanize (2.7.6)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0)
@@ -446,12 +446,12 @@ DEPENDENCIES
   elasticsearch-transport
   factory_bot_rails (~> 4.0)
   forgery
-  geoip
   google-api-client (~> 0.19.7)
   iso_country_codes
   jbuilder (~> 2.0)
   link_header
   listen
+  maxminddb
   mechanize
   meta_request
   mnemosyne-ruby (~> 1.3)
