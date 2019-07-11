@@ -203,7 +203,7 @@ module Reports
 
     def end_date
       if @end_year > 0 && @end_month > 0 && @end_day > 0
-        "#{@end_year}-#{@end_month}-#{@end_day}"
+        "#{@end_year}-#{format('%02d', @end_month)}-#{format('%02d', @end_day)}"
       else
         nil
       end
