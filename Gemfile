@@ -57,7 +57,7 @@ gem 'database_cleaner'
 # Use unicorn as the app server
 gem 'unicorn'
 
-gem 'geoip' # Location tracking
+gem 'maxminddb' # Location tracking
 gem 'iso_country_codes' #converting ISO country codes
 
 gem 'browser' # Browser info
