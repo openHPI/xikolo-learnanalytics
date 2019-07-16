@@ -147,10 +147,10 @@ module Reports
 
         if @include_statistics
           begin
-            if end_date
+            if end_date && Date.parse(end_date).past?
               stats = CourseStatistic.last_version_at(course['id'], end_date)
             else
-              stats = CourseStatistic.last_version(course['id'])
+              stats = CourseStatistic.find_by!(course_id: course['id'])
             end
           rescue ActiveRecord::RecordNotFound # no statistic available yet
             stats = nil

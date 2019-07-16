@@ -187,13 +187,5 @@ class CourseStatistic < ApplicationRecord
         .last
         &.reify
     end
-
-    def last_version(course_id)
-      find_by!(course_id: course_id)
-        .versions
-        .where.not(object: nil)
-        .last
-        &.reify
-    end
   end
 end
