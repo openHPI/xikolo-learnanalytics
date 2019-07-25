@@ -75,7 +75,7 @@ module Lanalytics
 
             # Content information
             if attrs[:hit_type] == :pageview
-              with_attribute :dh,    :string,  Xikolo.config.domain
+              with_attribute :dh,    :string,  Xikolo.base_url.host
               with_attribute :dp,    :string,  attrs[:document_path]
             end
 
