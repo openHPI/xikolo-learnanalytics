@@ -12,9 +12,16 @@ module Reports
 
     def generate!
       file_name = 'OverallCourseSummaryReport'
-      if @include_statistics && end_date
-        file_name = "#{end_date}_#{file_name}"
-        @job.update(annotation: end_date)
+      if @include_statistics
+        if end_date
+          file_name = "#{end_date}_#{file_name}"
+          @job.update(annotation: end_date)
+        else
+          today = Date.today
+          date = format_date(today.year, today.month, today.day)
+          file_name = "#{date}_#{file_name}"
+          @job.update(annotation: date)
+        end
       end
 
       csv_file file_name, headers, &method(:each_course)
@@ -203,10 +210,14 @@ module Reports
 
     def end_date
       if @end_year > 0 && @end_month > 0 && @end_day > 0
-        "#{@end_year}-#{format('%02d', @end_month)}-#{format('%02d', @end_day)}"
+        format_date(@end_year, @end_month, @end_day)
       else
         nil
       end
+    end
+
+    def format_date(year, month, day)
+      "#{year}-#{format('%02d', month)}-#{format('%02d', day)}"
     end
 
     def sections(course_id)
