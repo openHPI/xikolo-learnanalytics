@@ -210,17 +210,17 @@ module Reports
     def age_group_from_age(age)
       case age.to_i
         when 0...20
-          '0+'
+          '<20'
         when 20...30
-          '20+'
+          '20-29'
         when 30...40
-          '30+'
+          '30-39'
         when 40...50
-          '40+'
+          '40-49'
         when 50...60
-          '50+'
+          '50-59'
         when 60...70
-          '60+'
+          '60-69'
         else
           '70+'
       end
