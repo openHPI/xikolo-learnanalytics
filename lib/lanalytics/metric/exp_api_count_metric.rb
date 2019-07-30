@@ -41,8 +41,6 @@ module Lanalytics
         end
       end
 
-      private
-
       def self.verbs_filter
         if verbs == nil || verbs.size == 0
           return []
