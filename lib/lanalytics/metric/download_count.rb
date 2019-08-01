@@ -67,12 +67,24 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
+        course_api = Xikolo.api(:course).value!
+
+        sections = []
+        Xikolo.paginate(
+          course_api.rel(:sections).get(course_id: params[:course_id])
+        ) do |section|
+          sections << section
+        end
+
         video_items.map do |item|
           id = item['id']
           ri = item(id, from_result: result)
 
+          section = sections.find {|section| section['id'] == item['section_id'] }
+
           stats = {
             id: id,
+            position: "#{section['position']}.#{item['position']}",
             title: item['title'],
             total_downloads: ri&.dig('doc_count').to_i,
             total_downloads_unique_users: ri&.dig('user', 'value').to_i
