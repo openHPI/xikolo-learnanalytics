@@ -80,6 +80,7 @@ module Reports
             end
 
             if @include_profile
+              values += [user['avatar_url'].present? ? 'true' : '']
               profile = user.rel(:profile).get.value!
               profile_fields = ProfileFields.new(profile, @deanonymized)
               values += profile_fields.values
@@ -296,6 +297,7 @@ module Reports
         end
 
         if @include_profile
+          headers.concat ['Profile Picture']
           headers.concat ProfileFields.all_titles(@deanonymized)
         end
 
