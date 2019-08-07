@@ -6,9 +6,9 @@ module Lanalytics
 
       required_parameter :course_id
 
-      exec do |params|
-        video_items = video_items(params[:course_id])
+      optional_parameter :item_id
 
+      exec do |params|
         body = {
           size: 0,
           query: {
@@ -23,7 +23,7 @@ module Lanalytics
                     ]
                   }
                 }
-              ] + all_filters(nil, params[:course_id], nil)
+              ] + all_filters(nil, params[:course_id], params[:item_id])
             }
           },
           aggs: {
@@ -147,7 +147,6 @@ module Lanalytics
         end
 
         course_api = Xikolo.api(:course).value!
-        video_api = Xikolo.api(:video).value!
 
         sections = []
         Xikolo.paginate(
@@ -156,24 +155,14 @@ module Lanalytics
           sections << section
         end
 
-        video_items.map do |item|
-          id = item['id']
-          ri = item(id, from_result: result)
-
-          section = sections.find {|section| section['id'] == item['section_id'] }
-
-          video = video_api.rel(:video).get(id: item['content_id']).value!
-
-          {
-            id: id,
-            position: "#{section['position']}.#{item['position']}",
-            title: item['title'],
-            plays: ri&.dig('plays', 'user', 'value').to_i,
-            visits: ri&.dig('visits', 'user', 'value').to_i,
-            avg_farthest_watched: ri&.dig('farthest_watched', 'avg', 'value').to_f / video['duration'],
-            forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
-            backward_seeks: ri&.dig('seeks', 'backward', 'doc_count').to_i
-          }
+        if params[:item_id]
+          item = Xikolo.api(:course).value!
+                   .rel(:item).get(id: params[:item_id]).value!
+          result_data(item, sections, result)
+        else
+          video_items(params[:course_id]).map do |item|
+            result_data(item, sections, result)
+          end
         end
       end
 
@@ -181,6 +170,26 @@ module Lanalytics
         from_result.dig('aggregations', 'items', 'buckets')&.find do |ri|
           ri['key'] == id
         end
+      end
+
+      def self.result_data(item, sections, result)
+        id = item['id']
+        ri = item(id, from_result: result)
+
+        section = sections.find {|section| section['id'] == item['section_id'] }
+
+        video = Xikolo.api(:video).value!.rel(:video).get(id: item['content_id']).value!
+
+        {
+          id: id,
+          position: "#{section['position']}.#{item['position']}",
+          title: item['title'],
+          plays: ri&.dig('plays', 'user', 'value').to_i,
+          visits: ri&.dig('visits', 'user', 'value').to_i,
+          avg_farthest_watched: ri&.dig('farthest_watched', 'avg', 'value').to_f / video['duration'],
+          forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
+          backward_seeks: ri&.dig('seeks', 'backward', 'doc_count').to_i
+        }
       end
 
       def self.video_items(course_id)
