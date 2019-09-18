@@ -1,0 +1,31 @@
+module Lanalytics
+  module Metric
+    class RichTextLinkClickTotalCount < ExpApiMetric
+
+      description 'Counts all link clicks for all rich text items of a course.'
+
+      required_parameter :course_id
+
+      exec do |params|
+        body = {
+          size: 0,
+          query: {
+            bool: {
+              must: [
+                { match: { tracking_type: 'rich_text_item_link' } },
+                { match: { course_id: params[:course_id] } }
+              ]
+            }
+          }
+        }
+
+        result = datasource.exec do |client|
+          client.search index: datasource.index, body: body
+        end
+
+        { count: result.dig('hits', 'total').to_i }
+      end
+
+    end
+  end
+end
