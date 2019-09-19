@@ -6,8 +6,10 @@ module Lanalytics
 
       required_parameter :course_id
 
+      optional_parameter :item_id
+
       exec do |params|
-        rich_text_items = rich_text_items(params[:course_id])
+        rich_text_items = rich_text_items(params[:course_id], params[:item_id])
 
         body = {
           size: 0,
@@ -55,6 +57,10 @@ module Lanalytics
           }
         }
 
+        if params[:item_id]
+          body[:query][:bool][:must] << { match: { tracking_id: params[:item_id] } }
+        end
+
         result = datasource.exec do |client|
           client.search index: datasource.index, body: body
         end
@@ -68,7 +74,7 @@ module Lanalytics
           sections << section
         end
 
-        rich_text_items.map do |item|
+        stats = rich_text_items.map do |item|
           id = item['id']
           ri = item(id, from_result: result)
 
@@ -84,6 +90,12 @@ module Lanalytics
             latest_timestamp: ri&.dig('latest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp')
           }
         end
+
+        if params[:item_id]
+          stats.first
+        else
+          stats
+        end
       end
 
       def self.item(id, from_result:)
@@ -92,15 +104,18 @@ module Lanalytics
         end
       end
 
-      def self.rich_text_items(course_id)
+      def self.rich_text_items(course_id, item_id = nil)
         rich_texts = []
         Xikolo.paginate(
           Xikolo.api(:course).value!.rel(:items).get(
-            course_id: course_id,
-            content_type: 'rich_text'
+            {
+              course_id: course_id,
+              content_type: 'rich_text',
+              id: item_id
+            }.compact
           )
-        ) do |video|
-          rich_texts.append(video)
+        ) do |rich_text|
+          rich_texts.append(rich_text)
         end
         rich_texts
       end
