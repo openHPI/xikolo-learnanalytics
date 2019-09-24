@@ -92,6 +92,7 @@ module Reports
               user_course_city = fetch_metric('UserCourseCity', course['id'], user['id']) || ''
               device_usage = fetch_device_usage(course['id'], user['id'])
               last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
+              first_action = fetch_metric('FirstAction', course['id'], user['id'])
               forum_activity = fetch_metric('ForumActivity', course['id'], user['id'])&.dig(:total)
               forum_write_activity = fetch_metric('ForumWriteActivity', course['id'], user['id'])&.dig(:total)
 
@@ -104,6 +105,7 @@ module Reports
                 device_usage['mobile app'],
                 last_visited_item.dig('resource', 'resource_uuid') || '',
                 last_visited_item.dig('timestamp') || '',
+                first_action.dig('timestamp') || '',
                 clustering_metrics.dig(user['id'], 'sessions') || '',
                 clustering_metrics.dig(user['id'], 'average_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'total_session_duration') || '',
@@ -311,6 +313,7 @@ module Reports
             'Mobile App Activity',
             'Last Visited Item',
             'Last Visited Item Timestamp',
+            'First Action Timestamp',
             'Sessions',
             'Avg. Session Duration',
             'Total Session Duration',
