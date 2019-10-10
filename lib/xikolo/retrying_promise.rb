@@ -11,7 +11,8 @@ module Xikolo
           dep.value!
         rescue Restify::ServerError => e
           if (502..504) === e.response.code
-            Mnemosyne.attach_error e
+            ::Mnemosyne.attach_error(e)
+            ::Raven.capture_exception(e)
             dep.retry!
           else
             raise

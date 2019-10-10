@@ -11,8 +11,8 @@ config/application.rb       usr/lib/xikolo-learnanalytics/config/
 config/boot.rb              usr/lib/xikolo-learnanalytics/config/
 config/environment.rb       usr/lib/xikolo-learnanalytics/config/
 config/msgr.rb              usr/lib/xikolo-learnanalytics/config/
-config/routes.rb            usr/lib/xikolo-learnanalytics/config/
 config/permissions.yml      usr/lib/xikolo-learnanalytics/config/
+config/routes.rb            usr/lib/xikolo-learnanalytics/config/
 config/unicorn.rb           usr/lib/xikolo-learnanalytics/config/
 
 config/datasources/         etc/xikolo-learnanalytics/
@@ -31,9 +31,10 @@ config/sidekiq.yml          etc/xikolo-learnanalytics/
 config/sidekiq_redis.yml    etc/xikolo-learnanalytics/
 
 config.ru                   usr/lib/xikolo-learnanalytics/
-Rakefile                    usr/lib/xikolo-learnanalytics/
 Gemfile                     usr/lib/xikolo-learnanalytics/
 Gemfile.lock                usr/lib/xikolo-learnanalytics/
+Rakefile                    usr/lib/xikolo-learnanalytics/
+REVISION                    usr/lib/xikolo-learnanalytics/
 
 bin/bundle                  usr/lib/xikolo-learnanalytics/bin/
 bin/rails                   usr/lib/xikolo-learnanalytics/bin/
