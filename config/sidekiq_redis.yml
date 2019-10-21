@@ -1,15 +1,11 @@
-default: &default
-  namespace: xikolo-services-lanalytics
-
 development:
-  <<: *default
+  db: 5901
 
 test:
-  <<: *default
+  db: 5902
 
 integration:
-  <<: *default
+  db: 5903
 
 production:
-  <<: *default
-  url: redis://redis:6379/12
+  db: 5901

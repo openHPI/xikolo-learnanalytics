@@ -52,7 +52,7 @@ gem 'ruby-progressbar'
 gem 'link_header'
 
 gem 'business_time'
-gem 'xikolo-sidekiq'
+gem 'xikolo-sidekiq', '~> 3.0'
 gem 'sidekiq-cron'
 gem 'database_cleaner'
 
