@@ -31,7 +31,7 @@ module QcRules
     end
 
     def check_for_difficult_selftest(quiz_item)
-      quiz_service.rel(:quiz_submission_statistic).get(
+      quiz_service.rel(:submission_statistic).get(
         id: quiz_item['content_id'],
         embed: 'questions'
       ).value!['questions'].each do |question|
