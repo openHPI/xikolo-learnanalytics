@@ -1,3 +1,9 @@
+xikolo-learnanalytics (1.1) bionic; urgency=medium
+
+  * Rebuild for Bionic
+
+ -- Malte Swart <malte.swart@hpi.de>  Tue, 29 Oct 2019 18:04:50 +0100
+
 xikolo-learnanalytics (1.0) xenial; urgency=low
 
   * Package for Xenial

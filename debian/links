@@ -1,2 +1,4 @@
-/var/log/xikolo-learnanalytics            /usr/lib/xikolo-learnanalytics/log
-/var/tmp                                  /usr/lib/xikolo-learnanalytics/tmp
+#!/usr/bin/dh-exec
+/var/log/${PACKAGE}                      /usr/lib/${PACKAGE}/log
+/var/tmp                                 /usr/lib/${PACKAGE}/tmp
+/etc/${PACKAGE}/datasources              /usr/lib/${PACKAGE}/config/datasources

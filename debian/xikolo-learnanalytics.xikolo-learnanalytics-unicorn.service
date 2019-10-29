@@ -1,24 +1,28 @@
 [Unit]
 Description=Xikolo Learn Analytics Service - API Server
 After=network.target
-PartOf=xikolo-learnanalytics.service
+After=nginx.service
+After=consul.service
+Requires=nginx.service
+Before=xikolo-active.service
+PartOf=${PACKAGE}.service
 
 [Service]
 User=www-data
 Group=www-data
 
-SyslogIdentifier=xikolo-learnanalytics-unicorn
-WorkingDirectory=/usr/lib/xikolo-learnanalytics
-RuntimeDirectory=xikolo-learnanalytics
-PIDFile=/run/xikolo-learnanalytics/unicorn.pid
+SyslogIdentifier=${PACKAGE}-unicorn
+WorkingDirectory=/usr/lib/${PACKAGE}
+RuntimeDirectory=${PACKAGE}
+PIDFile=/run/${PACKAGE}/unicorn.pid
 
-Environment=RAILS_ENV=production
-Environment=WORKER=4
-Environment=CONCURRENCY=1
-Environment=LISTEN=/run/xikolo-learnanalytics/sock
-Environment=ARGS=
-ExecStart=/usr/bin/xikolo-learnanalytics unicorn --config-file config/unicorn.rb --pid /run/xikolo-learnanalytics/unicorn.pid --env ${RAILS_ENV} --listen ${LISTEN} ${ARGS}
+EnvironmentFile=/etc/default/${PACKAGE}
+EnvironmentFile=-/etc/${PACKAGE}/env
+
+ExecStart=/usr/bin/${PACKAGE} unicorn --config-file config/unicorn.rb --pid /run/${PACKAGE}/unicorn.pid --listen /run/${PACKAGE}/sock ${UNICORN_ARGS}
+ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} unicorn started
 ExecReload=/bin/kill -USR2 $MAINPID
+ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} unicorn stop
 ExecStop=/bin/kill -QUIT $MAINPID
 
 Restart=on-failure
@@ -28,4 +32,4 @@ ProtectSystem=full
 PrivateTmp=true
 
 [Install]
-WantedBy=xikolo-learnanalytics.service
+WantedBy=multi-user.target

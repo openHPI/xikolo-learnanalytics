@@ -1,0 +1,3 @@
+#!/usr/bin/dh-exec
+/etc/${PACKAGE}
+/etc/${PACKAGE}/datasources

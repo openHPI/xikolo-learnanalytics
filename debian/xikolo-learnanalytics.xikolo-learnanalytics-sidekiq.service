@@ -1,21 +1,24 @@
 [Unit]
 Description=Xikolo Learn Analytics Service - Background Job Processor
 After=network.target
-PartOf=xikolo-learnanalytics.service
+PartOf=${PACKAGE}.service
+ConditionPathExists=!/etc/xikolo.nobackground
 
 [Service]
 User=www-data
 Group=www-data
 
-SyslogIdentifier=xikolo-learnanalytics-sidekiq
-WorkingDirectory=/usr/lib/xikolo-learnanalytics
+SyslogIdentifier=${PACKAGE}-sidekiq
+WorkingDirectory=/usr/lib/${PACKAGE}
 
-Environment=RAILS_ENV=production
-Environment=WORKER=1
-Environment=CONCURRENCY=25
-Environment=ARGS=
-Environment=MALLOC_ARENA_MAX=2
-ExecStart=/usr/bin/xikolo-learnanalytics sidekiq --concurrency ${CONCURRENCY} --environment ${RAILS_ENV} ${ARGS}
+EnvironmentFile=/etc/default/${PACKAGE}
+EnvironmentFile=-/etc/${PACKAGE}/env
+
+ExecStart=/usr/bin/${PACKAGE} sidekiq --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
+ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq started
+ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq stop
+ExecStop=/bin/kill -TERM $MAINPID
+TimeoutStopSec=90s
 
 Restart=on-failure
 RestartSec=60s
@@ -24,4 +27,4 @@ ProtectSystem=full
 PrivateTmp=true
 
 [Install]
-WantedBy=xikolo-learnanalytics.service
+WantedBy=multi-user.target
