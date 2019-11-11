@@ -1,0 +1,6 @@
+inherit_gem:
+  xikolo-lint: default.yml
+
+AllCops:
+  TargetRubyVersion: 2.6
+  TargetRailsVersion: 5.2
