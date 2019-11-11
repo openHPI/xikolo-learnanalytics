@@ -1,0 +1,19 @@
+stages:
+  - lint
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/bundle
+
+rubocop:
+  stage: lint
+  image: ruby:2.6-slim
+  before_script:
+    - apt-get -qq update
+    - apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential cmake libpq-dev libxml2-dev pkg-config
+    - gem install bundler -v '~> 2.0'
+    - bundle install -j $(nproc) --retry 3 --path .cache/bundle --without development production integration
+  script: bundle exec pronto run --commit origin/master --exit-code
+  except:
+    refs: [master]

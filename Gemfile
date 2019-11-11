@@ -94,13 +94,16 @@ group :development do
 end
 
 group :development, :test do
-  gem 'listen'
   gem 'factory_bot_rails', '~> 4.0'
+  gem 'listen'
+  gem 'pronto'
+  gem 'pronto-rubocop', require: false
   gem 'rspec', '~> 3.7'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'rspec-teamcity', require: false
+  gem 'xikolo-lint', '~> 1.5.0'
 end
 
 group :test do
