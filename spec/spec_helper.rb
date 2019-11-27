@@ -43,11 +43,6 @@ Sidekiq::Testing.fake!
 ActiveRecord::Migration.maintain_test_schema!
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
-def build_attributes(*args)
-  FactoryBot.build(*args).attributes.delete_if do |k, v|
-    ["id", "created_at", "updated_at"].member?(k)
-  end
-end
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.infer_spec_type_from_file_location!
