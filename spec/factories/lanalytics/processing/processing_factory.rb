@@ -1,17 +1,4 @@
 FactoryBot.define do
-  factory :dummy_punit, class: Lanalytics::Processing::Unit do
-    type { :dummy_type }
-    data do
-      {
-        dummy_prop1: 'dummy_value1',
-        dummy_prop2: 'dummy_value2',
-        dummy_prop3: 'dummy_value3'
-      }
-      end
-
-    initialize_with { new(type, data) }
-  end
-
   factory :load_command_with_entity, class: Lanalytics::Processing::LoadORM::CreateCommand do
     entity do
       Lanalytics::Processing::LoadORM::Entity.create(:dummy_type) do
