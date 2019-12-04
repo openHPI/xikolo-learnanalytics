@@ -45,10 +45,12 @@ describe Lanalytics::Processing::Transformer::AnonymousDataFilter do
   end
 
   it 'does not modify the original hash' do
-    old_hash = input
-    filter.transform(input, processing_units, [], nil)
+    input.freeze
 
-    expect(input).to be(old_hash)
-    expect(input).to eq(old_hash)
+    # This would raise a +FrozenError+ if the transformation actually affected
+    # the original hash, e.g. by removing elements from it and not from a copy.
+    expect do
+      filter.transform(input, processing_units, [], nil)
+    end.not_to raise_error
   end
 end
