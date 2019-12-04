@@ -1,29 +1,54 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Lanalytics::Processing::Transformer::AnonymousDataFilter do
+  subject(:filter) { described_class.new }
 
-  before(:each) do
-    @original_hash = FactoryBot.attributes_for(:amqp_user).with_indifferent_access
-    @processing_units = [ Lanalytics::Processing::Unit.new(:USER, @original_hash) ]
-    @data_filter = Lanalytics::Processing::Transformer::AnonymousDataFilter.new
+  let(:input) do
+    {
+      id: '00000001-3100-4444-9999-000000000001',
+      email: 'kevin.cool@example.com',
+      display_name: 'Kevin Cool',
+      first_name: 'Kevin',
+      last_name: 'Cool Jr.',
+      name: 'Kevin Cool',
+      full_name: 'Kevin Cool Jr.',
+      language: 'en',
+      timezone: nil,
+      image_id: nil,
+      born_at: '1985-04-24T00:00:00.000Z',
+      archived: false,
+      password_digest: '$2a$10$v93d1K4Jw8ur/Ki0Yz69ouSnjTielvB3eb4WZJ95V6yxPZSi/rcYy',
+      created_at: '2014-10-20T19:56:31.268Z',
+      confirmed: true,
+      emails_url: 'http://localhost:3100/users/00000001-3100-4444-9999-000000000001/emails',
+      email_url: 'http://localhost:3100/users/00000001-3100-4444-9999-000000000001/emails/{id}',
+      self_url: 'http://localhost:3100/users/00000001-3100-4444-9999-000000000001',
+      blurb_url: 'http://localhost:3100/users/00000001-3100-4444-9999-000000000001/blurb',
+      affiliated: false,
+      in_context: {
+        user_ip: '141.89.225.126',
+        user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.25 Safari/537.36',
+      },
+    }
+  end
+  let(:processing_units) { [Lanalytics::Processing::Unit.new(:USER, input)] }
+
+  it 'removes all sensitive data properties' do
+    filter.transform(input, processing_units, [], nil)
+
+    processing_unit = processing_units.first
+    expect(processing_unit.data).to include(language: 'en', born_at: '1985-04-24T00:00:00.000Z')
+    expect(processing_unit.data).not_to include(:email, :display_name, :first_name, :last_name)
+    expect(processing_unit.data[:in_context]).not_to include(:user_ip, :user_agent)
   end
 
-  it 'should remove all sensitive data properties' do
-    @data_filter.transform(@original_hash, @processing_units, [], nil)
+  it 'does not modify the original hash' do
+    old_hash = input
+    filter.transform(input, processing_units, [], nil)
 
-    expect(@processing_units.length).to eq(1)
-    processing_unit = @processing_units.first
-    expect(processing_unit.data).to include(language: "en", born_at: "1985-04-24T00:00:00.000Z")
-    expect(processing_unit.data.keys).to_not include('email', 'display_name', 'first_name', 'last_name')
-    expect(processing_unit.data[:in_context].keys).to_not include('user_ip', 'user_agent')
+    expect(input).to be(old_hash)
+    expect(input).to eq(old_hash)
   end
-
-  it 'should not modify the original hash' do
-    old_hash = @original_hash
-    @data_filter.transform(@original_hash, @processing_units, [], nil)
-
-    expect(@original_hash).to be(old_hash)
-    expect(@original_hash).to eq(old_hash)
-  end
-
 end
