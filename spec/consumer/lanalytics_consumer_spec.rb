@@ -6,14 +6,15 @@ describe LanalyticsConsumer do
   before(:each) do
     stub_request(:head, 'http://localhost:9200/')
       .to_return(status: 200)
+
+    prepare_rabbitmq_stubs(consumer, dummy_event_data, routing_key)
   end
+
   let(:consumer) { described_class.new }
+  let(:dummy_event_data) { {dummy_property: 'dummy_value'} }
 
   describe "(:create)" do
-    before(:each) do
-      @dummy_event_data = {dummy_property: 'dummy_value'}
-      prepare_rabbitmq_stubs(consumer, @dummy_event_data, 'xikolo.lanalytics.test_event.create')
-    end
+    let(:routing_key) { 'xikolo.lanalytics.test_event.create' }
 
     it 'should find and trigger the correct pipeline' do
       # Add dummy pipeline to PipelineManager
@@ -25,7 +26,7 @@ describe LanalyticsConsumer do
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
       # Check whether the corresponding pipeline has been triggered
-      expect(dummy_pipeline).to receive(:process).with(@dummy_event_data, kind_of(Hash))
+      expect(dummy_pipeline).to receive(:process).with(dummy_event_data, kind_of(Hash))
 
       consumer.create
     end
@@ -52,19 +53,16 @@ describe LanalyticsConsumer do
 
       # Check whether the three corresponding pipelines have been triggered
       # Find the pipeline that should be processed
-      expect(dummy_pipeline1).to receive(:process).with(@dummy_event_data, kind_of(Hash))
-      expect(dummy_pipeline2).to receive(:process).with(@dummy_event_data, kind_of(Hash))
-      expect(dummy_pipeline3).to receive(:process).with(@dummy_event_data, kind_of(Hash))
+      expect(dummy_pipeline1).to receive(:process).with(dummy_event_data, kind_of(Hash))
+      expect(dummy_pipeline2).to receive(:process).with(dummy_event_data, kind_of(Hash))
+      expect(dummy_pipeline3).to receive(:process).with(dummy_event_data, kind_of(Hash))
 
       consumer.create
     end
   end
 
   describe "(:update)" do
-    before(:each) do
-      @dummy_event_data = {dummy_property: 'dummy_value'}
-      prepare_rabbitmq_stubs(consumer, @dummy_event_data, 'xikolo.lanalytics.test_event.update')
-    end
+    let(:routing_key) { 'xikolo.lanalytics.test_event.update' }
 
     it 'should find and trigger the correct pipeline' do
       # Add dummy pipeline to PipelineManager
@@ -76,19 +74,16 @@ describe LanalyticsConsumer do
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
       # Check whether the corresponding pipeline has been triggered
-      expect(dummy_pipeline).to receive(:process).with(@dummy_event_data, kind_of(Hash))
+      expect(dummy_pipeline).to receive(:process).with(dummy_event_data, kind_of(Hash))
 
       consumer.update
     end
   end
 
   describe "(:destroy)" do
-    before(:each) do
-      @dummy_event_data = {dummy_property: 'dummy_value'}
-      prepare_rabbitmq_stubs(consumer, @dummy_event_data, 'xikolo.lanalytics.test_event.destroy')
-    end
+    let(:routing_key) { 'xikolo.lanalytics.test_event.destroy' }
 
-    it 'should find and trigger the correct pipeline' do
+    it 'finds and triggers the correct pipeline' do
       # Add dummy pipeline to PipelineManager
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.destroy',
@@ -98,7 +93,7 @@ describe LanalyticsConsumer do
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
       # Check whether the corresponding pipeline has been triggered
-      expect(dummy_pipeline).to receive(:process).with(@dummy_event_data, kind_of(Hash))
+      expect(dummy_pipeline).to receive(:process).with(dummy_event_data, kind_of(Hash))
 
       consumer.destroy
     end
@@ -106,20 +101,19 @@ describe LanalyticsConsumer do
 
   describe "(:handle_user_event)" do
     before(:each) do
-      prepare_rabbitmq_stubs(consumer, dummy_event_data, 'xikolo.lanalytics.test_event.handle_user_event')
-
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
     end
+
+    let(:routing_key) { 'xikolo.lanalytics.test_event.handle_user_event' }
 
     # Add dummy pipeline to PipelineManager
     let(:dummy_pipeline) do
       Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.handle_user_event',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::Action::CREATE
+        Lanalytics::Processing::Action::CREATE,
       )
     end
-    let(:dummy_event_data) { {dummy_property: 'dummy_value'} }
 
     it 'finds and triggers the correct pipeline' do
       # Check whether the corresponding pipeline has been triggered
@@ -179,5 +173,4 @@ describe LanalyticsConsumer do
       end
     end
   end
-
 end
