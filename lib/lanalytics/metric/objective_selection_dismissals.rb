@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ObjectiveSelectionDismissals < ExpApiMetric
+    class ObjectiveSelectionDismissals < ExpEventsElasticMetric
 
       description 'Number of objectives selection dismissals by type (modal/infobox) and number of occurrences where both were dismissed.'
 

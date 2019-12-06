@@ -32,6 +32,6 @@ Each pipeline consists of extractors, transformers and loaders, where each is re
 
 * Add new pipeline file in `config/lanalytics_pipeline_flipper.yml`
 * Implement the pipeline file in a new `lib/lanalytics/processing/pipelines/new_pipelines.prb`
-* Define all the desired pipelines like in `lib/lanalytics/processing/pipelines/exp_api_pipeline.prb`
+* Define all the desired pipelines like in `lib/lanalytics/processing/pipelines/exp_events_pipeline.prb`
 * Implement new transformers when necessary
 * Register the event type in the `config/msgr.rb` file.

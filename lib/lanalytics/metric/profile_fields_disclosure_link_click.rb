@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ProfileFieldsDisclosureLinkClick < ExpApiMetric
+    class ProfileFieldsDisclosureLinkClick < ExpEventsElasticMetric
 
       description 'Check if a user has clicked on the profile_fields_disclosure_link (A/B test)'
 
@@ -24,7 +26,8 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        { clicked: result.dig('hits', 'total').to_i.positive? }
+        {clicked:
+           ElasticMigration.result(result.dig('hits', 'total')).to_i.positive?}
       end
 
     end

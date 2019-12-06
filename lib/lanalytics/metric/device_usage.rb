@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class DeviceUsage < ExpApiMetric
+    class DeviceUsage < ExpEventsElasticMetric
       include Lanalytics::Helper::PercentageHelper
       extend Lanalytics::Helper::ClientUsageHelper
 

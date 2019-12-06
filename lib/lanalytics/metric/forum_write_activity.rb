@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ForumWriteActivity < ExpApiMetric
+    class ForumWriteActivity < ExpEventsElasticMetric
 
       description 'Total number of forum write events and its unique users.'
 
@@ -36,7 +36,7 @@ module Lanalytics
           }
         end
         {
-          total: result.dig('hits', 'total'),
+          total: ElasticMigration.result(result.dig('hits', 'total')),
           user: result.dig('aggregations', 'user', 'value')
         }
       end

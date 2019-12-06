@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ProgressVisitsCount < ExpApiCountMetric
+    class ProgressVisitsCount < ExpEventsCountElasticMetric
 
       event_verbs %w(VISITED_PROGRESS)
 

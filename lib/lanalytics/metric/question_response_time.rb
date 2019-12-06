@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class QuestionResponseTime < ExpApiMetric
+    class QuestionResponseTime < ExpEventsElasticMetric
 
       description 'Average time between asked and answered question.'
 

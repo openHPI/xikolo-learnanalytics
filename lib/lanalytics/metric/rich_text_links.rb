@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class RichTextLinks < ExpApiMetric
+    class RichTextLinks < LinkTrackingEventsElasticMetric
 
       description 'Stats for all links of a rich text item.'
 

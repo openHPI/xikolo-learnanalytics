@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class LastActivity < ExpApiMetric
+    class LastActivity < ExpEventsElasticMetric
 
       description 'Last activity of user.'
 

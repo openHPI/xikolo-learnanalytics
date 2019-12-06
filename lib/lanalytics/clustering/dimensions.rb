@@ -73,7 +73,7 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.datasource
-    Lanalytics::Processing::DatasourceManager.datasource('exp_api_native')
+    Lanalytics::Processing::DatasourceManager.datasource('exp_events_postgres')
   end
 
   def self.perform_query(query)

@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ProfileFieldsDataProtectionLinkClick < ExpApiMetric
+    class ProfileFieldsDataProtectionLinkClick < ExpEventsElasticMetric
 
-      description 'Check if a user has clicked on the profile_fields_data_protection_link (A/B test)'
+      description 'Check if a user has clicked on the '\
+        'profile_fields_data_protection_link (A/B test)'
 
       required_parameter :course_id, :user_id
 
@@ -24,7 +27,8 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        { clicked: result.dig('hits', 'total').to_i.positive? }
+        {clicked:
+           ElasticMigration.result(result.dig('hits', 'total')).to_i.positive?}
       end
 
     end

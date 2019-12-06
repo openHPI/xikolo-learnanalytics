@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class DownloadCount < ExpApiMetric
+    class DownloadCount < ExpEventsElasticMetric
 
       description 'Counts all downloads for all video items of a course.'
 

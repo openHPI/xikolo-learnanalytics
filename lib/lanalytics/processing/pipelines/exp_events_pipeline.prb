@@ -1,6 +1,6 @@
 def create_exp_pipeline(route, extractor_type, processing_action)
-  datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic')
-  pipeline_for(route, :exp_api, processing_action) do
+  datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_events_elastic')
+  pipeline_for(route, :exp_events_elastic, processing_action) do
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
     transformer Lanalytics::Processing::Transformer::ContextData.new
@@ -8,13 +8,13 @@ def create_exp_pipeline(route, extractor_type, processing_action)
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
 
     # Important to be the last transformer, since it creates Entities and Attributes
-    transformer Lanalytics::Processing::Transformer::ExpApiSchemaTransformer.new
+    transformer Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer.new
 
-    loader Lanalytics::Processing::Loader::ElasticSearchLoader.new(datasource)
+    loader Lanalytics::Processing::Loader::ElasticLoader.new(datasource)
   end if datasource
 
-  datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_api_native')
-  pipeline_for(route, :exp_api_native, processing_action) do
+  datasource = Lanalytics::Processing::DatasourceManager.datasource('exp_events_postgres')
+  pipeline_for(route, :exp_events_postgres, processing_action) do
     extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new(extractor_type)
 
     transformer Lanalytics::Processing::Transformer::ContextData.new
@@ -22,7 +22,7 @@ def create_exp_pipeline(route, extractor_type, processing_action)
     transformer Lanalytics::Processing::Transformer::AnonymousDataFilter.new
 
     # Important to be the last transformer, since it creates Entities and Attributes
-    transformer Lanalytics::Processing::Transformer::ExpApiNativeSchemaTransformer.new
+    transformer Lanalytics::Processing::Transformer::ExpEventPostgresSchemaTransformer.new
 
     loader Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
   end if datasource

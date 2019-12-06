@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class Certificates < ExpApiMetric
+    class Certificates < ExpEventsElasticMetric
 
       description 'Returns the number of gained certificates.'
 

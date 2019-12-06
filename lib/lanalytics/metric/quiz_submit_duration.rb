@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class QuizSubmitDuration < ExpApiMetric
+    class QuizSubmitDuration < ExpEventsElasticMetric
 
       description 'Returns the total time, i.e. duration, needed for working on a quiz and the comparison with quizzes for which a time effort exists.'
 

@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class VideoPlayCount < ExpApiMetric
+    class VideoPlayCount < ExpEventsElasticMetric
 
       description 'Videos played by users.'
 

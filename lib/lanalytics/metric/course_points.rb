@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class CoursePoints < ExpApiMetric
+    class CoursePoints < ExpEventsElasticMetric
 
       description 'Achieved points of user in course.'
 

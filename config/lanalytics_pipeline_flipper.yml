@@ -1,20 +1,14 @@
 common: &common
   datasources:
-    - referral.yml
-    - exp_api_elastic.yml   # uses exp_api pipeline
-    - exp_api_native.yml    # uses exp_api pipeline
+    - exp_events_elastic.yml     # uses exp_events pipeline
+    - exp_events_postgres.yml    # uses exp_events pipeline
+    - link_tracking_events_elastic.yml
   pipelines:
-    - exp_api_pipeline.prb
-    - referrer_pipeline.prb
+    - exp_events_pipeline.prb
+    - link_tracking_events_pipeline.prb
 
 development:
-  datasources:
-    - referral.yml
-    - exp_api_elastic.yml   # uses exp_api pipeline
-    - exp_api_native.yml    # uses exp_api pipeline
-  pipelines:
-    - exp_api_pipeline.prb
-    - referrer_pipeline.prb
+  <<: *common
 
 test:
   <<: *common

@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class CourseActivityList < ExpApiMetric
+    class CourseActivityList < ExpEventsElasticMetric
 
       description 'Returns the top 10 active courses, defaults to last 24h.'
 

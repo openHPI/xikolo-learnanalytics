@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ItemVisitsTimebased < ExpApiMetric
+    class ItemVisitsTimebased < ExpEventsElasticMetric
 
       description 'Returns the cumulated unique and total visits over the specified time span (per day).'
 

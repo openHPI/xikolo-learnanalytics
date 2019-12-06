@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class VideoStatistics < ExpApiMetric
+    # rubocop:disable Metrics/ClassLength
+    class VideoStatistics < ExpEventsElasticMetric
 
       description 'Statistics for all videos of a course.'
 
@@ -8,6 +11,7 @@ module Lanalytics
 
       optional_parameter :item_id
 
+      # rubocop:disable Metrics/LineLength
       exec do |params|
         body = {
           size: 0,
@@ -18,121 +22,144 @@ module Lanalytics
                   bool: {
                     minimum_should_match: 1,
                     should: [
-                      { wildcard: { verb: 'video_*' } },
-                      { match: { verb: 'visited_item' } }
-                    ]
-                  }
-                }
-              ] + all_filters(nil, params[:course_id], params[:item_id])
-            }
+                      {wildcard: {verb: 'video_*'}},
+                      {match: {verb: 'visited_item'}},
+                    ],
+                  },
+                },
+              ] + all_filters(nil, params[:course_id], params[:item_id]),
+            },
           },
           aggs: {
             items: {
               terms: {
                 field: 'resource.resource_uuid',
-                size: 1_000
+                size: 1_000,
               },
               aggs: {
                 plays: {
                   filter: {
                     bool: {
                       must: [
-                        { match: { verb: 'video_play' } }
-                      ]
-                    }
+                        {match: {verb: 'video_play'}},
+                      ],
+                    },
                   },
                   aggs: {
                     user: {
                       cardinality: {
                         field: 'user.resource_uuid',
-                        precision_threshold: 40_000
-                      }
-                    }
-                  }
+                        precision_threshold: 40_000,
+                      },
+                    },
+                  },
                 },
                 visits: {
                   filter: {
                     bool: {
                       must: [
-                        { match: { verb: 'visited_item' } }
-                      ]
-                    }
+                        {match: {verb: 'visited_item'}},
+                      ],
+                    },
                   },
                   aggs: {
                     user: {
                       cardinality: {
                         field: 'user.resource_uuid',
-                        precision_threshold: 40_000
-                      }
-                    }
-                  }
+                        precision_threshold: 40_000,
+                      },
+                    },
+                  },
                 },
                 seeks: {
                   filter: {
                     bool: {
                       must: [
-                        { wildcard: { verb: 'video*seek' } }
-                      ]
-                    }
+                        {wildcard: {verb: 'video*seek'}},
+                      ],
+                    },
                   },
                   aggs: {
                     forward: {
                       filter: {
                         script: {
-                          script: "doc['in_context.old_current_time'].value < doc['in_context.new_current_time'].value"
-                        }
-                      }
+                          script: "
+                            if (doc['in_context.old_current_time'].size() == 0) return false;
+                            if (doc['in_context.new_current_time'].size() == 0) return false;
+                            doc['in_context.old_current_time'].value < doc['in_context.new_current_time'].value
+                          ",
+                        },
+                      },
                     },
                     backward: {
                       filter: {
                         script: {
-                          script: "doc['in_context.old_current_time'].value > doc['in_context.new_current_time'].value"
-                        }
-                      }
-                    }
-                  }
+                          script: "
+                            if (doc['in_context.old_current_time'].size() == 0) return false;
+                            if (doc['in_context.new_current_time'].size() == 0) return false;
+                            doc['in_context.old_current_time'].value > doc['in_context.new_current_time'].value
+                          ",
+                        },
+                      },
+                    },
+                  },
                 },
                 farthest_watched: {
                   filter: {
                     bool: {
                       must: [
-                        { wildcard: { verb: 'video_*' } }
-                      ]
-                    }
+                        {wildcard: {verb: 'video_*'}},
+                      ],
+                    },
                   },
                   aggs: {
                     user: {
                       terms: {
                         field: 'user.resource_uuid',
-                        size: 100_000
+                        size: 100_000,
                       },
                       aggs: {
                         max_time: {
                           max: {
                             script: "
+                              float current_time;
+                              float new_current_time;
+                              float old_current_time;
+
+                              if (doc['in_context.current_time'].size() != 0) {
+                                  current_time = (float) doc['in_context.current_time'].value;
+                              }
+                              if (doc['in_context.new_current_time'].size() != 0) {
+                                  new_current_time = (float) doc['in_context.new_current_time'].value;
+                              }
+                              if (doc['in_context.old_current_time'].size() != 0) {
+                                  old_current_time = (float) doc['in_context.old_current_time'].value;
+                              }
+
                               Math.max(
-                                doc['in_context.current_time'].value,
+                                current_time,
                                 Math.max(
-                                  doc['in_context.new_current_time'].value,
-                                  doc['in_context.old_current_time'].value
+                                  new_current_time,
+                                  old_current_time
                                 )
-                              )
-                            "
-                          }
-                        }
-                      }
+                              );
+                            ",
+                          },
+                        },
+                      },
                     },
                     avg: {
                       avg_bucket: {
-                        buckets_path: 'user>max_time'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+                        buckets_path: 'user>max_time',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         }
+        # rubocop:enable Metrics/LineLength
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: body,
@@ -150,18 +177,18 @@ module Lanalytics
 
         sections = []
         Xikolo.paginate(
-          course_api.rel(:sections).get(course_id: params[:course_id])
+          course_api.rel(:sections).get(course_id: params[:course_id]),
         ) do |section|
           sections << section
         end
 
         if params[:item_id]
           item = Xikolo.api(:course).value!
-                   .rel(:item).get(id: params[:item_id]).value!
+            .rel(:item).get(id: params[:item_id]).value!
           result_data(item, sections, result)
         else
-          video_items(params[:course_id]).map do |item|
-            result_data(item, sections, result)
+          video_items(params[:course_id]).map do |i|
+            result_data(i, sections, result)
           end
         end
       end
@@ -176,9 +203,10 @@ module Lanalytics
         id = item['id']
         ri = item(id, from_result: result)
 
-        section = sections.find {|section| section['id'] == item['section_id'] }
+        section = sections.find {|s| s['id'] == item['section_id'] }
 
-        video = Xikolo.api(:video).value!.rel(:video).get(id: item['content_id']).value!
+        video = Xikolo.api(:video).value!
+          .rel(:video).get(id: item['content_id']).value!
 
         {
           id: id,
@@ -186,9 +214,10 @@ module Lanalytics
           title: item['title'],
           plays: ri&.dig('plays', 'user', 'value').to_i,
           visits: ri&.dig('visits', 'user', 'value').to_i,
-          avg_farthest_watched: ri&.dig('farthest_watched', 'avg', 'value').to_f / video['duration'],
+          avg_farthest_watched: ri&.dig('farthest_watched', 'avg', 'value')
+            .to_f / video['duration'],
           forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
-          backward_seeks: ri&.dig('seeks', 'backward', 'doc_count').to_i
+          backward_seeks: ri&.dig('seeks', 'backward', 'doc_count').to_i,
         }
       end
 
@@ -197,8 +226,8 @@ module Lanalytics
         Xikolo.paginate(
           Xikolo.api(:course).value!.rel(:items).get(
             course_id: course_id,
-            content_type: 'video'
-          )
+            content_type: 'video',
+          ),
         ) do |video|
           videos.append(video)
         end
@@ -206,5 +235,6 @@ module Lanalytics
       end
 
     end
+    # rubocop:enable all
   end
 end

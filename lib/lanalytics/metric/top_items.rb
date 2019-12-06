@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class TopItems < ExpApiMetric
+    class TopItems < ExpEventsElasticMetric
 
       description 'Returns all course items with visits.'
 

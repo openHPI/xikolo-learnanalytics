@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ItemVisits < ExpApiMetric
+    class ItemVisits < ExpEventsElasticMetric
 
       description 'Total and unique user item visits; for last day, last 15 minutes (now) and overall.'
 
@@ -11,13 +13,21 @@ module Lanalytics
         total_item_visits = get_data resource_id, false, false
         total_item_visits_24 = get_data resource_id, true, false
         total_item_visits_now = get_data resource_id, false, true
+
         result = {}
-        result[:total_item_visits] = total_item_visits[:hits][:total]
-        result[:total_item_visits_24] = total_item_visits_24[:hits][:total]
-        result[:total_item_visits_now] = total_item_visits_now[:hits][:total]
-        result[:users_visited] = total_item_visits[:aggregations][:distinct_user_count][:value]
-        result[:users_visited_24] = total_item_visits_24[:aggregations][:distinct_user_count][:value]
-        result[:users_visiting_now] = total_item_visits_now[:aggregations][:distinct_user_count][:value]
+
+        result[:total_item_visits] =
+          ElasticMigration.result(total_item_visits[:hits][:total])
+        result[:total_item_visits_24] =
+          ElasticMigration.result(total_item_visits_24[:hits][:total])
+        result[:total_item_visits_now] =
+          ElasticMigration.result(total_item_visits_now[:hits][:total])
+        result[:users_visited] =
+          total_item_visits[:aggregations][:distinct_user_count][:value]
+        result[:users_visited_24] =
+          total_item_visits_24[:aggregations][:distinct_user_count][:value]
+        result[:users_visiting_now] =
+          total_item_visits_now[:aggregations][:distinct_user_count][:value]
         result
       end
 

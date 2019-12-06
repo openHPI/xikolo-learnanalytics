@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ActiveUserCountRelative < ExpApiMetric
+    class ActiveUserCountRelative < ExpEventsElasticMetric
 
       description """
 Calculates activity compared to the platform and itself for the last day.

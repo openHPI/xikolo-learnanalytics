@@ -20,7 +20,7 @@ describe MetricsController, type: :controller do
     end
 
     let(:client) do
-      Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic').client
+      Lanalytics::Processing::DatasourceManager.datasource('exp_events_elastic').client
     end
 
     let(:action) { -> { post :show, params: params } }

@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class QuizSubmissionTimeliness < ExpApiMetric
+    class QuizSubmissionTimeliness < ExpEventsElasticMetric
 
       description 'Returns the average time to the quiz submission deadline when submitting a quiz.'
 

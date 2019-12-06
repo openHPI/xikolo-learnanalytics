@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ReferrerMetric < Base
+    class LinkTrackingEventsElasticMetric < Base
 
       def self.datasource_keys
-        %w(referral)
+        %w[link_tracking_events_elastic]
       end
 
       def self.datasource

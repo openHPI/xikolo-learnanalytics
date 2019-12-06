@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ClientCombinationUsage < ExpApiMetric
+    class ClientCombinationUsage < ExpEventsElasticMetric
       include Lanalytics::Helper::PercentageHelper
       extend Lanalytics::Helper::ClientUsageHelper
 

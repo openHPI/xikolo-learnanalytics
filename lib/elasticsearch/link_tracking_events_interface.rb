@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 module Elasticsearch
-
   # interface for interacting with elasticsearch, also used by integration
-  class Interface
-
+  class LinkTrackingEventsInterface
     # elasticsearch client
     def self.client
       datasource.client
@@ -15,15 +15,15 @@ module Elasticsearch
 
     # elasticsearch mapping
     def self.mapping
-      ActiveSupport::JSON.decode File.read("#{Rails.root}/config/elasticsearch/mapping.json")
+      ActiveSupport::JSON.decode File.read(
+        "#{Rails.root}/config/elasticsearch/link_tracking_events.json",
+      )
     end
-
-    private
 
     def self.datasource
-      Lanalytics::Processing::DatasourceManager.datasource('exp_api_elastic')
+      Lanalytics::Processing::DatasourceManager.datasource(
+        'link_tracking_events_elastic',
+      )
     end
-
   end
-
 end

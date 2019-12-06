@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class RichTextLinkClickTotalCount < ExpApiMetric
+    class RichTextLinkClickTotalCount < LinkTrackingEventsElasticMetric
 
       description 'Counts all link clicks for all rich text items of a course.'
 
@@ -12,18 +14,18 @@ module Lanalytics
           query: {
             bool: {
               must: [
-                { match: { tracking_type: 'rich_text_item_link' } },
-                { match: { course_id: params[:course_id] } }
-              ]
-            }
-          }
+                {match: {tracking_type: 'rich_text_item_link'}},
+                {match: {course_id: params[:course_id]}},
+              ],
+            },
+          },
         }
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: body
         end
 
-        { count: result.dig('hits', 'total').to_i }
+        {count: ElasticMigration.result(result.dig('hits', 'total')).to_i}
       end
 
     end

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class VideoEventsTimeline < ExpApiMetric
+    class VideoEventsTimeline < ExpEventsElasticMetric
 
       description 'Counts per video event type.'
 
@@ -12,37 +14,42 @@ module Lanalytics
         verbs_filter = {
           bool: {
             minimum_should_match: 1,
-            should: []
-          }
+            should: [],
+          },
         }
 
         verbs.each do |verb|
-          verbs_filter.dig(:bool, :should) << { match: { verb: "video_#{verb}" } }
+          verbs_filter.dig(:bool, :should) <<
+            {match: {verb: "video_#{verb}"}}
         end
 
         body = {
           size: 0,
           query: {
             bool: {
-              must: [verbs_filter] + all_filters(nil, nil, params[:item_id])
-            }
+              must: [verbs_filter] + all_filters(
+                nil,
+                nil,
+                params[:item_id],
+              ),
+            },
           },
           aggs: {
             timestamps: {
               histogram: {
                 field: 'in_context.current_time',
                 interval: '15',
-                min_doc_count: '0'
+                min_doc_count: '0',
               },
               aggs: {
                 verbs: {
                   terms: {
-                    field: 'verb'
-                  }
-                }
-              }
-            }
-          }
+                    field: 'verb',
+                  },
+                },
+              },
+            },
+          },
         }
 
         result = datasource.exec do |client|
@@ -50,12 +57,13 @@ module Lanalytics
         end
 
         result.dig('aggregations', 'timestamps', 'buckets').map do |r|
-          e = { time: r['key'] }
+          e = {time: r['key']}
 
           verbs.each do |verb|
-            e[verb] = r.dig('verbs', 'buckets')
-                       .find {|i| i['key'] == "video_#{verb}" }
-                       &.dig('doc_count').to_i
+            e[verb] = r
+              .dig('verbs', 'buckets')
+              .find {|i| i['key'] == "video_#{verb}" }
+              &.dig('doc_count').to_i
           end
 
           e

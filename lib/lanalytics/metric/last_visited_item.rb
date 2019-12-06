@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class LastVisitedItem < ExpApiMetric
+    class LastVisitedItem < ExpEventsElasticMetric
 
       description 'Last visited item of user.'
 

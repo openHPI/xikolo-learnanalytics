@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class UserActivityCount < ExpApiMetric
+    class UserActivityCount < ExpEventsElasticMetric
 
       description 'Overall platform activity (events), defaults to 30 minutes.'
 
@@ -26,7 +26,7 @@ module Lanalytics
             }
           }
         end
-        result['hits']['total']
+        ElasticMigration.result(result['hits']['total'])
       end
 
     end

@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class VideoSpeedChangeMetric < ExpApiCountMetric
+    class VideoSpeedChangeMetric < ExpEventsCountElasticMetric
 
       event_verbs %w(VIDEO_CHANGE_SPEED)
 

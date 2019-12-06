@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class UserCourseCity < ExpApiMetric
+    class UserCourseCity < ExpEventsElasticMetric
 
       description 'Returns city with most activity.'
 

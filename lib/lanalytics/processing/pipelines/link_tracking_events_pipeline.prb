@@ -1,0 +1,9 @@
+pipeline_for('xikolo.web.referrer', :link_tracking_events_elastic, Lanalytics::Processing::Action::CREATE) do
+  datasource = Lanalytics::Processing::DatasourceManager.datasource('link_tracking_events_elastic')
+
+  extractor Lanalytics::Processing::Extractor::AmqEventExtractor.new
+
+  transformer Lanalytics::Processing::Transformer::LinkTrackingEventElasticSchemaTransformer.new
+
+  loader Lanalytics::Processing::Loader::ElasticLoader.new(datasource)
+end

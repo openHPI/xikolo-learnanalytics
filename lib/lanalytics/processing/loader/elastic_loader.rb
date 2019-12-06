@@ -2,7 +2,7 @@ module Lanalytics
   module Processing
     module Loader
 
-      class ElasticSearchLoader < LoadStep
+      class ElasticLoader < LoadStep
 
         def initialize(datasource = nil)
           @elastic_datasource = datasource
@@ -32,7 +32,7 @@ module Lanalytics
 
           indexing_hash = {}.tap do |hash|
             hash[:index] = @elastic_datasource.index
-            hash[:type] = entity.entity_key
+            hash[:type] = ElasticMigration.entity_key(entity)
             hash[:id] = entity.primary_attribute.value.to_s if entity.primary_attribute
             hash[:body] = {}.tap do |body_hash|
               entity.all_non_nil_attributes.each do |attr|
