@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 Transformer     = Lanalytics::Processing::Transformer
 CreateCommand   = Lanalytics::Processing::LoadORM::CreateCommand
 Entity          = Lanalytics::Processing::LoadORM::Entity
 ExpApiStatement = Lanalytics::Model::ExpApiStatement
 
-class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
+# rubocop:disable Metrics/ClassLength, Metrics/LineLength
+class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformStep
   def transform(_original_event, processing_units, load_commands, pipeline_ctx)
     processing_action = pipeline_ctx.processing_action.to_s.downcase
 
@@ -254,5 +257,5 @@ class Transformer::ExpApiNativeSchemaTransformer < Transformer::TransformStep
                                 estimated_time_effort: processing_unit[:estimated_time_effort]
                               }
   end
-
 end
+# rubocop:enable all

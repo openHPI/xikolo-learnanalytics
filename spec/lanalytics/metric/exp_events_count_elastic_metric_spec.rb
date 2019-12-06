@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Lanalytics::Metric::ExpApiCountMetric do
+RSpec.describe Lanalytics::Metric::ExpEventsCountElasticMetric do
   let(:user_id) { SecureRandom.uuid }
   let(:course_id) { SecureRandom.uuid }
   let(:start_time) { 2.weeks.ago.to_s }

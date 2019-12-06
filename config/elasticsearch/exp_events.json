@@ -1,0 +1,484 @@
+{
+  "settings": {
+    "number_of_shards": "1",
+    "number_of_replicas": "0",
+    "analysis": {
+      "normalizer": {
+        "keyword_lowercase": {
+          "filter": "lowercase",
+          "type": "custom"
+        }
+      },
+      "analyzer": {
+        "lowercase": {
+          "tokenizer": "lowercase"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "in_context": {
+        "properties": {
+          "admin": {
+            "type": "boolean"
+          },
+          "affiliated": {
+            "type": "boolean"
+          },
+          "attempt": {
+            "type": "integer"
+          },
+          "build_number": {
+            "type": "integer"
+          },
+          "build_version": {
+            "type": "integer"
+          },
+          "build_version_name": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "certificate": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "certificate_type": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "client_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "codeocean_user_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "commentable_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "commentable_type": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "confirmation_of_participation": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "content_type": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "context_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "correct": {
+            "type": "boolean"
+          },
+          "correct_count": {
+            "type": "integer"
+          },
+          "course_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "current_fullscreen": {
+            "type": "boolean"
+          },
+          "current_layout": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "current_orientation": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "current_quality": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "current_source": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "current_speed": {
+            "type": "float"
+          },
+          "current_time": {
+            "type": "float"
+          },
+          "device": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "dialog": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "free_space": {
+            "type": "long"
+          },
+          "exercise": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "file_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "hd_video": {
+            "type": "boolean"
+          },
+          "implicit_tags": {
+            "type": "text"
+          },
+          "item_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "learning_room_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "list_style": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "max_points": {
+            "type": "float"
+          },
+          "network": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_current_fullscreen": {
+            "type": "boolean"
+          },
+          "new_current_time": {
+            "type": "float"
+          },
+          "new_dual_stream_status": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_layout": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_objective": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_quality": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_source": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_speed": {
+            "type": "float"
+          },
+          "new_state": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_subtitle_language": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "new_transcript_language": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "objectives_modal_context": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "old_current_time": {
+            "type": "float"
+          },
+          "old_layout": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "old_objective": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "old_quality": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "old_source": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "old_speed": {
+            "type": "float"
+          },
+          "onboarding_group": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "onboarding_step": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "platform": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "platform_version": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "points": {
+            "type": "float"
+          },
+          "points_achieved": {
+            "type": "long"
+          },
+          "points_maximal": {
+            "type": "long"
+          },
+          "points_percentage": {
+            "type": "long"
+          },
+          "policy_accepted": {
+            "type": "boolean"
+          },
+          "preferred_language": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "provider_name": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "provider_start_url": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "query": {
+            "type": "text",
+            "analyzer": "lowercase"
+          },
+          "quantile": {
+            "type": "double"
+          },
+          "question_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "questions_count": {
+            "type": "integer"
+          },
+          "questions_total": {
+            "type": "integer"
+          },
+          "quiz_access_time": {
+            "type": "date"
+          },
+          "quiz_submission_deadline": {
+            "type": "date"
+          },
+          "quiz_submission_time": {
+            "type": "date"
+          },
+          "quiz_type": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "quiz_version_at": {
+            "type": "date"
+          },
+          "ratio": {
+            "type": "float"
+          },
+          "recap_session_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "received_certificate": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "received_confirmation_of_participation": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "received_record_of_achievement": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "record_of_achievement": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "referer": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "runtime": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "runtime_api_level": {
+            "type": "integer"
+          },
+          "runtime_version": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "screen_density": {
+            "type": "integer"
+          },
+          "screen_height": {
+            "type": "integer"
+          },
+          "screen_width": {
+            "type": "integer"
+          },
+          "sd_video": {
+            "type": "boolean"
+          },
+          "section_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "service": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "slides": {
+            "type": "boolean"
+          },
+          "stopped_by_user": {
+            "type": "boolean"
+          },
+          "technical": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "text"
+          },
+          "total_space": {
+            "type": "long"
+          },
+          "estimated_time_effort": {
+            "type": "integer"
+          },
+          "user_agent": {
+            "type": "text"
+          },
+          "user_app_version": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_ip": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_local_timestamp": {
+            "type": "date"
+          },
+          "user_location_city": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_location_country_code": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_location_country_name": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_location_latitude": {
+            "type": "double"
+          },
+          "user_location_longitude": {
+            "type": "double"
+          },
+          "user_location_time_zone": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_os": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "user_tags": {
+            "type": "text"
+          },
+          "variant": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "video_download_pref": {
+            "type": "integer"
+          },
+          "video_size": {
+            "type": "integer"
+          },
+          "video_timestamp": {
+            "type": "integer"
+          },
+          "window_height": {
+            "type": "integer"
+          },
+          "window_width": {
+            "type": "integer"
+          },
+          "wrong_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "resource": {
+        "properties": {
+          "content_type": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "resource_uuid": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "text": {
+            "type": "text"
+          },
+          "title": {
+            "type": "text"
+          }
+        }
+      },
+      "timestamp": {
+        "type": "date"
+      },
+      "user": {
+        "properties": {
+          "resource_uuid": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          }
+        }
+      },
+      "verb": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "with_result": {
+        "type": "object"
+      }
+    }
+  }
+}

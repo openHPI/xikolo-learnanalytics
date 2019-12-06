@@ -4,9 +4,9 @@
 common: &common
   datasource_adapter: 'PostgresqlDatasource'
   adapter: postgresql
-  key: 'exp_api_native'
-  name: 'Exp API on PostgreSQL'
-  description: 'Simply storing exp api events in a relational database.'
+  key: 'exp_events_postgres'
+  name: 'Experience Events on Postgres'
+  description: 'User Interaction Events'
   pool: 5
 
 development:

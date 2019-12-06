@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class GeoActivity < ExpApiMetric
+    class GeoActivity < ExpEventsElasticMetric
 
       description 'Counted geo locations, defaults to 1 minute.'
 

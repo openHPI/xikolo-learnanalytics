@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Processing
     module Transformer
-      class ExpApiSchemaTransformer < TransformStep
+      # rubocop:disable Metrics/ClassLength, Metrics/BlockLength
+      class ExpEventElasticSchemaTransformer < TransformStep
 
         def transform(_original_event, processing_units, load_commands, pipeline_ctx)
           processing_action = pipeline_ctx.processing_action.to_s.downcase
@@ -302,6 +305,7 @@ module Lanalytics
         end
 
       end
+      # rubocop:enable all
     end
   end
 end

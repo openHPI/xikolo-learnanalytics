@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class TopReferrers < ReferrerMetric
+    class TopReferrers < LinkTrackingEventsElasticMetric
 
       description 'Top 25 referrer with count.'
 

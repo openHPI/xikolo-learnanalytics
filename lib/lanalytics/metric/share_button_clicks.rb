@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ShareButtonClicks < ExpApiMetric
+    class ShareButtonClicks < ExpEventsElasticMetric
 
       description 'Top 25 share button click services with count.'
 

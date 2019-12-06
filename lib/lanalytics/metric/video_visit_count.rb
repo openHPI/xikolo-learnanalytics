@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class VideoVisitCount < ExpApiCountMetric
+    class VideoVisitCount < ExpEventsCountElasticMetric
 
       event_verbs %w(VISITED_ITEM)
 

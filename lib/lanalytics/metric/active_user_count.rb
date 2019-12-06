@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ActiveUserCount < ExpApiMetric
+    class ActiveUserCount < ExpEventsElasticMetric
 
       description 'The number of distinct active users. The default time range is 30 minutes.'
 

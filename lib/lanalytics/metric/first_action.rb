@@ -2,7 +2,7 @@
 
 module Lanalytics
   module Metric
-    class FirstAction < ExpApiMetric
+    class FirstAction < ExpEventsElasticMetric
       description 'First action of a user in a course.'
 
       required_parameter :course_id, :user_id

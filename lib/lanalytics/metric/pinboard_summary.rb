@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class PinboardSummary< ExpApiMetric
+    class PinboardSummary < ExpEventsElasticMetric
 
       description 'Returns the total number of events for the different pinboard activities.'
 

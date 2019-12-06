@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class UserCourseCountry < ExpApiMetric
+    class UserCourseCountry < ExpEventsElasticMetric
 
       description 'Returns country with most activity.'
 

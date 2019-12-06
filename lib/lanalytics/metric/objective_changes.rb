@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ObjectiveChanges < ExpApiMetric
+    class ObjectiveChanges < ExpEventsElasticMetric
 
       description 'Number of changes between objectives by pairs of objectives.'
 

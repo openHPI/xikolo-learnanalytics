@@ -12,18 +12,18 @@ shared_examples 'an experience statement' do
   end
 end
 
-describe Lanalytics::Processing::Transformer::ExpApiSchemaTransformer do
+describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer do
   before(:each) do
     @original_event = FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
     @processing_units = [Lanalytics::Processing::Unit.new(:exp_event, @original_event)]
     @load_commands = []
     @pipeline_ctx = OpenStruct.new processing_action: :CREATE
-
-    @exp_api_transformer = Lanalytics::Processing::Transformer::ExpApiSchemaTransformer.new
   end
 
+  let(:exp_event_elastic_transformer) { described_class.new }
+
   it 'should transform processing unit to nested (LoaORM) entity' do
-    @exp_api_transformer.transform(
+    exp_event_elastic_transformer.transform(
       @original_event,
       @processing_units,
       @load_commands,

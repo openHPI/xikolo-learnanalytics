@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class VideoEvents < ExpApiMetric
+    class VideoEvents < ExpEventsElasticMetric
 
       description 'Counts per video event type.'
 

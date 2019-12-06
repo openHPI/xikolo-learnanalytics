@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class RichTextLinkClickCount < ExpApiMetric
+    class RichTextLinkClickCount < LinkTrackingEventsElasticMetric
 
       description 'Counts all link clicks for all rich text items of a course.'
 

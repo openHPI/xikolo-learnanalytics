@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ExpApiCountMetric < ExpApiMetric
+    class ExpEventsCountElasticMetric < ExpEventsElasticMetric
 
       def self.verbs
         @verbs ||= []

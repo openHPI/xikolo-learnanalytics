@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ExpApiMetric < Base
+    class ExpEventsElasticMetric < Base
 
       def self.datasource_keys
-        %w(exp_api_elastic)
+        %w[exp_events_elastic]
       end
 
       def self.datasource

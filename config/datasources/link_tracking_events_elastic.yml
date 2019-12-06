@@ -2,15 +2,15 @@
 
 common: &common
   datasource_adapter: 'ElasticDatasource'
-  key: 'exp_api_elastic'
-  name: 'Experience API On ElasticSearch '
-  description: 'Learning Record Store containing all activity from MOOC students in the Experience API Schema. Try out some of the queries ...'
+  key: 'link_tracking_events_elastic'
+  name: 'Link Tracking on Elastic'
+  description: 'Tracking internal and external links'
 
 development:
   <<: *common
   host: 'localhost'
   port: '9200'
-  index: 'lanalytics'
+  index: 'link_tracking'
   user: 'lanalytics'
   password: 'lanalytics'
 

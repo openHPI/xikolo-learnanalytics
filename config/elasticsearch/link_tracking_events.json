@@ -1,0 +1,58 @@
+{
+  "settings": {
+    "number_of_shards": "1",
+    "number_of_replicas": "0",
+    "analysis": {
+      "normalizer": {
+        "keyword_lowercase": {
+          "filter": "lowercase",
+          "type": "custom"
+        }
+      },
+      "analyzer": {
+        "lowercase": {
+          "tokenizer": "lowercase"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "course_id": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "referrer": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "referrer_page": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "timestamp": {
+        "type": "date"
+      },
+      "tracking_campaign": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "tracking_external_link": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "tracking_id": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "tracking_type": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      },
+      "user_id": {
+        "type": "keyword",
+        "normalizer": "keyword_lowercase"
+      }
+    }
+  }
+}

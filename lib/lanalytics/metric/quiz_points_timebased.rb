@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class QuizPointsTimebased < ExpApiMetric
+    class QuizPointsTimebased < ExpEventsElasticMetric
 
       description 'Returns the cumulated scored and maximum points for quizzes(!) over the specified time span (per day).'
 

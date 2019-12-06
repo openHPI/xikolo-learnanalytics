@@ -28,12 +28,19 @@ namespace :qc do
 end
 
 namespace :elastic do
-  desc 'Create elasticsearch index and mapping (index must not exist)'
+  desc 'Create elasticsearch indexes and mappings (index must not exist)'
   task setup: :environment do
-    client       = Elasticsearch::Interface.client
-    index        = Elasticsearch::Interface.index
-    mapping      = Elasticsearch::Interface.mapping
-    mapping_json = ActiveSupport::JSON.encode mapping
-    client.perform_request 'PUT', index, {}, mapping_json
+    interfaces = [
+      Elasticsearch::ExpEventsInterface,
+      Elasticsearch::LinkTrackingEventsInterface,
+    ]
+
+    interfaces.each do |interface|
+      client       = interface.client
+      index        = interface.index
+      mapping      = interface.mapping
+      mapping_json = ActiveSupport::JSON.encode mapping
+      client.perform_request 'PUT', index, {}, mapping_json
+    end
   end
 end

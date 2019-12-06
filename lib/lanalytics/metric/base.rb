@@ -13,17 +13,17 @@ module Lanalytics
           .map { |i| i.basename.to_s.split('.').first.camelize }
           .sort
           .reject do |c|
-            %w(
+            %w[
               Base
-              ExpApiMetric
-              ExpApiCountMetric
-              CombinedMetric
-              ReferrerMetric
+              ExpEventsElasticMetric
+              ExpEventsCountElasticMetric
+              ExpEventsPostgresMetric
+              LinkTrackingEventsElasticMetric
               ClusteringMetric
-              FallbackMetric
               GoogleAnalyticsMetric
-              ExpApiPostgresMetric
-            ).include? c
+              FallbackMetric
+              CombinedMetric
+            ].include? c
           end
       end
 

@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ExpApiPostgresMetric < Base
+    class ExpEventsPostgresMetric < Base
 
       def self.datasource_keys
-        %w(exp_api_native)
+        %w[exp_events_postgres]
       end
 
       def self.datasource

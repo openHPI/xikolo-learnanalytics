@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class DeviceUsageCount < ExpApiMetric
+    class DeviceUsageCount < ExpEventsElasticMetric
       extend Lanalytics::Helper::ClientUsageHelper
 
       description 'Counts the web, mobile and mixed device usage per user.'

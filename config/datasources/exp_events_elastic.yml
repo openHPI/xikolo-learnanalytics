@@ -2,15 +2,15 @@
 
 common: &common
   datasource_adapter: 'ElasticDatasource'
-  key: 'referral'
-  name: 'Referrer'
-  description: 'Tracking internal and external referrers...'
+  key: 'exp_events_elastic'
+  name: 'Experience Events on Elastic'
+  description: 'User Interaction Events'
 
 development:
   <<: *common
   host: 'localhost'
   port: '9200'
-  index: 'lanalytics'
+  index: 'exp'
   user: 'lanalytics'
   password: 'lanalytics'
 

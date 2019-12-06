@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ExternalLinks < ReferrerMetric
+    class ExternalLinks < LinkTrackingEventsElasticMetric
 
       description 'Counts the total and unique clicks for a given announcement tracking id.'
 

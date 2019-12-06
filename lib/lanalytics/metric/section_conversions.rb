@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class SectionConversions < ExpApiPostgresMetric
+    class SectionConversions < ExpEventsPostgresMetric
 
       description 'Calculate nodes and links to display every users\' item visits from section to section as a sankey diagram'
 

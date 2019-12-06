@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class TopCitiesEs < ExpApiMetric
+    class TopCitiesEs < ExpEventsElasticMetric
       include Lanalytics::Helper::PercentageHelper
 
       description 'Returns top 100 cities.'

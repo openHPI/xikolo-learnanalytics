@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class LearnerDashboardLinkCounts < ExpApiMetric
+    class LearnerDashboardLinkCounts < ExpEventsElasticMetric
 
       description 'Counts the number of clicks on links (to forum, items, sections) in the learner dashboard.'
 

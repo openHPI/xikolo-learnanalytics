@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class SocialKpi < ExpApiMetric
+    class SocialKpi < ExpEventsElasticMetric
 
       description 'Calculates social kpi: social_today / avg_social.'
 

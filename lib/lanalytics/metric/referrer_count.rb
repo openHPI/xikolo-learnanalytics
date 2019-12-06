@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ReferrerCount < ReferrerMetric
+    class ReferrerCount < LinkTrackingEventsElasticMetric
 
       description 'Counts all referrers'
 

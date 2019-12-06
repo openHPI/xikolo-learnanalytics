@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class TopCountriesEs < ExpApiMetric
+    class TopCountriesEs < ExpEventsElasticMetric
       include Lanalytics::Helper::PercentageHelper
 
       description 'Returns top 100 countries.'

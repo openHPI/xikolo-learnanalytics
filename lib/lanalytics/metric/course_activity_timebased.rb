@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class CourseActivityTimebased < ExpApiMetric
+    class CourseActivityTimebased < ExpEventsElasticMetric
 
       description 'Returns the course activities within the specified time span grouped by the day of week and hour of the day.'
 

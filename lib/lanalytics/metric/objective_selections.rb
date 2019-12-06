@@ -1,6 +1,6 @@
 module Lanalytics
   module Metric
-    class ObjectiveSelections < ExpApiMetric
+    class ObjectiveSelections < ExpEventsElasticMetric
 
       description 'Learning objective measures including the number of users with objective, selections by objective, average number of objectives, and distribution of selected objectives.'
 
@@ -97,7 +97,8 @@ module Lanalytics
           # Count currently selected (active) objectives (by objective_id)
           active_objectives: active_objectives,
           # Count total selections
-          total_selections: result.dig('hits', 'total'),
+          total_selections:
+            ElasticMigration.result(result.dig('hits', 'total')),
           # Count total selections (by objective_id)
           total_selections_by_objective: total_selections_by_objective,
           # Average number of objectives per user
