@@ -129,7 +129,7 @@ describe LanalyticsConsumer do
           :lanalytics_consumer_spec,
           Lanalytics::Processing::Action::CREATE,
           [Lanalytics::Processing::Extractor::AmqEventExtractor.new(:exp_event)],
-          [Lanalytics::Processing::Transformer::ExpApiNativeSchemaTransformer.new],
+          [Lanalytics::Processing::Transformer::ExpEventPostgresSchemaTransformer.new],
           [Lanalytics::Processing::Loader::PostgresLoader.new(pg_conn)],
         )
       end
