@@ -32,13 +32,30 @@ module Lanalytics
                 nil,
                 params[:item_id],
               ),
+              must_not: {
+                term: {'in_context.current_time' => '0'},
+              },
             },
           },
           aggs: {
             timestamps: {
               histogram: {
                 field: 'in_context.current_time',
-                interval: '15',
+                interval: '10',
+                min_doc_count: '0',
+              },
+              aggs: {
+                verbs: {
+                  terms: {
+                    field: 'verb',
+                  },
+                },
+              },
+            },
+            old_timestamps: {
+              histogram: {
+                field: 'in_context.old_current_time',
+                interval: '10',
                 min_doc_count: '0',
               },
               aggs: {
@@ -56,7 +73,7 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        result.dig('aggregations', 'timestamps', 'buckets').map do |r|
+        values = result.dig('aggregations', 'timestamps', 'buckets').map do |r|
           e = {time: r['key']}
 
           verbs.each do |verb|
@@ -68,6 +85,18 @@ module Lanalytics
 
           e
         end
+
+        # workaround for seek events
+        result.dig('aggregations', 'old_timestamps', 'buckets').each do |r|
+          e = values.find {|v| v[:time] == r['key'] }
+
+          e['seek_start'] = r
+            .dig('verbs', 'buckets')
+            .find {|i| i['key'] == 'video_seek' }
+            &.dig('doc_count').to_i
+        end
+
+        values
       end
 
     end
