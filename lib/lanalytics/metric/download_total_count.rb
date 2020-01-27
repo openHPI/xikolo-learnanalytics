@@ -35,7 +35,7 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        {count: ElasticMigration.result(result.dig('hits', 'total')).to_i}
+        {count: result.dig('hits', 'total', 'value').to_i}
       end
 
       def self.download_verbs_filter(verbs)

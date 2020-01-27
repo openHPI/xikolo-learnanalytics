@@ -26,7 +26,7 @@ module Lanalytics
             }
           }
         end
-        ElasticMigration.result(result['hits']['total'])
+        result['hits']['total']['value']
       end
 
     end

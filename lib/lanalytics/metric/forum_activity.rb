@@ -39,7 +39,7 @@ module Lanalytics
           }
         end
         {
-          total: ElasticMigration.result(result.dig('hits', 'total')),
+          total: result.dig('hits', 'total', 'value'),
           user: result.dig('aggregations', 'user', 'value')
         }
       end

@@ -95,7 +95,7 @@ module Lanalytics
           end
 
         {
-          total: ElasticMigration.result(quiz_statements.dig('hits', 'total')),
+          total: quiz_statements.dig('hits', 'total', 'value'),
           average_points_percentage: avg,
           avg_attempts: quiz_statements.dig(
             'aggregations',
