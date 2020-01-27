@@ -32,7 +32,7 @@ module Lanalytics
 
           indexing_hash = {}.tap do |hash|
             hash[:index] = @elastic_datasource.index
-            hash[:type] = ElasticMigration.entity_key(entity)
+            hash[:type] = '_doc'
             hash[:id] = entity.primary_attribute.value.to_s if entity.primary_attribute
             hash[:body] = {}.tap do |body_hash|
               entity.all_non_nil_attributes.each do |attr|

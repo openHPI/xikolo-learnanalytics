@@ -91,10 +91,10 @@ module Lanalytics
 
         {
           data: processed_result,
-          next: current_last < ElasticMigration.result(result['hits']['total']),
+          next: current_last < result['hits']['total']['value'],
           scroll_id: result['_scroll_id'],
           total_pages: (
-            ElasticMigration.result(result['hits']['total']) / per_page.to_f
+            result['hits']['total']['value'] / per_page.to_f
           ).ceil,
         }
       end

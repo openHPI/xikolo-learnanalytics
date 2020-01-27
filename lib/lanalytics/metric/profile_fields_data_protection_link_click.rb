@@ -27,8 +27,7 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        {clicked:
-           ElasticMigration.result(result.dig('hits', 'total')).to_i.positive?}
+        {clicked: result.dig('hits', 'total', 'value').to_i.positive?}
       end
 
     end

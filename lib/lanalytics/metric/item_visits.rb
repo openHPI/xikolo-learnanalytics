@@ -17,11 +17,11 @@ module Lanalytics
         result = {}
 
         result[:total_item_visits] =
-          ElasticMigration.result(total_item_visits[:hits][:total])
+          total_item_visits[:hits][:total][:value]
         result[:total_item_visits_24] =
-          ElasticMigration.result(total_item_visits_24[:hits][:total])
+          total_item_visits_24[:hits][:total][:value]
         result[:total_item_visits_now] =
-          ElasticMigration.result(total_item_visits_now[:hits][:total])
+          total_item_visits_now[:hits][:total][:value]
         result[:users_visited] =
           total_item_visits[:aggregations][:distinct_user_count][:value]
         result[:users_visited_24] =

@@ -97,8 +97,7 @@ module Lanalytics
           # Count currently selected (active) objectives (by objective_id)
           active_objectives: active_objectives,
           # Count total selections
-          total_selections:
-            ElasticMigration.result(result.dig('hits', 'total')),
+          total_selections: result.dig('hits', 'total', 'value'),
           # Count total selections (by objective_id)
           total_selections_by_objective: total_selections_by_objective,
           # Average number of objectives per user
