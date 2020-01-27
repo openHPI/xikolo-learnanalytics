@@ -20,6 +20,7 @@ module Lanalytics
 
         body = {
           size: 0,
+          track_total_hits: true,
           query: {
             bool: {
               must: all_filters(

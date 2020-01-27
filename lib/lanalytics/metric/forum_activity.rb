@@ -10,6 +10,7 @@ module Lanalytics
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
+            track_total_hits: true,
             query: {
               bool: {
                 must: [

@@ -51,6 +51,7 @@ module Lanalytics
             },
             sort: ['_doc'],
             size: per_page,
+            track_total_hits: true,
           }
 
           if verb.present?

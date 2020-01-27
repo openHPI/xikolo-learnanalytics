@@ -23,6 +23,7 @@ module Lanalytics
 
           body = {
             size: 0,
+            track_total_hits: true,
             query: {
               bool: {
                 must: query_must

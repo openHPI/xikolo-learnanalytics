@@ -33,6 +33,7 @@ module Lanalytics
         quiz_statements = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
+            track_total_hits: true,
             query: query,
             aggs: {
               sum_points: {
