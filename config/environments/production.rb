@@ -18,12 +18,15 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :info
+  # We log to STDOUT on all production platforms. When deploying, this output
+  # should be sent to a better location, e.g. the syslog or a logging server.
+  config.log_level = :warn
+  config.log_tags = [:request_id]
+  config.log_formatter = ::Logger::Formatter.new
 
-  # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.logger = ActiveSupport::TaggedLogging.new(
+    ActiveSupport::Logger.new(STDOUT, formatter: config.log_formatter)
+  )
 
   config.action_mailer.perform_caching = false
 
@@ -33,15 +36,6 @@ Rails.application.configure do
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
-
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
-
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
-  end
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
