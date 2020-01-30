@@ -214,6 +214,7 @@ module Lanalytics
           title: item['title'],
           plays: ri&.dig('plays', 'user', 'value').to_i,
           visits: ri&.dig('visits', 'user', 'value').to_i,
+          duration: video['duration'],
           avg_farthest_watched: ri&.dig('farthest_watched', 'avg', 'value')
             .to_f / video['duration'],
           forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
