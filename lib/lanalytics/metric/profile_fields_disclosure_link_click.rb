@@ -2,7 +2,7 @@
 
 module Lanalytics
   module Metric
-    class ProfileFieldsDisclosureLinkClick < ExpEventsElasticMetric
+    class ProfileFieldsDisclosureLinkClick < LinkTrackingEventsElasticMetric
 
       description 'Check if a user has clicked on the profile_fields_disclosure_link (A/B test)'
 
