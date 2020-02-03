@@ -7,7 +7,7 @@ module Lanalytics
       class LinkTrackingEventElasticSchemaTransformer < TransformStep
         def transform(_, processing_units, load_commands, _)
           processing_units.each do |punit|
-            entity = Lanalytics::Processing::LoadORM::Entity.create(:referral) do
+            entity = Lanalytics::Processing::LoadORM::Entity.create(:link_tracking_event) do
               ctx = Lanalytics::Processing::Transformer::LinkTrackingEventElasticSchemaTransformer
               ctx.safe_with_attribute self, :referrer, :string, punit[:referrer]
               ctx.safe_with_attribute self, :referrer_page, :string, punit[:referrer_page]

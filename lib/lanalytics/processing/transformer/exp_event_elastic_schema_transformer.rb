@@ -23,7 +23,7 @@ module Lanalytics
         def transform_exp_event_punit_to_create(processing_unit, load_commands)
           exp_stmt = Lanalytics::Model::ExpApiStatement.new_from_json(processing_unit.data)
 
-          entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
+          entity = Lanalytics::Processing::LoadORM::Entity.create(:exp_event) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:user) do
               with_primary_attribute :resource_uuid, :uuid, exp_stmt.user.uuid
             end
@@ -65,7 +65,7 @@ module Lanalytics
         # Transforms everything to super-fancy object-oriented attributes / entities
         #
         def transform_punit_to_create(load_commands, attrs)
-          entity = Lanalytics::Processing::LoadORM::Entity.create(:EXP_STATEMENT) do
+          entity = Lanalytics::Processing::LoadORM::Entity.create(:exp_event) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:user) do
               with_primary_attribute :resource_uuid, :uuid, attrs[:user][:resource_uuid]
             end
