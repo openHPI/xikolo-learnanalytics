@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 shared_examples 'an experience statement' do
-  its(:entity_key) { is_expected.to eq :EXP_STATEMENT }
+  its(:entity_key) { is_expected.to eq :exp_event }
   it 'has the correct attributes' do
     expect(subject.attributes.map(&:name)).to match_array(
       %i(user verb resource timestamp in_context))
