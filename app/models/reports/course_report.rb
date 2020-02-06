@@ -93,6 +93,7 @@ module Reports
               device_usage = fetch_device_usage(course['id'], user['id'])
               first_action = fetch_metric('FirstAction', course['id'], user['id'])
               first_visited_item = fetch_metric('FirstVisitedItem', course['id'], user['id'])
+              last_action = fetch_metric('LastAction', course['id'], user['id'])
               last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
               forum_activity = fetch_metric('ForumActivity', course['id'], user['id'])&.dig(:total)
               forum_write_activity = fetch_metric('ForumWriteActivity', course['id'], user['id'])&.dig(:total)
@@ -106,6 +107,7 @@ module Reports
                 device_usage['mobile app'],
                 first_action.dig('timestamp') || '',
                 first_visited_item.dig('timestamp') || '',
+                last_action.dig('timestamp') || '',
                 last_visited_item.dig('timestamp') || '',
                 last_visited_item.dig('resource', 'resource_uuid') || '',
                 clustering_metrics.dig(user['id'], 'sessions') || '',
@@ -121,6 +123,8 @@ module Reports
                 forum_activity.to_f / course_days,
                 forum_write_activity,
                 clustering_metrics.dig(user['id'], 'quiz_performance') || '',
+                clustering_metrics.dig(user['id'], 'graded_quiz_performance') || '',
+                clustering_metrics.dig(user['id'], 'ungraded_quiz_performance') || '',
               ]
             end
 
@@ -134,6 +138,7 @@ module Reports
             values += [
               stat_pinboard['posts'],
               stat_pinboard['threads'],
+              enrollment['forced_submission_date'].present? || '',
               enrollment.dig('certificates', 'confirmation_of_participation') || '',
               enrollment.dig('certificates', 'record_of_achievement') || '',
               enrollment.dig('certificates', 'certificate') || '',
@@ -261,6 +266,8 @@ module Reports
         unique_video_downloads_activity
         unique_slide_downloads_activity
         quiz_performance
+        graded_quiz_performance
+        ungraded_quiz_performance
       ]
       result = Lanalytics::Clustering::Dimensions.query(course['id'], clustering_metrics, nil)
       result.map { |x| [x['user_uuid'], x.except('user_uuid')] }.to_h
@@ -315,6 +322,7 @@ module Reports
             'Mobile App Activity',
             'First Action Timestamp',
             'First Visited Item Timestamp',
+            'Last Action Timestamp',
             'Last Visited Item Timestamp',
             'Last Visited Item',
             'Sessions',
@@ -329,7 +337,9 @@ module Reports
             'Forum Activity',
             'Forum Activity per Day',
             'Forum Posting Activity',
-            'Quiz Performance'
+            'Quiz Performance',
+            'Graded Quiz Performance',
+            'Ungraded Quiz Performance',
           ]
         end
 
@@ -337,6 +347,7 @@ module Reports
           'Enrollment Delta in Days',
           'Forum Posts',
           'Forum Threads',
+          'Reactivated',
           'Confirmation of Participation',
           'Record of Achievement',
           'Qualified Certificate',
