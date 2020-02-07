@@ -1,5 +1,6 @@
 stages:
   - lint
+  - test
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -17,3 +18,21 @@ rubocop:
   script: bundle exec pronto run --commit origin/master --exit-code
   except:
     refs: [master]
+
+fossa:analyze:
+  stage: test
+  image: registry.xikolo.de/docker/fossa:latest
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}---fossa
+    paths:
+      - vendor/ruby
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - Gemfile.lock
+  before_script:
+    - bundle install --frozen --jobs 32 --retry 3 --clean --path vendor
+  script:
+    - fossa analyze
+    - fossa test --timeout 1200
