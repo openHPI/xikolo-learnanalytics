@@ -240,6 +240,10 @@
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
+          "player_version": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
           "points": {
             "type": "float"
           },
