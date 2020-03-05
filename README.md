@@ -9,12 +9,7 @@ Xikolo's Learning Analytics Engine
 * `bundle install`
 * `bundle exec rake db:drop db:create db:migrate`
 * `bundle exec rake db:seed`
-* install elasticsearch  
-  * `brew install elasticsearch@5.6` (macOS)
-  * `...` (Debian / Ubuntu)
-* start elasticsearch
-  * `brew services start elasticsearch@5.6` (macOS)
-  * `...` (Debian / Ubuntu)
+* Install and start Elasticsearch 7  
 * `bundle exec rake elastic:setup`
 * `bundle exec rails s -p 5900`
 
