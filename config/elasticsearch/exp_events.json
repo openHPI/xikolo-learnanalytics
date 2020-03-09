@@ -342,6 +342,9 @@
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
+          "score": {
+            "type": "float"
+          },
           "screen_density": {
             "type": "integer"
           },
