@@ -83,7 +83,8 @@ module Lanalytics
             end
             with_attribute :resource, :entity, resource_entity
 
-            with_attribute :timestamp, :timestamp, attrs[:timestamp]
+            with_attribute(:timestamp, :timestamp,
+              DateTime.parse(attrs[:timestamp].to_s).iso8601)
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
               attrs[:in_context].each do |attribute, value|

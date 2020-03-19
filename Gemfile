@@ -111,6 +111,7 @@ group :test do
   gem 'simplecov'
   gem 'accept_values_for'
   gem 'rspec-sidekiq'
+  gem 'timecop'
 end
 
 group :test, :integration do
