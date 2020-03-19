@@ -17,7 +17,7 @@ shared_examples 'an experience statement' do
   end
 
   it 'has iso8601 formatted timestamp' do
-    expect(subject[:timestamp].value).to eq('2018-01-01T01:00:00+01:00')
+    expect { Time.iso8601(subject[:timestamp].value) }.not_to raise_error
   end
 end
 
