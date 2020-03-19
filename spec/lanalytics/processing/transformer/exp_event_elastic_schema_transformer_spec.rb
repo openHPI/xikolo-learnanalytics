@@ -1,7 +1,12 @@
 require 'rails_helper'
 
 shared_examples 'an experience statement' do
+  before { Timecop.freeze Time.zone.local(2018, 1, 1, 0, 0, 0) }
+
+  after { Timecop.return }
+
   its(:entity_key) { is_expected.to eq :exp_event }
+
   it 'has the correct attributes' do
     expect(subject.attributes.map(&:name)).to match_array(
       %i(user verb resource timestamp in_context))
@@ -9,6 +14,10 @@ shared_examples 'an experience statement' do
 
   it 'has only non-nil attributes' do
     expect(subject.attributes.map(&:value).select(&:nil?).size).to eq 0
+  end
+
+  it 'has iso8601 formatted timestamp' do
+    expect(subject[:timestamp].value).to eq('2018-01-01T01:00:00+01:00')
   end
 end
 
