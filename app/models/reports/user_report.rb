@@ -51,7 +51,7 @@ module Reports
         end
 
         if @include_auth && @deanonymized
-          headers.concat Xikolo.config.reportable_auth_fields.map { |f| "Auth: #{f}" }
+          headers.concat(reportable_auth_fields.map {|f| "Auth: #{f}" })
         end
 
         if @include_consents
@@ -59,7 +59,7 @@ module Reports
         end
 
         if @include_features
-          headers.concat Xikolo.config.reportable_features.map { |f| "Feature: #{f}" }
+          headers.concat(reportable_features.map {|f| "Feature: #{f}" })
         end
 
         if @include_email_subscriptions
@@ -122,7 +122,7 @@ module Reports
 
         if @include_auth && @deanonymized
           authorizations = account_service.rel(:authorizations).get(user: user['id']).value!
-          values += Xikolo.config.reportable_auth_fields.map do |f|
+          values += reportable_auth_fields.map do |f|
             authorizations
               .select { |auth| auth['provider'] == f.split('.').first }
               .map { |auth| auth.dig(*f.split('.').drop(1)) }
@@ -140,7 +140,7 @@ module Reports
 
         if @include_features
           features = user.rel(:features).get.value!
-          values += Xikolo.config.reportable_features.map { |f| features.key?(f) || '' }
+          values += reportable_features.map {|f| features.key?(f) || '' }
         end
 
         if @include_email_subscriptions
@@ -268,6 +268,14 @@ module Reports
 
     def treatments
       @treatments ||= account_service.rel(:treatments).get.value!
+    end
+
+    def reportable_features
+      Xikolo.config.reports['features']
+    end
+
+    def reportable_auth_fields
+      Xikolo.config.reports['auth_fields']
     end
 
     def account_service
