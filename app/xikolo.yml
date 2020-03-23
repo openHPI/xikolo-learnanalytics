@@ -27,3 +27,19 @@ qc_alert:
     medium_threshold: 15
     high_threshold: 20
     page_view_threshold: 50
+reports:
+  # List of classifiers which are utilized by reports
+  classifiers: []
+  # List of features which are utilized by reports
+  features: []
+  # Configuration of authorization provider and their attributes (nested
+  # separated by `.`) which are utilized by reports. First word needs to
+  # be the authorization provider name, followed by the desired attribute.
+  # Nested attributes can be accessed by the hash name, like `info`
+  # in the example.
+  #
+  #  auth_fields:
+  #    - 'sap.uid'
+  #    - 'sap.info.user_name'
+  #
+  auth_fields: []

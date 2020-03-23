@@ -29,7 +29,8 @@ module Reports
           course_service.rel(:classifiers).get
         end.each_item do |classifier|
           # filter classifiers only if explicitly configured
-          if Xikolo.config.reportable_classifiers.nil? || Xikolo.config.reportable_classifiers.include?(classifier['cluster'])
+          if reportable_classifiers.nil? ||
+             reportable_classifiers.include?(classifier['cluster'])
             @classifiers.append(classifier)
           end
         end
@@ -51,6 +52,10 @@ module Reports
 
     def classifier_for_cluster(cluster)
       @classifiers.select { |c| c['cluster'] == cluster }.sort_by { |c| c['title'].downcase }
+    end
+
+    def reportable_classifiers
+      Xikolo.config.reports['classifiers']
     end
 
     def headers(cluster = nil)
