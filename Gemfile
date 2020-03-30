@@ -66,8 +66,6 @@ gem 'browser' # Browser info
 
 gem 'uuid4'
 
-gem 'rserve-client', '~> 0.3.1' # Connect ruby to R
-
 gem 'responders'
 gem 'decorate-responder'
 gem 'will_paginate'

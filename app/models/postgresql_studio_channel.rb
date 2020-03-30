@@ -1,3 +1,0 @@
-class PostgresqlStudioChannel < WebAppChannel
-
-end

@@ -12,7 +12,6 @@ config/elasticsearch        usr/lib/${PACKAGE}/config/
 config/environment.rb       usr/lib/${PACKAGE}/config/
 config/environments         usr/lib/${PACKAGE}/config/
 config/initializers         usr/lib/${PACKAGE}/config/
-config/lanalytics_sync.yml  usr/lib/${PACKAGE}/config/
 config/locales              usr/lib/${PACKAGE}/config/
 config/msgr.rb              usr/lib/${PACKAGE}/config/
 config/permissions.yml      usr/lib/${PACKAGE}/config/
