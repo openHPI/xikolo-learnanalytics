@@ -1,2 +1,0 @@
-class ElasticDatasource < Datasource
-end

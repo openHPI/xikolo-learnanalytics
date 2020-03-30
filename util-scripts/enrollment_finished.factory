@@ -1,4 +1,0 @@
-{
-"id"=>"c4713db6-f525-426a-9d92-433186c222bb", 
-"user_id"=>"00000003-3100-4444-9999-000000000170", 
-"course_id"=>"ef41fa17-8e7b-4a9f-93f0-d64b01737078", "role"=>"student", "url"=>"/enrollments/c4713db6-f525-426a-9d92-433186c222bb", "created_at"=>"2014-11-13T10:47:47.233Z", "points"=>{"achieved"=>5.0, "maximal"=>10.0, "percentage"=>50.0}, "certificates"=>{"confirmation_of_participation"=>nil, "record_of_achievement"=>nil, "certificate"=>nil}, "completed"=>false, "quantile"=>1.0}

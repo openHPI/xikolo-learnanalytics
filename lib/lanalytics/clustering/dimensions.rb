@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# legacy code; still used by metrics
+
 class Lanalytics::Clustering::Dimensions
 
   # To add a verb:

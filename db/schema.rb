@@ -10,21 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_14_122557) do
+ActiveRecord::Schema.define(version: 2020_03_20_145501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
-
-  create_table "cluster_groups", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string "name"
-    t.jsonb "user_uuids"
-    t.jsonb "cluster_results"
-    t.uuid "course_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "course_statistics", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string "course_code"
@@ -81,21 +72,6 @@ ActiveRecord::Schema.define(version: 2019_03_14_122557) do
     t.integer "cop_count"
     t.integer "qc_count"
     t.float "consumption_rate"
-  end
-
-  create_table "datasource_accesses", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "research_case_id"
-    t.string "datasource_key"
-    t.string "channel"
-    t.datetime "accessed_at", default: "1970-01-01 00:00:00", null: false
-  end
-
-  create_table "datasources", primary_key: "key", id: :string, force: :cascade do |t|
-    t.string "name"
-    t.text "description"
-    t.text "settings"
-    t.string "type"
   end
 
   create_table "events", id: :serial, force: :cascade do |t|
@@ -177,18 +153,6 @@ ActiveRecord::Schema.define(version: 2019_03_14_122557) do
     t.jsonb "options", default: {}, null: false
   end
 
-  create_table "research_cases", id: :serial, force: :cascade do |t|
-    t.string "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "description"
-  end
-
-  create_table "research_cases_users", primary_key: ["research_case_id", "user_id"], force: :cascade do |t|
-    t.integer "research_case_id", null: false
-    t.integer "user_id", null: false
-  end
-
   create_table "resources", id: :serial, force: :cascade do |t|
     t.string "uuid"
     t.string "resource_type"
@@ -199,28 +163,6 @@ ActiveRecord::Schema.define(version: 2019_03_14_122557) do
   create_table "section_conversions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "course_id"
     t.jsonb "data"
-  end
-
-  create_table "teacher_actions", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "cluster_group_id"
-    t.uuid "author_id"
-    t.uuid "richtext_id"
-    t.jsonb "subject"
-    t.jsonb "user_uuids"
-    t.datetime "action_performed_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "half_group", default: false, null: false
-  end
-
-  create_table "users", id: :serial, force: :cascade do |t|
-    t.string "email", null: false
-    t.string "crypted_password", null: false
-    t.string "salt", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "username"
-    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   create_table "verbs", id: :serial, force: :cascade do |t|
