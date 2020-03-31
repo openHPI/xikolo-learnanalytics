@@ -43,7 +43,11 @@ module Reports
             course_id: course['id'], per_page: 50, deleted: true
           )
         end.each_item do |e, enrollment_page|
-          user = account_service.rel(:user).get(id: e['user_id']).value!
+          user, * = Xikolo::RetryingPromise.new(
+            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+              account_service.rel(:user).get(id: e['user_id'])
+            end,
+          ).value!
 
           Xikolo::RetryingPromise.new(
             Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) {
@@ -81,7 +85,12 @@ module Reports
 
             if @include_profile
               values += [user['avatar_url'].present? ? 'true' : '']
-              profile = user.rel(:profile).get.value!
+
+              profile, * = Xikolo::RetryingPromise.new(
+                Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+                  user.rel(:profile).get
+                end,
+              ).value!
               profile_fields = ProfileFields.new(profile, @deanonymized)
               values += profile_fields.values
             end
