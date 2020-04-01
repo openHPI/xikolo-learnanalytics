@@ -13,6 +13,8 @@ require 'bundler'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require 'telegraf/rails'
+
 module Xikolo::Lanalytics
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -31,6 +33,8 @@ module Xikolo::Lanalytics
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
     end
+
+    config.telegraf.rack.tags = {application: 'learnanalytics'}
 
     initializer 'xikolo-patches' do
       require 'ext/xikolo/common/paginate_with_retries'
