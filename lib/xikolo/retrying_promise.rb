@@ -9,14 +9,10 @@ module Xikolo
       loop do
         @dependencies.each do |dep|
           dep.value!
-        rescue Restify::ServerError => e
-          if (502..504) === e.response.code
-            ::Mnemosyne.attach_error(e)
-            ::Raven.capture_exception(e)
-            dep.retry!
-          else
-            raise
-          end
+        rescue Restify::GatewayError => e
+          ::Mnemosyne.attach_error(e)
+          ::Raven.capture_exception(e)
+          dep.retry!
         end
 
         break if @dependencies.all?(&:success?)
