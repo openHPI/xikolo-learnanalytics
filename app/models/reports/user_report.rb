@@ -25,8 +25,7 @@ module Reports
       ['User ID'].tap do |headers|
         if @deanonymized
           headers.concat [
-            'First Name',
-            'Last Name',
+            'Full Name',
             'Email'
           ]
         end
@@ -90,8 +89,7 @@ module Reports
 
         if @deanonymized
           values += [
-            escape_csv_string(user['first_name']),
-            escape_csv_string(user['last_name']),
+            escape_csv_string(user['full_name']),
             user['email']
           ]
         end
