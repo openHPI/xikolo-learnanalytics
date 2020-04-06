@@ -44,7 +44,7 @@ module Reports
           )
         end.each_item do |e, enrollment_page|
           user, * = Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+            Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
               account_service.rel(:user).get(id: e['user_id'])
             end,
           ).value!
@@ -86,7 +86,7 @@ module Reports
               values += [user['avatar_url'].present? ? 'true' : '']
 
               profile, * = Xikolo::RetryingPromise.new(
-                Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+                Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
                   user.rel(:profile).get
                 end,
               ).value!
@@ -113,11 +113,11 @@ module Reports
                 device_usage['desktop web'],
                 device_usage['mobile web'],
                 device_usage['mobile app'],
-                first_action.dig('timestamp') || '',
-                first_visited_item.dig('timestamp') || '',
-                last_action.dig('timestamp') || '',
-                last_visited_item.dig('timestamp') || '',
-                last_visited_item.dig('resource', 'resource_uuid') || '',
+                first_action&.dig('timestamp') || '',
+                first_visited_item&.dig('timestamp') || '',
+                last_action&.dig('timestamp') || '',
+                last_visited_item&.dig('timestamp') || '',
+                last_visited_item&.dig('resource', 'resource_uuid') || '',
                 clustering_metrics.dig(user['id'], 'sessions') || '',
                 clustering_metrics.dig(user['id'], 'average_session_duration') || '',
                 clustering_metrics.dig(user['id'], 'total_session_duration') || '',
