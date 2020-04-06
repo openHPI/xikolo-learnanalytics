@@ -14,8 +14,7 @@ module Reports
     def headers
       [
         'User ID',
-        'First Name',
-        'Last Name',
+        'Full Name',
         'Email',
         'Created'
       ]
@@ -31,8 +30,7 @@ module Reports
       end.each_item do |user, page|
         values = [
           user['id'],
-          escape_csv_string(user['first_name']),
-          escape_csv_string(user['last_name']),
+          escape_csv_string(user['full_name']),
           user['email'],
           user['created_at'].to_datetime.strftime('%Y-%m-%d')
         ]
