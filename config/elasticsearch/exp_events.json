@@ -135,10 +135,18 @@
           "hd_video": {
             "type": "boolean"
           },
+          "helpdesk_session_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
           "implicit_tags": {
             "type": "text"
           },
           "item_id": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
+          "language": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
@@ -278,6 +286,9 @@
           "quantile": {
             "type": "double"
           },
+          "question": {
+            "type": "text"
+          },
           "question_id": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
@@ -331,6 +342,15 @@
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
+          "report": {
+            "type": "text"
+          },
+          "request_time": {
+            "type": "float"
+          },
+          "response": {
+            "type": "text"
+          },
           "runtime": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
@@ -368,6 +388,10 @@
           "slides": {
             "type": "boolean"
           },
+          "status": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
           "stopped_by_user": {
             "type": "boolean"
           },
@@ -375,6 +399,9 @@
             "type": "boolean"
           },
           "text": {
+            "type": "text"
+          },
+          "topic": {
             "type": "text"
           },
           "total_space": {
