@@ -27,11 +27,15 @@ module Reports
         if @include_analytics_metrics
           clustering_metrics = fetch_clustering_metrics(course)
 
-          video_count ||= course_service.rel(:items).get(
-            course_id: course['id'],
-            content_type: 'video',
-            was_available: true
-          ).value!.count
+          video_count ||= Xikolo::RetryingPromise.new(
+            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+              course_service.rel(:items).get(
+                course_id: course['id'],
+                content_type: 'video',
+                was_available: true,
+              )
+            end,
+          ).value!.first.count
 
           start_date =  Date.parse(course['start_date'])
           end_date =    course['end_date'].present? ? Date.parse(course['end_date']) : Date.today
@@ -43,11 +47,11 @@ module Reports
             course_id: course['id'], per_page: 50, deleted: true
           )
         end.each_item do |e, enrollment_page|
-          user, * = Xikolo::RetryingPromise.new(
+          user = Xikolo::RetryingPromise.new(
             Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
               account_service.rel(:user).get(id: e['user_id'])
             end,
-          ).value!
+          ).value!.first
 
           Xikolo::RetryingPromise.new(
             Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) {
@@ -85,11 +89,11 @@ module Reports
             if @include_profile
               values += [user['avatar_url'].present? ? 'true' : '']
 
-              profile, * = Xikolo::RetryingPromise.new(
+              profile = Xikolo::RetryingPromise.new(
                 Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
                   user.rel(:profile).get
                 end,
-              ).value!
+              ).value!.first
               profile_fields = ProfileFields.new(profile, @deanonymized)
               values += profile_fields.values
             end
@@ -163,7 +167,14 @@ module Reports
 
             # For each section, append visit percentage and points percentage
             if @include_sections
-              progresses = course_service.rel(:progresses).get(user_id: user['id'], course_id: course['id']).value!
+              progresses = Xikolo::RetryingPromise.new(
+                Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+                  course_service.rel(:progresses).get(
+                    user_id: user['id'],
+                    course_id: course['id'],
+                  )
+                end,
+              ).value!.first
 
               values += course_sections.map do |s|
                 p = progresses.find { |p| p['resource_id'] == s['id'] }
@@ -384,7 +395,12 @@ module Reports
     end
 
     def courses
-      @courses ||= [course_service.rel(:course).get(id: @job.task_scope).value!]
+      # return an array with the course
+      @courses ||= Xikolo::RetryingPromise.new(
+        Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+          course_service.rel(:course).get(id: @job.task_scope)
+        end,
+      ).value!
     end
 
     def course
@@ -392,11 +408,15 @@ module Reports
     end
 
     def course_sections
-      @course_sections ||= course_service.rel(:sections).get(
-        course_id: course['id'],
-        published: true,
-        include_alternatives: true
-      ).value!
+      @course_sections ||= Xikolo::RetryingPromise.new(
+        Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+          course_service.rel(:sections).get(
+            course_id: course['id'],
+            published: true,
+            include_alternatives: true,
+          )
+        end,
+      ).value!.first
     end
 
     def quiz_column_headers
@@ -429,17 +449,21 @@ module Reports
     def all_user_submissions(user_id)
       return {} unless @include_all_quizzes
 
-      submissions = quiz_service.rel(:quiz_submissions).get(
-        user_id: user_id,
-        only_submitted: true,
-        course_id: course['id']
-      ).value!
+      all_submissions = []
 
-      all_submissions = submissions.data
+      submissions_promise = Xikolo.paginate_with_retries(
+        max_retries: 3,
+        wait: 60.seconds,
+      ) do
+        quiz_service.rel(:quiz_submissions).get(
+          user_id: user_id,
+          only_submitted: true,
+          course_id: course['id'],
+        )
+      end
 
-      while submissions.rel?(:next)
-        submissions = submissions.rel(:next).get.value!
-        all_submissions += submissions
+      submissions_promise.each_item do |submissions|
+        all_submissions.append(submissions)
       end
 
       # Get last submission for every quiz
@@ -452,11 +476,22 @@ module Reports
     end
 
     def first_enrollment?(enrollment)
-      all_enrollments = course_service.rel(:enrollments).get(
-        user_id: enrollment['user_id'],
-        deleted: true,
-        per_page: 500
-      ).value!
+      all_enrollments = []
+
+      enrollments_promise = Xikolo.paginate_with_retries(
+        max_retries: 3,
+        wait: 60.seconds,
+      ) do
+        course_service.rel(:enrollments).get(
+          user_id: enrollment['user_id'],
+          deleted: true,
+          per_page: 500,
+        )
+      end
+
+      enrollments_promise.each_item do |enrollments|
+        all_enrollments.append(enrollments)
+      end
 
       compare_date = as_date(enrollment['created_at'])
 
