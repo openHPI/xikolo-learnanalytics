@@ -40,6 +40,13 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  # Use Redis for caching
+  redis = Rails.application.config_for(:cache_redis)
+  config.cache_store = :redis_cache_store, {
+    url: redis.fetch('url'),
+    expires_in: 1.day,
+  }
+
   # load puppet production specific configuration
   if File.exist? File.expand_path('puppet.rb', __dir__)
     require File.expand_path('puppet', __dir__)

@@ -37,6 +37,7 @@ gem 'connection_pool'
 
 # Different database adapters to store the data
 gem 'pg', '~> 1.1'
+gem 'redis', '~> 4.0'
 gem 'elasticsearch'
 gem 'elasticsearch-transport'
 
@@ -76,9 +77,6 @@ gem 'mechanize'
 
 # for versioning
 gem 'paper_trail'
-
-# Asynchronous execution + cache in redis
-gem 'redis-activesupport'
 
 group :development do
   gem 'spring' # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring

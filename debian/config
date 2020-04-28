@@ -1,3 +1,4 @@
+cache_redis.yml
 database.yml
 lanalytics_pipeline_flipper.yml
 mnemosyne.yml
