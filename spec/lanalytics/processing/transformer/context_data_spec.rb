@@ -74,7 +74,7 @@ describe Lanalytics::Processing::Transformer::ContextData do
 
       expect(@processing_units.length).to eq(1)
       in_context = @processing_units[0][:in_context]
-      expect(in_context).to include(:platform => "Macintosh")
+      expect(in_context).to include(:platform => "Mac OS X")
       expect(in_context).to include(:platform_version => "10.11.4")
       expect(in_context).to include(:runtime => "Chrome")
       expect(in_context).to include(:runtime_version => "50")

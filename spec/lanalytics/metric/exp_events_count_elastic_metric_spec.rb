@@ -8,7 +8,7 @@ RSpec.describe Lanalytics::Metric::ExpEventsCountElasticMetric do
 
   describe '#query', elasticsearch: true do
     before do
-      stub_request(:get, 'http://localhost:9200/_count')
+      stub_request(:post, 'http://localhost:9200/_count')
         .to_return(status: 200,
                    body: '{"count":0,"_shards":{"total":5,"successful":5,"failed":0}}',
                    headers: {'Content-Type' => 'application/json; charset=UTF-8'})

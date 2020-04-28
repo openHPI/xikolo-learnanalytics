@@ -46,6 +46,7 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.infer_spec_type_from_file_location!
+  config.example_status_persistence_file_path = 'spec/examples.txt'
 
   config.before do
     stub_request(:any, /lanalytics\.xikolo\.tld/)
