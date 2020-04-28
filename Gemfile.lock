@@ -270,7 +270,7 @@ GEM
       rack (~> 2.0)
     rack-link_headers (2.2.2)
       rack
-    rack-protection (2.0.7)
+    rack-protection (2.0.8.1)
       rack
     rack-remote (1.1.0)
       multi_json
@@ -396,9 +396,9 @@ GEM
       rdoc (~> 4.0)
     sentry-raven (2.11.3)
       faraday (>= 0.7.6, < 1.0)
-    sidekiq (6.0.2)
+    sidekiq (6.0.7)
       connection_pool (>= 2.2.2)
-      rack (>= 2.0.0)
+      rack (~> 2.0)
       rack-protection (>= 2.0.0)
       redis (>= 4.1.0)
     sidekiq-cron (1.1.0)
