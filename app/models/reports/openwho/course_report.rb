@@ -37,7 +37,7 @@ module Reports::Openwho
         'Gender',
         'Affiliation',
         'Country of Nationality',
-        'Last Country',
+        'Last Country (Name)',
       ].tap do |headers|
         if @include_enrollment_evaluation
           headers.append(
@@ -100,7 +100,7 @@ module Reports::Openwho
             'LastCountry', course['id'], user['id']
           ).dig(:code)
           last_country_name = suppress(IsoCountryCodes::UnknownCodeError) do
-            IsoCountryCodes.find(last_country_code)
+            IsoCountryCodes.find(last_country_code)&.name
           end
 
           values.append(last_country_name || last_country_code)
