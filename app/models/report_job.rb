@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
 class ReportJob < ApplicationRecord
-  validates_presence_of :user_id
-  validates_presence_of :task_type
-  validates_presence_of :task_scope, if: :scoped?
+  validates :user_id, presence: true
+  validates :task_type, presence: true
+  validates :task_scope, presence: {if: :scoped?}
+
+  before_destroy :validate_not_running
 
   REPORT_CLASSES = {
     'course_report' => Reports::CourseReport,
@@ -14,9 +18,11 @@ class ReportJob < ApplicationRecord
     'enrollment_report' => Reports::EnrollmentReport,
     'course_content_report' => Reports::CourseContentReport,
     'overall_course_summary_report' => Reports::OverallCourseSummaryReport,
-  }
+    'openwho_course_report' => Reports::Openwho::CourseReport,
+    'openwho_combined_course_report' => Reports::Openwho::CombinedCourseReport,
+  }.freeze
 
-  default_scope {order('updated_at DESC')}
+  default_scope { order('updated_at DESC') }
 
   class << self
     def start(job_id)
@@ -29,14 +35,11 @@ class ReportJob < ApplicationRecord
   end
 
   def generate!
-    REPORT_CLASSES.fetch(task_type).new(self).tap { |report|
-      report.generate!
-    }
+    REPORT_CLASSES.fetch(task_type).new(self).tap(&:generate!)
   end
 
-  def destroy
+  def validate_not_running
     raise ReportJobRunningError if status == 'started'
-    super
   end
 
   class ReportJobRunningError < StandardError
@@ -45,6 +48,7 @@ class ReportJob < ApplicationRecord
     end
   end
 
+  # rubocop:disable Naming/UncommunicativeMethodParamName
   def progress_to(part, of:)
     # Prevent division by zero
     return if of == 0
@@ -53,13 +57,14 @@ class ReportJob < ApplicationRecord
 
     update progress: [0, percentage, 100].sort[1]
   end
+  # rubocop:enable all
 
   # Mark a job as complete and set the given attributes
   def finish_with(attributes)
     update attributes.merge(
       status: 'done',
       progress: 100,
-      options: options.except('zip_password')
+      options: options.except('zip_password'),
     )
 
     self
@@ -69,7 +74,7 @@ class ReportJob < ApplicationRecord
   def fail_with(error_message)
     update(
       status: 'failing',
-      error_text: error_message
+      error_text: error_message,
     )
   end
 
@@ -89,10 +94,10 @@ class ReportJob < ApplicationRecord
   end
 
   def scoped?
-    %w(
+    %w[
       user_report
       unconfirmed_user_report
       overall_course_summary_report
-    ).exclude? task_type
+    ].exclude? task_type
   end
 end
