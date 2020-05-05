@@ -20,10 +20,16 @@ class ProfileFields
     all_fields.reject { |f| omittable_fields.include? f['name'] }
   end
 
+  def [](name)
+    field = fields.find {|f| f['name'] == name }
+
+    return nil unless field
+
+    value(from_field: field)
+  end
+
   def values
-    fields.map do |f|
-      f['type'] == 'CustomTextField' ? "\"#{f.dig('values', 0)}\"" : f.dig('values')&.join(';')
-    end
+    fields.map {|field| value(from_field: field) }
   end
 
   def titles
@@ -40,4 +46,13 @@ class ProfileFields
     profile_fields.titles
   end
 
+  private
+
+  def value(from_field:)
+    if from_field['type'] == 'CustomTextField'
+      "\"#{from_field.dig('values', 0)}\""
+    else
+      from_field.dig('values')&.join(';')
+    end
+  end
 end
