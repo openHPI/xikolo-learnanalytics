@@ -418,7 +418,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    telegraf (0.6.1)
+    telegraf (0.7.0)
       influxdb
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
@@ -531,7 +531,7 @@ DEPENDENCIES
   sidekiq-cron
   simplecov
   spring
-  telegraf (~> 0.6.0)
+  telegraf (~> 0.7.0)
   timecop
   unicorn
   uuid4
