@@ -39,6 +39,10 @@ module Reports::Openwho
         'Country of Nationality',
         'Last Country (Name)',
       ].tap do |headers|
+        if reportable_country_regions.any?
+          headers.append('Last Country (Region)')
+        end
+
         if @include_enrollment_evaluation
           headers.append(
             'Items Visited',
@@ -105,6 +109,14 @@ module Reports::Openwho
 
           values.append(last_country_name || last_country_code)
 
+          if reportable_country_regions.any?
+            regions = reportable_country_regions.select do |_, countries|
+              countries.any? {|c| c.casecmp(last_country_code) == 0 }
+            end
+
+            values.append(regions.keys.join(';'))
+          end
+
           if @include_enrollment_evaluation
             evaluation = Xikolo::RetryingPromise.new(
               Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
@@ -162,6 +174,10 @@ module Reports::Openwho
     def fetch_metric(metric, course_id, user_id)
       metric = "Lanalytics::Metric::#{metric}".constantize
       metric.query(user_id: user_id, course_id: course_id)
+    end
+
+    def reportable_country_regions
+      Xikolo.config.reports['country_regions'] || {}
     end
 
     def courses

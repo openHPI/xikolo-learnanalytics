@@ -41,5 +41,13 @@ reports:
   #  auth_fields:
   #    - 'sap.uid'
   #    - 'sap.info.user_name'
-  #
   auth_fields: []
+  # Hash of custom regions and their corresponding ISO country codes. A country
+  # can be included in multiple regions. Used by WHO's course report. Example:
+  #
+  # country_regions:
+  #   AFRO:
+  #     - DZ
+  #     - AO
+  #     - BJ
+  country_regions: {}
