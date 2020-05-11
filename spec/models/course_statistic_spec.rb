@@ -85,7 +85,7 @@ describe CourseStatistic do
     )
 
     # elasticsearch
-    stub_request(:get, 'http://localhost:9200/_count')
+    stub_request(:post, 'http://localhost:9200/_count')
       .to_return(status: 200)
     stub_request(:get, 'http://localhost:9200/_search')
       .to_return(
