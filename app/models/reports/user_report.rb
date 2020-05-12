@@ -269,11 +269,11 @@ module Reports
     end
 
     def reportable_features
-      Xikolo.config.reports['features']
+      Xikolo.config.reports['features'] || []
     end
 
     def reportable_auth_fields
-      Xikolo.config.reports['auth_fields']
+      Xikolo.config.reports['auth_fields'] || []
     end
 
     def account_service
