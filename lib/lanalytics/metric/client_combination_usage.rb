@@ -77,6 +77,7 @@ module Lanalytics
               must: [
                 {exists: {field: 'in_context.platform'}},
                 {exists: {field: 'in_context.runtime'}},
+                {wildcard: {verb: 'visited_*'}},
               ].append(
                 course_filter(params[:course_id]),
                 date_filter(params[:start_date], params[:end_date]),

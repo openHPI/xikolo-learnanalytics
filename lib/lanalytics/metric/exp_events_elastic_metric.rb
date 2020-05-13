@@ -25,6 +25,18 @@ module Lanalytics
         }
       end
 
+      def self.user_filter(user_id)
+        return nil if user_id.nil?
+
+        {match: {'user.resource_uuid' => user_id}}
+      end
+
+      def self.resource_filter(resource_id)
+        return nil if resource_id.nil?
+
+        {match: {'resource.resource_uuid' => resource_id}}
+      end
+
       def self.date_filter(start_date, end_date)
         return nil if start_date.nil? && end_date.nil?
 
@@ -41,40 +53,16 @@ module Lanalytics
         df
       end
 
-      # deprecated
-      # rubocop:disable Metrics/MethodLength
+      # deprecated, use the more specific filter methods instead
       def self.all_filters(user_id, course_id, resource_id)
-        filters_ = if course_id.nil?
-                     []
-                   else
-                     [
-                       {
-                         bool: {
-                           minimum_should_match: 1,
-                           should: [
-                             {match: {'in_context.course_id' => course_id}},
-                             {match: {'resource.resource_uuid' => course_id}},
-                           ],
-                         },
-                       },
-                     ]
-                   end
+        af = [
+          course_filter(course_id),
+          user_filter(user_id),
+          resource_filter(resource_id),
+        ].compact
 
-        filters_ += if user_id.nil?
-                      []
-                    else
-                      [{match: {'user.resource_uuid' => user_id}}]
-                    end
-
-        filters_ += if resource_id.nil?
-                      []
-                    else
-                      [{match: {'resource.resource_uuid' => resource_id}}]
-                    end
-
-        filters_ + filters
+        af + filters
       end
-      # rubocop:enable all
 
       # deprecated
       def self.filters
