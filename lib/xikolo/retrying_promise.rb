@@ -9,7 +9,7 @@ module Xikolo
       loop do
         @dependencies.each do |dep|
           dep.value!
-        rescue Restify::GatewayError => e
+        rescue Restify::GatewayError, Restify::Timeout::Error => e
           ::Mnemosyne.attach_error(e)
           ::Raven.capture_exception(e)
           dep.retry!
