@@ -21,7 +21,8 @@ class CreateReportJob < ApplicationJob
         publish_file job, zip_file
       end
     rescue => error
-      trace = "#{error.message}\n#{error.backtrace.join("\n")}"
+      trace =
+        "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
       Sidekiq.logger.error trace
       job.fail_with trace
     end
@@ -32,7 +33,8 @@ class CreateReportJob < ApplicationJob
   def publish_file(job, path)
     job.finish_with upload_file(path, job.id)
   rescue => error
-    trace = "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
+    trace =
+      "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
     job.fail_with("Report could not be stored:\n#{trace}")
   end
 
