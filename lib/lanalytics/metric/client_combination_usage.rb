@@ -122,12 +122,12 @@ module Lanalytics
       def self.intersection_users(result, intersections, client_types)
         # Inclusion-exclusion principle
         sign = (-1)**(client_types.size + 1)
-        union_users(result, client_types) + (1...client_types.size).map do |n|
+        (union_users(result, client_types) + (1...client_types.size).map do |n|
           subset_sign = (-1)**n
           client_types.combination(n).map do |subset|
             intersections[subset]
           end.sum * subset_sign
-        end.sum * sign
+        end.sum) * sign
       end
       # rubocop:enable all
 
