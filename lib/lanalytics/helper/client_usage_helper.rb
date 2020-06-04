@@ -15,8 +15,4 @@ module Lanalytics::Helper::ClientUsageHelper
   def mobile_app_runtimes
     ['android', 'ios']
   end
-
-  def tv_app_runtimes
-    ['tvos']
-  end
 end
