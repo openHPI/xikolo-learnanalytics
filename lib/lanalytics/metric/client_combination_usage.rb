@@ -20,9 +20,6 @@ module Lanalytics
         mobile_app_runtimes_conditions = mobile_app_runtimes.map do |runtime|
           {match: {'in_context.runtime' => runtime}}
         end
-        tv_app_runtimes_conditions = tv_app_runtimes.map do |runtime|
-          {match: {'in_context.runtime' => runtime}}
-        end
 
         filters = {
           desktop_web: {
@@ -33,18 +30,12 @@ module Lanalytics
           mobile_web: {
             bool: {
               should: mobile_web_platforms_conditions,
-              must_not: mobile_app_runtimes_conditions +
-                        tv_app_runtimes_conditions,
+              must_not: mobile_app_runtimes_conditions,
             },
           },
           mobile_app: {
             bool: {
               should: mobile_app_runtimes_conditions,
-            },
-          },
-          tv_app: {
-            bool: {
-              should: tv_app_runtimes_conditions,
             },
           },
         }

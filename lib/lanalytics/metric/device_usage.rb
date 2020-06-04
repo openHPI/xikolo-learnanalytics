@@ -65,7 +65,6 @@ module Lanalytics
         desktop_web = 0
         mobile_web = 0
         mobile_app = 0
-        tv_app = 0
 
         # total activity
         total_activity = 0
@@ -114,8 +113,6 @@ module Lanalytics
           if mobile_app_runtimes.include? runtime['key'].downcase
             mobile_app += runtime['doc_count']
             mobile_web -= runtime['doc_count']
-          elsif tv_app_runtimes.include? runtime['key'].downcase
-            tv_app += runtime['doc_count']
           end
 
           result_subitem = {}
@@ -146,11 +143,6 @@ module Lanalytics
             total_activity: mobile_app,
             relative_activity: mobile_app.percent_of(total_activity)
           },
-          {
-            category: 'tv app',
-            total_activity: tv_app,
-            relative_activity: tv_app.percent_of(total_activity)
-          }
         ]
 
         # sort usage
