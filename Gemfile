@@ -100,7 +100,7 @@ group :development, :test do
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'rspec-teamcity', require: false
-  gem 'xikolo-lint', '~> 1.5.0'
+  gem 'xikolo-lint', '~> 2.2.0'
 end
 
 group :test do

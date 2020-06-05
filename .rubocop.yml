@@ -4,3 +4,11 @@ inherit_gem:
 AllCops:
   TargetRubyVersion: 2.6
   TargetRailsVersion: 5.2
+
+Metrics/BlockLength:
+  Exclude:
+    - 'lib/lanalytics/metric/*.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'lib/lanalytics/metric/*.rb'
