@@ -112,7 +112,6 @@ module Lanalytics
                 farthest_watched: {
                   terms: {
                     field: 'user.resource_uuid',
-                    size: 100_000,
                   },
                   aggs: {
                     max_time: {
