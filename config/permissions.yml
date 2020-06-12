@@ -21,9 +21,6 @@ grants:
   - role: lanalytics.alert.inspector
     group: xikolo.admins
     context: root
-  - role: lanalytics.report.inspector
-    group: xikolo.admins
-    context: root
   - role: lanalytics.rule.admin
     group: xikolo.admins
     context: root
