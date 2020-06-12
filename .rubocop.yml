@@ -12,3 +12,6 @@ Metrics/BlockLength:
 Metrics/ClassLength:
   Exclude:
     - 'lib/lanalytics/metric/*.rb'
+
+Rails/ActiveSupportAliases:
+  Enabled: false
