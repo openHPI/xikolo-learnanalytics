@@ -12,6 +12,68 @@ module Lanalytics
           raise ArgumentError.new('course_id or item_id must be provided')
         end
 
+        course_api = Xikolo.api(:course).value!
+
+        sections = []
+
+        if params[:item_id]
+          item = Xikolo.api(:course).value!
+            .rel(:item).get(id: params[:item_id]).value!
+
+          sections.append(
+            course_api.rel(:section).get(id: item['section_id']).value!,
+          )
+
+          result_data(item, sections)
+        else
+          Xikolo.paginate(
+            course_api.rel(:sections).get(course_id: params[:course_id]),
+          ) do |section|
+            sections.append(section)
+          end
+
+          video_items(params[:course_id]).map do |i|
+            result_data(i, sections)
+          end
+        end
+      end
+
+      def self.result_data(item, sections)
+        id = item['id']
+        ri = exec_query(id).dig('aggregations')
+
+        section = sections.find {|s| s['id'] == item['section_id'] }
+
+        video = Xikolo.api(:video).value!
+          .rel(:video).get(id: item['content_id']).value!
+
+        {
+          id: id,
+          position: "#{section['position']}.#{item['position']}",
+          title: item['title'],
+          plays: ri&.dig('plays', 'user', 'value').to_i,
+          duration: video['duration'],
+          avg_farthest_watched: ri&.dig('avg_farthest_watched', 'value')
+            .to_f / video['duration'],
+          forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
+          backward_seeks: ri&.dig('seeks', 'backward', 'doc_count').to_i,
+        }
+      end
+
+      def self.video_items(course_id)
+        videos = []
+        Xikolo.paginate(
+          Xikolo.api(:course).value!.rel(:items).get(
+            course_id: course_id,
+            content_type: 'video',
+          ),
+        ) do |video|
+          videos.append(video)
+        end
+        videos
+      end
+
+      def self.exec_query(item_id)
         forward_seeks_script = <<~SCRIPT
           if (doc['in_context.old_current_time'].size() == 0) return false;
           if (doc['in_context.new_current_time'].size() == 0) return false;
@@ -54,160 +116,85 @@ module Lanalytics
             bool: {
               must: [
                 {wildcard: {verb: 'video_*'}},
-              ].append(
-                course_filter(params[:course_id]),
-                resource_filter(params[:item_id]),
-              ).compact,
+              ].append(resource_filter(item_id)),
             },
           },
           aggs: {
-            items: {
-              terms: {
-                field: 'resource.resource_uuid',
-                size: 1_000,
+            plays: {
+              filter: {
+                bool: {
+                  must: [
+                    {match: {verb: 'video_play'}},
+                  ],
+                },
               },
               aggs: {
-                plays: {
-                  filter: {
-                    bool: {
-                      must: [
-                        {match: {verb: 'video_play'}},
-                      ],
-                    },
-                  },
-                  aggs: {
-                    user: {
-                      cardinality: {
-                        field: 'user.resource_uuid',
-                        precision_threshold: 40_000,
-                      },
-                    },
-                  },
-                },
-                seeks: {
-                  filter: {
-                    bool: {
-                      must: [
-                        {wildcard: {verb: 'video*seek'}},
-                      ],
-                    },
-                  },
-                  aggs: {
-                    forward: {
-                      filter: {
-                        script: {
-                          script: forward_seeks_script,
-                        },
-                      },
-                    },
-                    backward: {
-                      filter: {
-                        script: {
-                          script: backward_seeks_script,
-                        },
-                      },
-                    },
-                  },
-                },
-                farthest_watched: {
-                  terms: {
+                user: {
+                  cardinality: {
                     field: 'user.resource_uuid',
+                    precision_threshold: 40_000,
                   },
-                  aggs: {
-                    max_time: {
-                      max: {
-                        script: max_time_script,
-                      },
+                },
+              },
+            },
+            seeks: {
+              filter: {
+                bool: {
+                  must: [
+                    {wildcard: {verb: 'video*seek'}},
+                  ],
+                },
+              },
+              aggs: {
+                forward: {
+                  filter: {
+                    script: {
+                      script: forward_seeks_script,
                     },
                   },
                 },
-                avg_farthest_watched: {
-                  avg_bucket: {
-                    buckets_path: 'farthest_watched>max_time',
+                backward: {
+                  filter: {
+                    script: {
+                      script: backward_seeks_script,
+                    },
                   },
                 },
+              },
+            },
+            farthest_watched: {
+              terms: {
+                field: 'user.resource_uuid',
+                size: 100_000,
+              },
+              aggs: {
+                max_time: {
+                  max: {
+                    script: max_time_script,
+                  },
+                },
+              },
+            },
+            avg_farthest_watched: {
+              avg_bucket: {
+                buckets_path: 'farthest_watched>max_time',
               },
             },
           },
         }
 
-        result = datasource.exec do |client|
-          client.search index: datasource.index,
-                        body: body,
-                        filter_path: %w[
-                          aggregations.items.buckets.key
-                          aggregations.items.buckets.plays.user
-                          aggregations.items.buckets.avg_farthest_watched
-                          aggregations.items.buckets.seeks.forward
-                          aggregations.items.buckets.seeks.backward
-                        ]
-        end
-
-        course_api = Xikolo.api(:course).value!
-
-        sections = []
-
-        if params[:item_id]
-          item = Xikolo.api(:course).value!
-            .rel(:item).get(id: params[:item_id]).value!
-
-          sections.append(
-            course_api.rel(:section).get(id: item['section_id']).value!,
+        datasource.exec do |client|
+          client.search(
+            index: datasource.index,
+            body: body,
+            filter_path: %w[
+              aggregations.plays.user
+              aggregations.avg_farthest_watched
+              aggregations.seeks.forward
+              aggregations.seeks.backward
+            ],
           )
-
-          result_data(item, sections, result)
-        else
-          Xikolo.paginate(
-            course_api.rel(:sections).get(course_id: params[:course_id]),
-          ) do |section|
-            sections.append(section)
-          end
-
-          video_items(params[:course_id]).map do |i|
-            result_data(i, sections, result)
-          end
         end
-      end
-
-      def self.item(id, from_result:)
-        from_result.dig('aggregations', 'items', 'buckets')&.find do |ri|
-          ri['key'] == id
-        end
-      end
-
-      def self.result_data(item, sections, result)
-        id = item['id']
-        ri = item(id, from_result: result)
-
-        section = sections.find {|s| s['id'] == item['section_id'] }
-
-        video = Xikolo.api(:video).value!
-          .rel(:video).get(id: item['content_id']).value!
-
-        {
-          id: id,
-          position: "#{section['position']}.#{item['position']}",
-          title: item['title'],
-          plays: ri&.dig('plays', 'user', 'value').to_i,
-          duration: video['duration'],
-          avg_farthest_watched: ri&.dig('avg_farthest_watched', 'value')
-            .to_f / video['duration'],
-          forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
-          backward_seeks: ri&.dig('seeks', 'backward', 'doc_count').to_i,
-        }
-      end
-
-      def self.video_items(course_id)
-        videos = []
-        Xikolo.paginate(
-          Xikolo.api(:course).value!.rel(:items).get(
-            course_id: course_id,
-            content_type: 'video',
-          ),
-        ) do |video|
-          videos.append(video)
-        end
-        videos
       end
     end
   end
