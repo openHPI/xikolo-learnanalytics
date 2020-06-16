@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 class SectionConversionsController < ApplicationController
   responders Responders::DecorateResponder,
-             Responders::HttpCacheResponder,
-             Responders::PaginateResponder
+    Responders::HttpCacheResponder,
+    Responders::PaginateResponder
+
   respond_to :json
 
   def show
