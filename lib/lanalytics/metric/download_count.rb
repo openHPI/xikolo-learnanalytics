@@ -71,7 +71,10 @@ module Lanalytics
 
         sections = []
         Xikolo.paginate(
-          course_api.rel(:sections).get(course_id: params[:course_id])
+          course_api.rel(:sections).get(
+            course_id: params[:course_id],
+            include_alternatives: true,
+          ),
         ) do |section|
           sections << section
         end
