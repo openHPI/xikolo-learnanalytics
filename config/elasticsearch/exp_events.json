@@ -66,6 +66,10 @@
           "completed": {
             "type": "boolean"
           },
+          "component": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
           "confirmation_of_participation": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
