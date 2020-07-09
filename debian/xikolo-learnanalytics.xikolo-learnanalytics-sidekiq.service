@@ -14,11 +14,21 @@ WorkingDirectory=/usr/lib/${PACKAGE}
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
 
-ExecStart=/usr/bin/${PACKAGE} sidekiq --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
+# The very high timeout (5 days) is needed for a few very bad reports.
+# See more below.
+ExecStart=/usr/bin/${PACKAGE} sidekiq --timeout 432000 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
 ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq started
 ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq stop
 ExecStop=/bin/kill -TERM $MAINPID
-TimeoutStopSec=90s
+
+# We need to keep the old sidekiq process running for a few very bad reports
+# that may run for days and do not recover from being restarted.
+#
+# With KillMode=none we only send the TERM signal and ignore any left-over
+# process. sidekiq will run until its own shutdown timeout is reached, which is
+# set very high. The process usually exists on its own when the job is done. If
+# not, it will just hang around forever...
+KillMode=none
 
 Restart=on-failure
 RestartSec=60s
