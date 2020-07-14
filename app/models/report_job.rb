@@ -26,7 +26,13 @@ class ReportJob < ApplicationRecord
 
   class << self
     def start(job_id)
-      ReportJob.update job_id, status: 'started'
+      ReportJob.update(job_id, status: 'started').tap do |report|
+        Xikolo.metrics.write(
+          'report_job',
+          tags: {type: report.task_type},
+          values: {id: job_id, status: 'started'},
+        )
+      end
     end
   end
 
@@ -54,13 +60,33 @@ class ReportJob < ApplicationRecord
     return if of == 0
 
     percentage = ((part / of.to_f) * 100).to_i
+    progress = [0, percentage, 100].sort[1]
 
-    update progress: [0, percentage, 100].sort[1]
+    Xikolo.metrics.write(
+      'report_job',
+      tags: {type: task_type},
+      values: {
+        id: id,
+        status: 'progress',
+        part: part,
+        of: of,
+        percentage: percentage,
+        progress: progress,
+      },
+    )
+
+    update progress: progress
   end
   # rubocop:enable all
 
   # Mark a job as complete and set the given attributes
   def finish_with(attributes)
+    Xikolo.metrics.write(
+      'report_job',
+      tags: {type: task_type},
+      values: {id: id, status: 'done'},
+    )
+
     update attributes.merge(
       status: 'done',
       progress: 100,
@@ -72,6 +98,12 @@ class ReportJob < ApplicationRecord
 
   # Mark a job as failed
   def fail_with(error_message)
+    Xikolo.metrics.write(
+      'report_job',
+      tags: {type: task_type},
+      values: {id: id, status: 'failing', error: error_message},
+    )
+
     update(
       status: 'failing',
       error_text: error_message,

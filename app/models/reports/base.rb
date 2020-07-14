@@ -31,9 +31,19 @@ module Reports
           csv << headers
         end
 
+        index = 0
+
         block.call do |row|
           csv << row
           csv.flush
+
+          Xikolo.metrics.write(
+            'report_job',
+            tags: {type: @job.task_type},
+            values: {id: @job.id, status: 'line_flushed', line: index},
+          )
+
+          index += 1
         end
       end
     end
