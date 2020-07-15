@@ -89,7 +89,6 @@ class ReportJob < ApplicationRecord
   def with_tmp_directory
     FileUtils.mkpath tmp_directory
     yield tmp_directory
-  ensure
     FileUtils.rmtree tmp_directory
   end
 
