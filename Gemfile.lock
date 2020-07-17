@@ -464,7 +464,7 @@ GEM
       rubocop-performance (~> 1.4.1)
       rubocop-rails (~> 2.3.2)
       rubocop-rspec (~> 1.35.0)
-    xikolo-s3 (1.5.0)
+    xikolo-s3 (1.4.0)
       aws-sdk-s3 (~> 1.16)
       uuid4
       xikolo-config
@@ -541,7 +541,7 @@ DEPENDENCIES
   xikolo-common (~> 2.4)
   xikolo-config (~> 4.3)
   xikolo-lint (~> 2.2.0)
-  xikolo-s3 (~> 1.5)
+  xikolo-s3 (< 1.5)
   xikolo-sidekiq (~> 3.0)
 
 RUBY VERSION
