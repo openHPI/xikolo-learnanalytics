@@ -2,6 +2,11 @@
 
 Xikolo's Learning Analytics Engine
 
+## Dependencies
+
+* [Elasticsearch 7](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
+* [MinIO](https://github.com/minio/minio) (for reports). Check our [Local Setup](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Local+Setup) guide how to configure it as a S3 storage.
+
 ## Setup
 
 * `git clone git@dev.xikolo.de:xikolo/lanalytics.git`
@@ -9,7 +14,6 @@ Xikolo's Learning Analytics Engine
 * `bundle install`
 * `bundle exec rake db:drop db:create db:migrate`
 * `bundle exec rake db:seed`
-* Install and start Elasticsearch 7  
 * `bundle exec rake elastic:setup`
 * `bundle exec rails s -p 5900`
 
@@ -30,3 +34,98 @@ Each pipeline consists of extractors, transformers and loaders, where each is re
 * Define all the desired pipelines like in `lib/lanalytics/processing/pipelines/exp_events_pipeline.prb`
 * Implement new transformers when necessary
 * Register the event type in the `config/msgr.rb` file.
+
+## Event Tracking
+
+Our event schema is close to xAPI: a `user` does `verb` for `resource` in `context` with `result`. All events are stored redundant in Elasticsearch and Postres.
+
+The Elasticsearch data schema can be found in `config/elasticsearch/exp_events.json`. If updated, make sure to update in pillars as well and increase the version number.
+
+### Web Frontend
+
+See `web/app/assets/lanalytics/common.js#track`.
+
+Usage:
+```
+import track from './common';
+[...]
+track('my_verb', resource.uuid, resource.type, context);
+```
+
+### Ember Frontend
+
+See `web/frontend/app/services/tracking.js#track`
+
+Usage:
+```
+tracking: service(),
+[...]
+this.get('tracking').track({
+  verb: 'my_verb',
+  resource: resource.uuid,
+  resourceType: resource.type,
+  context,
+});
+```
+
+### API
+
+The Web Service and Ember Frontend track events via our API, which is also used by our native apps. The API endpoint documentation can be found here: https://dev.xikolo.de/api-docs/#endpoint-tracking-events.
+
+## Link Tracking
+
+We can track internal and external links of our web application. The data is stored in Elasticsearch.
+
+The Elasticsearch data schema can be found in `config/elasticsearch/link_tracking_events.json`. If updated, make sure to update in pillars as well and increase the version number.
+
+A good starting point for this is `web/app/controllers/concerns/tracks_referrers.rb`.
+
+## Query Elasticsearch Events
+
+Get familiar with the [Elasticsearch API](elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html) and a HTTP client, either CLI or GUI-based (e.g., [Postman](https://www.postman.com/)).
+
+As a warm-up, query all available verbs (aka event types):
+```
+POST 0.0.0.0:9200/_search
+
+{
+  "size": 0,
+  "aggregations": {
+    "verbs": {
+      "terms": {
+        "size": 10000,
+        "field": "verb"
+      }
+    }
+  }
+}
+```
+
+Get the 10 most recent events with *verb*:
+```
+POST 0.0.0.0:9200/_search
+
+{
+  "size": 10,
+  "sort": { 
+    "timestamp": { 
+      "order":"desc" 
+    } 
+  },
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "verb": "visited_item" } }
+      ]
+    }
+  }
+}
+```
+
+## Metrics
+
+All available metrics are self-documented and can be retrieved by directly calling the index endpoint, i.e., http://0.0.0.0:5900/metrics.
+
+## Reports
+
+To generate reports, a user must have the `lanalytics.report.admin` role. Check the [Reporting Permission](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Reporting+Permission) page on how to grant this. And make sure MinIO runs properly.
