@@ -30,6 +30,7 @@ module Reports::Openwho
     def headers
       @headers ||= [
         'User ID',
+        'User Created',
         'Language',
         'Affiliated',
         'Age Group',
@@ -91,6 +92,7 @@ module Reports::Openwho
 
           values = [
             @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
+            user['created_at'],
             user['language'],
             user['affiliated'],
             age.present? ? age_group(age) : nil,
