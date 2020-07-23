@@ -39,8 +39,12 @@ module Reports
 
           Xikolo.metrics.write(
             'report_job',
-            tags: {type: @job.task_type},
-            values: {id: @job.id, status: 'line_flushed', line: index},
+            tags: {id: @job.id, type: @job.task_type},
+            values: {
+              user_id: @job.user_id,
+              status: 'line_flushed',
+              line: index,
+            },
           )
 
           index += 1
