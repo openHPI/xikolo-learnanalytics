@@ -1,79 +1,95 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-    class ActiveUsersByDaytime < GoogleAnalyticsMetric
+    class ActiveUsersByDaytime < ExpEventsElasticMetric
 
       description 'Counts the number of activities per day of week and hour'
 
       required_parameter :start_date, :end_date
 
-      optional_parameter :course_id, :item_id
+      optional_parameter :course_id
 
       exec do |params|
-        day_of_week_report, hour_report, combined_report = request_reports([
-          active_users_report_request(params, %w(ga:dayOfWeek)),
-          active_users_report_request(params, %w(ga:hour)),
-          active_users_report_request(params, %w(ga:dayOfWeek ga:hour))
-        ])
+        start_date = params[:start_date]
+        end_date = params[:end_date]
 
-        processed_result = {}
-
-        # Get date range to compute averages
-        start_date = [params[:start_date].to_date, datasource.adoption_date].max
-        end_date = params[:end_date].to_date
-        date_range = (start_date..end_date).to_a
-
-        # Process days
-        processed_result[:day_of_weeks] = combined_report[:rows].group_by{ |row| row['ga:dayOfWeek'] }.map do |day_of_week, rows|
-          day_of_week_count = date_range.select{ |date| date.wday == day_of_week.to_i }.size
-          day_row = day_of_week_report[:rows].find{ |row| row['ga:dayOfWeek'] == day_of_week }
-          {
-            day_of_week: day_of_week.to_i,
-            avg_users: (day_row['ga:users'] / day_of_week_count).round(2),
-            hours: rows.map do |row|
-              {
-                hour: row['ga:hour'].to_i,
-                avg_users: (row['ga:users'] / day_of_week_count).round(2)
-              }
-            end
+        result = datasource.exec do |client|
+          client.search index: datasource.index, body: {
+            size: 0,
+            query: {
+              bool: {
+                must: [course_filter(params[:course_id])].compact,
+                filter: {
+                  range: {
+                    timestamp: {
+                      gte: DateTime.parse(start_date).iso8601,
+                      lte: DateTime.parse(end_date).iso8601,
+                    },
+                  },
+                },
+              },
+            },
+            aggregations: {
+              timestamps: {
+                date_histogram: {
+                  field: 'timestamp',
+                  interval: 'hour',
+                  min_doc_count: 0,
+                  extended_bounds: {
+                    min: DateTime.parse(start_date).iso8601,
+                    max: DateTime.parse(end_date).iso8601,
+                  },
+                },
+                aggregations: {
+                  user: {
+                    cardinality: {
+                      field: 'user.resource_uuid',
+                    },
+                  },
+                },
+              },
+            },
           }
         end
 
-        # Process hours
-        processed_result[:hours] = hour_report[:rows].group_by{ |row| row['ga:hour'] }.map do |hour, rows|
-          hour_total_users = rows.map{ |row| row['ga:users'] }.sum
-          {
-            hour: hour,
-            avg_users: (hour_total_users / date_range.size).round(2)
-          }
-        end
-
-        processed_result
+        user_by_wday(result.dig('aggregations', 'timestamps', 'buckets'))
       end
 
-      def self.active_users_report_request(params, dimension_names)
+      def self.user_by_wday(buckets)
+        by_hour = buckets.each_with_object({}) do |bucket, hours|
+          time = Time.zone.parse bucket['key_as_string']
+          hours[time.hour] ||= wday_scaffold
+          hours[time.hour][time.wday][:user] += bucket['user']['value']
+          hours[time.hour][time.wday][:bucket_count] += 1
+        end
+
+        result = []
+
+        by_hour.each do |hour, w_days|
+          w_days.each do |w_day, data|
+            result.append(
+              day_of_week: w_day,
+              hour: hour,
+              avg_users: data[:user].to_f / data[:bucket_count],
+            )
+          end
+        end
+
+        result.sort_by {|a| [a[:day_of_week], a[:hour]] }
+      end
+
+      def self.wday_scaffold
         {
-          date_ranges: date_ranges(params[:start_date], params[:end_date]),
-          dimensions: dimension_names.map{ |name| { name: name } },
-          metrics: [
-            { expression: 'ga:users' }
-          ],
-          dimension_filter_clauses: [
-            course_filter(params[:course_id]),
-            item_filter(params[:item_id]),
-            # Exclude completed_course events as they are not triggered by an action of a user
-            {
-              operator: 'AND',
-              filters: [{
-                dimension_name: 'ga:eventAction',
-                not: true,
-                operator: 'EXACT',
-                expressions: ['completed_course']
-              }]
-            }
-          ]
+          0 => {user: 0, bucket_count: 0},
+          1 => {user: 0, bucket_count: 0},
+          2 => {user: 0, bucket_count: 0},
+          3 => {user: 0, bucket_count: 0},
+          4 => {user: 0, bucket_count: 0},
+          5 => {user: 0, bucket_count: 0},
+          6 => {user: 0, bucket_count: 0},
         }
       end
-
     end
   end
 end
