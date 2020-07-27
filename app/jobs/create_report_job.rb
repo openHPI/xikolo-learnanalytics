@@ -24,6 +24,8 @@ class CreateReportJob < ApplicationJob
       trace =
         "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
       Sidekiq.logger.error trace
+      ::Mnemosyne.attach_error(error)
+      ::Raven.capture_exception(error)
       job.fail_with trace
     end
   end
