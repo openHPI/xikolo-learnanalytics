@@ -37,6 +37,8 @@ class CreateReportJob < ApplicationJob
   rescue => error
     trace =
       "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
+    ::Mnemosyne.attach_error(error)
+    ::Raven.capture_exception(error)
     job.fail_with("Report could not be stored:\n#{trace}")
   end
 
