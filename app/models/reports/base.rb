@@ -38,7 +38,7 @@ module Reports
           csv.flush
 
           Xikolo.metrics.write(
-            'report_job',
+            'report_jobs',
             tags: {id: @job.id, type: @job.task_type},
             values: {
               user_id: @job.user_id,
