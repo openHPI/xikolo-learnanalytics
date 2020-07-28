@@ -29,8 +29,8 @@ class ReportJob < ApplicationRecord
       ReportJob.update(job_id, status: 'started').tap do |report|
         Xikolo.metrics.write(
           'report_job',
-          tags: {type: report.task_type},
-          values: {id: job_id, status: 'started'},
+          tags: {id: job_id, type: report.task_type},
+          values: {user_id: report.user_id, status: 'started'},
         )
       end
     end
@@ -64,9 +64,9 @@ class ReportJob < ApplicationRecord
 
     Xikolo.metrics.write(
       'report_job',
-      tags: {type: task_type},
+      tags: {id: id, type: task_type},
       values: {
-        id: id,
+        user_id: user_id,
         status: 'progress',
         part: part,
         of: of,
@@ -83,8 +83,8 @@ class ReportJob < ApplicationRecord
   def finish_with(attributes)
     Xikolo.metrics.write(
       'report_job',
-      tags: {type: task_type},
-      values: {id: id, status: 'done'},
+      tags: {id: id, type: task_type},
+      values: {user_id: user_id, status: 'done'},
     )
 
     update attributes.merge(
@@ -100,8 +100,8 @@ class ReportJob < ApplicationRecord
   def fail_with(error_message)
     Xikolo.metrics.write(
       'report_job',
-      tags: {type: task_type},
-      values: {id: id, status: 'failing', error: error_message},
+      tags: {id: id, type: task_type},
+      values: {user_id: user_id, status: 'failing', error: error_message},
     )
 
     update(
