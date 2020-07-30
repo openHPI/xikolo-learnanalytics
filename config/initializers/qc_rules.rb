@@ -13,7 +13,6 @@ qc_rules = [
     ['AnnouncementFailedWorker', true],
     ['DifficultSelftestWorker', false],
     ['QuizPerformanceWorker', false],
-    ['ExitItemWorker', false]
 ]
 #This will create an disabled (inactive) worker for each rule that is not set up yet
 begin
