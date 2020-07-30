@@ -22,11 +22,6 @@ qc_alert:
     right_answer_threshold: 0.7
     # Threshold for minimum submissions to question
     minimum_submissions: 20
-  exit_item:
-    low_threshold: 10
-    medium_threshold: 15
-    high_threshold: 20
-    page_view_threshold: 50
 reports:
   # List of classifiers which are utilized by reports
   classifiers: []
