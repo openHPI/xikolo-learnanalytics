@@ -17,9 +17,9 @@ qc_alert:
     avg_first_attempt_percentage_threshold: 40
     # Threshold for average amount of attempts
     avg_attempts_threshold: 3
-  difficult_selftest:
-    # Threshold for amount of correct answers on quiz questions, if less alert is created
-    right_answer_threshold: 0.7
+  difficult_quiz_question:
+    # Threshold for amount of correct submissions on quiz questions, if less alert is created
+    correct_submissions_threshold: 0.7
     # Threshold for minimum submissions to question
     minimum_submissions: 20
 reports:
