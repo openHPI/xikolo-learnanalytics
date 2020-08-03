@@ -9,7 +9,7 @@ module Reports
       @end_month = job.options['end_month'].to_i
       @end_year = job.options['end_year'].to_i
 
-      @window_in_months = job.options['window_in_months'].to_i
+      @window_in_months = [job.options['window_in_months'].to_i, 1].max
       @sliding_window = job.options['sliding_window']
 
       @include_active_users = job.options['include_active_users']
