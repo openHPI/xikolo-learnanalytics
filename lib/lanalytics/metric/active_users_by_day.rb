@@ -2,9 +2,9 @@
 
 module Lanalytics
   module Metric
-    class ActiveUsersByDaytime < ExpEventsElasticMetric
-
-      description 'Counts the number of activities per day of week and hour'
+    class ActiveUsersByDay < ExpEventsElasticMetric
+      include Lanalytics::Helper::PercentageHelper
+      description 'Counts the number of active users per day and hour.'
 
       required_parameter :start_date, :end_date
 
@@ -53,42 +53,15 @@ module Lanalytics
           }
         end
 
-        user_by_wday(result.dig('aggregations', 'timestamps', 'buckets'))
-      end
+        result.dig('aggregations', 'timestamps', 'buckets').map do |bucket|
+          time = Time.zone.parse(bucket['key_as_string'])
 
-      def self.user_by_wday(buckets)
-        by_hour = buckets.each_with_object({}) do |bucket, hours|
-          time = Time.zone.parse bucket['key_as_string']
-          hours[time.hour] ||= wday_scaffold
-          hours[time.hour][time.wday][:user] += bucket['user']['value']
-          hours[time.hour][time.wday][:bucket_count] += 1
+          {
+            date: time.strftime('%Y%m%d'),
+            total_users: bucket.dig('user', 'value').to_i,
+            hour: time.hour,
+          }
         end
-
-        result = []
-
-        by_hour.each do |hour, w_days|
-          w_days.each do |w_day, data|
-            result.append(
-              day_of_week: w_day,
-              hour: hour,
-              avg_users: data[:user].to_f / data[:bucket_count],
-            )
-          end
-        end
-
-        result.sort_by {|a| [a[:day_of_week], a[:hour]] }
-      end
-
-      def self.wday_scaffold
-        {
-          0 => {user: 0, bucket_count: 0},
-          1 => {user: 0, bucket_count: 0},
-          2 => {user: 0, bucket_count: 0},
-          3 => {user: 0, bucket_count: 0},
-          4 => {user: 0, bucket_count: 0},
-          5 => {user: 0, bucket_count: 0},
-          6 => {user: 0, bucket_count: 0},
-        }
       end
     end
   end
