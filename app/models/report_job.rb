@@ -101,7 +101,12 @@ class ReportJob < ApplicationRecord
     Xikolo.metrics.write(
       'report_jobs',
       tags: {id: id, type: task_type},
-      values: {user_id: user_id, status: 'failing', error: error_message},
+      values: {
+        user_id: user_id,
+        status: 'failing',
+        error: error_message,
+        env_path: ENV['PATH'],
+      },
     )
 
     update(
