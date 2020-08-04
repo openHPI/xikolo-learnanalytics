@@ -22,9 +22,16 @@ class FileCollection
     path = "#{File.basename(@files.first[0], '.*')}.zip"
 
     if password.present?
-      system 'zip', '--password', password, path, *names, chdir: @base_path
+      system(
+        '/usr/bin/zip',
+        '--password',
+        password,
+        path,
+        *names,
+        chdir: @base_path,
+      )
     else
-      system 'zip', path, *names, chdir: @base_path
+      system '/usr/bin/zip', path, *names, chdir: @base_path
     end
 
     raise "Zipping files failed: #{$?}" if $?.exitstatus > 0
