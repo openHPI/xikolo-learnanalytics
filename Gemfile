@@ -13,7 +13,7 @@ gem 'nokogiri', '< 1.8.3'
 gem 'jbuilder', '~> 2.0'
 
 gem 'xikolo-common', '~> 2.4'
-gem 'xikolo-config', '~> 4.3'
+gem 'xikolo-config', '~> 5.0'
 gem 'xikolo-s3', '~> 1.5', '>= 1.5.1'
 
 # bundle exec rake doc:rails generates the API under doc/api.
