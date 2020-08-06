@@ -93,6 +93,9 @@ class ReportJob < ApplicationRecord
       options: options.except('zip_password'),
     )
 
+    # Clean up tmp directory
+    FileUtils.rmtree tmp_directory
+
     self
   end
 
@@ -106,6 +109,7 @@ class ReportJob < ApplicationRecord
         status: 'failing',
         error: error_message,
         env_path: ENV['PATH'],
+        tmp_dir: tmp_directory,
       },
     )
 
@@ -126,7 +130,6 @@ class ReportJob < ApplicationRecord
   def with_tmp_directory
     FileUtils.mkpath tmp_directory
     yield tmp_directory
-    FileUtils.rmtree tmp_directory
   end
 
   def scoped?
