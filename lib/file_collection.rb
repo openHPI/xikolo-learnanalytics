@@ -19,6 +19,11 @@ class FileCollection
   end
 
   def zip(password)
+    # Check if at least one file exists (typically there is only one)
+    unless File.exist?(@files.first[1])
+      raise "File '#{@files.first[1]}' does not exist"
+    end
+
     path = "#{File.basename(@files.first[0], '.*')}.zip"
 
     if password.present?
