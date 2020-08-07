@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
-
     class << self
-
       def resolve(name)
-        "Lanalytics::Metric::#{name.camelize}".constantize if all.include? name.camelize
+        return nil unless all.include? name.camelize
+
+        "Lanalytics::Metric::#{name.camelize}".constantize
       end
 
       def all
         Rails.root.join('lib/lanalytics/metric')
           .to_enum(:each_child)
-          .map { |i| i.basename.to_s.split('.').first.camelize }
+          .map {|i| i.basename.to_s.split('.').first.camelize }
           .sort
           .reject do |c|
             %w[
@@ -20,19 +22,14 @@ module Lanalytics
               ExpEventsPostgresMetric
               LinkTrackingEventsElasticMetric
               ClusteringMetric
-              GoogleAnalyticsMetric
-              FallbackMetric
               CombinedMetric
             ].include? c
           end
       end
-
     end
 
     class Base
-
       class << self
-
         attr_reader :desc
 
         def description(text)
@@ -41,7 +38,11 @@ module Lanalytics
 
         def query(**params)
           unless (required_params - params.keys).empty?
-            raise ArgumentError, "Required parameter missing for #{self.to_s}. Required: [#{required_params.join(', ')}]. Received: [#{params.keys.join(', ')}]."
+            raise ArgumentError.new(
+              "Required parameter missing for #{self}. " \
+              "Required: [#{required_params.join(', ')}]. " \
+              "Received: [#{params.keys.join(', ')}].",
+            )
           end
 
           allowed_params = params.slice(*(required_params + optional_params))
@@ -74,15 +75,19 @@ module Lanalytics
         end
 
         def datasources
-          datasource_keys.map{ |key| Lanalytics::Processing::DatasourceManager.datasource(key) }
+          datasource_keys.map do |key|
+            Lanalytics::Processing::DatasourceManager.datasource(key)
+          end
         end
 
         def available?
-          datasources.all?{ |ds| ds.present? && Rails.cache.fetch("ds_availability/#{ds.key}/", expires_in: 2.minutes) { ds.ping } }
+          datasources.all? do |ds|
+            ds.present? && Rails.cache.fetch(
+              "ds_availability/#{ds.key}/", expires_in: 2.minutes
+            ) { ds.ping }
+          end
         end
-
       end
-
     end
   end
 end
