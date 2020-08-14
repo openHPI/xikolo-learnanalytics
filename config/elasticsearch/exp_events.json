@@ -47,6 +47,10 @@
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
+          "chatbot_version": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
           "client_id": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
