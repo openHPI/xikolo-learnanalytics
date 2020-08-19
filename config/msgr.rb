@@ -74,8 +74,5 @@ route 'xikolo.web.referrer', to: 'Lanalytics#create'
 route 'xikolo.web.tracking', to: 'Lanalytics#create'
 
 
-# ------------------- Google Analytics Hit Queue -------------------
-route 'xikolo.lanalytics.google_analytics_hits', to: 'GoogleAnalyticsHit#emit', prefetch: Lanalytics::Processing::GoogleAnalytics::HitsEmitter::MAX_BATCH_SIZE
-
 # If you want to know how the routes look like, you can puts them with the following line:x
 # puts @routes.inspect
