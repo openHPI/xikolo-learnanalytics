@@ -75,7 +75,9 @@ class ReportJob < ApplicationRecord
       },
     )
 
-    update progress: progress
+    Xikolo::Reconnect.on_stale_connection do
+      update progress: progress
+    end
   end
   # rubocop:enable all
 
@@ -87,11 +89,13 @@ class ReportJob < ApplicationRecord
       values: {user_id: user_id, status: 'done'},
     )
 
-    update attributes.merge(
-      status: 'done',
-      progress: 100,
-      options: options.except('zip_password'),
-    )
+    Xikolo::Reconnect.on_stale_connection do
+      update attributes.merge(
+        status: 'done',
+        progress: 100,
+        options: options.except('zip_password'),
+      )
+    end
 
     # Clean up tmp directory
     FileUtils.rmtree tmp_directory
@@ -113,10 +117,12 @@ class ReportJob < ApplicationRecord
       },
     )
 
-    update(
-      status: 'failing',
-      error_text: error_message,
-    )
+    Xikolo::Reconnect.on_stale_connection do
+      update(
+        status: 'failing',
+        error_text: error_message,
+      )
+    end
   end
 
   def failing?
