@@ -42,6 +42,9 @@ module Xikolo::Lanalytics
 
       ::Xikolo.send :extend, Xikolo::Common::PaginateWithRetries
     end
+
+    # Restify: Do not wrap hashes with object-like accessors
+    Restify::Processors::Json.indifferent_access = false
   end
 
   def self.rake?
