@@ -10,7 +10,7 @@ module Lanalytics
         course_id = params[:course_id]
 
         course = Xikolo.api(:course).value!.rel(:courses).get(id: course_id).value!
-        start_date = DateTime.parse(course[0].start_date)
+        start_date = DateTime.parse(course[0]['start_date'])
         days_since_start = (DateTime.now.to_date - start_date.to_date).to_i
 
         result = {}
