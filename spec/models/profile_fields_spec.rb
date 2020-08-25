@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe ProfileFields do
-  subject { described_class.new(profile, deanonymized) }
+  subject(:fields) { described_class.new(profile, deanonymized) }
 
   let(:full_name) do
     {
@@ -81,6 +81,40 @@ describe ProfileFields do
       let(:deanonymized) { true }
 
       it { is_expected.to match_array [full_name, gender, city, languages] }
+    end
+  end
+
+  describe '#[]' do
+    context 'anonymized' do
+      let(:deanonymized) { false }
+
+      it 'exposes normal fields' do
+        expect(fields['gender']).to eq 'male'
+      end
+
+      it 'hides fields marked as sensitive' do
+        expect(fields['full_name']).to be_nil
+      end
+
+      it 'hides field marked as omittable' do
+        expect(fields['sap_id']).to be_nil
+      end
+    end
+
+    context 'deanonymized' do
+      let(:deanonymized) { true }
+
+      it 'exposes normal fields' do
+        expect(fields['gender']).to eq 'male'
+      end
+
+      it 'exposes fields marked as sensitive' do
+        expect(fields['full_name']).to eq '"Max Muster"'
+      end
+
+      it 'hides field marked as omittable' do
+        expect(fields['sap_id']).to be_nil
+      end
     end
   end
 
