@@ -1,6 +1,10 @@
-# applies profile field configurations to user profiles from account service for reports
-class ProfileFields
+# frozen_string_literal: true
 
+##
+# Applies profile field configurations to user profiles from account service
+# for reports.
+#
+class ProfileFields
   def initialize(profile, deanonymized)
     @profile = profile
     @deanonymized = deanonymized
@@ -9,15 +13,16 @@ class ProfileFields
   def fields
     all_fields = @profile.dig('fields') || []
 
-    if @deanonymized
-      omittable_fields = ProfileFieldConfiguration.where('omittable = true')
-    else
-      omittable_fields = ProfileFieldConfiguration.where('omittable = true OR sensitive = true')
-    end
+    omittable_fields = if @deanonymized
+                         ProfileFieldConfiguration.where('omittable = true')
+                       else
+                         ProfileFieldConfiguration
+                           .where('omittable = true OR sensitive = true')
+                       end
 
     omittable_fields = omittable_fields.pluck(:name)
 
-    all_fields.reject { |f| omittable_fields.include? f['name'] }
+    all_fields.reject {|f| omittable_fields.include? f['name'] }
   end
 
   def [](name)
@@ -33,13 +38,13 @@ class ProfileFields
   end
 
   def titles
-    fields.map { |f| f.dig('title', 'en') }
+    fields.map {|f| f.dig('title', 'en') }
   end
 
   def self.all_titles(deanonymized)
     users = Xikolo.api(:account).value!.rel(:users).get(per_page: 1).value!
 
-    return [] unless users.present?
+    return [] if users.blank?
 
     profile = users.first.rel(:profile).get.value!
     profile_fields = ProfileFields.new(profile, deanonymized)

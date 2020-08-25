@@ -1,62 +1,65 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe ProfileFields do
+  subject { described_class.new(profile, deanonymized) }
 
-  let!(:full_name) {
+  let(:full_name) do
     {
-      'name' =>'full_name',
+      'name' => 'full_name',
       'title' => {
-        'en' => 'Full Name'
+        'en' => 'Full Name',
       },
       'type' => 'CustomTextField',
-      'values' => %w(Max\ Muster)
+      'values' => %w[Max\ Muster],
     }
-  }
-  let!(:gender) {
+  end
+  let(:gender) do
     {
-      'name' =>'gender',
+      'name' => 'gender',
       'title' => {
-        'en' => 'Gender'
+        'en' => 'Gender',
       },
       'type' => 'CustomSelectField',
-      'values' => %w(male)
+      'values' => %w[male],
     }
-  }
-  let!(:city) {
+  end
+  let(:city) do
     {
-      'name' =>'city',
+      'name' => 'city',
       'title' => {
-        'en' => 'City'
+        'en' => 'City',
       },
       'type' => 'CustomTextField',
-      'values' => %w(Berlin)
+      'values' => %w[Berlin],
     }
-  }
-  let!(:sap_id) {
+  end
+  let(:sap_id) do
     {
-      'name' =>'sap_id',
+      'name' => 'sap_id',
       'title' => {
-        'en' => 'SAP ID'
+        'en' => 'SAP ID',
       },
       'type' => 'CustomTextField',
-      'values' => %w(12345678)
+      'values' => %w[12345678],
     }
-  }
-  let!(:languages) {
+  end
+  let(:languages) do
     {
-      'name' =>'languages',
+      'name' => 'languages',
       'title' => {
-        'en' => 'Languages'
+        'en' => 'Languages',
       },
       'type' => 'CustomSelectField',
-      'values' => %w(de en fr)
+      'values' => %w[de en fr],
     }
-  }
+  end
 
-  let!(:profile) do
+  let(:profile) do
     {
       'user_id' => '9b954287-672a-4c49-8d07-d4c3d8d70d19',
-      'fields' => [full_name, gender, city, sap_id, languages]
+      'fields' => [full_name, gender, city, sap_id, languages],
     }
   end
 
@@ -65,18 +68,18 @@ describe ProfileFields do
     FactoryBot.create :profile_field_configuration, name: 'full_name', sensitive: true, omittable: false
   end
 
-  subject { ProfileFields.new(profile, deanonymized) }
-
   describe '#fields' do
     subject { super().fields }
 
     context 'anonymized' do
       let(:deanonymized) { false }
+
       it { is_expected.to match_array [gender, city, languages] }
     end
 
     context 'deanonymized' do
       let(:deanonymized) { true }
+
       it { is_expected.to match_array [full_name, gender, city, languages] }
     end
   end
@@ -86,12 +89,14 @@ describe ProfileFields do
 
     context 'anonymized' do
       let(:deanonymized) { false }
-      it { is_expected.to match_array %w(male "Berlin" de;en;fr) }
+
+      it { is_expected.to match_array ['male', '"Berlin"', 'de;en;fr'] }
     end
 
     context 'deanonymized' do
       let(:deanonymized) { true }
-      it { is_expected.to match_array %w(male "Max\ Muster" "Berlin" de;en;fr) }
+
+      it { is_expected.to match_array ['male', '"Max Muster"', '"Berlin"', 'de;en;fr'] }
     end
   end
 
@@ -100,13 +105,14 @@ describe ProfileFields do
 
     context 'anonymized' do
       let(:deanonymized) { false }
-      it { is_expected.to match_array %w(Gender City Languages) }
+
+      it { is_expected.to match_array %w[Gender City Languages] }
     end
 
     context 'deanonymized' do
       let(:deanonymized) { true }
-      it { is_expected.to match_array %w(Full\ Name Gender City Languages) }
+
+      it { is_expected.to match_array %w[Full\ Name Gender City Languages] }
     end
   end
-
 end
