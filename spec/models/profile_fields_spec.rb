@@ -68,22 +68,6 @@ describe ProfileFields do
     FactoryBot.create :profile_field_configuration, name: 'full_name', sensitive: true, omittable: false
   end
 
-  describe '#fields' do
-    subject { super().fields }
-
-    context 'anonymized' do
-      let(:deanonymized) { false }
-
-      it { is_expected.to match_array [gender, city, languages] }
-    end
-
-    context 'deanonymized' do
-      let(:deanonymized) { true }
-
-      it { is_expected.to match_array [full_name, gender, city, languages] }
-    end
-  end
-
   describe '#[]' do
     context 'anonymized' do
       let(:deanonymized) { false }
