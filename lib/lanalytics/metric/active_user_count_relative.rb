@@ -79,7 +79,7 @@ Default active users of last day.
         active_courses = relative_users.size
         result[:deviation] = active_courses != 0 ? (result[:relative] - (1.0 / active_courses.to_f)).round(2) : 0
         course = Xikolo.api(:course).value!.rel(:courses).get(id: course_id).value!
-        start_date = DateTime.parse(course[0].start_date)
+        start_date = DateTime.parse(course[0]['start_date'])
         days_since_start = (DateTime.now.to_date - start_date.to_date).to_i
 
         if days_since_start <= 0
