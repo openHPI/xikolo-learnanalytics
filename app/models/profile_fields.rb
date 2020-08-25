@@ -10,21 +10,6 @@ class ProfileFields
     @deanonymized = deanonymized
   end
 
-  def fields
-    all_fields = @profile.dig('fields') || []
-
-    omittable_fields = if @deanonymized
-                         ProfileFieldConfiguration.where('omittable = true')
-                       else
-                         ProfileFieldConfiguration
-                           .where('omittable = true OR sensitive = true')
-                       end
-
-    omittable_fields = omittable_fields.pluck(:name)
-
-    all_fields.reject {|f| omittable_fields.include? f['name'] }
-  end
-
   def [](name)
     field = fields.find {|f| f['name'] == name }
 
@@ -52,6 +37,23 @@ class ProfileFields
   end
 
   private
+
+  def fields
+    @fields ||= @profile.fetch('fields', [])
+      .reject {|f| hidden_fields.include? f['name'] }
+  end
+
+  ##
+  # The names of the fields that should not be exposed.
+  #
+  def hidden_fields
+    @hidden_fields ||= if @deanonymized
+                         ProfileFieldConfiguration.where('omittable = true')
+                       else
+                         ProfileFieldConfiguration
+                           .where('omittable = true OR sensitive = true')
+                       end.pluck(:name)
+  end
 
   def value(from_field:)
     if from_field['type'] == 'CustomTextField'
