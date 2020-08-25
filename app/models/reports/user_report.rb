@@ -66,7 +66,7 @@ module Reports
         end
 
         if @include_profile
-          headers.concat(ProfileFields.all_titles(@deanonymized))
+          headers.concat(profile_config.all_titles)
         end
 
         if @include_auth && @deanonymized
@@ -144,9 +144,7 @@ module Reports
             end,
           ).value!.first
 
-          profile_fields = ProfileFields.new(profile, @deanonymized)
-
-          values.concat(profile_fields.values)
+          values.concat(profile_config.for(profile).values)
         end
 
         if @include_auth && @deanonymized
@@ -347,6 +345,14 @@ module Reports
 
     def reportable_auth_fields
       Xikolo.config.reports['auth_fields'] || []
+    end
+
+    def profile_config
+      @profile_config ||= if @deanonymized
+                            ProfileFieldConfiguration.deanonymized
+                          else
+                            ProfileFieldConfiguration.anonymized
+                          end
     end
 
     def account_service

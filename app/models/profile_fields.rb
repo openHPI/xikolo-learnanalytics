@@ -5,9 +5,9 @@
 # for reports.
 #
 class ProfileFields
-  def initialize(profile, deanonymized)
+  def initialize(config, profile)
+    @config = config
     @profile = profile
-    @deanonymized = deanonymized
   end
 
   def [](name)
@@ -26,33 +26,11 @@ class ProfileFields
     fields.map {|f| f.dig('title', 'en') }
   end
 
-  def self.all_titles(deanonymized)
-    users = Xikolo.api(:account).value!.rel(:users).get(per_page: 1).value!
-
-    return [] if users.blank?
-
-    profile = users.first.rel(:profile).get.value!
-    profile_fields = ProfileFields.new(profile, deanonymized)
-    profile_fields.titles
-  end
-
   private
 
   def fields
     @fields ||= @profile.fetch('fields', [])
-      .reject {|f| hidden_fields.include? f['name'] }
-  end
-
-  ##
-  # The names of the fields that should not be exposed.
-  #
-  def hidden_fields
-    @hidden_fields ||= if @deanonymized
-                         ProfileFieldConfiguration.where('omittable = true')
-                       else
-                         ProfileFieldConfiguration
-                           .where('omittable = true OR sensitive = true')
-                       end.pluck(:name)
+      .reject {|f| @config.hidden? f['name'] }
   end
 
   def value(from_field:)

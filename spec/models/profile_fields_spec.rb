@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe ProfileFields do
-  subject(:fields) { described_class.new(profile, deanonymized) }
+  subject(:fields) { profile_config.for(profile) }
 
   let(:full_name) do
     {
@@ -70,7 +70,7 @@ describe ProfileFields do
 
   describe '#[]' do
     context 'anonymized' do
-      let(:deanonymized) { false }
+      let(:profile_config) { ProfileFieldConfiguration.anonymized }
 
       it 'exposes normal fields' do
         expect(fields['gender']).to eq 'male'
@@ -86,7 +86,7 @@ describe ProfileFields do
     end
 
     context 'deanonymized' do
-      let(:deanonymized) { true }
+      let(:profile_config) { ProfileFieldConfiguration.deanonymized }
 
       it 'exposes normal fields' do
         expect(fields['gender']).to eq 'male'
@@ -106,13 +106,13 @@ describe ProfileFields do
     subject { super().values }
 
     context 'anonymized' do
-      let(:deanonymized) { false }
+      let(:profile_config) { ProfileFieldConfiguration.anonymized }
 
       it { is_expected.to match_array ['male', '"Berlin"', 'de;en;fr'] }
     end
 
     context 'deanonymized' do
-      let(:deanonymized) { true }
+      let(:profile_config) { ProfileFieldConfiguration.deanonymized }
 
       it { is_expected.to match_array ['male', '"Max Muster"', '"Berlin"', 'de;en;fr'] }
     end
@@ -122,13 +122,13 @@ describe ProfileFields do
     subject { super().titles }
 
     context 'anonymized' do
-      let(:deanonymized) { false }
+      let(:profile_config) { ProfileFieldConfiguration.anonymized }
 
       it { is_expected.to match_array %w[Gender City Languages] }
     end
 
     context 'deanonymized' do
-      let(:deanonymized) { true }
+      let(:profile_config) { ProfileFieldConfiguration.deanonymized }
 
       it { is_expected.to match_array %w[Full\ Name Gender City Languages] }
     end
