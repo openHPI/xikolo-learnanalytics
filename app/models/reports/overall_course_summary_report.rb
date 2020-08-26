@@ -140,7 +140,7 @@ module Reports
           course['proctored'],
           course['on_demand'],
           sections.size,
-          sections.select(&:published).size,
+          sections.select {|s| s['published'] }.size,
           peer_assessment_type(course['id']),
           course['has_collab_space'],
           course['has_teleboard'],
