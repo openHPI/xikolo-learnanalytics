@@ -94,8 +94,7 @@ module Reports
                   user.rel(:profile).get
                 end,
               ).value!.first
-              profile_fields = ProfileFields.new(profile, @deanonymized)
-              values += profile_fields.values
+              values += profile_config.for(profile).values
             end
 
             # get elasticsearch / postgres metrics per user
@@ -328,7 +327,7 @@ module Reports
 
         if @include_profile
           headers.concat ['Profile Picture']
-          headers.concat ProfileFields.all_titles(@deanonymized)
+          headers.concat profile_config.all_titles
         end
 
         if @include_analytics_metrics
@@ -424,6 +423,14 @@ module Reports
         section = course_sections.find { |s| s['id'] == q['section_id'] } || {'title' => ''}
         "#{section['title'].titleize} - #{q['title'].titleize} Percentage (Quiz)"
       }
+    end
+
+    def profile_config
+      @profile_config ||= if @deanonymized
+                            ProfileFieldConfiguration.deanonymized
+                          else
+                            ProfileFieldConfiguration.anonymized
+                          end
     end
 
     def quizzes

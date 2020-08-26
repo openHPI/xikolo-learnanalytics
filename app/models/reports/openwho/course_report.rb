@@ -88,7 +88,7 @@ module Reports::Openwho
               ((birth_compare_date - user['born_at'].to_datetime) / 365).to_i
             end
 
-          profile_fields = ProfileFields.new(profile, @deanonymized)
+          profile_fields = profile_config.for(profile)
 
           values = [
             @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
@@ -180,6 +180,14 @@ module Reports::Openwho
 
     def reportable_country_regions
       Xikolo.config.reports['country_regions'] || {}
+    end
+
+    def profile_config
+      @profile_config ||= if @deanonymized
+                            ProfileFieldConfiguration.deanonymized
+                          else
+                            ProfileFieldConfiguration.anonymized
+                          end
     end
 
     def courses
