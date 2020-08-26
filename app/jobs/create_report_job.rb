@@ -26,7 +26,7 @@ class CreateReportJob < ApplicationJob
       Sidekiq.logger.error trace
       ::Mnemosyne.attach_error(error)
       ::Raven.capture_exception(error)
-      job.fail_with trace
+      job.fail_with error
     end
   end
 
