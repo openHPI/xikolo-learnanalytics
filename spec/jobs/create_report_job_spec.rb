@@ -62,7 +62,7 @@ describe CreateReportJob do
 
     it 'stores the exception trace in the database' do
       subject
-      expect(report_job.reload.error_text).to include 'Report could not be stored:'
+      expect(report_job.reload.error_text).to include 'Aws::S3::Errors'
     end
   end
 

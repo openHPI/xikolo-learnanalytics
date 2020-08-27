@@ -18,7 +18,7 @@ class CreateReportJob < ApplicationJob
         zip_file = report.files.zip(zip_password)
 
         # ...and finally send them to the file service
-        publish_file job, zip_file
+        job.finish_with upload_file(zip_file, job.id)
       end
     rescue => error
       trace =
@@ -26,21 +26,11 @@ class CreateReportJob < ApplicationJob
       Sidekiq.logger.error trace
       ::Mnemosyne.attach_error(error)
       ::Raven.capture_exception(error)
-      job.fail_with trace
+      job.fail_with error
     end
   end
 
   private
-
-  def publish_file(job, path)
-    job.finish_with upload_file(path, job.id)
-  rescue => error
-    trace =
-      "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
-    ::Mnemosyne.attach_error(error)
-    ::Raven.capture_exception(error)
-    job.fail_with("Report could not be stored:\n#{trace}")
-  end
 
   def upload_file(file_path, job_id)
     # which bucket should we use:

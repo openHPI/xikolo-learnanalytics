@@ -104,14 +104,17 @@ class ReportJob < ApplicationRecord
   end
 
   # Mark a job as failed
-  def fail_with(error_message)
+  def fail_with(error)
+    title = "#{error.class.name}: #{error.message}"
+    trace = error.backtrace.join("\n")
+
     Xikolo.metrics.write(
       'report_jobs',
       tags: {id: id, type: task_type},
       values: {
         user_id: user_id,
         status: 'failing',
-        error: error_message,
+        error: title,
         env_path: ENV['PATH'],
         tmp_dir: tmp_directory,
       },
@@ -120,7 +123,7 @@ class ReportJob < ApplicationRecord
     Xikolo::Reconnect.on_stale_connection do
       update(
         status: 'failing',
-        error_text: error_message,
+        error_text: "#{title}\n#{trace}",
       )
     end
   end
