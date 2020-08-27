@@ -56,6 +56,8 @@ class ReportJob < ApplicationRecord
 
   # rubocop:disable Naming/UncommunicativeMethodParamName
   def progress_to(part, of:)
+    part, of = part.to_i, of.to_i
+
     # Prevent division by zero
     return if of == 0
 
