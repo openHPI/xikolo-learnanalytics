@@ -140,7 +140,19 @@ class ReportJob < ApplicationRecord
 
   def with_tmp_directory
     FileUtils.mkpath tmp_directory
-    yield tmp_directory
+
+    File.open(tmp_directory) do |file|
+      # Acquire a shared lock on our temporary directory so that systemd does
+      # not unlink the file when the Sidekiq service is restarted. Previously,
+      # this meant that files were still written to by our long-running report
+      # generation zombie processes (thanks, KillMode=none), but could no
+      # longer be found / read when zipping them up.
+      #
+      # Reference: https://systemd.io/TEMPORARY_DIRECTORIES/
+      file.flock File::LOCK_SH
+
+      yield tmp_directory
+    end
   end
 
   def scoped?
