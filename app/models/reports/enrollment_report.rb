@@ -150,8 +150,8 @@ module Reports
       ).value!
 
       values = [
-        stats[:total_enrollments],
-        stats[:unique_enrolled_users]
+        stats['total_enrollments'],
+        stats['unique_enrolled_users']
       ]
 
       if @include_active_users
