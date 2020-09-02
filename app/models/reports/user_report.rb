@@ -74,7 +74,7 @@ module Reports
         end
 
         if @include_consents
-          headers.concat(treatments.map {|t| "Consent: #{t.name}" })
+          headers.concat(treatments.map {|t| "Consent: #{t['name']}" })
         end
 
         if @include_features
