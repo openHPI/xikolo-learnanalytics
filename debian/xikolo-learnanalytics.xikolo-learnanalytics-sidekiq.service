@@ -34,7 +34,10 @@ Restart=on-failure
 RestartSec=60s
 
 ProtectSystem=full
-PrivateTmp=true
+
+# Write to the global tmp dir(s) so that temp files are not deleted by systemd
+# for running zombie processes (because of KillMode=none above).
+PrivateTmp=false
 
 [Install]
 WantedBy=multi-user.target
