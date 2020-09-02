@@ -1,26 +1,8 @@
 roles:
   # Admins are allowed to mark alerts as ignored for all users
-  lanalytics.alert.admin:
-    - lanalytics.alert.ignore
-  lanalytics.alert.inspector:
-    - lanalytics.alert.index
-    - lanalytics.alert.ignore.own
   lanalytics.report.admin:
     - lanalytics.report.create
     - lanalytics.report.delete
   lanalytics.report.inspector:
     - lanalytics.report.create.anonymous
     - lanalytics.report.delete
-  lanalytics.rule.admin:
-    - lanalytics.rule.manage
-
-grants:
-  - role: lanalytics.alert.admin
-    group: xikolo.admins
-    context: root
-  - role: lanalytics.alert.inspector
-    group: xikolo.admins
-    context: root
-  - role: lanalytics.rule.admin
-    group: xikolo.admins
-    context: root
