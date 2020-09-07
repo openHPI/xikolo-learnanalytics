@@ -425,7 +425,7 @@ GEM
       railties (< 6)
       restify (~> 1.6)
       telegraf
-    xikolo-config (5.0)
+    xikolo-config (6.0.1)
       activesupport
       addressable (~> 2.0)
     xikolo-lint (2.2.0)
@@ -506,7 +506,7 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-common (~> 2.4)
-  xikolo-config (~> 5.0)
+  xikolo-config (~> 6.0)
   xikolo-lint (~> 2.2.0)
   xikolo-s3 (~> 1.5, >= 1.5.1)
   xikolo-sidekiq (~> 3.0)
