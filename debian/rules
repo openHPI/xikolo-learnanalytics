@@ -82,9 +82,6 @@ override_dh_link:
 		ln --symbolic /etc/${PACKAGE}/$$(basename $$cf) ${PKGBASE}${PREFIX}/config; \
 	done;
 
-	ln -s /etc/${PACKAGE}/environment.rb \
-		${PKGBASE}${PREFIX}/config/environments/puppet.rb
-
 
 override_dh_installsystemd:
 	sed -i -e 's/$${PACKAGE}/${PACKAGE}/g' debian/*.service

@@ -42,9 +42,4 @@ Rails.application.configure do
     url: redis.fetch('url'),
     expires_in: 1.day,
   }
-
-  # load puppet production specific configuration
-  if File.exist? File.expand_path('puppet.rb', __dir__)
-    require File.expand_path('puppet', __dir__)
-  end
 end
