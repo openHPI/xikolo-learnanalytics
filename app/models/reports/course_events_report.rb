@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Reports
   class CourseEventsReport < Base
     def initialize(job)
@@ -10,34 +12,48 @@ module Reports
     def generate!
       @job.update(annotation: course['course_code'])
 
-      csv_file "CourseEventsReport_#{course['id']}", headers, &method(:each_event)
+      csv_file(
+        "CourseEventsReport_#{course['id']}", headers, &method(:each_event)
+      )
     end
 
     private
 
     def headers
-      ['User ID', 'Verb', 'Resource ID', 'Timestamp', 'Context', 'Type', 'Item', 'Section']
+      [
+        'User ID',
+        'Verb',
+        'Resource ID',
+        'Timestamp',
+        'Context',
+        'Type',
+        'Item',
+        'Section',
+      ]
     end
 
-    # Handle each course event, prepare it for CSV output and yield it to the caller
+    # Handle each course event, prepare it for
+    # CSV output and yield it to the caller
     def each_event
-      # We currently do not generate these reports for courses without start or end date
-      return unless course['start_date'].present? and course['end_date'].present?
+      # We currently do not generate these reports
+      # for courses without start or end date
+      return unless course['start_date'].present? && course['end_date'].present?
 
       each_page do |page|
         page[:data].each do |row|
           # Skip deprecated events
-          next if %w(
+          next if %w[
             VISITED
             VIEWED_PAGE
-          ).include? row[:verb]
+          ].include? row[:verb]
 
           yield transform(row)
         end
       end
     end
 
-    # Scroll through the course events, page by page, and yield each page to the caller
+    # Scroll through the course events, page by page,
+    # and yield each page to the caller
     def each_page
       page = 1
       scroll_id = nil
@@ -58,12 +74,23 @@ module Reports
     # Transform one event's data for output to the CSV file
     def transform(row)
       # De-anonymize the user ID, if required
-      row[:user_id] = @deanonymized ? row[:user_id] : Digest::SHA256.hexdigest(row[:user_id])
+      row[:user_id] = if @deanonymized
+                        row[:user_id]
+                      else
+                        Digest::SHA256.hexdigest(row[:user_id])
+                      end
 
-      row[:context] = @deanonymized ? row[:context].to_json : row[:context].except('user_ip', 'user_agent').to_json
+      row[:context] = if @deanonymized
+                        row[:context].to_json
+                      else
+                        row[:context].except('user_ip', 'user_agent').to_json
+                      end
 
       # We add three more columns with information related to course items
-      item = items[row[:resource_id]] || items[JSON.parse(row[:context])['item_id']] || {}
+      item = items[row[:resource_id]] ||
+             items[JSON.parse(row[:context])['item_id']] ||
+             {}
+
       row[:type] = item['content_type']
       row[:item] = item['title']
 
@@ -79,7 +106,7 @@ module Reports
         end_date: course['end_date'],
         verb: @verb,
         page: page,
-        scroll_id: scroll_id
+        scroll_id: scroll_id,
       )
     end
 
@@ -90,18 +117,18 @@ module Reports
     def sections
       @sections ||= course_service.rel(:sections).get(
         course_id: course['id'],
-        per_page: 200
+        per_page: 200,
       ).value!.map do |item|
-        [item.id, item]
+        [item['id'], item]
       end.to_h
     end
 
     def items
       @items ||= course_service.rel(:items).get(
         course_id: course['id'],
-        per_page: 500
+        per_page: 500,
       ).value!.map do |item|
-        [item.id, item]
+        [item['id'], item]
       end.to_h
     end
 
