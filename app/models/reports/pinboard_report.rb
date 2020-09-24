@@ -17,38 +17,38 @@ module Reports
     private
 
     def headers
-      headers = %w[
-        id
-        title
-        text
-        video_timestamp
-        video_id
-        user_id
-        created_at
-        updated_at
-        accepted_answer_id
-        course_id
-        collab_space_id
-        collab_space_title
-        topic_id
-        file_id
-        commentable_id
-        commentable_type
-        answer_prediction
-        sentiment
-        sticky
-        deleted
-        closed
-        section_id
-        section_title
-        item_id
-        item_title
+      headers = [
+        'ID',
+        'Title',
+        'Text',
+        'Video Timestamp',
+        'Video ID',
+        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        'Created At',
+        'Updated At',
+        'Accepted Answer ID',
+        'Course ID',
+        'Collab Space ID',
+        'Collab Space Title',
+        'Topic ID',
+        'File ID',
+        'Commentable ID',
+        'Commentable Type',
+        'Answer Prediction',
+        'Sentiment',
+        'Sticky',
+        'Deleted',
+        'Closed',
+        'Section ID',
+        'Section Title',
+        'Item ID',
+        'Item Title',
       ]
 
       if @include_permission_groups
-        headers.concat %w[
-          user_global_groups
-          user_course_groups
+        headers.concat [
+          'User Global Groups',
+          'User Course Groups',
         ]
       end
 

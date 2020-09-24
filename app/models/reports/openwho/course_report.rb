@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/BlockLength
 # rubocop:disable Metrics/CyclomaticComplexity
-# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/PerceivedComplexity
 module Reports::Openwho
   class CourseReport < Reports::Base
     def initialize(job)
@@ -29,7 +28,7 @@ module Reports::Openwho
 
     def headers
       @headers ||= [
-        'User ID',
+        @deanonymized ? 'User ID' : 'User Pseudo ID',
         'User Created',
         'Language',
         'Affiliated',
