@@ -21,7 +21,7 @@ module Reports
 
     def headers
       [
-        'User ID',
+        @deanonymized ? 'User ID' : 'User Pseudo ID',
         'Verb',
         'Resource ID',
         'Timestamp',

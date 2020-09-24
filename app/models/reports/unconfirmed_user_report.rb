@@ -3,6 +3,8 @@ module Reports
 
     def initialize(job)
       super
+
+      @deanonymized = job.options['deanonymized']
     end
 
     def generate!
@@ -13,10 +15,10 @@ module Reports
 
     def headers
       [
-        'User ID',
+        @deanonymized ? 'User ID' : 'User Pseudo ID',
         'Full Name',
         'Email',
-        'Created'
+        'Created',
       ]
     end
 

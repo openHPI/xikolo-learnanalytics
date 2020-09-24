@@ -308,7 +308,7 @@ module Reports
 
     def headers
       @headers ||= [
-        'User ID',
+        @deanonymized ? 'User ID' : 'User Pseudo ID',
         'Enrollment Date',
         'First Enrollment',
         'User created',
@@ -316,12 +316,12 @@ module Reports
         'Affiliated',
         'Birth Date',
         'Age',
-        'Age Group'
+        'Age Group',
       ].tap do |headers|
         if @deanonymized
           headers.concat [
             'Full Name',
-            'Email'
+            'Email',
           ]
         end
 
@@ -377,7 +377,7 @@ module Reports
           'Items Visited',
           'Items Visited Percentage',
           'Points',
-          'Points Percentage'
+          'Points Percentage',
         ]
 
         if @include_sections

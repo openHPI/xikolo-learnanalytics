@@ -15,12 +15,12 @@ module Reports
     private
 
     def headers
-      headers = ['User ID']
+      headers = [@deanonymized ? 'User ID' : 'User Pseudo ID']
 
       if @deanonymized
         headers.concat [
-         'User Name',
-         'Email',
+          'User Name',
+          'Email',
         ]
       end
 

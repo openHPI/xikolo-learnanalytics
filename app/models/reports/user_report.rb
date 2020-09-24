@@ -41,7 +41,7 @@ module Reports
 
     def headers
       @headers ||= [
-        'User ID',
+        @deanonymized ? 'User ID' : 'User Pseudo ID',
       ].tap do |headers|
         if @deanonymized
           headers.append(
