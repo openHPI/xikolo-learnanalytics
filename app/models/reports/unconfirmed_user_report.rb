@@ -1,10 +1,9 @@
+# frozen_string_literal: true
+
 module Reports
   class UnconfirmedUserReport < Base
-
     def initialize(job)
       super
-
-      @deanonymized = job.options['deanonymized']
     end
 
     def generate!
@@ -15,7 +14,7 @@ module Reports
 
     def headers
       [
-        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        'User ID',
         'Full Name',
         'Email',
         'Created',
@@ -25,16 +24,19 @@ module Reports
     def each_user
       index = 0
 
-      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-        account_service.rel(:users).get(
-          confirmed: false, per_page: 500
-        )
-      end.each_item do |user, page|
+      users_promise =
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+          account_service.rel(:users).get(
+            confirmed: false, per_page: 500,
+          )
+        end
+
+      users_promise.each_item do |user, page|
         values = [
           user['id'],
           escape_csv_string(user['full_name']),
           user['email'],
-          user['created_at'].to_datetime.strftime('%Y-%m-%d')
+          user['created_at'].to_datetime.strftime('%Y-%m-%d'),
         ]
 
         yield values
@@ -47,6 +49,5 @@ module Reports
     def account_service
       @account_service ||= Xikolo.api(:account).value!
     end
-
   end
 end
