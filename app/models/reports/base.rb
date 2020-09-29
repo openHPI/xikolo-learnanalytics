@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 require 'csv'
 require 'file_collection'
 
 module Reports
   class Base
     def initialize(job)
-      # Subclasses can override this method if they need access to the additional options
+      # Subclasses can override this method if they need access to
+      # the additional options
       @job = job
 
       @machine_headers = job.options['machine_headers']
@@ -22,17 +25,22 @@ module Reports
 
     def csv_file(target, headers, &block)
       CSV.open(
-        files.make("#{target}_#{DateTime.now.strftime('%Y-%m-%d')}_#{@job.id}.csv"),
-        'wb'
+        files.make(
+          "#{target}_#{DateTime.now.strftime('%Y-%m-%d')}_#{@job.id}.csv",
+        ),
+        'wb',
       ) do |csv|
-        if @machine_headers
-          csv << headers.map(&:underscore)
-        else
-          csv << headers
-        end
+        csv << if @machine_headers
+                 # Lowercase, underscored (incl. whitespaces) and
+                 # non-alphanumeric characters removed.
+                 headers.map {|h| h.underscore.tr(' ', '_').gsub(/\W/, '') }
+               else
+                 headers
+               end
 
         index = 0
 
+        # rubocop:disable Performance/RedundantBlockCall
         block.call do |row|
           csv << row
           csv.flush
@@ -49,6 +57,7 @@ module Reports
 
           index += 1
         end
+        # rubocop:enable all
       end
     end
   end
