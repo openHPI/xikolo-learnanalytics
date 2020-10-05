@@ -99,9 +99,6 @@ class ReportJob < ApplicationRecord
       )
     end
 
-    # Clean up tmp directory
-    FileUtils.rmtree tmp_directory
-
     self
   end
 
@@ -152,6 +149,8 @@ class ReportJob < ApplicationRecord
 
       yield tmp_directory
     end
+  ensure
+    FileUtils.rmtree tmp_directory
   end
 
   def scoped?
