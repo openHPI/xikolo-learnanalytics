@@ -659,10 +659,12 @@ module Reports
     end
 
     # rubocop:disable Naming/UncommunicativeMethodParamName
+    # rubocop:disable Style/FloatDivision
     def percentage(n, of:)
       return if n.blank? || of == 0
 
-      format('%.4f', n / of.to_f)
+      # Cast `n` and `of` to floats since they can be strings
+      format('%.4f', n.to_f / of.to_f)
     end
     # rubocop:enable all
 
