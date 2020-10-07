@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 module Reports
+  # rubocop:disable Metrics/ClassLength
   class CourseReport < Base
     def initialize(job)
       super
 
-      @deanonymized = job.options['deanonymized']
+      @de_pseudonymized = job.options['de_pseudonymized']
       @include_analytics_metrics = job.options['include_analytics_metrics']
       @include_profile = job.options['include_profile']
       @include_sections = true
@@ -13,11 +16,18 @@ module Reports
     def generate!
       @job.update(annotation: course['course_code'])
 
-      csv_file "CourseReport_#{course['course_code']}", headers, &method(:each_row)
+      csv_file(
+        "CourseReport_#{course['course_code']}",
+        headers,
+        &method(:each_row)
+      )
     end
 
     private
 
+    # rubocop:disable Metrics/BlockLength
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def each_row
       courses.each_with_index do |course, course_index|
         index = 0
@@ -37,16 +47,24 @@ module Reports
             end,
           ).value!.first.count
 
-          start_date =  Date.parse(course['start_date'])
-          end_date =    course['end_date'].present? ? Date.parse(course['end_date']) : Date.today
+          start_date = Date.parse(course['start_date'])
+          end_date = if course['end_date'].present?
+                       Date.parse(course['end_date'])
+                     else
+                       Time.zone.today
+                     end
           course_days = (end_date - start_date).to_i
         end
 
-        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+        enrollments_promise = Xikolo.paginate_with_retries(
+          max_retries: 3, wait: 60.seconds,
+        ) do
           course_service.rel(:enrollments).get(
-            course_id: course['id'], per_page: 50, deleted: true
+            course_id: course['id'], per_page: 50, deleted: true,
           )
-        end.each_item do |e, enrollment_page|
+        end
+
+        enrollments_promise.each_item do |e, enrollment_page|
           user = Xikolo::RetryingPromise.new(
             Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
               account_service.rel(:user).get(id: e['user_id'])
@@ -54,21 +72,43 @@ module Reports
           ).value!.first
 
           Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) {
+            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
               course_service.rel(:enrollments).get(
-                course_id: course['id'], user_id: e['user_id'], deleted: true, learning_evaluation: true
+                course_id: course['id'],
+                user_id: e['user_id'],
+                deleted: true,
+                learning_evaluation: true,
               )
-            },
-            Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { pinboard_service.rel(:statistic).get(id: course['id'], user_id: user['id']) }
+            end,
+            Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+              pinboard_service.rel(:statistic).get(
+                id: course['id'],
+                user_id: user['id'],
+              )
+            end,
           ) do |enrollments, stat_pinboard|
             enrollment = enrollments.first
             course_start_date = as_date(course['start_date'])
             birth_compare_date = course_start_date || DateTime.now
             enrollment_date = as_date(enrollment['created_at'])
-            age = user['born_at'].present? ? ((birth_compare_date - DateTime.parse(user['born_at'])) / 365).to_i : ''
+
+            age = if user['born_at'].present?
+                    (
+                      (birth_compare_date - DateTime.parse(user['born_at'])) /
+                      365
+                    ).to_i
+                  else
+                    ''
+                  end
+
+            user_id = if @de_pseudonymized
+                        user['id']
+                      else
+                        Digest::SHA256.hexdigest(user['id'])
+                      end
 
             values = [
-              @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
+              user_id,
               enrollment_date,
               first_enrollment?(enrollment),
               user['created_at'],
@@ -76,13 +116,13 @@ module Reports
               user['affiliated'],
               as_date(user['born_at']),
               age,
-              user['born_at'].present? ? age_group_from_age(age) : ''
+              user['born_at'].present? ? age_group_from_age(age) : '',
             ]
 
-            if @deanonymized
+            if @de_pseudonymized
               values += [
                 escape_csv_string(user['full_name']),
-                user['email']
+                user['email'],
               ]
             end
 
@@ -99,19 +139,39 @@ module Reports
 
             # get elasticsearch / postgres metrics per user
             if @include_analytics_metrics
-              user_course_country = fetch_metric('UserCourseCountry', course['id'], user['id']) || ''
-              user_course_city = fetch_metric('UserCourseCity', course['id'], user['id']) || ''
-              device_usage = fetch_device_usage(course['id'], user['id'])
-              first_action = fetch_metric('FirstAction', course['id'], user['id'])
-              first_visited_item = fetch_metric('FirstVisitedItem', course['id'], user['id'])
-              last_action = fetch_metric('LastAction', course['id'], user['id'])
-              last_visited_item = fetch_metric('LastVisitedItem', course['id'], user['id'])
-              forum_activity = fetch_metric('ForumActivity', course['id'], user['id'])&.dig(:total)
-              forum_write_activity = fetch_metric('ForumWriteActivity', course['id'], user['id'])&.dig(:total)
+              user_course_country = fetch_metric(
+                'UserCourseCountry', course['id'], user['id']
+              ) || ''
+              user_course_city = fetch_metric(
+                'UserCourseCity', course['id'], user['id']
+              ) || ''
+              device_usage = fetch_device_usage(
+                course['id'], user['id']
+              )
+              first_action = fetch_metric(
+                'FirstAction', course['id'], user['id']
+              )
+              first_visited_item = fetch_metric(
+                'FirstVisitedItem', course['id'], user['id']
+              )
+              last_action = fetch_metric(
+                'LastAction', course['id'], user['id']
+              )
+              last_visited_item = fetch_metric(
+                'LastVisitedItem', course['id'], user['id']
+              )
+              forum_activity = fetch_metric(
+                'ForumActivity', course['id'], user['id']
+              )&.dig(:total)
+              forum_write_activity = fetch_metric(
+                'ForumWriteActivity', course['id'], user['id']
+              )&.dig(:total)
 
               values += [
                 user_course_country,
-                suppress(IsoCountryCodes::UnknownCodeError) { IsoCountryCodes.find(user_course_country).name },
+                suppress(IsoCountryCodes::UnknownCodeError) do
+                  IsoCountryCodes.find(user_course_country)&.name
+                end,
                 user_course_city,
                 device_usage['desktop web'],
                 device_usage['mobile web'],
@@ -120,48 +180,93 @@ module Reports
                 first_visited_item&.dig('timestamp') || '',
                 last_action&.dig('timestamp') || '',
                 last_visited_item&.dig('timestamp') || '',
-                last_visited_item&.dig('resource', 'resource_uuid') || '',
-                clustering_metrics.dig(user['id'], 'sessions') || '',
-                clustering_metrics.dig(user['id'], 'average_session_duration') || '',
-                clustering_metrics.dig(user['id'], 'total_session_duration') || '',
-                clustering_metrics.dig(user['id'], 'unique_video_play_activity') || '',
-                percentage(clustering_metrics.dig(user['id'], 'unique_video_play_activity'), of: video_count) || '',
-                clustering_metrics.dig(user['id'], 'unique_video_downloads_activity') || '',
-                percentage(clustering_metrics.dig(user['id'], 'unique_video_downloads_activity'), of: video_count) || '',
-                clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity') || '',
-                percentage(clustering_metrics.dig(user['id'], 'unique_slide_downloads_activity'), of: video_count) || '',
+                last_visited_item&.dig(
+                  'resource', 'resource_uuid'
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'sessions'
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'average_session_duration'
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'total_session_duration'
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'unique_video_play_activity'
+                ) || '',
+                percentage(
+                  clustering_metrics.dig(
+                    user['id'], 'unique_video_play_activity'
+                  ),
+                  of: video_count,
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'unique_video_downloads_activity'
+                ) || '',
+                percentage(
+                  clustering_metrics.dig(
+                    user['id'], 'unique_video_downloads_activity'
+                  ),
+                  of: video_count,
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'unique_slide_downloads_activity'
+                ) || '',
+                percentage(
+                  clustering_metrics.dig(
+                    user['id'], 'unique_slide_downloads_activity'
+                  ),
+                  of: video_count,
+                ) || '',
                 forum_activity,
                 forum_activity.to_f / course_days,
                 forum_write_activity,
-                clustering_metrics.dig(user['id'], 'quiz_performance') || '',
-                clustering_metrics.dig(user['id'], 'graded_quiz_performance') || '',
-                clustering_metrics.dig(user['id'], 'ungraded_quiz_performance') || '',
+                clustering_metrics.dig(
+                  user['id'], 'quiz_performance'
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'graded_quiz_performance'
+                ) || '',
+                clustering_metrics.dig(
+                  user['id'], 'ungraded_quiz_performance'
+                ) || '',
               ]
             end
 
             # Try to calculate enrollment delta
-            if course_start_date && enrollment_date
-              values << (enrollment_date - course_start_date).to_i
-            else
-              values << ''
-            end
+            values << if course_start_date && enrollment_date
+                        (enrollment_date - course_start_date).to_i
+                      else
+                        ''
+                      end
+
+            top_performance = if enrollment['quantile'].present?
+                                calculate_top_performance(
+                                  enrollment['quantile'],
+                                )
+                              else
+                                ''
+                              end
 
             values += [
               stat_pinboard['posts'],
               stat_pinboard['threads'],
               enrollment['forced_submission_date'].present? || '',
               enrollment['forced_submission_date'] || '',
-              enrollment.dig('certificates', 'confirmation_of_participation') || '',
+              enrollment.dig(
+                'certificates', 'confirmation_of_participation'
+              ) || '',
               enrollment.dig('certificates', 'record_of_achievement') || '',
               enrollment.dig('certificates', 'certificate') || '',
               enrollment['completed'] || '',
               enrollment['deleted'] || '',
               enrollment['quantile'] || '',
-              enrollment['quantile'].present? ? calculate_top_performance(enrollment['quantile']) : '',
+              top_performance,
               enrollment.dig('visits', 'visited'),
               enrollment.dig('visits', 'percentage'),
               enrollment.dig('points', 'achieved'),
-              enrollment.dig('points', 'percentage')
+              enrollment.dig('points', 'percentage'),
             ]
 
             # For each section, append visit percentage and points percentage
@@ -176,50 +281,55 @@ module Reports
               ).value!.first
 
               values += course_sections.map do |s|
-                p = progresses.find { |p| p['resource_id'] == s['id'] }
-                if p
-                  total =   p.dig('visits', 'total').to_f
-                  n =       p.dig('visits', 'user').to_f
-                  percentage n, of: total
-                end
+                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+
+                next unless p
+
+                total = p.dig('visits', 'total').to_f
+                n = p.dig('visits', 'user').to_f
+                percentage n, of: total
               end
 
               values += course_sections.map do |s|
-                p = progresses.find { |p| p['resource_id'] == s['id'] }
-                if p
-                  total =   p.dig('selftest_exercises', 'max_points').to_f
-                  n =       p.dig('selftest_exercises', 'graded_points').to_f
-                  percentage n, of: total
-                end
+                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+
+                next unless p
+
+                total = p.dig('selftest_exercises', 'max_points').to_f
+                n = p.dig('selftest_exercises', 'graded_points').to_f
+                percentage n, of: total
               end
 
               values += course_sections.map do |s|
-                p = progresses.find { |p| p['resource_id'] == s['id'] }
-                if p
-                  total =   p.dig('main_exercises', 'max_points').to_f
-                  n =       p.dig('main_exercises', 'graded_points').to_f
-                  percentage n, of: total
-                end
+                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+
+                next unless p
+
+                total = p.dig('main_exercises', 'max_points').to_f
+                n = p.dig('main_exercises', 'graded_points').to_f
+                percentage n, of: total
               end
 
               values += course_sections.map do |s|
-                p = progresses.find { |p| p['resource_id'] == s['id'] }
-                if p
-                  total =   p.dig('bonus_exercises', 'max_points').to_f
-                  n =       p.dig('bonus_exercises', 'graded_points').to_f
-                  percentage n, of: total
-                end
+                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+
+                next unless p
+
+                total = p.dig('bonus_exercises', 'max_points').to_f
+                n = p.dig('bonus_exercises', 'graded_points').to_f
+                percentage n, of: total
               end
             end
 
             all_submissions = all_user_submissions(user['id'])
             values += quizzes.map do |q|
               s = all_submissions[q['content_id']]
-              if s
-                total =   q['max_points'].to_f
-                n =       s['points'].to_f + s['fudge_points'].to_f
-                percentage n, of: total
-              end
+
+              next unless s
+
+              total = q['max_points'].to_f
+              n = s['points'].to_f + s['fudge_points'].to_f
+              percentage n, of: total
             end
 
             values += [course['course_code']]
@@ -228,14 +338,18 @@ module Reports
 
             index += 1
             @job.progress_to(
-              (course_index * enrollment_page.response.headers['X_TOTAL_COUNT'].to_i) + index,
-              of: courses.count * enrollment_page.response.headers['X_TOTAL_COUNT'].to_i
+              (course_index *
+                enrollment_page.response.headers['X_TOTAL_COUNT'].to_i) + index,
+              of: courses.count *
+                enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,
             )
           end.value!
         end
       end
     end
+    # rubocop:enable all
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def age_group_from_age(age)
       case age.to_i
         when 0...20
@@ -254,6 +368,7 @@ module Reports
           '70+'
       end
     end
+    # rubocop:enable all
 
     def fetch_device_usage(course_id, user_id)
       device_usage = fetch_metric('DeviceUsage', course_id, user_id)
@@ -288,14 +403,17 @@ module Reports
         graded_quiz_performance
         ungraded_quiz_performance
       ]
-      result = Lanalytics::Clustering::Dimensions.query(course['id'], clustering_metrics, nil)
-      result.map { |x| [x['user_uuid'], x.except('user_uuid')] }.to_h
+      result = Lanalytics::Clustering::Dimensions.query(
+        course['id'], clustering_metrics, nil
+      )
+      result.map {|x| [x['user_uuid'], x.except('user_uuid')] }.to_h
     rescue
       {}
     end
 
     def calculate_top_performance(quantile)
       return '' unless quantile
+
       top_percentage = (1 - quantile.to_f).round(10)
       if top_percentage <= 0.05
         'Top5'
@@ -306,9 +424,10 @@ module Reports
       end
     end
 
+    # rubocop:disable Metrics/BlockLength
     def headers
       @headers ||= [
-        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
         'Enrollment Date',
         'First Enrollment',
         'User created',
@@ -318,7 +437,7 @@ module Reports
         'Age',
         'Age Group',
       ].tap do |headers|
-        if @deanonymized
+        if @de_pseudonymized
           headers.concat [
             'Full Name',
             'Email',
@@ -381,10 +500,26 @@ module Reports
         ]
 
         if @include_sections
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Visited Percentage (Section)" }
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Self-tests Percentage (Section)" }
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Assignments Percentage (Section)" }
-          headers.concat course_sections.map { |s| "#{s['title'].titleize} Bonus Percentage (Section)" }
+          headers.concat(
+            course_sections.map do |s|
+              "#{s['title'].titleize} Visited Percentage (Section)"
+            end,
+          )
+          headers.concat(
+            course_sections.map do |s|
+              "#{s['title'].titleize} Self-tests Percentage (Section)"
+            end,
+          )
+          headers.concat(
+            course_sections.map do |s|
+              "#{s['title'].titleize} Assignments Percentage (Section)"
+            end,
+          )
+          headers.concat(
+            course_sections.map do |s|
+              "#{s['title'].titleize} Bonus Percentage (Section)"
+            end,
+          )
         end
 
         headers.concat quiz_column_headers
@@ -392,6 +527,7 @@ module Reports
         headers.concat ['Course Code']
       end
     end
+    # rubocop:enable all
 
     def courses
       # return an array with the course
@@ -419,17 +555,21 @@ module Reports
     end
 
     def quiz_column_headers
-      quizzes.map { |q|
-        section = course_sections.find { |s| s['id'] == q['section_id'] } || {'title' => ''}
-        "#{section['title'].titleize} - #{q['title'].titleize} Percentage (Quiz)"
-      }
+      quizzes.map do |q|
+        section = course_sections.find do |s|
+          s['id'] == q['section_id']
+        end || {'title' => ''}
+
+        "#{section['title'].titleize} - " \
+        "#{q['title'].titleize} Percentage (Quiz)"
+      end
     end
 
     def profile_config
-      @profile_config ||= if @deanonymized
-                            ProfileFieldConfiguration.deanonymized
+      @profile_config ||= if @de_pseudonymized
+                            ProfileFieldConfiguration.de_pseudonymized
                           else
-                            ProfileFieldConfiguration.anonymized
+                            ProfileFieldConfiguration.pseudonymized
                           end
     end
 
@@ -438,13 +578,18 @@ module Reports
 
       if @quizzes.nil?
         @quizzes = []
-        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+
+        items_promise = Xikolo.paginate_with_retries(
+          max_retries: 3, wait: 60.seconds,
+        ) do
           course_service.rel(:items).get(
             course_id: course['id'],
-            content_type: 'quiz'
+            content_type: 'quiz',
           )
-        end.each_item do |quiz|
-          if %w(main selftest bonus).include? quiz['exercise_type']
+        end
+
+        items_promise.each_item do |quiz|
+          if %w[main selftest bonus].include? quiz['exercise_type']
             @quizzes.append(quiz)
           end
         end
@@ -475,11 +620,14 @@ module Reports
 
       # Get last submission for every quiz
       all_submissions
-        .group_by { |submission| submission['quiz_id'] }
-        .map { |quiz_id, arr|
-          last_submission = arr.sort_by { |s| DateTime.parse(s['quiz_submission_time']) }.last
+        .group_by {|submission| submission['quiz_id'] }
+        .map do |quiz_id, arr|
+          last_submission = arr.max_by do |s|
+            DateTime.parse(s['quiz_submission_time'])
+          end
+
           [quiz_id, last_submission]
-        }.to_h
+        end.to_h
     end
 
     def first_enrollment?(enrollment)
@@ -505,15 +653,18 @@ module Reports
       return '' unless compare_date
 
       all_enrollments
-        .map { |e| as_date(e['created_at']) }
+        .map {|e| as_date(e['created_at']) }
         .compact
-        .none? { |date| date < compare_date }
+        .none? {|date| date < compare_date }
     end
 
+    # rubocop:disable Naming/UncommunicativeMethodParamName
     def percentage(n, of:)
       return if n.blank? || of == 0
-      format("%.4f", n.to_f / of.to_f)
+
+      format('%.4f', n / of.to_f)
     end
+    # rubocop:enable all
 
     def account_service
       @account_service ||= Xikolo.api(:account).value!

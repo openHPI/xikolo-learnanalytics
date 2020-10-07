@@ -1,18 +1,16 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/AbcSize
 # rubocop:disable Metrics/BlockLength
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/CyclomaticComplexity
-# rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/PerceivedComplexity
 module Reports
   class UserReport < Base
     def initialize(job)
       super
 
-      @deanonymized =
-        job.options['deanonymized']
+      @de_pseudonymized =
+        job.options['de_pseudonymized']
       @include_top_location =
         job.options['include_top_location']
       @include_profile =
@@ -41,9 +39,9 @@ module Reports
 
     def headers
       @headers ||= [
-        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
       ].tap do |headers|
-        if @deanonymized
+        if @de_pseudonymized
           headers.append(
             'Full Name',
             'Email',
@@ -65,11 +63,9 @@ module Reports
           )
         end
 
-        if @include_profile
-          headers.concat(profile_config.all_titles)
-        end
+        headers.concat(profile_config.all_titles) if @include_profile
 
-        if @include_auth && @deanonymized
+        if @include_auth && @de_pseudonymized
           headers.concat(reportable_auth_fields.map {|f| "Auth: #{f}" })
         end
 
@@ -107,10 +103,10 @@ module Reports
 
       users_promise.each_item do |user, page|
         values = [
-          @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
+          @de_pseudonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
         ]
 
-        if @deanonymized
+        if @de_pseudonymized
           values.append(
             escape_csv_string(user['full_name']),
             user['email'],
@@ -147,7 +143,7 @@ module Reports
           values.concat(profile_config.for(profile).values)
         end
 
-        if @include_auth && @deanonymized
+        if @include_auth && @de_pseudonymized
           authorizations = Xikolo::RetryingPromise.new(
             Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
               account_service.rel(:authorizations).get(user: user['id'])
@@ -348,10 +344,10 @@ module Reports
     end
 
     def profile_config
-      @profile_config ||= if @deanonymized
-                            ProfileFieldConfiguration.deanonymized
+      @profile_config ||= if @de_pseudonymized
+                            ProfileFieldConfiguration.de_pseudonymized
                           else
-                            ProfileFieldConfiguration.anonymized
+                            ProfileFieldConfiguration.pseudonymized
                           end
     end
 
