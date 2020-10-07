@@ -9,11 +9,11 @@ class ProfileFieldConfiguration < ApplicationRecord
   scope :sensitive, -> { where(sensitive: true) }
   scope :omittable, -> { where(omittable: true) }
 
-  def self.anonymized
+  def self.pseudonymized
     Instance.new sensitive.or(omittable)
   end
 
-  def self.deanonymized
+  def self.de_pseudonymized
     Instance.new omittable
   end
 

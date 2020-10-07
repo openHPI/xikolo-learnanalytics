@@ -8,8 +8,8 @@ module Reports::Openwho
     def initialize(job)
       super
 
-      @deanonymized =
-        job.options['deanonymized']
+      @de_pseudonymized =
+        job.options['de_pseudonymized']
       @include_enrollment_evaluation =
         job.options['include_enrollment_evaluation']
     end
@@ -28,7 +28,7 @@ module Reports::Openwho
 
     def headers
       @headers ||= [
-        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
         'User Created',
         'Language',
         'Affiliated',
@@ -89,8 +89,14 @@ module Reports::Openwho
 
           profile_fields = profile_config.for(profile)
 
+          user_id = if @de_pseudonymized
+                      user['id']
+                    else
+                      Digest::SHA256.hexdigest(user['id'])
+                    end
+
           values = [
-            @deanonymized ? user['id'] : Digest::SHA256.hexdigest(user['id']),
+            user_id,
             user['created_at'],
             user['language'],
             user['affiliated'],
@@ -182,10 +188,10 @@ module Reports::Openwho
     end
 
     def profile_config
-      @profile_config ||= if @deanonymized
-                            ProfileFieldConfiguration.deanonymized
+      @profile_config ||= if @de_pseudonymized
+                            ProfileFieldConfiguration.de_pseudonymized
                           else
-                            ProfileFieldConfiguration.anonymized
+                            ProfileFieldConfiguration.pseudonymized
                           end
     end
 

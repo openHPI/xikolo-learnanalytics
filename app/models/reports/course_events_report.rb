@@ -5,7 +5,7 @@ module Reports
     def initialize(job)
       super
 
-      @deanonymized = job.options['deanonymized']
+      @de_pseudonymized = job.options['de_pseudonymized']
       @verb = job.options['verb']
     end
 
@@ -21,7 +21,7 @@ module Reports
 
     def headers
       [
-        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
         'Verb',
         'Resource ID',
         'Timestamp',
@@ -74,13 +74,13 @@ module Reports
     # Transform one event's data for output to the CSV file
     def transform(row)
       # De-anonymize the user ID, if required
-      row[:user_id] = if @deanonymized
+      row[:user_id] = if @de_pseudonymized
                         row[:user_id]
                       else
                         Digest::SHA256.hexdigest(row[:user_id])
                       end
 
-      row[:context] = if @deanonymized
+      row[:context] = if @de_pseudonymized
                         row[:context].to_json
                       else
                         row[:context].except('user_ip', 'user_agent').to_json

@@ -5,8 +5,8 @@ module Reports::Openwho
     def initialize(job)
       super
 
-      @deanonymized =
-        job.options['deanonymized']
+      @de_pseudonymized =
+        job.options['de_pseudonymized']
       @include_enrollment_evaluation =
         job.options['include_enrollment_evaluation']
     end

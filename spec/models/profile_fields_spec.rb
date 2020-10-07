@@ -69,8 +69,8 @@ describe ProfileFields do
   end
 
   describe '#[]' do
-    context 'anonymized' do
-      let(:profile_config) { ProfileFieldConfiguration.anonymized }
+    context 'pseudonymized' do
+      let(:profile_config) { ProfileFieldConfiguration.pseudonymized }
 
       it 'exposes normal fields' do
         expect(fields['gender']).to eq 'male'
@@ -85,8 +85,8 @@ describe ProfileFields do
       end
     end
 
-    context 'deanonymized' do
-      let(:profile_config) { ProfileFieldConfiguration.deanonymized }
+    context 'de_pseudonymized' do
+      let(:profile_config) { ProfileFieldConfiguration.de_pseudonymized }
 
       it 'exposes normal fields' do
         expect(fields['gender']).to eq 'male'
@@ -105,14 +105,14 @@ describe ProfileFields do
   describe '#values' do
     subject { super().values }
 
-    context 'anonymized' do
-      let(:profile_config) { ProfileFieldConfiguration.anonymized }
+    context 'pseudonymized' do
+      let(:profile_config) { ProfileFieldConfiguration.pseudonymized }
 
       it { is_expected.to match_array ['male', '"Berlin"', 'de;en;fr'] }
     end
 
-    context 'deanonymized' do
-      let(:profile_config) { ProfileFieldConfiguration.deanonymized }
+    context 'de_pseudonymized' do
+      let(:profile_config) { ProfileFieldConfiguration.de_pseudonymized }
 
       it { is_expected.to match_array ['male', '"Max Muster"', '"Berlin"', 'de;en;fr'] }
     end
@@ -121,14 +121,14 @@ describe ProfileFields do
   describe '#titles' do
     subject { super().titles }
 
-    context 'anonymized' do
-      let(:profile_config) { ProfileFieldConfiguration.anonymized }
+    context 'pseudonymized' do
+      let(:profile_config) { ProfileFieldConfiguration.pseudonymized }
 
       it { is_expected.to match_array %w[Gender City Languages] }
     end
 
-    context 'deanonymized' do
-      let(:profile_config) { ProfileFieldConfiguration.deanonymized }
+    context 'de_pseudonymized' do
+      let(:profile_config) { ProfileFieldConfiguration.de_pseudonymized }
 
       it { is_expected.to match_array %w[Full\ Name Gender City Languages] }
     end

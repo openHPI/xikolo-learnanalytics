@@ -1,17 +1,24 @@
+# frozen_string_literal: true
+
 module Reports
+  # rubocop:disable Metrics/ClassLength
   class PinboardReport < Base
     def initialize(job)
       super
 
-      @deanonymized = job.options['deanonymized']
-      @include_collab_spaces = job.options.fetch('include_collab_spaces', false)
-      @include_permission_groups = job.options.fetch('include_permission_groups', false)
+      @de_pseudonymized = job.options['de_pseudonymized']
+      @include_collab_spaces = job.options['include_collab_spaces']
+      @include_permission_groups = job.options['include_permission_groups']
     end
 
     def generate!
       @job.update(annotation: course['course_code'])
 
-      csv_file "PinboardReport_#{course['course_code']}", headers, &method(:each_post)
+      csv_file(
+        "PinboardReport_#{course['course_code']}",
+        headers,
+        &method(:each_post)
+      )
     end
 
     private
@@ -23,7 +30,7 @@ module Reports
         'Text',
         'Video Timestamp',
         'Video ID',
-        @deanonymized ? 'User ID' : 'User Pseudo ID',
+        @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
         'Created At',
         'Updated At',
         'Accepted Answer ID',
@@ -80,14 +87,14 @@ module Reports
       section_id = implicit_section_id(topic['implicit_tags'])
       item_id = implicit_item_id(topic['implicit_tags'])
 
-      section_title = sections \
-        .find { |section| section['id'] == section_id }&.dig('title')
-      item_title = items \
-        .find { |item| item['id'] == item_id }&.dig('title')
+      section_title = sections
+        .find {|section| section['id'] == section_id }&.dig('title')
+      item_title = items
+        .find {|item| item['id'] == item_id }&.dig('title')
 
       collab_space_id = topic['learning_room_id']
-      collab_space_title = collab_spaces \
-        .find { |space| space['id'] == collab_space_id }&.dig('name')
+      collab_space_title = collab_spaces
+        .find {|space| space['id'] == collab_space_id }&.dig('name')
 
       values = [
         topic['id'],
@@ -118,12 +125,12 @@ module Reports
       ]
 
       if @include_permission_groups
-        global_groups = user_global_groups \
-                          .groups_for_user(topic['user_id']) \
-                          .join(';')
-        course_groups = user_course_groups \
-                          .groups_for_user(topic['user_id']) \
-                          .join(';')
+        global_groups = user_global_groups
+          .groups_for_user(topic['user_id'])
+          .join(';')
+        course_groups = user_course_groups
+          .groups_for_user(topic['user_id'])
+          .join(';')
 
         values.concat [
           global_groups,
@@ -144,7 +151,7 @@ module Reports
 
     def each_answer(topic)
       pinboard_service.rel(:answers).get(
-        question_id: topic['id'], per_page: 250
+        question_id: topic['id'], per_page: 250,
       ).value!.each do |answer|
         yield [
           answer['id'],
@@ -174,9 +181,10 @@ module Reports
       end
     end
 
+    # rubocop:disable Metrics/BlockLength
     def each_comment(object, type)
       pinboard_service.rel(:comments).get(
-        commentable_id: object['id'], commentable_type: type, per_page: 250
+        commentable_id: object['id'], commentable_type: type, per_page: 250,
       ).value!.each do |comment|
         question_id = ''
         if comment['commentable_type'] == 'Question'
@@ -207,9 +215,10 @@ module Reports
         ]
       end
     end
+    # rubocop:enable all
 
     def user_id(id)
-      if @deanonymized
+      if @de_pseudonymized
         id
       else
         Digest::SHA256.hexdigest(id)
@@ -217,20 +226,24 @@ module Reports
     end
 
     def implicit_section_id(tags)
-      tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Section' }&.dig('name')
+      tags.find do |tag|
+        tag['referenced_resource'] == 'Xikolo::Course::Section'
+      end&.dig('name')
     end
 
     def implicit_item_id(tags)
-      tags.find { |tag| tag['referenced_resource'] == 'Xikolo::Course::Item' }&.dig('name')
+      tags.find do |tag|
+        tag['referenced_resource'] == 'Xikolo::Course::Item'
+      end&.dig('name')
     end
 
     def topic_filters
       filters = [
-        {course_id: course['id']}
+        {course_id: course['id']},
       ]
 
       if @include_collab_spaces
-        collab_spaces.each { |space| filters << {learning_room_id: space['id']} }
+        collab_spaces.each {|space| filters << {learning_room_id: space['id']} }
       end
 
       filters
@@ -243,11 +256,17 @@ module Reports
     def sections
       @sections ||= begin
         sections = []
-        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+
+        sections_promise = Xikolo.paginate_with_retries(
+          max_retries: 3, wait: 60.seconds,
+        ) do
           course_service.rel(:sections).get(course_id: course['id'])
-        end.each_item do |section|
+        end
+
+        sections_promise.each_item do |section|
           sections << section
         end
+
         sections
       end
     end
@@ -255,11 +274,17 @@ module Reports
     def items
       @items ||= begin
         items = []
-        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+
+        items_promise = Xikolo.paginate_with_retries(
+          max_retries: 3, wait: 60.seconds,
+        ) do
           course_service.rel(:items).get(course_id: course['id'])
-        end.each_item do |item|
+        end
+
+        items_promise.each_item do |item|
           items << item
         end
+
         items
       end
     end
@@ -267,11 +292,17 @@ module Reports
     def collab_spaces
       @collab_spaces ||= begin
         collab_spaces = []
-        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+
+        collab_spaces_promise = Xikolo.paginate_with_retries(
+          max_retries: 3, wait: 60.seconds,
+        ) do
           collab_space_service.rel(:collab_spaces).get(course_id: course['id'])
-        end.each_item do |space|
+        end
+
+        collab_spaces_promise.each_item do |space|
           collab_spaces << space
         end
+
         collab_spaces
       end
     end
@@ -281,7 +312,9 @@ module Reports
     end
 
     def user_course_groups
-      @user_course_groups ||= UserGroups::CourseGroups.new(course['course_code'])
+      @user_course_groups ||= UserGroups::CourseGroups.new(
+        course['course_code'],
+      )
     end
 
     def collab_space_service
