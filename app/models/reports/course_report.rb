@@ -385,8 +385,6 @@ module Reports
     def fetch_metric(metric, course_id, user_id)
       metric = "Lanalytics::Metric::#{metric}".constantize
       metric.query(user_id: user_id, course_id: course_id)
-    rescue
-      nil
     end
 
     def fetch_clustering_metrics(course)
@@ -407,8 +405,6 @@ module Reports
         course['id'], clustering_metrics, nil
       )
       result.map {|x| [x['user_uuid'], x.except('user_uuid')] }.to_h
-    rescue
-      {}
     end
 
     def calculate_top_performance(quantile)
