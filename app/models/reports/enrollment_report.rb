@@ -55,7 +55,7 @@ module Reports
     end
 
     def reportable_classifiers
-      Xikolo.config.reports['classifiers'] || []
+      Lanalytics.config.reports['classifiers'] || []
     end
 
     def headers(cluster = nil)

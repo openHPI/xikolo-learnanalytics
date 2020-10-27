@@ -40,7 +40,7 @@ class UserGroups
 
   class GlobalGroups < UserGroups
     def keys
-      Xikolo.config.global_permission_groups
+      Lanalytics.config.global_permission_groups
     end
 
     def group_name(group_key)
@@ -55,7 +55,7 @@ class UserGroups
     end
 
     def keys
-      Xikolo.config.course_groups.keys
+      Lanalytics.config.course_groups.keys
     end
 
     def group_name(group_key)

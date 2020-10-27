@@ -40,7 +40,7 @@ module QcRules
     private
 
     def config
-      @config ||= Xikolo.config.qc_alert['quiz_performance']
+      @config ||= Lanalytics.config.qc_alert['quiz_performance']
     end
 
     def calculate_metrics(item, course)

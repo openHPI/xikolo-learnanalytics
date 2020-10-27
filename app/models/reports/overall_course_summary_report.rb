@@ -61,7 +61,7 @@ module Reports
         'Rating Votes',
       ]
 
-      headers += Xikolo.config.classifiers.map(&:humanize)
+      headers += Lanalytics.config.classifiers.map(&:humanize)
 
       if @include_statistics
         headers += [
@@ -148,7 +148,7 @@ module Reports
           course['rating_votes'],
         ]
 
-        Xikolo.config.classifiers.each do |c|
+        Lanalytics.config.classifiers.each do |c|
           values.append escape_csv_string(course.dig('classifiers', c)&.join(','))
         end
 
