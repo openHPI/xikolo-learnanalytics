@@ -10,6 +10,11 @@ Group=www-data
 
 SyslogIdentifier=${PACKAGE}-sidekiq
 WorkingDirectory=/usr/lib/${PACKAGE}
+RuntimeDirectory=${PACKAGE}-sidekiq
+
+# More modern versions of systemd would set this environment variable
+# for us automatically.
+Environment=RUNTIME_DIRECTORY=/run/${PACKAGE}-sidekiq
 
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
@@ -30,14 +35,15 @@ ExecStop=/bin/kill -TERM $MAINPID
 # not, it will just hang around forever...
 KillMode=none
 
+# To make sure that our zombie processes can continue writing files, we mark the
+# runtime directory to not be cleaned up when stopping the service.
+RuntimeDirectoryPreserve=yes
+
 Restart=on-failure
 RestartSec=60s
 
 ProtectSystem=full
-
-# Write to the global tmp dir(s) so that temp files are not deleted by systemd
-# for running zombie processes (because of KillMode=none above).
-PrivateTmp=false
+PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
