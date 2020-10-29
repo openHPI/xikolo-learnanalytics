@@ -1,4 +1,4 @@
 s3:
   connect_info: {}
-  buckets:
-    reports: xikolo-reports
+reports:
+  s3_bucket: xikolo-reports

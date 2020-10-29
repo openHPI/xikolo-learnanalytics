@@ -1,3 +1,9 @@
+# DEFAULT SETTINGS
+# To change some of the values locally, create a `xikolo.development.yml` in
+# the `config` directory and list overwritten values there.
+# NOTE: Only top-level keys will be merged. Deeper structures will need to be
+# replicated completely.
+
 site: unknown
 brand: xikolo
 
@@ -26,6 +32,8 @@ qc_alert:
     # Threshold for minimum submissions to question
     minimum_submissions: 20
 reports:
+  # The name of the S3 bucket where reports can be stored for downloading
+  s3_bucket: xikolo-reports
   # List of classifiers which are utilized by reports
   classifiers: []
   # List of features which are utilized by reports
@@ -68,3 +76,12 @@ course_groups:
   admins: {}
   moderators: {}
   teachers: {}
+
+# Where is our S3 server and how can we connect to it?
+s3:
+  connect_info:
+    endpoint: ~
+    region: default
+    access_key_id: ~
+    secret_access_key: ~
+    force_path_style: true
