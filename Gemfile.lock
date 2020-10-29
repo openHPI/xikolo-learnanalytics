@@ -425,18 +425,11 @@ GEM
       railties (< 6)
       restify (~> 1.6)
       telegraf
-    xikolo-config (6.0.1)
-      activesupport
-      addressable (~> 2.0)
     xikolo-lint (2.2.0)
       rubocop (~> 0.74.0)
       rubocop-performance (~> 1.4.1)
       rubocop-rails (~> 2.3.2)
       rubocop-rspec (~> 1.35.0)
-    xikolo-s3 (1.5.1)
-      aws-sdk-s3 (~> 1.16)
-      uuid4
-      xikolo-config
     xikolo-sidekiq (3.0.0)
       railties (>= 5)
       sidekiq (~> 6.0)
@@ -446,6 +439,7 @@ PLATFORMS
 
 DEPENDENCIES
   accept_values_for
+  aws-sdk-s3 (~> 1.16)
   better_errors
   binding_of_caller
   browser
@@ -507,7 +501,6 @@ DEPENDENCIES
   will_paginate
   xikolo-common (~> 2.4)
   xikolo-lint (~> 2.2.0)
-  xikolo-s3 (~> 1.5, >= 1.5.1)
   xikolo-sidekiq (~> 3.0)
 
 RUBY VERSION
