@@ -1,5 +1,5 @@
 require 'fileutils'
-require 'xikolo/s3'
+require 'lanalytics/s3'
 
 class CreateReportJob < ApplicationJob
   queue_as :default
@@ -33,11 +33,14 @@ class CreateReportJob < ApplicationJob
   private
 
   def upload_file(file_path, job_id)
-    # which bucket should we use:
-    bucket = Xikolo::S3.bucket_for(:reports)
-    # upload report:
+    # Where is our bucket?
+    bucket = Lanalytics::S3.resource.bucket(
+      Lanalytics.config.reports['s3_bucket'],
+    )
+
+    # Upload the generated report to S3
     object = bucket.put_object(
-      key: 'reports/' + job_id + '/' + File.basename(file_path),
+      key: "reports/#{job_id}/#{File.basename(file_path)}",
       body: open(file_path),
       acl: 'private',
       content_type: 'application/zip',
@@ -46,13 +49,14 @@ class CreateReportJob < ApplicationJob
       }
     )
 
-    # we expect the S3 object to be deleted after 7 days
-    # lets generate a presigned-download url for this durtain and
-    # define this as file expire date:
-    valid_duration = 604800 # one week
+    # We expect the S3 object to be deleted after 7 days.
+    # Let's generate a pre-signed download URL for this duration and remember
+    # this as file expiry date.
+    duration = 1.week
+
     {
-      file_expire_date: valid_duration.seconds.from_now,
-      download_url: object.presigned_url(:get, expires_in: valid_duration)
+      file_expire_date: duration.from_now,
+      download_url: object.presigned_url(:get, expires_in: duration.to_i),
     }
   end
 end
