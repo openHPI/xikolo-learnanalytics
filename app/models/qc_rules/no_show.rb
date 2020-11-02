@@ -60,7 +60,7 @@ module QcRules
     end
 
     def config
-      Xikolo.config.qc_alert['no_show_rate']
+      Lanalytics.config.qc_alert['no_show_rate']
     end
 
     def course_service

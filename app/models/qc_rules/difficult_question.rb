@@ -86,7 +86,7 @@ module QcRules
     end
 
     def config
-      @config ||= Xikolo.config.qc_alert['difficult_quiz_question']
+      @config ||= Lanalytics.config.qc_alert['difficult_quiz_question']
     end
   end
 end

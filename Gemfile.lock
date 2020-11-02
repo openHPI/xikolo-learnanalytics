@@ -506,7 +506,6 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-common (~> 2.4)
-  xikolo-config (~> 6.0)
   xikolo-lint (~> 2.2.0)
   xikolo-s3 (~> 1.5, >= 1.5.1)
   xikolo-sidekiq (~> 3.0)

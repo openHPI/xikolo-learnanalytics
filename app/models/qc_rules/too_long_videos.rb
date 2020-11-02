@@ -55,7 +55,7 @@ module QcRules
     end
     
     def config
-      Xikolo.config.qc_alert['video_duration']
+      Lanalytics.config.qc_alert['video_duration']
     end
 
     def course_service

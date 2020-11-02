@@ -184,7 +184,7 @@ module Reports::Openwho
     end
 
     def reportable_country_regions
-      Xikolo.config.reports['country_regions'] || {}
+      Lanalytics.config.reports['country_regions'] || {}
     end
 
     def profile_config

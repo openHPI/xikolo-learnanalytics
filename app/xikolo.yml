@@ -1,3 +1,6 @@
+site: unknown
+brand: xikolo
+
 qc_alert:
   # Thresholds for video duration (in min) after which an alert with low/medium/high severity is created
   video_duration:
@@ -46,3 +49,22 @@ reports:
   #     - AO
   #     - BJ
   country_regions: {}
+
+# A list of categories (simple strings) which can be used to loosely group courses.
+classifiers: []
+
+# A list of special groups that can be assigned to users with system-wide effects.
+# These will be prefixed with "xikolo.".
+global_permission_groups:
+  - admins
+  - helpdesk
+
+# A list of special groups that will be created for each course.
+# NOTE: These hashes contain far more information (a description and a list of
+#       roles to be granted) in production environments - these are omitted
+#       here for brevity, because this service does not care.
+course_groups:
+  students: {}
+  admins: {}
+  moderators: {}
+  teachers: {}

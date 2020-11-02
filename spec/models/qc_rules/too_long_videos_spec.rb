@@ -44,6 +44,7 @@ describe QcRules::TooLongVideos do
       :course, :get, '/items',
       query: {course_id: test_course2['id'], content_type: 'video', published: 'true'}
     ).to_return Stub.json([
+      {id: '00000001-3100-4444-9999-000000000004', content_id: '00000001-3100-4444-9999-000000000004'},
       {id: '00000001-3100-4444-9999-000000000005', content_id: '00000001-3100-4444-9999-000000000005'},
       {id: '00000001-3100-4444-9999-000000000006', content_id: '00000001-3100-4444-9999-000000000006'},
       {id: '00000001-3100-4444-9999-000000000007', content_id: '00000001-3100-4444-9999-000000000007'},
@@ -57,25 +58,25 @@ describe QcRules::TooLongVideos do
       :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
     ).to_return Stub.json(
       id: '00000001-3100-4444-9999-000000000004',
-      duration: 100,
+      duration: 700, # 11 min 40 sec
     )
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000005'
     ).to_return Stub.json(
       id: '00000001-3100-4444-9999-000000000005',
-      duration: 1560,
+      duration: 1560, # 26 min
     )
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000006'
     ).to_return Stub.json(
       id: '00000001-3100-4444-9999-000000000006',
-      duration: 2040,
+      duration: 2040, # 34 min
     )
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000007'
     ).to_return Stub.json(
       id: '00000001-3100-4444-9999-000000000007',
-      duration: 2700,
+      duration: 2700, # 45 min
     )
   end
 
@@ -91,10 +92,28 @@ describe QcRules::TooLongVideos do
     context 'when there are three long videos' do
       let(:course) { test_course2 }
 
-      it 'creates three alert' do
+      it 'creates three alerts' do
         expect { run }.to change(QcAlert, :count)
           .from(0)
           .to(3)
+      end
+
+      context 'when the thresholds are more strict' do
+        before do
+          yaml_config <<~YML
+            qc_alert:
+              video_duration:
+                low: 10
+                medium: 20
+                high: 30
+          YML
+        end
+
+        it 'creates four alerts' do
+          expect { run }.to change(QcAlert, :count)
+            .from(0)
+            .to(4)
+        end
       end
     end
 

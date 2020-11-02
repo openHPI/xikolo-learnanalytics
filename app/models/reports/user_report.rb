@@ -336,11 +336,11 @@ module Reports
     end
 
     def reportable_features
-      Xikolo.config.reports['features'] || []
+      Lanalytics.config.reports['features'] || []
     end
 
     def reportable_auth_fields
-      Xikolo.config.reports['auth_fields'] || []
+      Lanalytics.config.reports['auth_fields'] || []
     end
 
     def profile_config

@@ -15,8 +15,8 @@ Rails.application.tap do |app|
     config.send_modules = false
 
     config.tags = {
-      site: Xikolo.site.to_s,
-      brand: Xikolo.brand.to_s,
+      site: Lanalytics.config.site,
+      brand: Lanalytics.config.brand,
     }
   end
 end
