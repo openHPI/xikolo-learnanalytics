@@ -66,7 +66,7 @@ module Reports
         headers.concat(profile_config.all_titles) if @include_profile
 
         if @include_auth && @de_pseudonymized
-          headers.concat(reportable_auth_fields.map {|f| "Auth: #{f}" })
+          headers.concat(auth_fields.headers)
         end
 
         if @include_consents
@@ -144,21 +144,7 @@ module Reports
         end
 
         if @include_auth && @de_pseudonymized
-          authorizations = Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-              account_service.rel(:authorizations).get(user: user['id'])
-            end,
-          ).value!.first
-
-          auth_values = reportable_auth_fields.map do |f|
-            authorizations
-              .select {|auth| auth['provider'] == f.split('.').first }
-              .map {|auth| auth.dig(*f.split('.').drop(1)) }
-              .compact
-              .join(',')
-          end
-
-          values.concat(auth_values)
+          values.concat(auth_fields.values(user['id']))
         end
 
         if @include_consents
@@ -339,10 +325,6 @@ module Reports
       Lanalytics.config.reports['features'] || []
     end
 
-    def reportable_auth_fields
-      Lanalytics.config.reports['auth_fields'] || []
-    end
-
     def profile_config
       @profile_config ||= if @de_pseudonymized
                             ProfileFieldConfiguration.de_pseudonymized
@@ -357,6 +339,10 @@ module Reports
 
     def course_service
       @course_service ||= Xikolo.api(:course).value!
+    end
+
+    def auth_fields
+      @auth_fields ||= AuthFields.new
     end
   end
 end

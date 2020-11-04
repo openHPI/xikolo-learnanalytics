@@ -9,6 +9,7 @@ module Reports
       @de_pseudonymized = job.options['de_pseudonymized']
       @include_analytics_metrics = job.options['include_analytics_metrics']
       @include_profile = job.options['include_profile']
+      @include_auth = job.options['include_auth']
       @include_sections = true
       @include_all_quizzes = job.options['include_all_quizzes']
     end
@@ -135,6 +136,10 @@ module Reports
                 end,
               ).value!.first
               values += profile_config.for(profile).values
+            end
+
+            if @include_auth && @de_pseudonymized
+              values.concat(auth_fields.values(user['id']))
             end
 
             # get elasticsearch / postgres metrics per user
@@ -421,6 +426,8 @@ module Reports
     end
 
     # rubocop:disable Metrics/BlockLength
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def headers
       @headers ||= [
         @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
@@ -443,6 +450,10 @@ module Reports
         if @include_profile
           headers.concat ['Profile Picture']
           headers.concat profile_config.all_titles
+        end
+
+        if @include_auth && @de_pseudonymized
+          headers.concat(auth_fields.headers)
         end
 
         if @include_analytics_metrics
@@ -682,6 +693,10 @@ module Reports
 
     def as_date(string_or_nil)
       string_or_nil && DateTime.parse(string_or_nil)
+    end
+
+    def auth_fields
+      @auth_fields ||= AuthFields.new
     end
   end
 end
