@@ -3,6 +3,8 @@
 
 require File.expand_path('../config/application', __FILE__)
 
+require 'lanalytics/s3'
+
 Rails.application.load_tasks
 
 Xikolo::Lanalytics.rake = true
@@ -24,6 +26,22 @@ namespace :qc do
   task run_all_rules: :environment do
     QcRunAllRules.new.perform
     puts "finished"
+  end
+end
+
+namespace :s3 do
+  desc 'Create necessary S3 bucket(s) for reports (if it does not exist already)'
+  task setup: :environment do
+    reports = Lanalytics::S3.resource.bucket(
+      Lanalytics.config.reports['s3_bucket'],
+    )
+
+    if reports.exists?
+      puts "Bucket already exists. Done."
+    else
+      reports.create
+      puts "Bucket created."
+    end
   end
 end
 

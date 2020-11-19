@@ -80,8 +80,8 @@ course_groups:
 # Where is our S3 server and how can we connect to it?
 s3:
   connect_info:
-    endpoint: ~
+    endpoint: http://127.0.0.1:9000
     region: default
-    access_key_id: ~
-    secret_access_key: ~
+    access_key_id: minioadmin
+    secret_access_key: minioadmin
     force_path_style: true
