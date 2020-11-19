@@ -51,10 +51,8 @@ module Xikolo::Lanalytics
     ::Lanalytics::Config.locations = [
       Rails.root.join('app/xikolo.yml'),
       ('/etc/xikolo.yml' unless Rails.env.test?),
-      (::File.expand_path('~/.xikolo.yml') if !Rails.env.test? && ENV.key?('HOME')),
       Rails.root.join('config/xikolo.yml'),
       "/etc/xikolo.#{Rails.env}.yml",
-      (::File.expand_path("~/.xikolo.#{Rails.env}.yml") if ENV.key?('HOME')),
       "config/xikolo.#{Rails.env}.yml",
     ].compact
   end
