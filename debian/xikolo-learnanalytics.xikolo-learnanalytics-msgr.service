@@ -1,0 +1,29 @@
+[Unit]
+Description=Xikolo Learn Analytics Service - Messaging Consumer
+After=network.target
+PartOf=${PACKAGE}.service
+ConditionPathExists=!/etc/xikolo.nobackground
+
+[Service]
+User=www-data
+Group=www-data
+
+SyslogIdentifier=${PACKAGE}-msgr
+WorkingDirectory=/usr/lib/${PACKAGE}
+
+EnvironmentFile=/etc/default/${PACKAGE}
+EnvironmentFile=-/etc/${PACKAGE}/env
+
+ExecStart=/usr/bin/${PACKAGE} msgr --environment production ${MSGR_ARGS}
+ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} msgr started
+ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} msgr stop
+ExecStop=/bin/kill -TERM $MAINPID
+
+Restart=on-failure
+RestartSec=60s
+
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

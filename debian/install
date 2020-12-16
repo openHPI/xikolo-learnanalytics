@@ -26,6 +26,7 @@ Rakefile                    usr/lib/${PACKAGE}/
 REVISION                    usr/lib/${PACKAGE}/
 
 bin/bundle                  usr/lib/${PACKAGE}/bin/
+bin/msgr                    usr/lib/${PACKAGE}/bin/
 bin/rails                   usr/lib/${PACKAGE}/bin/
 bin/rake                    usr/lib/${PACKAGE}/bin/
 bin/sidekiq                 usr/lib/${PACKAGE}/bin/

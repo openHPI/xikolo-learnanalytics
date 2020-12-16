@@ -56,12 +56,4 @@ module Xikolo::Lanalytics
       "config/xikolo.#{Rails.env}.yml",
     ].compact
   end
-
-  def self.rake?
-    @rake
-  end
-
-  def self.rake=(value)
-    @rake = !!value
-  end
 end

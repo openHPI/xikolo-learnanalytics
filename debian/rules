@@ -88,3 +88,4 @@ override_dh_installsystemd:
 	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}
 	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-unicorn
 	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-sidekiq
+	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-msgr
