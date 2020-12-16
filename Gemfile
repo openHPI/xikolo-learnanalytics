@@ -13,7 +13,6 @@ gem 'nokogiri', '< 1.8.3'
 gem 'jbuilder', '~> 2.0'
 
 gem 'xikolo-common', '~> 2.4'
-gem 'xikolo-s3', '~> 1.5', '>= 1.5.1'
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
@@ -34,11 +33,12 @@ gem 'msgr', '~> 1.2'
 
 gem 'connection_pool'
 
-# Different database adapters to store the data
+# Different storage backends for data and files
 gem 'pg', '~> 1.1'
 gem 'redis', '~> 4.0'
 gem 'elasticsearch'
 gem 'elasticsearch-transport'
+gem 'aws-sdk-s3', '~> 1.16'
 
 gem 'rest-client'
 gem 'multi_json'

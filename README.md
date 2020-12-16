@@ -5,7 +5,7 @@ Xikolo's Learning Analytics Engine
 ## Dependencies
 
 * [Elasticsearch 7](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
-* [MinIO](https://github.com/minio/minio) (for reports). Check our [Local Setup](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Local+Setup) guide how to configure it as a S3 storage.
+* [MinIO](https://github.com/minio/minio) (for reports)
 
 ## Setup
 
@@ -15,6 +15,9 @@ Xikolo's Learning Analytics Engine
 * `bundle exec rake db:drop db:create db:migrate`
 * `bundle exec rake db:seed`
 * `bundle exec rake elastic:setup`
+* `bundle exec rake s3:setup`
+  * Minio must be running. If Minio uses default port and credentials, no further setup is needed.
+  * If you configured Minio differently, you can override the defaults from `app/xikolo.yml` in `config/xikolo.development.yml`.
 * `bundle exec rails s -p 5900`
 
 ## Lanalytics Data Processing Library

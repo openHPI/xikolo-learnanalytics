@@ -26,14 +26,8 @@ describe CreateReportJob do
   context 'successful report generation' do
     before do
       allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
-    end
-    let(:s3_stubs) do
-      {
-        #head_object: Timeout::Error
-        head_object: {
-          expiration: 'Hans'
-        }
-      }
+
+      Lanalytics::S3.stub_responses!(head_object: {expiration: 'Hans'})
     end
 
     it 'marks the report job as finished' do
@@ -49,11 +43,8 @@ describe CreateReportJob do
   context 'error during report upload' do
     before do
       allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
-    end
-    let(:s3_stubs) do
-      {
-        put_object: 'NotSuchBucket'
-      }
+
+      Lanalytics::S3.stub_responses!(put_object: 'NotSuchBucket')
     end
 
     it 'marks the report job as failed' do
