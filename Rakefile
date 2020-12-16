@@ -7,8 +7,6 @@ require 'lanalytics/s3'
 
 Rails.application.load_tasks
 
-Xikolo::Lanalytics.rake = true
-
 namespace :ci do
   desc 'Setup service for CI'
   task setup: %w[ci:env db:drop:all db:create:all db:schema:load]
