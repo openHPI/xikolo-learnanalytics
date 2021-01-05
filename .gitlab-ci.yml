@@ -9,7 +9,7 @@ cache:
 
 rubocop:
   stage: lint
-  image: ruby:2.6-slim
+  image: ruby:2.7-slim
   before_script:
     - apt-get -qq update
     - apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential cmake libpq-dev libxml2-dev pkg-config
