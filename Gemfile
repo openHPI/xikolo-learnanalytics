@@ -1,5 +1,5 @@
 source 'https://gemuser:QiKLoxr2rfPDisUmEYA9gnJGaLiWTuvW@dev.xikolo.de/gems/'
-ruby '~> 2.6.0'
+ruby '~> 2.7.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.0'
@@ -13,9 +13,6 @@ gem 'nokogiri', '< 1.8.3'
 gem 'jbuilder', '~> 2.0'
 
 gem 'xikolo-common', '~> 2.4'
-
-# bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'restify', '~> 1.8'
 gem 'rails-rfc6570', '~> 2.3'

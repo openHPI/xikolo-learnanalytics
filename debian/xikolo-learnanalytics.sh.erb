@@ -7,7 +7,9 @@ export RAILS_ENV=${RAILS_ENV:-production}
 export RACK_ENV=none
 export GEM_PATH=<%= gempath %>
 export DEB_VERSION=<%= version %>
+export RUBYOPT="-W:no-deprecated -W:no-experimental"
+export DEBIAN_DISABLE_RUBYGEMS_INTEGRATION=1
 
 cd <%= Shellwords.escape(prefix) %>
 
-exec <%= Shellwords.escape(File.join(prefix, 'bin')) %>/$@
+exec <%= Shellwords.escape(File.join(prefix, 'bin', 'bundle')) %> exec $@

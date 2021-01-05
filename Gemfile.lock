@@ -151,7 +151,6 @@ GEM
     jbuilder (2.10.1)
       activesupport (>= 5.0.0)
     jmespath (1.4.0)
-    json (1.8.6)
     kgio (2.11.3)
     link_header (0.0.8)
     listen (3.3.3)
@@ -285,7 +284,6 @@ GEM
     rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    rdoc (4.3.0)
     redis (4.2.5)
     request_store (1.5.0)
       rack (>= 1.4)
@@ -358,9 +356,6 @@ GEM
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
-    sdoc (0.4.2)
-      json (~> 1.7, >= 1.7.7)
-      rdoc (~> 4.0)
     sentry-raven (2.13.0)
       faraday (>= 0.7.6, < 1.0)
     sidekiq (6.1.2)
@@ -486,7 +481,6 @@ DEPENDENCIES
   rspec-teamcity
   ruby-prof
   ruby-progressbar
-  sdoc (~> 0.4.0)
   sentry-raven (~> 2.11)
   sidekiq-cron
   simplecov
@@ -503,7 +497,7 @@ DEPENDENCIES
   xikolo-sidekiq (~> 3.0)
 
 RUBY VERSION
-   ruby 2.6.2p47
+   ruby 2.7.2p137
 
 BUNDLED WITH
-   2.2.0
+   2.2.4
