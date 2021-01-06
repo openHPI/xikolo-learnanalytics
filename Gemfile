@@ -6,8 +6,7 @@ gem 'rails', '~> 5.2.0'
 
 gem 'bundler', '~> 2.0'
 
-# 1.8.3+ does not compile
-gem 'nokogiri', '< 1.8.3'
+gem 'nokogiri', '~> 1.11'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
