@@ -21,6 +21,17 @@ module Reports
       "\"#{string}\""
     end
 
+    class InvalidReportArgumentError < ArgumentError
+      def initialize(name, value)
+        @name = name
+        @value = value
+      end
+
+      def message
+        "Invalid value '#{@value}' for argument '#{@name}'."
+      end
+    end
+
     private
 
     def csv_file(target, headers, &block)
