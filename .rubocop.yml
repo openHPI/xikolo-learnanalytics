@@ -1,21 +1,274 @@
-inherit_gem:
-  xikolo-lint: default.yml
-
-inherit_mode:
-  merge:
-    - Exclude
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.7
   TargetRailsVersion: 5.2
+  Exclude:
+    - 'bin/**'
+    - 'config/initializers/integration*'
+    - 'db/schema.rb'
+    - 'vendor/**'
+
+
+
+# -----------------------------------------------------------------------------
+#                                   RAILS
+
+Rails:
+  Enabled: true
+
+#
+# False positives:
+#   * On Acfs::Resource#update_attributes!
+#
+Rails/ActiveRecordAliases:
+  Enabled: false
+
+#
+# Tobi finds it easier to understand what explicit methods like "#append" and
+# "#concat" actually do than operators like "<<" and "+" for arrays.
+#
+Rails/ActiveSupportAliases:
+  Enabled: false
+
+#
+# False positives:
+#   * On embedded models in migrations.
+#
+Rails/ApplicationRecord:
+  Exclude:
+    - 'db/**/*'
+
+#
+# Often when triggered it just wants to pass joined paths as separate
+# arguments but that can hurt readability.
+#
+Rails/FilePath:
+  Enabled: false
+
+#
+# False positives:
+#   * Specs and migrations often need to update things without validations.
+#
+Rails/SkipsModelValidations:
+  Exclude:
+    - 'db/migrations/**.rb'
+    - 'spec/**/*_spec.rb'
+
+
+
+# -----------------------------------------------------------------------------
+#                                   RSPEC
+
+RSpec:
+  Include:
+    - 'spec/**/*_spec.rb'
+    - 'spec/spec_helper.rb'
+    - 'spec/rails_helper.rb'
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/features/**/*_spec.rb
+    - spec/requests/**/*_spec.rb
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/ExpectInHook:
+  Enabled: false
+
+RSpec/FilePath:
+  Exclude:
+    - 'spec/client/**/*_spec.rb'
+  CustomTransform:
+    OpenSAP: opensap
+    OpenHPI: openhpi
+    OpenWHO: openwho
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MissingExampleGroupArgument:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 5
+
+# -----------------------------------------------------------------------------
+#                                   Layout
+
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+  SupportedStyles:
+    - case
+    - end
+  IndentOneStep: true
+
+# This is currently broken:
+#   https://github.com/rubocop-hq/rubocop/issues/7212
+#
+Layout/EmptyLinesAroundAccessModifier:
+  Enabled: false
+
+Layout/IndentFirstArrayElement:
+  EnforcedStyle: consistent
+
+Layout/IndentFirstHashElement:
+  EnforcedStyle: consistent
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/SpaceInsideBlockBraces:
+  EnforcedStyle: space
+  EnforcedStyleForEmptyBraces: no_space
+  SpaceBeforeBlockParameters: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+
+
+# -----------------------------------------------------------------------------
+#                                    Lint
+
+#
+# False positives:
+#   * expect { something }.to change { something } often triggers this
+#
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+
+
+# -----------------------------------------------------------------------------
+#                                   Metrics
 
 Metrics/BlockLength:
   Exclude:
+    - 'db/**/*'
+    - 'spec/**/*'
+    - 'config/**/*'
     - 'lib/lanalytics/metric/*.rb'
+    - '**/*.rake'
 
 Metrics/ClassLength:
+  Max: 200
   Exclude:
     - 'lib/lanalytics/metric/*.rb'
 
-Rails/ActiveSupportAliases:
+Metrics/LineLength:
+  Exclude:
+    - 'db/**/*'
+    - 'spec/**/*'
+    - 'config/**/*'
+
+#
+# Often used as a proxy for complexity in a method, but causes many false
+# positives, e.g. when generating large, but simple, hashes.
+# We want to rely on CyclomaticComplexity instead.
+#
+Metrics/MethodLength:
   Enabled: false
+
+#
+# Method calls add to this metric, but they are everywhere in Ruby, so this
+# metric caused lots of what we would consider false positives.
+#
+Metrics/AbcSize:
+  Enabled: false
+
+#
+# This seems to be the cop that is closest to what we're interested in, which
+# is the kind of complexity that usually surfaces in deep nesting.
+#
+Metrics/CyclomaticComplexity:
+  Enabled: true
+
+
+
+# -----------------------------------------------------------------------------
+#                                   Style
+
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
+
+#
+# Both styles or mixtures are reasonable
+#
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+  Enabled: false
+
+#
+# Would be better but unlikely...
+#
+Style/Documentation:
+  Enabled: false
+
+#
+# Okay for conditions, but false positive in return statements (e.g. APIs)
+#
+Style/DoubleNegation:
+  Enabled: false
+
+#
+# Scripts might include on top-level
+#
+Style/MixinUsage:
+  Exclude:
+    - 'scripts/**/*'
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+#
+# Quick single line rescues in specs
+#
+Style/RescueModifier:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+#
+# Quick single line rescues in specs
+#
+Style/RescueStandardError:
+  # xikolo/lint#2
+  Enabled: false
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+#
+# Often used pattern in chaining subjects in specs
+#
+Style/Semicolon:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma

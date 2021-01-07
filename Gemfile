@@ -89,7 +89,10 @@ group :development, :test do
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'rspec-teamcity', require: false
-  gem 'xikolo-lint', '~> 2.2.0'
+  gem 'rubocop', '~> 0.74.0'
+  gem 'rubocop-performance', '~> 1.4.1'
+  gem 'rubocop-rails', '~> 2.3.2'
+  gem 'rubocop-rspec', '~> 1.35.0'
 end
 
 group :test do

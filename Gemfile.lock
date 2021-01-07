@@ -423,11 +423,6 @@ GEM
       railties (< 6)
       restify (~> 1.6)
       telegraf
-    xikolo-lint (2.2.0)
-      rubocop (~> 0.74.0)
-      rubocop-performance (~> 1.4.1)
-      rubocop-rails (~> 2.3.2)
-      rubocop-rspec (~> 1.35.0)
     xikolo-sidekiq (3.0.0)
       railties (>= 5)
       sidekiq (~> 6.0)
@@ -486,6 +481,10 @@ DEPENDENCIES
   rspec-rails
   rspec-sidekiq
   rspec-teamcity
+  rubocop (~> 0.74.0)
+  rubocop-performance (~> 1.4.1)
+  rubocop-rails (~> 2.3.2)
+  rubocop-rspec (~> 1.35.0)
   ruby-prof
   ruby-progressbar
   sentry-raven (~> 2.11)
@@ -500,7 +499,6 @@ DEPENDENCIES
   webmock
   will_paginate
   xikolo-common (~> 2.4)
-  xikolo-lint (~> 2.2.0)
   xikolo-sidekiq (~> 3.0)
 
 RUBY VERSION
