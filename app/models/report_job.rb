@@ -15,7 +15,7 @@ class ReportJob < ApplicationRecord
     'submission_report' => Reports::SubmissionReport,
     'pinboard_report' => Reports::PinboardReport,
     'course_events_report' => Reports::CourseEventsReport,
-    'enrollment_report' => Reports::EnrollmentReport,
+    'enrollment_statistics_report' => Reports::EnrollmentStatisticsReport,
     'course_content_report' => Reports::CourseContentReport,
     'overall_course_summary_report' => Reports::OverallCourseSummaryReport,
     'openwho_course_report' => Reports::Openwho::CourseReport,
