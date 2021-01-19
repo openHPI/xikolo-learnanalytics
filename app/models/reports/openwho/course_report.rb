@@ -30,6 +30,7 @@ module Reports::Openwho
       @headers ||= [
         @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
         'User Created',
+        'Enrollment Date',
         'Language',
         'Affiliated',
         'Age Group',
@@ -98,6 +99,7 @@ module Reports::Openwho
           values = [
             user_id,
             user['created_at'],
+            enrollment['created_at'],
             user['language'],
             user['affiliated'],
             age.present? ? age_group(age) : nil,
