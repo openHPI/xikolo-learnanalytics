@@ -30,6 +30,8 @@ module Xikolo::Lanalytics
 
     config.action_controller.default_protect_from_forgery = false
 
+    config.active_job.queue_adapter = :sidekiq
+
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
     end
@@ -41,6 +43,30 @@ module Xikolo::Lanalytics
       require 'ext/xikolo/common/paginate_with_retries'
 
       ::Xikolo.send :extend, Xikolo::Common::PaginateWithRetries
+    end
+
+    # Setup Sidekiq Redis connection as configured in config/sidekiq_redis.yml
+    initializer 'sidekiq-connection' do |app|
+      redis_config = app.config_for(:sidekiq_redis)
+
+      ::Sidekiq.configure_server do |config|
+        config.redis = redis_config
+      end
+
+      ::Sidekiq.configure_client do |config|
+        config.redis = redis_config
+      end
+    end
+
+    # We automatically configure the sidekiq-cron gem via a config/cron.yml file
+    initializer :sidekiq_cron do |app|
+      next unless Sidekiq.server?
+
+      # By using an after_initialize callback, we make sure that Redis can be
+      # configured properly before we try to store any cron job information.
+      app.config.after_initialize do
+        Sidekiq::Cron::Job.load_from_hash! app.config_for(:cron)
+      end
     end
 
     # Restify: Do not wrap hashes with object-like accessors
