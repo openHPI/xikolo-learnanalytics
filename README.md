@@ -20,6 +20,12 @@ Xikolo's Learning Analytics Engine
   * If you configured Minio differently, you can override the defaults from `app/xikolo.yml` in `config/xikolo.development.yml`.
 * `bundle exec rails s -p 5900`
 
+To get a clean state during development, run:
+
+* `bundle exec rake db:reset`
+* `bundle exec rake sidekiq:clear`
+* `bundle exec rake msgr:drain`
+
 ## Lanalytics Data Processing Library
 
 Most of the code for the processing can be found in the folder `lib/lanalytics/processing/`.
