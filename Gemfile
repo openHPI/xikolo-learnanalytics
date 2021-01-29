@@ -19,7 +19,7 @@ gem 'rails-rfc6570', '~> 2.3'
 gem 'concurrent-ruby', '~> 1.0'
 gem 'mnemosyne-ruby', '~> 1.3'
 gem 'sentry-raven', '~> 2.11'
-gem 'telegraf', '~> 0.7.0'
+gem 'telegraf', '~> 1.0'
 
 gem 'forgery'
 gem 'validates_email_format_of'

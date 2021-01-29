@@ -36,8 +36,8 @@ module Xikolo::Lanalytics
       g.orm :active_record, primary_key_type: :uuid
     end
 
-    config.telegraf.rack.tags = {application: 'learnanalytics'}
-    config.telegraf.sidekiq.tags = {application: 'learnanalytics'}
+    # Configure Telegraf event collection
+    config.telegraf.tags = {application: 'learnanalytics'}
 
     initializer 'xikolo-patches' do
       require 'ext/xikolo/common/paginate_with_retries'
