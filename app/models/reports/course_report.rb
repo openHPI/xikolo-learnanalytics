@@ -93,14 +93,8 @@ module Reports
             birth_compare_date = course_start_date || DateTime.now
             enrollment_date = as_date(enrollment['created_at'])
 
-            age = if user['born_at'].present?
-                    (
-                      (birth_compare_date - DateTime.parse(user['born_at'])) /
-                      365
-                    ).to_i
-                  else
-                    ''
-                  end
+            age_data = BirthDate.new(user['born_at'])
+            age_group = age_data.age_group_at(birth_compare_date)
 
             user_id = if @de_pseudonymized
                         user['id']
@@ -115,15 +109,14 @@ module Reports
               user['created_at'],
               user['language'],
               user['affiliated'],
-              as_date(user['born_at']),
-              age,
-              user['born_at'].present? ? age_group_from_age(age) : '',
+              age_group,
             ]
 
             if @de_pseudonymized
               values += [
                 escape_csv_string(user['full_name']),
                 user['email'],
+                user['born_at'],
               ]
             end
 
@@ -354,27 +347,6 @@ module Reports
     end
     # rubocop:enable all
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    def age_group_from_age(age)
-      case age.to_i
-        when 0...20
-          '<20'
-        when 20...30
-          '20-29'
-        when 30...40
-          '30-39'
-        when 40...50
-          '40-49'
-        when 50...60
-          '50-59'
-        when 60...70
-          '60-69'
-        else
-          '70+'
-      end
-    end
-    # rubocop:enable all
-
     def fetch_device_usage(course_id, user_id)
       device_usage = fetch_metric('DeviceUsage', course_id, user_id)
 
@@ -436,14 +408,13 @@ module Reports
         'User created',
         'Language',
         'Affiliated',
-        'Birth Date',
-        'Age',
         'Age Group',
       ].tap do |headers|
         if @de_pseudonymized
           headers.concat [
             'Full Name',
             'Email',
+            'Birth Date',
           ]
         end
 
