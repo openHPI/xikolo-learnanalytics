@@ -2,7 +2,7 @@
 
 class BirthDate
   def initialize(birth_date)
-    @birth_date = from! birth_date
+    @birth_date = from birth_date
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -30,6 +30,14 @@ class BirthDate
 
   private
 
+  def from(date)
+    return if date.blank?
+
+    parsed = DateTime.parse(date)
+
+    parsed if parsed.year <= DateTime.now.year
+  end
+
   # Not to add 1 year to the age of users whose birthday is not yet reached
   # in current year, it also checks if the user's birthday has yet to arrive
   # and, in that case, it subtracts 1 to the difference
@@ -47,13 +55,5 @@ class BirthDate
   def upcoming_birth_day?(date)
     date.month < @birth_date.month ||
       (date.month == @birth_date.month && date.day < @birth_date.day)
-  end
-
-  def from!(date)
-    return if date.blank?
-
-    parsed = DateTime.parse date
-
-    return parsed if parsed.year <= DateTime.now.year
   end
 end
