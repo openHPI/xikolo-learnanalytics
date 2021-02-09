@@ -46,6 +46,14 @@ class ReportJobsController < ApplicationController
     render json: { error: e.message }, status: :conflict
   end
 
+  def max_per_page
+    200
+  end
+
+  def default_per_page
+    200
+  end
+
   private
 
   def job_params
