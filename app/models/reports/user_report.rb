@@ -45,14 +45,15 @@ module Reports
           headers.append(
             'Full Name',
             'Email',
+            'Birth Date',
           )
         end
 
         headers.append(
+          'Age Group',
           'Language',
           'Affiliated',
           'Created',
-          'Birth Date',
         )
 
         if @include_top_location
@@ -110,14 +111,17 @@ module Reports
           values.append(
             escape_csv_string(user['full_name']),
             user['email'],
+            user['born_at'],
           )
         end
 
+        age_group = BirthDate.new(user['born_at']).age_group_at(DateTime.now)
+
         values.append(
+          age_group,
           user['language'],
           user['affiliated'] || '',
           user['created_at'],
-          user['born_at'],
         )
 
         if @include_top_location

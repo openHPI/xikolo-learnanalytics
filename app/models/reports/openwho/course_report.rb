@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/BlockLength
-# rubocop:disable Metrics/CyclomaticComplexity
-# rubocop:disable Metrics/PerceivedComplexity
 module Reports::Openwho
   class CourseReport < Reports::Base
     def initialize(job)
@@ -83,10 +81,8 @@ module Reports::Openwho
 
           course_start_date = course['start_date']&.to_datetime
           birth_compare_date = course_start_date || Time.zone.now
-          age =
-            if user['born_at'].present?
-              ((birth_compare_date - user['born_at'].to_datetime) / 365).to_i
-            end
+          age_data = BirthDate.new(user['born_at'])
+          age_group = age_data.age_group_at(birth_compare_date)
 
           profile_fields = profile_config.for(profile)
 
@@ -102,7 +98,7 @@ module Reports::Openwho
             enrollment['created_at'],
             user['language'],
             user['affiliated'],
-            age.present? ? age_group(age) : nil,
+            age_group,
             profile_fields['primary_language'],
             profile_fields['gender'],
             profile_fields['affiliation'],
@@ -158,25 +154,6 @@ module Reports::Openwho
               enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,
           )
         end
-      end
-    end
-
-    def age_group(age)
-      case age.to_i
-        when 0...20
-          '<20'
-        when 20...30
-          '20-29'
-        when 30...40
-          '30-39'
-        when 40...50
-          '40-49'
-        when 50...60
-          '50-59'
-        when 60...70
-          '60-69'
-        else
-          '70+'
       end
     end
 
