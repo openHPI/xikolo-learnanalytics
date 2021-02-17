@@ -9,7 +9,6 @@ module Lanalytics
 
       optional_parameter :course_id, :start_date, :end_date
 
-      # rubocop:disable Metric/BlockLength
       exec do |params|
         course_id = params[:course_id]
 
@@ -60,7 +59,7 @@ module Lanalytics
         result.dig('aggregations', 'cities', 'buckets').each do |item|
           country_code, city_name = item['key'].split(':')
           result_sub_item = {
-            city_name: city_name.titleize,
+            city_name: city_name&.titleize,
             country_code: country_code,
             country_code_iso3: IsoCountryCodes.find(country_code)&.alpha3,
             distinct_users: item.dig('ucount', 'value'),
@@ -71,9 +70,9 @@ module Lanalytics
         rescue IsoCountryCodes::UnknownCodeError
           # ignored
         end
+        # rubocop:enable all
         processed_result.sort_by {|i| i[:distinct_users] }.reverse
       end
-      # rubocop:enable all
     end
   end
 end
