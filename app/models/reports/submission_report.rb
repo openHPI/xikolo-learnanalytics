@@ -16,7 +16,7 @@ module Reports
       )
 
       csv_file(
-        "SubmissionReport_#{@job.task_scope}",
+        "SubmissionReport_#{course['course_code']}_#{@job.task_scope}",
         headers,
         &method(:each_submission)
       )
@@ -205,7 +205,7 @@ module Reports
     end
 
     def course
-      course_service.rel(:course).get(id: item['course_id']).value!
+      @course ||= course_service.rel(:course).get(id: item['course_id']).value!
     end
 
     def account_service
