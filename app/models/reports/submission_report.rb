@@ -10,7 +10,8 @@ module Reports
 
     def generate!
       @job.update(
-        annotation: "#{item['title'].parameterize.underscore} " \
+        annotation: "#{course['course_code']}_" \
+                    "#{item['title'].parameterize.underscore} " \
                     "(#{@job.task_scope})",
       )
 
@@ -201,6 +202,10 @@ module Reports
     def item
       @item ||= course_service.rel(:items)
         .get(content_id: @job.task_scope).value!.first
+    end
+
+    def course
+      course_service.rel(:course).get(id: item['course_id']).value!
     end
 
     def account_service
