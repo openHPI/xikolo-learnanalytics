@@ -10,12 +10,13 @@ module Reports
 
     def generate!
       @job.update(
-        annotation: "#{item['title'].parameterize.underscore} " \
+        annotation: "#{course['course_code']}_" \
+                    "#{item['title'].parameterize.underscore} " \
                     "(#{@job.task_scope})",
       )
 
       csv_file(
-        "SubmissionReport_#{@job.task_scope}",
+        "SubmissionReport_#{course['course_code']}_#{@job.task_scope}",
         headers,
         &method(:each_submission)
       )
@@ -201,6 +202,10 @@ module Reports
     def item
       @item ||= course_service.rel(:items)
         .get(content_id: @job.task_scope).value!.first
+    end
+
+    def course
+      @course ||= course_service.rel(:course).get(id: item['course_id']).value!
     end
 
     def account_service
