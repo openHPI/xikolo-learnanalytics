@@ -18,7 +18,8 @@ describe QcRules::DifficultSelftest do
   end
 
   before do
-    Stub.service(:course, items_url: '/items')
+    Stub.request(:course, :get)
+      .to_return Stub.json(items_url: '/items')
     Stub.request(
       :course, :get, '/items',
       query: {
@@ -34,11 +35,11 @@ describe QcRules::DifficultSelftest do
       },
     ])
 
-    Stub.service(
-      :quiz,
-      question_url: '/questions/{id}',
-      submission_statistic_url: '/submission_statistics/{id}',
-    )
+    Stub.request(:quiz, :get)
+      .to_return Stub.json(
+        question_url: '/questions/{id}',
+        submission_statistic_url: '/submission_statistics/{id}',
+      )
     Stub.request(
       :quiz, :get,
       '/submission_statistics/00000001-3100-4444-9999-000000000004',

@@ -23,10 +23,8 @@ describe QcRules::InitialAnnouncement do
     }
   end
   before do
-    Stub.service(
-      :course,
-      enrollments_url: '/enrollments'
-    )
+    Stub.request(:course, :get)
+      .to_return Stub.json(enrollments_url: '/enrollments')
     Stub.request(
       :course, :get, '/enrollments',
       query: { course_id: test_course['id'], per_page: 1 }
@@ -52,11 +50,11 @@ describe QcRules::InitialAnnouncement do
       { id: '00000001-3100-4444-9999-000000000001' }
     ], headers: headers)
 
-    Stub.service(
-      :news,
-      news_index_url: 'http://news.xikolo.tld/news',
-      news_url: 'http://news.xikolo.tld/news/{id}'
-    )
+    Stub.request(:news, :get)
+      .to_return Stub.json(
+        news_index_url: 'http://news.xikolo.tld/news',
+        news_url: 'http://news.xikolo.tld/news/{id}',
+      )
     Stub.request(
       :news, :get, '/news',
       query: { course_id: test_course['id'], published: 'true' }

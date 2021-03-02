@@ -2,10 +2,8 @@ require 'spec_helper'
 
 describe QcRules::AnnouncementFailed do
   before do
-    Stub.service(
-      :news,
-      news_index_url: '/news'
-    )
+    Stub.request(:news, :get)
+      .to_return Stub.json(news_index_url: '/news')
     Stub.request(
       :news, :get, '/news',
       query: { published: 'true' }
@@ -20,10 +18,8 @@ describe QcRules::AnnouncementFailed do
       }
     ])
 
-    Stub.service(
-      :notification,
-      mail_log_stats_url: '/mail_log_stats{?news_id}'
-    )
+    Stub.request(:notification, :get)
+      .to_return Stub.json(mail_log_stats_url: '/mail_log_stats{?news_id}')
     Stub.request(
       :notification, :get, '/mail_log_stats?news_id=c97b9403-0e81-4857-a52f-a02e901856b1'
     ).to_return Stub.json(
