@@ -6,7 +6,7 @@ module QcRules
 
     def run
       Xikolo.paginate(
-        Xikolo.api(:news).value!.rel(:news_index).get(
+        news_service.rel(:news_index).get(
           published: true
         )
       ) do |announcement|
@@ -45,11 +45,11 @@ module QcRules
     end
 
     def news_service
-      @news_service ||= Xikolo.api(:news).value!
+      @news_service ||= Restify.new(:news).get.value!
     end
 
     def notification_service
-      @notification_service ||= Xikolo.api(:notification).value!
+      @notification_service ||= Restify.new(:notification).get.value!
     end
   end
 end

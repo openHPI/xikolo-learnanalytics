@@ -31,6 +31,6 @@ class CalculateCourseStatsWorker
   end
 
   def course_service
-    @course_service ||= Xikolo.api(:course).value!
+    @course_service ||= Restify.new(:course).get.value!
   end
 end

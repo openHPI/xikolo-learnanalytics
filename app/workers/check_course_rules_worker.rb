@@ -3,7 +3,7 @@ class CheckCourseRulesWorker
   sidekiq_options queue: :high, retry: false
 
   def perform(course_id)
-    course = Xikolo.api(:course).value!
+    course = Restify.new(:course).get.value!
                .rel(:course).get(id: course_id).value!
 
     QcRule.active.not_global.each do |course_rule|

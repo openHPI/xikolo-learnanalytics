@@ -13,7 +13,7 @@ module Lanalytics
       exec do |params|
         course_id = params[:course_id]
 
-        course_service = Xikolo.api(:course).value!
+        course_service = Restify.new(:course).get.value!
 
         # get course
         course = course_service.rel(:course).get(id: course_id).value!

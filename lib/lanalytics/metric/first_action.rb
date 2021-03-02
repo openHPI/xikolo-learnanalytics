@@ -8,7 +8,7 @@ module Lanalytics
       required_parameter :course_id, :user_id
 
       exec do |params|
-        course_service = Xikolo.api(:course).value!
+        course_service = Restify.new(:course).get.value!
 
         course = course_service.rel(:course).get(id: params[:course_id]).value!
 

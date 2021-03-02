@@ -78,11 +78,11 @@ module QcRules
     end
 
     def course_service
-      @course_service ||= Xikolo.api(:course).value!
+      @course_service ||= Restify.new(:course).get.value!
     end
 
     def quiz_service
-      @quiz_service ||= Xikolo.api(:quiz).value!
+      @quiz_service ||= Restify.new(:quiz).get.value!
     end
 
     def config

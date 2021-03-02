@@ -50,11 +50,11 @@ module QcRules
     end
 
     def course_service
-      @course_service ||= Xikolo.api(:course).value!
+      @course_service ||= Restify.new(:course).get.value!
     end
 
     def news_service
-      @news_service ||= Xikolo.api(:news).value!
+      @news_service ||= Restify.new(:news).get.value!
     end
   end
 end

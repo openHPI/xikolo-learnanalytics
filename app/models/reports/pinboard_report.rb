@@ -318,15 +318,15 @@ module Reports
     end
 
     def collab_space_service
-      @collab_space_service ||= Xikolo.api(:collabspace).value!
+      @collab_space_service ||= Restify.new(:collabspace).get.value!
     end
 
     def course_service
-      @course_service ||= Xikolo.api(:course).value!
+      @course_service ||= Restify.new(:course).get.value!
     end
 
     def pinboard_service
-      @pinboard_service ||= Xikolo.api(:pinboard).value!
+      @pinboard_service ||= Restify.new(:pinboard).get.value!
     end
   end
 end

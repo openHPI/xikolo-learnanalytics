@@ -33,7 +33,7 @@ class UserGroups
   private
 
   def account_service
-    @account_service ||= Xikolo.api(:account).value!
+    @account_service ||= Restify.new(:account).get.value!
   end
 
   public
