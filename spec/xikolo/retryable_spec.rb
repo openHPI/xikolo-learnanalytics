@@ -11,7 +11,7 @@ describe Xikolo::Retryable do
   let(:retryable) { described_class.new(max_retries: max_retries, wait: wait, &promise_block) }
   let(:max_retries) { 3 }
   let(:wait) { 0 }
-  let(:promise_block) { Proc.new { Xikolo.api(:course).value!.rel(:stats).get } }
+  let(:promise_block) { proc { Restify.new(:course).get.value!.rel(:stats).get } }
 
   describe '#retry!' do
     subject { retryable.retry! }

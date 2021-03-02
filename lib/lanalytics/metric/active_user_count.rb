@@ -48,7 +48,8 @@ module Lanalytics
           end
 
           if resource_id.present?
-            courses = Xikolo.api(:course).value!.rel(:courses).get(cat_id: resource_id).value!
+            courses = Restify.new(:course).get.value!
+              .rel(:courses).get(cat_id: resource_id).value!
             body[:query][:bool][:minimum_should_match] = 1
             body[:query][:bool][:should] = []
             courses.each do |course|

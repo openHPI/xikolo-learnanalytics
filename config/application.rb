@@ -45,6 +45,15 @@ module Xikolo::Lanalytics
       ::Xikolo.send :extend, Xikolo::Common::PaginateWithRetries
     end
 
+    # Register service URLs from services.yml in the Restify registry
+    initializer 'restify-services' do |app|
+      services = app.config_for(:services).fetch('services', {})
+
+      services.each do |service, location|
+        Restify::Registry.store service.to_sym, location
+      end
+    end
+
     # Setup Sidekiq Redis connection as configured in config/sidekiq_redis.yml
     initializer 'sidekiq-connection' do |app|
       redis_config = app.config_for(:sidekiq_redis)

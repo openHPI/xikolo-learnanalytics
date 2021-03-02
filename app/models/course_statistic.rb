@@ -155,19 +155,19 @@ class CourseStatistic < ApplicationRecord
   private
 
   def course_service
-    @course_service ||= Xikolo.api(:course).value!
+    @course_service ||= Restify.new(:course).get.value!
   end
 
   def pinboard_service
-    @pinboard_service ||= Xikolo.api(:pinboard).value!
+    @pinboard_service ||= Restify.new(:pinboard).get.value!
   end
 
   def helpdesk_service
-    @helpdesk_service ||= Xikolo.api(:helpdesk).value!
+    @helpdesk_service ||= Restify.new(:helpdesk).get.value!
   end
 
   def certificate_service
-    @certificate_service ||= Xikolo.api(:certificate).value!
+    @certificate_service ||= Restify.new(:certificate).get.value!
   end
 
   class << self

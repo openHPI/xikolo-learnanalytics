@@ -246,11 +246,11 @@ module Reports
     end
 
     def course_service
-      @course_service ||= Xikolo.api(:course).value!
+      @course_service ||= Restify.new(:course).get.value!
     end
 
     def peerassessment_service
-      @peerassessment_service ||= Xikolo.api(:peerassessment).value!
+      @peerassessment_service ||= Restify.new(:peerassessment).get.value!
     end
 
   end

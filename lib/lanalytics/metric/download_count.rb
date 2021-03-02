@@ -67,7 +67,7 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        course_api = Xikolo.api(:course).value!
+        course_api = Restify.new(:course).get.value!
 
         sections = []
         Xikolo.paginate(
@@ -113,7 +113,7 @@ module Lanalytics
       def self.video_items(course_id)
         videos = []
         Xikolo.paginate(
-          Xikolo.api(:course).value!.rel(:items).get(
+          Restify.new(:course).get.value!.rel(:items).get(
             course_id: course_id,
             content_type: 'video'
           )

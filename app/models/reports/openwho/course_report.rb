@@ -188,11 +188,11 @@ module Reports::Openwho
     end
 
     def account_service
-      @account_service ||= Xikolo.api(:account).value!
+      @account_service ||= Restify.new(:account).get.value!
     end
 
     def course_service
-      @course_service ||= Xikolo.api(:course).value!
+      @course_service ||= Restify.new(:course).get.value!
     end
   end
 end

@@ -143,12 +143,12 @@ module Lanalytics
                         ]
         end
 
-        course_api = Xikolo.api(:course).value!
+        course_api = Restify.new(:course).get.value!
 
         sections = []
 
         if params[:item_id]
-          item = Xikolo.api(:course).value!
+          item = Restify.new(:course).get.value!
             .rel(:item).get(id: params[:item_id]).value!
 
           sections.append(
@@ -184,7 +184,7 @@ module Lanalytics
 
         section = sections.find {|s| s['id'] == item['section_id'] }
 
-        video = Xikolo.api(:video).value!
+        video = Restify.new(:video).get.value!
           .rel(:video).get(id: item['content_id']).value!
 
         {
@@ -205,7 +205,7 @@ module Lanalytics
       def self.video_items(course_id)
         videos = []
         Xikolo.paginate(
-          Xikolo.api(:course).value!.rel(:items).get(
+          Restify.new(:course).get.value!.rel(:items).get(
             course_id: course_id,
             content_type: 'video',
           ),

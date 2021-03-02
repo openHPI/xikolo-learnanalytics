@@ -65,7 +65,7 @@ module Lanalytics
           client.search index: datasource.index, body: body
         end
 
-        course_api = Xikolo.api(:course).value!
+        course_api = Restify.new(:course).get.value!
 
         sections = []
         Xikolo.paginate(
@@ -110,7 +110,7 @@ module Lanalytics
       def self.rich_text_items(course_id, item_id = nil)
         rich_texts = []
         Xikolo.paginate(
-          Xikolo.api(:course).value!.rel(:items).get(
+          Restify.new(:course).get.value!.rel(:items).get(
             {
               course_id: course_id,
               content_type: 'rich_text',

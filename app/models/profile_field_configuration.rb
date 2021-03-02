@@ -27,7 +27,8 @@ class ProfileFieldConfiguration < ApplicationRecord
     end
 
     def all_titles
-      users = Xikolo.api(:account).value!.rel(:users).get(per_page: 1).value!
+      users = Restify.new(:account).get.value!
+        .rel(:users).get(per_page: 1).value!
 
       return [] if users.blank?
 

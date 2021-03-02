@@ -647,19 +647,19 @@ module Reports
     # rubocop:enable all
 
     def account_service
-      @account_service ||= Xikolo.api(:account).value!
+      @account_service ||= Restify.new(:account).get.value!
     end
 
     def course_service
-      @course_service ||= Xikolo.api(:course).value!
+      @course_service ||= Restify.new(:course).get.value!
     end
 
     def pinboard_service
-      @pinboard_service ||= Xikolo.api(:pinboard).value!
+      @pinboard_service ||= Restify.new(:pinboard).get.value!
     end
 
     def quiz_service
-      @quiz_service ||= Xikolo.api(:quiz).value!
+      @quiz_service ||= Restify.new(:quiz).get.value!
     end
 
     def as_date(string_or_nil)

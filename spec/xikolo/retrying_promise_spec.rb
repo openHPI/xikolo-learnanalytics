@@ -29,15 +29,15 @@ describe Xikolo::RetryingPromise do
   end
 
   let(:retryable_1) do
-    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Xikolo.api(:course).value!.rel(:stats1).get }
+    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats1).get }
   end
 
   let(:retryable_2) do
-    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Xikolo.api(:course).value!.rel(:stats2).get }
+    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats2).get }
   end
 
   let(:retryable_3) do
-    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Xikolo.api(:course).value!.rel(:stats3).get }
+    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats3).get }
   end
 
   describe '#value!' do
