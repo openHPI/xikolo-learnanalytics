@@ -12,7 +12,7 @@ describe 'Pinboard Report' do
   before do
     Stub.service(
       :course,
-      course_url: 'http://localhost:3300/courses/{id}'
+      course_url: 'http://course.xikolo.tld/courses/{id}'
     )
     Stub.request(
       :course, :get, "/courses/#{report_job.task_scope}"
@@ -34,9 +34,9 @@ describe 'Pinboard Report' do
 
     Stub.service(
       :pinboard,
-      answers_url: 'http://localhost:3500/answers',
-      comments_url: 'http://localhost:3500/comments',
-      questions_url: 'http://localhost:3500/questions'
+      answers_url: 'http://pinboard.xikolo.tld/answers',
+      comments_url: 'http://pinboard.xikolo.tld/comments',
+      questions_url: 'http://pinboard.xikolo.tld/questions'
     )
     Stub.request(
       :pinboard, :get, '/questions',
