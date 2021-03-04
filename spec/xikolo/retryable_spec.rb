@@ -2,10 +2,8 @@ require 'spec_helper'
 
 describe Xikolo::Retryable do
   before do
-    Stub.service(
-      :course,
-      stats_url: '/stats',
-    )
+    Stub.request(:course, :get)
+      .to_return Stub.json(stats_url: '/stats')
   end
 
   let(:retryable) { described_class.new(max_retries: max_retries, wait: wait, &promise_block) }

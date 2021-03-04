@@ -8,10 +8,8 @@ describe CheckAllRulesWorker do
   end
 
   before do
-    Stub.service(
-      :course,
-      courses_url: '/courses'
-    )
+    Stub.request(:course, :get)
+      .to_return Stub.json(courses_url: '/courses')
     Stub.request(
       :course, :get, '/courses',
       query: { groups: 'any', public: 'true' }

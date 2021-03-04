@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe Xikolo::RetryingPromise do
   before do
-    Stub.service(
-      :course,
-      stats1_url: '/stats1',
-      stats2_url: '/stats2',
-      stats3_url: '/stats3',
-    )
+    Stub.request(:course, :get)
+      .to_return Stub.json(
+        stats1_url: '/stats1',
+        stats2_url: '/stats2',
+        stats3_url: '/stats3',
+      )
     Stub.request(
       :course, :get, '/stats1'
     ).to_return Stub.json(

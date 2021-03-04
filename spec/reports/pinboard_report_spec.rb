@@ -10,10 +10,8 @@ describe 'Pinboard Report' do
   end
 
   before do
-    Stub.service(
-      :course,
-      course_url: 'http://localhost:3300/courses/{id}'
-    )
+    Stub.request(:course, :get)
+      .to_return Stub.json(course_url: 'http://course.xikolo.tld/courses/{id}')
     Stub.request(
       :course, :get, "/courses/#{report_job.task_scope}"
     ).to_return Stub.json(
@@ -21,10 +19,8 @@ describe 'Pinboard Report' do
       course_code: 'report_course'
     )
 
-    Stub.service(
-      :collabspace,
-      collab_spaces_url: '/collab_spaces'
-    )
+    Stub.request(:collabspace, :get)
+      .to_return Stub.json(collab_spaces_url: '/collab_spaces')
     Stub.request(
       :collabspace, :get, '/collab_spaces',
       query: { course_id: report_job.task_scope }
@@ -32,12 +28,12 @@ describe 'Pinboard Report' do
       {id: collab_space_id}
     ])
 
-    Stub.service(
-      :pinboard,
-      answers_url: 'http://localhost:3500/answers',
-      comments_url: 'http://localhost:3500/comments',
-      questions_url: 'http://localhost:3500/questions'
-    )
+    Stub.request(:pinboard, :get)
+      .to_return Stub.json(
+        answers_url: 'http://pinboard.xikolo.tld/answers',
+        comments_url: 'http://pinboard.xikolo.tld/comments',
+        questions_url: 'http://pinboard.xikolo.tld/questions',
+      )
     Stub.request(
       :pinboard, :get, '/questions',
       query: { course_id: report_job.task_scope, per_page: 50 }

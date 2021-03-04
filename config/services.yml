@@ -22,8 +22,15 @@ development: &dev
 
 test:
   services:
-    <<: *devserv
+    certificate: http://certificate.xikolo.tld
+    collabspace: http://collabspace.xikolo.tld
+    course: http://course.xikolo.tld
+    helpdesk: http://helpdesk.xikolo.tld
     news: http://news.xikolo.tld
+    notification: http://notification.xikolo.tld
+    pinboard: http://pinboard.xikolo.tld
+    quiz: http://quiz.xikolo.tld
+    video: http://video.xikolo.tld
 
 staging:
   services:

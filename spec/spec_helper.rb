@@ -30,8 +30,6 @@ require 'webmock/rspec'
 require 'rspec/collection_matchers'
 require 'paper_trail/frameworks/rspec'
 
-require 'xikolo/common/rspec'
-
 require 'restify'
 require 'restify/adapter/typhoeus'
 

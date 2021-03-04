@@ -4,12 +4,12 @@ describe CourseStatistic do
   let(:course_id) {'00000001-3300-4444-9999-000000000008'}
 
   before do
-    Stub.service(
-      :course,
-      course_url: '/courses/{id}',
-      stats_url: '/stats',
-      course_statistic_url: '/courses/{course_id}/statistic'
-    )
+    Stub.request(:course, :get)
+      .to_return Stub.json(
+        course_url: '/courses/{id}',
+        stats_url: '/stats',
+        course_statistic_url: '/courses/{course_id}/statistic',
+      )
     Stub.request(
       :course, :get, "/courses/#{course_id}"
     ).to_return Stub.json(
@@ -48,10 +48,8 @@ describe CourseStatistic do
       student_enrollments_by_day: { DateTime.now.iso8601.to_s => 199}
     )
 
-    Stub.service(
-      :helpdesk,
-      statistics_url: '/statistic{?course_id}'
-    )
+    Stub.request(:helpdesk, :get)
+      .to_return Stub.json(statistics_url: '/statistic{?course_id}')
     Stub.request(
       :helpdesk, :get, '/statistic',
       query: { course_id: course_id }
@@ -60,10 +58,8 @@ describe CourseStatistic do
       ticket_count_last_day: 100
     )
 
-    Stub.service(
-      :pinboard,
-      statistic_url: '/statistics/{id}'
-    )
+    Stub.request(:pinboard, :get)
+      .to_return Stub.json(statistic_url: '/statistics/{id}')
     Stub.request(
       :pinboard, :get, "/statistics/#{course_id}",
     ).to_return Stub.json(
@@ -73,10 +69,8 @@ describe CourseStatistic do
       questions_last_day: 50
     )
 
-    Stub.service(
-      :certificate,
-      open_badge_statistics_url: '/open_badge_statistics{?course_id}'
-    )
+    Stub.request(:certificate, :get)
+      .to_return Stub.json(open_badge_statistics_url: '/open_badge_statistics{?course_id}')
     Stub.request(
       :certificate, :get, '/open_badge_statistics',
       query: { course_id: course_id }
