@@ -22,6 +22,7 @@ development: &dev
 
 test:
   services:
+    account: http://account.xikolo.tld
     certificate: http://certificate.xikolo.tld
     collabspace: http://collabspace.xikolo.tld
     course: http://course.xikolo.tld

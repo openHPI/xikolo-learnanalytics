@@ -8,6 +8,7 @@ module Reports
 
       @de_pseudonymized = job.options['de_pseudonymized']
       @include_analytics_metrics = job.options['include_analytics_metrics']
+      @include_access_groups = job.options['include_access_groups']
       @include_profile = job.options['include_profile']
       @include_auth = job.options['include_auth']
       @include_sections = true
@@ -30,6 +31,9 @@ module Reports
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def each_row
+      # Initialize access groups to preload some data.
+      access_groups if @include_access_groups
+
       courses.each_with_index do |course, course_index|
         index = 0
 
@@ -108,9 +112,13 @@ module Reports
               first_enrollment?(enrollment),
               user['created_at'],
               user['language'],
-              user['affiliated'],
               age_group,
             ]
+
+            if @include_access_groups
+              memberships = access_groups.memberships_for(user['id'])
+              values.append(escape_csv_string(memberships.join('; ')))
+            end
 
             if @de_pseudonymized
               values += [
@@ -407,7 +415,6 @@ module Reports
         'First Enrollment',
         'User created',
         'Language',
-        'Affiliated',
         'Age Group',
       ].tap do |headers|
         if @de_pseudonymized
@@ -417,6 +424,8 @@ module Reports
             'Birth Date',
           ]
         end
+
+        headers.append('Access Groups') if @include_access_groups
 
         if @include_profile
           headers.concat ['Profile Picture']
@@ -664,6 +673,10 @@ module Reports
 
     def as_date(string_or_nil)
       string_or_nil && DateTime.parse(string_or_nil)
+    end
+
+    def access_groups
+      @access_groups ||= AccessGroups.new
     end
 
     def auth_fields

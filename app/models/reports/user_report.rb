@@ -13,6 +13,8 @@ module Reports
         job.options['de_pseudonymized']
       @include_top_location =
         job.options['include_top_location']
+      @include_access_groups =
+        job.options['include_access_groups']
       @include_profile =
         job.options['include_profile']
       @include_auth =
@@ -52,9 +54,10 @@ module Reports
         headers.append(
           'Age Group',
           'Language',
-          'Affiliated',
           'Created',
         )
+
+        headers.append('Access Groups') if @include_access_groups
 
         if @include_top_location
           headers.append(
@@ -95,6 +98,9 @@ module Reports
     end
 
     def each_user
+      # Initialize access groups to preload some data.
+      access_groups if @include_access_groups
+
       index = 0
 
       users_promise =
@@ -120,9 +126,13 @@ module Reports
         values.append(
           age_group,
           user['language'],
-          user['affiliated'] || '',
           user['created_at'],
         )
+
+        if @include_access_groups
+          memberships = access_groups.memberships_for(user['id'])
+          values.append(escape_csv_string(memberships.join('; ')))
+        end
 
         if @include_top_location
           user_top_country = top_country(user)
@@ -343,6 +353,10 @@ module Reports
 
     def course_service
       @course_service ||= Restify.new(:course).get.value!
+    end
+
+    def access_groups
+      @access_groups ||= AccessGroups.new
     end
 
     def auth_fields
