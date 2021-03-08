@@ -2,6 +2,7 @@
 
 require 'csv'
 require 'file_collection'
+require 'lanalytics'
 
 module Reports
   class Base
@@ -56,7 +57,7 @@ module Reports
           csv << row
           csv.flush
 
-          Xikolo.metrics.write(
+          Lanalytics.telegraf.write(
             'report_jobs',
             tags: {id: @job.id, type: @job.task_type},
             values: {

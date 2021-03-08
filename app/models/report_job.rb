@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'lanalytics'
+
 class ReportJob < ApplicationRecord
   validates :user_id, presence: true
   validates :task_type, presence: true
@@ -27,7 +29,7 @@ class ReportJob < ApplicationRecord
   class << self
     def start(job_id)
       ReportJob.update(job_id, status: 'started').tap do |report|
-        Xikolo.metrics.write(
+        Lanalytics.telegraf.write(
           'report_jobs',
           tags: {id: job_id, type: report.task_type},
           values: {user_id: report.user_id, status: 'started'},
@@ -78,7 +80,7 @@ class ReportJob < ApplicationRecord
     percentage = ((part / of.to_f) * 100).to_i
     progress = [0, percentage, 100].sort[1]
 
-    Xikolo.metrics.write(
+    Lanalytics.telegraf.write(
       'report_jobs',
       tags: {id: id, type: task_type},
       values: {
@@ -99,7 +101,7 @@ class ReportJob < ApplicationRecord
 
   # Mark a job as complete and set the given attributes
   def finish_with(attributes)
-    Xikolo.metrics.write(
+    Lanalytics.telegraf.write(
       'report_jobs',
       tags: {id: id, type: task_type},
       values: {user_id: user_id, status: 'done'},
@@ -121,7 +123,7 @@ class ReportJob < ApplicationRecord
     title = "#{error.class.name}: #{error.message}"
     trace = error.backtrace.join("\n")
 
-    Xikolo.metrics.write(
+    Lanalytics.telegraf.write(
       'report_jobs',
       tags: {id: id, type: task_type},
       values: {
