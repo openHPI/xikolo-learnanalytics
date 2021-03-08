@@ -38,8 +38,3 @@ spec/examples.txt
 
 # Local config
 /config/xikolo.development.yml
-
-# Integration tests
-/config/initializers/integration*
-/config/services.integration.yml
-config/xikolo.integration.yml
