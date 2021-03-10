@@ -115,17 +115,17 @@ module Reports
               age_group,
             ]
 
-            if @include_access_groups
-              memberships = access_groups.memberships_for(user['id'])
-              values.append(escape_csv_string(memberships.join('; ')))
-            end
-
             if @de_pseudonymized
               values += [
                 escape_csv_string(user['full_name']),
                 user['email'],
                 user['born_at'],
               ]
+            end
+
+            if @include_access_groups
+              memberships = access_groups.memberships_for(user['id'])
+              values.append(escape_csv_string(memberships.join('; ')))
             end
 
             if @include_profile
