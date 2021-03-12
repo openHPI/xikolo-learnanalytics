@@ -48,9 +48,9 @@ RSpec.configure do |config|
 
   config.before do
     stub_request(:any, /lanalytics\.xikolo\.tld/)
-      .to_rack(Xikolo::Lanalytics::Application)
+      .to_rack(Lanalytics::Application)
     stub_request(:any, /test\.host/)
-      .to_rack(Xikolo::Lanalytics::Application)
+      .to_rack(Lanalytics::Application)
   end
 
   config.around(:each) do |example|

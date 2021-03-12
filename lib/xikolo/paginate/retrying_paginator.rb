@@ -1,4 +1,6 @@
-module Xikolo
+# frozen_string_literal: true
+
+module Xikolo::Paginate
   class RetryingPaginator
     def initialize(max_retries:, wait:, &request)
       @max_retries = max_retries
@@ -31,8 +33,8 @@ module Xikolo
     private
 
     def start(&request_blk)
-      RetryingPromise.new(
-        Retryable.new(
+      Xikolo::RetryingPromise.new(
+        Xikolo::Retryable.new(
           max_retries: @max_retries,
           wait: @wait,
           &request_blk

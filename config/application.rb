@@ -15,7 +15,7 @@ Bundler.require(*Rails.groups)
 
 require 'telegraf/rails'
 
-module Xikolo::Lanalytics
+module Lanalytics
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
@@ -38,12 +38,6 @@ module Xikolo::Lanalytics
 
     # Configure Telegraf event collection
     config.telegraf.tags = {application: 'learnanalytics'}
-
-    initializer 'xikolo-patches' do
-      require 'ext/xikolo/common/paginate_with_retries'
-
-      ::Xikolo.send :extend, Xikolo::Common::PaginateWithRetries
-    end
 
     # Register service URLs from services.yml in the Restify registry
     initializer 'restify-services' do |app|
@@ -80,6 +74,9 @@ module Xikolo::Lanalytics
 
     # Restify: Do not wrap hashes with object-like accessors
     Restify::Processors::Json.indifferent_access = false
+
+    # Load our custom Xikolo libs
+    require 'xikolo'
 
     # Register locations for loading application config
     require 'lanalytics/config'
