@@ -11,8 +11,6 @@ gem 'nokogiri', '~> 1.11'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 
-gem 'xikolo-common', '~> 2.4'
-
 gem 'restify', '~> 1.8'
 gem 'rails-rfc6570', '~> 2.3'
 
