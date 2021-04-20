@@ -27,6 +27,24 @@ class ReportJob < ApplicationRecord
   default_scope { order('updated_at DESC') }
 
   class << self
+    def create(attributes = {}, &block)
+      super(attributes.merge(status: 'requested'), &block)
+    end
+
+    def create_and_enqueue(params)
+      ReportJob.create(params).tap {|job| job.schedule if job.valid? }
+    end
+
+    def queued(job_id)
+      ReportJob.update(job_id, status: 'queued').tap do |report|
+        Lanalytics.telegraf.write(
+          'report_jobs',
+          tags: {id: job_id, type: report.task_type},
+          values: {user_id: report.user_id, status: 'queued'},
+        )
+      end
+    end
+
     def start(job_id)
       ReportJob.update(job_id, status: 'started').tap do |report|
         Lanalytics.telegraf.write(
@@ -72,7 +90,8 @@ class ReportJob < ApplicationRecord
 
   # rubocop:disable Naming/UncommunicativeMethodParamName
   def progress_to(part, of:)
-    part, of = part.to_i, of.to_i
+    part = part.to_i
+    of = of.to_i
 
     # Prevent division by zero
     return if of == 0
