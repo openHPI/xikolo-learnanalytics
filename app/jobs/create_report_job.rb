@@ -1,8 +1,15 @@
+# frozen_string_literal: true
+
 require 'fileutils'
 require 'lanalytics/s3'
 
 class CreateReportJob < ApplicationJob
   queue_as :default
+
+  after_enqueue do |job|
+    job_id = job.arguments.first
+    ReportJob.queued(job_id)
+  end
 
   def perform(job_id)
     job = ReportJob.start(job_id)
@@ -20,13 +27,13 @@ class CreateReportJob < ApplicationJob
         # ...and finally send them to the file service
         job.finish_with upload_file(zip_file, job.id)
       end
-    rescue => error
+    rescue => e
       trace =
-        "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
+        "#{e.class.name}: #{e.message}\n#{e.backtrace.join("\n")}"
       Sidekiq.logger.error trace
-      ::Mnemosyne.attach_error(error)
-      ::Raven.capture_exception(error)
-      job.fail_with error
+      ::Mnemosyne.attach_error(e)
+      ::Raven.capture_exception(e)
+      job.fail_with e
     end
   end
 
@@ -39,15 +46,15 @@ class CreateReportJob < ApplicationJob
     )
 
     # Upload the generated report to S3
-    object = bucket.put_object(
-      key: "reports/#{job_id}/#{File.basename(file_path)}",
-      body: open(file_path),
-      acl: 'private',
-      content_type: 'application/zip',
-      metadata: {
-        'job-id' => job_id
-      }
-    )
+    object = File.open(file_path, 'rb') do |file|
+      bucket.put_object(
+        key: "reports/#{job_id}/#{File.basename(file_path)}",
+        body: file,
+        acl: 'private',
+        content_type: 'application/zip',
+        metadata: {'job-id' => job_id},
+      )
+    end
 
     # We expect the S3 object to be deleted after 7 days.
     # Let's generate a pre-signed download URL for this duration and remember
