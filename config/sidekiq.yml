@@ -3,3 +3,5 @@
 :queues:
   - high
   - default
+  - reports_default
+  - reports_long_running

@@ -6,6 +6,18 @@ require 'lanalytics'
 
 module Reports
   class Base
+    class << self
+      def queue_name
+        @queue_name || :reports_default
+      end
+
+      protected
+
+      def queue_as(queue_name)
+        @queue_name = queue_name
+      end
+    end
+
     def initialize(job)
       # Subclasses can override this method if they need access to
       # the additional options
