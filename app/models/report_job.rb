@@ -68,6 +68,10 @@ class ReportJob < ApplicationRecord
                       Rails.root.join('tmp')
                     end
     end
+
+    def queue_name(job_id)
+      REPORT_CLASSES.fetch(ReportJob.find(job_id).task_type).queue_name
+    end
   end
 
   def schedule

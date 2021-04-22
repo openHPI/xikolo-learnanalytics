@@ -6,6 +6,8 @@
 # rubocop:disable Metrics/PerceivedComplexity
 module Reports
   class UserReport < Base
+    queue_as :reports_long_running
+
     def initialize(job)
       super
 

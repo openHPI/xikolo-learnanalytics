@@ -4,7 +4,10 @@ require 'fileutils'
 require 'lanalytics/s3'
 
 class CreateReportJob < ApplicationJob
-  queue_as :default
+  queue_as do # Executed in the job context (so you can access self.arguments)
+    job_id = arguments.first
+    ReportJob.queue_name(job_id)
+  end
 
   after_enqueue do |job|
     job_id = job.arguments.first

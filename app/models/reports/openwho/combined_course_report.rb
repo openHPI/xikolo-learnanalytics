@@ -2,6 +2,8 @@
 
 module Reports::Openwho
   class CombinedCourseReport < Reports::Openwho::CourseReport
+    queue_as :reports_long_running
+
     def initialize(job)
       super
 

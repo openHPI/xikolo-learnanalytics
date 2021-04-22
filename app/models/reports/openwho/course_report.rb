@@ -3,6 +3,8 @@
 # rubocop:disable Metrics/BlockLength
 module Reports::Openwho
   class CourseReport < Reports::Base
+    queue_as :reports_long_running
+
     def initialize(job)
       super
 

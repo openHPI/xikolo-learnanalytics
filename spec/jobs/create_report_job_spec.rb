@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'file_collection'
 
@@ -7,21 +9,34 @@ class ReportStub
   end
 
   def files
-    FileCollection.new(@report_job.tmp_directory).tap { |files|
+    FileCollection.new(@report_job.tmp_directory).tap do |files|
       FileUtils.cp(
         Rails.root.join('spec', 'support', 'files', 'course-report-example.csv'),
-        files.make('course-report-example.csv')
+        files.make('course-report-example.csv'),
       )
-    }
+    end
   end
 end
 
 describe CreateReportJob do
-  subject { described_class.new.perform(report_job.id) }
+  subject(:perform_job) { described_class.new.perform(report_job.id) }
 
-  let!(:report_job) { FactoryBot.create :report_job, :course_report }
-
+  let(:report_job) { FactoryBot.create :report_job, :course_report }
   let(:report_stub) { ReportStub.new(report_job) }
+
+  it 'enqueued on the queue for long running reports' do
+    ActiveJob::Base.queue_adapter = :test
+    expect { described_class.perform_later(report_job.id) }.to have_enqueued_job.on_queue('reports_long_running')
+  end
+
+  context 'pinboard_report' do
+    let(:report_job) { FactoryBot.create :report_job, :pinboard_report }
+
+    it 'enqueued on the default queue for reports' do
+      ActiveJob::Base.queue_adapter = :test
+      expect { described_class.perform_later(report_job.id) }.to have_enqueued_job.on_queue('reports_default')
+    end
+  end
 
   context 'successful report generation' do
     before do
@@ -31,11 +46,11 @@ describe CreateReportJob do
     end
 
     it 'marks the report job as finished' do
-      expect { subject }.to change { report_job.reload.status }.from('pending').to('done')
+      expect { perform_job }.to change { report_job.reload.status }.from('requested').to('done')
     end
 
     it 'saves an expiry date for the file' do
-      subject
+      perform_job
       expect(report_job.reload.file_expire_date).to be_future
     end
   end
@@ -48,11 +63,11 @@ describe CreateReportJob do
     end
 
     it 'marks the report job as failed' do
-      expect { subject }.to change { report_job.reload.status }.from('pending').to('failing')
+      expect { perform_job }.to change { report_job.reload.status }.from('requested').to('failing')
     end
 
     it 'stores the exception trace in the database' do
-      subject
+      perform_job
       expect(report_job.reload.error_text).to include 'Aws::S3::Errors'
     end
   end
@@ -63,11 +78,11 @@ describe CreateReportJob do
     end
 
     it 'marks the report job as failed' do
-      expect { subject }.to change { report_job.reload.status }.from('pending').to('failing')
+      expect { perform_job }.to change { report_job.reload.status }.from('requested').to('failing')
     end
 
     it 'stores the exception trace in the database' do
-      subject
+      perform_job
       expect(report_job.reload.error_text).to include 'Report failed'
     end
   end

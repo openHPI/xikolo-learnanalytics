@@ -2,6 +2,8 @@
 
 module Reports
   class CombinedCourseReport < CourseReport
+    queue_as :reports_long_running
+
     def initialize(job)
       super
 

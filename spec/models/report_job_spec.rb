@@ -35,4 +35,44 @@ describe ReportJob, type: :model do
       end
     end
   end
+
+  describe '::queue_name' do
+    subject(:queue_name) { described_class.queue_name(report_job.id) }
+
+    let(:report_job) { FactoryBot.create :report_job, report_type }
+
+    %i[
+      course_report
+      combined_course_report
+      course_events_report
+      user_report
+      openwho_course_report
+      openwho_combined_course_report
+    ].each do |long_running_report|
+      context long_running_report.to_s do
+        let(:report_type) { long_running_report }
+
+        it 'returns the queue for long running reports' do
+          expect(queue_name).to eq(:reports_long_running)
+        end
+      end
+    end
+
+    %i[
+      unconfirmed_user_report
+      submission_report
+      pinboard_report
+      enrollment_statistics_report
+      course_content_report
+      overall_course_summary_report
+    ].each do |default_report|
+      context default_report.to_s do
+        let(:report_type) { default_report }
+
+        it 'returns the default queue for reports' do
+          expect(queue_name).to eq(:reports_default)
+        end
+      end
+    end
+  end
 end
