@@ -14,7 +14,8 @@ WorkingDirectory=/usr/lib/${PACKAGE}
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
 
-ExecStart=/usr/bin/${PACKAGE} sidekiq --queue high --queue default --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
+# ExecStart=/usr/bin/${PACKAGE} sidekiq --queue high --queue default --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
+ExecStart=/usr/bin/${PACKAGE} sidekiq --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
 ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq started
 ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq stop
 ExecStop=/bin/kill -TERM $MAINPID

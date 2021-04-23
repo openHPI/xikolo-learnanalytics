@@ -1,7 +1,7 @@
 [Unit]
 Description=Xikolo Learn Analytics Service - Report Generation
 After=network.target
-PartOf=${PACKAGE}.service
+# PartOf=${PACKAGE}.service
 ConditionPathExists=!/etc/xikolo.nobackground
 
 [Service]
