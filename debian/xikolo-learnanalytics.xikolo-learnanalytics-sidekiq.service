@@ -10,34 +10,16 @@ Group=www-data
 
 SyslogIdentifier=${PACKAGE}-sidekiq
 WorkingDirectory=/usr/lib/${PACKAGE}
-RuntimeDirectory=${PACKAGE}-sidekiq
-
-# More modern versions of systemd would set this environment variable
-# for us automatically.
-Environment=RUNTIME_DIRECTORY=/run/${PACKAGE}-sidekiq
 
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
 
-# The very high timeout (5 days) is needed for a few very bad reports.
-# See more below.
-ExecStart=/usr/bin/${PACKAGE} sidekiq --timeout 432000 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
+# ExecStart=/usr/bin/${PACKAGE} sidekiq --queue high --queue default --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
+ExecStart=/usr/bin/${PACKAGE} sidekiq --timeout 80 --concurrency ${SIDEKIQ_CONCURRENCY} ${SIDEKIQ_ARGS}
 ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq started
 ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq stop
 ExecStop=/bin/kill -TERM $MAINPID
-
-# We need to keep the old sidekiq process running for a few very bad reports
-# that may run for days and do not recover from being restarted.
-#
-# With KillMode=none we only send the TERM signal and ignore any left-over
-# process. sidekiq will run until its own shutdown timeout is reached, which is
-# set very high. The process usually exists on its own when the job is done. If
-# not, it will just hang around forever...
-KillMode=none
-
-# To make sure that our zombie processes can continue writing files, we mark the
-# runtime directory to not be cleaned up when stopping the service.
-RuntimeDirectoryPreserve=yes
+TimeoutStopSec=90s
 
 Restart=on-failure
 RestartSec=60s

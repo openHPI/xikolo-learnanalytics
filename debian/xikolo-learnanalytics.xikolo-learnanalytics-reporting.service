@@ -1,0 +1,49 @@
+[Unit]
+Description=Xikolo Learn Analytics Service - Report Generation
+After=network.target
+# PartOf=${PACKAGE}.service
+ConditionPathExists=!/etc/xikolo.nobackground
+
+[Service]
+User=www-data
+Group=www-data
+
+SyslogIdentifier=${PACKAGE}-reporting
+WorkingDirectory=/usr/lib/${PACKAGE}
+RuntimeDirectory=${PACKAGE}-reporting
+
+# More modern versions of systemd would set this environment variable
+# for us automatically.
+Environment=RUNTIME_DIRECTORY=/run/${PACKAGE}-reporting
+
+EnvironmentFile=/etc/default/${PACKAGE}
+EnvironmentFile=-/etc/${PACKAGE}/env
+
+# The very high timeout (5 days) is needed for a few very bad reports.
+# See more below.
+ExecStart=/usr/bin/${PACKAGE} sidekiq --queue reports_default --queue reports_long_running --timeout 432000 --concurrency ${REPORTING_CONCURRENCY} ${REPORTING_ARGS}
+ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq started
+ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq stop
+ExecStop=/bin/kill -TERM $MAINPID
+
+# We need to keep the old sidekiq process running for a few very bad reports
+# that may run for days and do not recover from being restarted.
+#
+# With KillMode=none we only send the TERM signal and ignore any left-over
+# process. sidekiq will run until its own shutdown timeout is reached, which is
+# set very high. The process usually exists on its own when the job is done. If
+# not, it will just hang around forever...
+KillMode=none
+
+# To make sure that our zombie processes can continue writing files, we mark the
+# runtime directory to not be cleaned up when stopping the service.
+RuntimeDirectoryPreserve=yes
+
+Restart=on-failure
+RestartSec=60s
+
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
