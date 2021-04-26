@@ -1,4 +1,4 @@
 # The runtime directory (where reports are written while being generated)
 # can be cleaned up once a day, in cases CSVs from reports that ran out of
 # memory linger around.
-e /run/xikolo-learnanalytics-sidekiq - - - 1d
+e /run/xikolo-learnanalytics-reporting - - - 1d
