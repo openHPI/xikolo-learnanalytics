@@ -3,7 +3,7 @@ Description=Xikolo Learn Analytics Service
 After=network.target
 Wants=${PACKAGE}-unicorn.service
 Wants=${PACKAGE}-sidekiq.service
-# Wants=${PACKAGE}-reporting.service
+Wants=${PACKAGE}-reporting.service
 
 [Service]
 Type=oneshot
