@@ -1,4 +1,5 @@
-source 'https://gemuser:QiKLoxr2rfPDisUmEYA9gnJGaLiWTuvW@dev.xikolo.de/gems/'
+source 'https://rubygems.org'
+
 ruby '~> 2.7.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
