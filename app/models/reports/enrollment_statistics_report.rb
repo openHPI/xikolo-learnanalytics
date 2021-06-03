@@ -8,8 +8,8 @@ module Reports
       @window_unit = extract_window_unit(job)
       @window_size = extract_window_size(job)
 
-      @first_date = extract_date(job, 'first_day', 'first_month', 'first_year')
-      @last_date = extract_date(job, 'last_day', 'last_month', 'last_year')
+      @first_date = extract_date(job, 'first')
+      @last_date = extract_date(job, 'last')
 
       @sliding_window = job.options['sliding_window']
       @include_active_users = job.options['include_active_users']
@@ -84,29 +84,22 @@ module Reports
       window_size
     end
 
-    def extract_date(job, day_name, month_name, year_name)
+    def extract_date(job, prefix)
       window_unit = extract_window_unit(job)
 
-      # Only the first day per month as the beginning of a time
-      # window, if the time window spans full months.
-      day = window_unit == 'months' ? 1 : job.options[day_name].to_i
-      month = job.options[month_name].to_i
-      year = job.options[year_name].to_i
-
       begin
-        Date.parse("#{day}/#{month}/#{year}", '%d/%m/%Y')
+        date = Date.parse(job.options["#{prefix}_date"], '%Y-%m-%d')
+
+        return date if window_unit != 'months'
+
+        # Only the first day per month as the beginning of a time
+        # window, if the time window spans full months.
+        date.change(day: 1)
       rescue Date::Error
-        if window_unit == 'months'
-          raise InvalidReportArgumentError.new(
-            "#{month_name}/#{year_name}",
-            "#{month}/#{year}",
-          )
-        else
-          raise InvalidReportArgumentError.new(
-            "#{day_name}/#{month_name}/#{year_name}",
-            "#{day}/#{month}/#{year}",
-          )
-        end
+        raise InvalidReportArgumentError.new(
+          "#{prefix}_date",
+          job.options["#{prefix}_date"],
+        )
       end
     end
 

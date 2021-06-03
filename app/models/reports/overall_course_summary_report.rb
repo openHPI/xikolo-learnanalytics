@@ -1,26 +1,24 @@
+# frozen_string_literal: true
+
 module Reports
   class OverallCourseSummaryReport < Base
-
     def initialize(job)
       super
 
       @include_statistics = job.options['include_statistics']
-      @end_day = job.options['end_day'].to_i
-      @end_month = job.options['end_month'].to_i
-      @end_year = job.options['end_year'].to_i
+      @end_date = extract_end_date(job)
     end
 
     def generate!
       file_name = 'OverallCourseSummaryReport'
       if @include_statistics
-        if end_date
-          file_name = "#{end_date}_#{file_name}"
-          @job.update(annotation: end_date)
+        if @end_date
+          file_name = "#{@end_date}_#{file_name}"
+          @job.update(annotation: @end_date.to_s)
         else
-          today = Date.today
-          date = format_date(today.year, today.month, today.day)
-          file_name = "#{date}_#{file_name}"
-          @job.update(annotation: date)
+          today = Time.zone.today
+          file_name = "#{today}_#{file_name}"
+          @job.update(annotation: today.to_s)
         end
       end
 
@@ -105,16 +103,20 @@ module Reports
       headers
     end
 
+    # rubocop:disable Metrics/BlockLength
     def each_course
       index = 0
 
-      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-        course_service.rel(:courses).get(
-          exclude_external: true,
-          groups: 'any',
-          per_page: 500
-        )
-      end.each_item do |course, page|
+      courses_promise =
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+          course_service.rel(:courses).get(
+            exclude_external: true,
+            groups: 'any',
+            per_page: 500,
+          )
+        end
+
+      courses_promise.each_item do |course, page|
         sections = sections(course['id'])
 
         values = [
@@ -149,16 +151,19 @@ module Reports
         ]
 
         Lanalytics.config.classifiers.each do |c|
-          values.append escape_csv_string(course.dig('classifiers', c)&.join(','))
+          values.append(
+            escape_csv_string(course.dig('classifiers', c)&.join(',')),
+          )
         end
 
         if @include_statistics
           begin
-            if end_date && Date.parse(end_date).past?
-              stats = CourseStatistic.last_version_at(course['id'], end_date)
-            else
-              stats = CourseStatistic.find_by!(course_id: course['id'])
-            end
+            stats =
+              if @end_date&.past?
+                CourseStatistic.last_version_at(course['id'], @end_date.to_s)
+              else
+                CourseStatistic.find_by!(course_id: course['id'])
+              end
           rescue ActiveRecord::RecordNotFound # no statistic available yet
             stats = nil
           end
@@ -207,41 +212,53 @@ module Reports
         @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
       end
     end
+    # rubocop:enable all
 
-    def end_date
-      if @end_year > 0 && @end_month > 0 && @end_day > 0
-        format_date(@end_year, @end_month, @end_day)
-      else
-        nil
+    def extract_end_date(job)
+      key = 'end_date'
+
+      return unless job.options.key? key # end_date is an optional parameter
+
+      begin
+        Date.parse(job.options[key], '%Y-%m-%d')
+      rescue Date::Error
+        raise InvalidReportArgumentError.new(key, job.options[key])
       end
-    end
-
-    def format_date(year, month, day)
-      "#{year}-#{format('%02d', month)}-#{format('%02d', day)}"
     end
 
     def sections(course_id)
       sections = []
-      Xikolo.paginate_with_retries(max_retries: 3, wait: 20.seconds) do
-        course_service.rel(:sections).get(course_id: course_id)
-      end.each_item do |section|
-        sections << section
-      end
+
+      sections_promise =
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 20.seconds) do
+          course_service.rel(:sections).get(course_id: course_id)
+        end
+
+      sections_promise.each_item {|section| sections << section }
+
       sections
     end
 
     def peer_assessment_type(course_id)
       pa_type = ''
-      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-        course_service.rel(:items).get(
-          course_id: course_id,
-          content_type: 'peer_assessment'
-        )
-      end.each_item do |item|
+
+      items_promise =
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+          course_service.rel(:items).get(
+            course_id: course_id,
+            content_type: 'peer_assessment',
+          )
+        end
+
+      items_promise.each_item do |item|
         break if pa_type == 'team'
-        pa = peerassessment_service.rel(:peer_assessment).get(id: item['content_id']).value!
+
+        pa = peerassessment_service
+          .rel(:peer_assessment).get(id: item['content_id']).value!
+
         pa_type = pa['is_team_assessment'] ? 'team' : 'solo'
       end
+
       pa_type
     end
 
@@ -252,6 +269,5 @@ module Reports
     def peerassessment_service
       @peerassessment_service ||= Restify.new(:peerassessment).get.value!
     end
-
   end
 end
