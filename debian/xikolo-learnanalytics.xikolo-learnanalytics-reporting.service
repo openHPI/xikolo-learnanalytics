@@ -21,7 +21,7 @@ EnvironmentFile=-/etc/${PACKAGE}/env
 
 # The very high timeout (5 days) is needed for a few very bad reports.
 # See more below.
-ExecStart=/usr/bin/${PACKAGE} sidekiq --queue reports_default --queue reports_long_running --timeout 432000 --concurrency ${REPORTING_CONCURRENCY} ${REPORTING_ARGS}
+ExecStart=/usr/bin/${PACKAGE} sidekiq --queue reports_default --queue reports_long_running --timeout 432000 --concurrency ${REPORTING_CONCURRENCY} $REPORTING_ARGS
 ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq started
 ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} sidekiq stop
 ExecStop=/bin/kill -TERM $MAINPID
