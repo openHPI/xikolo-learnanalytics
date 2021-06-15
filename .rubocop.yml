@@ -4,6 +4,7 @@ require:
   - rubocop-rspec
 
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.7
   TargetRailsVersion: 5.2
   Exclude:
@@ -106,7 +107,7 @@ RSpec/NestedGroups:
 # -----------------------------------------------------------------------------
 #                                   Layout
 
-Layout/AlignArguments:
+Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
 
 Layout/CaseIndentation:
@@ -122,11 +123,17 @@ Layout/CaseIndentation:
 Layout/EmptyLinesAroundAccessModifier:
   Enabled: false
 
-Layout/IndentFirstArrayElement:
+Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
-Layout/IndentFirstHashElement:
+Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
+
+Layout/LineLength:
+  Exclude:
+    - 'db/**/*'
+    - 'spec/**/*'
+    - 'config/**/*'
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
@@ -170,12 +177,6 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/lanalytics/metric/*.rb'
 
-Metrics/LineLength:
-  Exclude:
-    - 'db/**/*'
-    - 'spec/**/*'
-    - 'config/**/*'
-
 #
 # Often used as a proxy for complexity in a method, but causes many false
 # positives, e.g. when generating large, but simple, hashes.
@@ -202,9 +203,6 @@ Metrics/CyclomaticComplexity:
 
 # -----------------------------------------------------------------------------
 #                                   Style
-
-Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
 
 #
 # Both styles or mixtures are reasonable

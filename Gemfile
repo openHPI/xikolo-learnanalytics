@@ -81,17 +81,15 @@ end
 group :development, :test do
   gem 'factory_bot_rails', '~> 4.0'
   gem 'listen'
-  gem 'pronto'
-  gem 'pronto-rubocop', require: false
   gem 'rspec', '~> 3.7'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'rspec-teamcity', require: false
-  gem 'rubocop', '~> 0.74.0'
-  gem 'rubocop-performance', '~> 1.4.1'
-  gem 'rubocop-rails', '~> 2.3.2'
-  gem 'rubocop-rspec', '~> 1.35.0'
+  gem 'rubocop', '~> 1.17.0'
+  gem 'rubocop-performance', '~> 1.11.3'
+  gem 'rubocop-rails', '~> 2.10.1'
+  gem 'rubocop-rspec', '~> 2.4.0'
 end
 
 group :test do
