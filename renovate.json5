@@ -1,0 +1,36 @@
+// vim: ft=jsonc
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  //
+  // Reduce concurrent load for maintainers
+  //
+  "prHourlyLimit": 1,
+  "prConcurrentLimit": 4,
+  //
+  // Keep PR and lock files up-to-date
+  //
+  "rebaseWhen": "behind-base-branch",
+  "lockFileMaintenance": {
+    "automerge": true
+  },
+  "packageRules": [
+    // Do not bump ruby version (only security patches)
+    {
+      "matchManagers": [
+        "gitlabci",
+        "ruby-version"
+      ],
+      "matchPackageNames": [
+        "ruby"
+      ],
+      "matchUpdateTypes": [
+        "major",
+        "minor"
+      ],
+      "enabled": false
+    }
+  ]
+}
