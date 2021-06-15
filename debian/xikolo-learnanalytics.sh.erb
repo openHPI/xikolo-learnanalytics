@@ -12,4 +12,4 @@ export DEBIAN_DISABLE_RUBYGEMS_INTEGRATION=1
 
 cd <%= Shellwords.escape(prefix) %>
 
-exec <%= Shellwords.escape(File.join(prefix, 'bin', 'bundle')) %> exec $@
+exec <%= Shellwords.escape(File.join(prefix, 'bin', 'bundle')) %> exec "$@"

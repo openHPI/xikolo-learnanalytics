@@ -19,7 +19,7 @@ PIDFile=/run/${PACKAGE}/unicorn.pid
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
 
-ExecStart=/usr/bin/${PACKAGE} unicorn -E none --config-file config/unicorn.rb --pid /run/${PACKAGE}/unicorn.pid --listen /run/${PACKAGE}/sock ${UNICORN_ARGS}
+ExecStart=/usr/bin/${PACKAGE} unicorn -E none --config-file config/unicorn.rb --pid /run/${PACKAGE}/unicorn.pid --listen /run/${PACKAGE}/sock $UNICORN_ARGS
 ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} unicorn started
 ExecReload=/bin/kill -USR2 $MAINPID
 ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} unicorn stop
