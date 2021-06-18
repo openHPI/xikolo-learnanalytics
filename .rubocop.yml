@@ -170,12 +170,14 @@ Metrics/BlockLength:
     - 'spec/**/*'
     - 'config/**/*'
     - 'lib/lanalytics/metric/*.rb'
+    - 'app/models/reports/**/*.rb'
     - '**/*.rake'
 
 Metrics/ClassLength:
   Max: 200
   Exclude:
     - 'lib/lanalytics/metric/*.rb'
+    - 'app/models/reports/**/*.rb'
 
 #
 # Often used as a proxy for complexity in a method, but causes many false
@@ -198,6 +200,15 @@ Metrics/AbcSize:
 #
 Metrics/CyclomaticComplexity:
   Enabled: true
+
+
+
+# -----------------------------------------------------------------------------
+#                                   Performance
+
+Performance/MethodObjectAsBlock:
+  Exclude:
+    - 'app/models/reports/**/*.rb'
 
 
 

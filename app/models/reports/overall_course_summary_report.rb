@@ -103,7 +103,8 @@ module Reports
       headers
     end
 
-    # rubocop:disable Metrics/BlockLength
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def each_course
       index = 0
 
@@ -142,7 +143,7 @@ module Reports
           course['proctored'],
           course['on_demand'],
           sections.size,
-          sections.select {|s| s['published'] }.size,
+          sections.count {|s| s['published'] },
           peer_assessment_type(course['id']),
           course['has_collab_space'],
           course['has_teleboard'],
@@ -217,7 +218,7 @@ module Reports
     def extract_end_date(job)
       key = 'end_date'
 
-      return unless job.options.key? key # end_date is an optional parameter
+      return if job.options[key].blank? # end_date is an optional parameter
 
       begin
         Date.parse(job.options[key], '%Y-%m-%d')
