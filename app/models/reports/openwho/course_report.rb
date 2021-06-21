@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 module Reports::Openwho
   class CourseReport < Reports::Base
     queue_as :reports_long_running
@@ -40,9 +39,7 @@ module Reports::Openwho
         'Country of Nationality',
         'Last Country (Name)',
       ].tap do |headers|
-        if reportable_country_regions.any?
-          headers.append('Last Country (Region)')
-        end
+        headers.append('Last Country (Region)') if reportable_country_regions.any?
 
         if @include_enrollment_evaluation
           headers.append(
@@ -57,6 +54,8 @@ module Reports::Openwho
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def each_row
       courses.each_with_index do |course, course_index|
         index = 0
@@ -109,7 +108,7 @@ module Reports::Openwho
 
           last_country_code = fetch_metric(
             'LastCountry', course['id'], user['id']
-          ).dig(:code)
+          )[:code]
           last_country_name = suppress(IsoCountryCodes::UnknownCodeError) do
             IsoCountryCodes.find(last_country_code)&.name
           end
@@ -158,6 +157,7 @@ module Reports::Openwho
         end
       end
     end
+    # rubocop:enable all
 
     def fetch_metric(metric, course_id, user_id)
       metric = "Lanalytics::Metric::#{metric}".constantize
@@ -198,4 +198,3 @@ module Reports::Openwho
     end
   end
 end
-# rubocop:enable all

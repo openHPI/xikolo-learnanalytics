@@ -1,10 +1,7 @@
+# frozen_string_literal: true
+
 module Reports
   class CourseContentReport < Base
-
-    def initialize(job)
-      super
-    end
-
     def generate!
       @job.update(annotation: course['course_code'])
 
@@ -25,19 +22,21 @@ module Reports
         'Section ID',
         'Section Name',
         'Section Position',
-        'Course Code'
+        'Course Code',
       ]
     end
 
     def each_item
       index = 0
 
-      Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+      items_promise = Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:items).get(
-          course_id: course['id'], per_page: 500
+          course_id: course['id'], per_page: 500,
         )
-      end.each_item do |item, page|
-        section = sections.find { |section| section['id'] == item['section_id'] }
+      end
+
+      items_promise.each_item do |item, page|
+        section = sections.find {|s| s['id'] == item['section_id'] }
 
         values = [
           item['id'],
@@ -50,7 +49,7 @@ module Reports
           section&.dig('id') || '',
           section&.dig('title') || '',
           section&.dig('position') || '',
-          course['course_code']
+          course['course_code'],
         ]
 
         yield values
@@ -71,6 +70,5 @@ module Reports
     def course_service
       @course_service ||= Restify.new(:course).get.value!
     end
-
   end
 end

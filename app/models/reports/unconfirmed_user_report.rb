@@ -2,10 +2,6 @@
 
 module Reports
   class UnconfirmedUserReport < Base
-    def initialize(job)
-      super
-    end
-
     def generate!
       csv_file 'UnconfirmedUserReport', headers, &method(:each_user)
     end

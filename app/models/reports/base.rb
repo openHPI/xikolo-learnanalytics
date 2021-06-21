@@ -36,6 +36,7 @@ module Reports
 
     class InvalidReportArgumentError < ArgumentError
       def initialize(name, value)
+        super()
         @name = name
         @value = value
       end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Reports
-  # rubocop:disable Metrics/ClassLength
   class PinboardReport < Base
     def initialize(job)
       super
@@ -62,27 +61,21 @@ module Reports
       headers
     end
 
-    def each_post
+    def each_post(&block)
       i = 0
 
       each_topic do |topic, page|
         yield transform_topic(topic)
 
-        each_comment(topic, 'Question') do |row|
-          yield row
-        end
-
-        unless topic['discussion_flag']
-          each_answer(topic) do |row|
-            yield row
-          end
-        end
+        each_comment(topic, 'Question', &block)
+        each_answer(topic, &block) unless topic['discussion_flag']
 
         i += 1
         @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def transform_topic(topic)
       section_id = implicit_section_id(topic['implicit_tags'])
       item_id = implicit_item_id(topic['implicit_tags'])
@@ -140,6 +133,7 @@ module Reports
 
       values
     end
+    # rubocop:enable all
 
     def each_topic(&block)
       topic_filters.each do |filters|
@@ -149,7 +143,7 @@ module Reports
       end
     end
 
-    def each_answer(topic)
+    def each_answer(topic, &block)
       pinboard_service.rel(:answers).get(
         question_id: topic['id'], per_page: 250,
       ).value!.each do |answer|
@@ -175,23 +169,22 @@ module Reports
         ]
 
         # get comments for each answer
-        each_comment(answer, 'Answer') do |row|
-          yield row
-        end
+        each_comment(answer, 'Answer', &block)
       end
     end
 
-    # rubocop:disable Metrics/BlockLength
     def each_comment(object, type)
       pinboard_service.rel(:comments).get(
         commentable_id: object['id'], commentable_type: type, per_page: 250,
       ).value!.each do |comment|
-        question_id = ''
-        if comment['commentable_type'] == 'Question'
-          question_id = comment['commentable_id']
-        elsif comment['commentable_type'] == 'Answer'
-          question_id = object['question_id']
-        end
+        question_id = case comment['commentable_type']
+                        when 'Question'
+                          comment['commentable_id']
+                        when 'Answer'
+                          object['question_id']
+                        else
+                          ''
+                      end
 
         yield [
           comment['id'],
@@ -215,7 +208,6 @@ module Reports
         ]
       end
     end
-    # rubocop:enable all
 
     def user_id(id)
       if @de_pseudonymized
@@ -242,9 +234,7 @@ module Reports
         {course_id: course['id']},
       ]
 
-      if @include_collab_spaces
-        collab_spaces.each {|space| filters << {learning_room_id: space['id']} }
-      end
+      collab_spaces.each {|space| filters << {learning_room_id: space['id']} } if @include_collab_spaces
 
       filters
     end

@@ -4,6 +4,8 @@ module Reports
   class CourseEventsReport < Base
     queue_as :reports_long_running
 
+    DEPRECATED_EVENTS = %w[VISITED VIEWED_PAGE].freeze
+
     def initialize(job)
       super
 
@@ -44,10 +46,7 @@ module Reports
       each_page do |page|
         page[:data].each do |row|
           # Skip deprecated events
-          next if %w[
-            VISITED
-            VIEWED_PAGE
-          ].include? row[:verb]
+          next if DEPRECATED_EVENTS.include? row[:verb]
 
           yield transform(row)
         end
@@ -120,18 +119,18 @@ module Reports
       @sections ||= course_service.rel(:sections).get(
         course_id: course['id'],
         per_page: 200,
-      ).value!.map do |item|
-        [item['id'], item]
-      end.to_h
+      ).value!.index_by do |item|
+        item['id']
+      end
     end
 
     def items
       @items ||= course_service.rel(:items).get(
         course_id: course['id'],
         per_page: 500,
-      ).value!.map do |item|
-        [item['id'], item]
-      end.to_h
+      ).value!.index_by do |item|
+        item['id']
+      end
     end
 
     def course_service

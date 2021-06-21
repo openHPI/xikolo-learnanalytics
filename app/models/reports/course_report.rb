@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Reports
-  # rubocop:disable Metrics/ClassLength
   class CourseReport < Base
     queue_as :reports_long_running
 
@@ -29,7 +28,6 @@ module Reports
 
     private
 
-    # rubocop:disable Metrics/BlockLength
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def each_row
@@ -141,9 +139,7 @@ module Reports
               values += profile_config.for(profile).values
             end
 
-            if @include_auth && @de_pseudonymized
-              values.concat(auth_fields.values(user['id']))
-            end
+            values.concat(auth_fields.values(user['id'])) if @include_auth && @de_pseudonymized
 
             # get elasticsearch / postgres metrics per user
             if @include_analytics_metrics
@@ -407,7 +403,6 @@ module Reports
       end
     end
 
-    # rubocop:disable Metrics/BlockLength
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def headers
@@ -434,9 +429,7 @@ module Reports
           headers.concat profile_config.all_titles
         end
 
-        if @include_auth && @de_pseudonymized
-          headers.concat(auth_fields.headers)
-        end
+        headers.concat(auth_fields.headers) if @include_auth && @de_pseudonymized
 
         if @include_analytics_metrics
           headers.concat [
@@ -578,9 +571,7 @@ module Reports
         end
 
         items_promise.each_item do |quiz|
-          if %w[main selftest bonus].include? quiz['exercise_type']
-            @quizzes.append(quiz)
-          end
+          @quizzes.append(quiz) if %w[main selftest bonus].include? quiz['exercise_type']
         end
       end
 
@@ -642,18 +633,16 @@ module Reports
       return '' unless compare_date
 
       all_enrollments
-        .map {|e| as_date(e['created_at']) }
-        .compact
+        .filter_map {|e| as_date(e['created_at']) }
         .none? {|date| date < compare_date }
     end
 
-    # rubocop:disable Naming/UncommunicativeMethodParamName
     # rubocop:disable Style/FloatDivision
-    def percentage(n, of:)
-      return if n.blank? || of == 0
+    def percentage(number, of:)
+      return if number.blank? || of == 0
 
-      # Cast `n` and `of` to floats since they can be strings
-      format('%.4f', n.to_f / of.to_f)
+      # Cast `number` and `of` to floats since they can be strings
+      format('%.4f', number.to_f / of.to_f)
     end
     # rubocop:enable all
 

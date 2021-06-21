@@ -67,9 +67,7 @@ module Reports
     def extract_window_unit(job)
       window_unit = job.options['window_unit']
 
-      unless %w[days months].include? window_unit
-        raise InvalidReportArgumentError.new('window_unit', window_unit)
-      end
+      raise InvalidReportArgumentError.new('window_unit', window_unit) unless %w[days months].include? window_unit
 
       window_unit
     end
@@ -77,9 +75,7 @@ module Reports
     def extract_window_size(job)
       window_size = job.options['window_size'].to_i
 
-      unless window_size.positive?
-        raise InvalidReportArgumentError.new('window_size', window_size)
-      end
+      raise InvalidReportArgumentError.new('window_size', window_size) unless window_size.positive?
 
       window_size
     end
@@ -112,6 +108,7 @@ module Reports
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def dates
       @dates ||=
         begin
@@ -138,6 +135,7 @@ module Reports
           end
         end
     end
+    # rubocop:enable all
 
     def headers(cluster = nil)
       headers = [
@@ -167,15 +165,12 @@ module Reports
       headers
     end
 
-    # rubocop:disable Metrics/BlockLength
     def each_timeframe(cluster = nil)
       proc do |&block|
         timeframe_index = 0
         timeframe_count = dates.size
 
-        unless @sliding_window
-          timeframe_count = (timeframe_count / @window_size.to_f).ceil
-        end
+        timeframe_count = (timeframe_count / @window_size.to_f).ceil unless @sliding_window
 
         dates.each do |date|
           first_date = date.to_s
@@ -209,7 +204,6 @@ module Reports
         end
       end
     end
-    # rubocop:enable all
 
     def fetch_data(start_date, end_date, c_id = nil)
       stats, * = Xikolo::RetryingPromise.new(
