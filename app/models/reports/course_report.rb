@@ -639,7 +639,7 @@ module Reports
 
     # rubocop:disable Style/FloatDivision
     def percentage(number, of:)
-      return if number.blank? || of == 0
+      return if number.blank? || of.to_f.zero?
 
       # Cast `number` and `of` to floats since they can be strings
       format('%.4f', number.to_f / of.to_f)
