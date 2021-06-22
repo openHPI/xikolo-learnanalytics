@@ -134,6 +134,7 @@ Layout/LineLength:
     - 'db/**/*'
     - 'spec/**/*'
     - 'config/**/*'
+  Max: 120
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented

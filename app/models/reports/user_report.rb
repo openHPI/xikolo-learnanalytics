@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
-# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/CyclomaticComplexity
 # rubocop:disable Metrics/PerceivedComplexity
 module Reports
@@ -71,17 +69,11 @@ module Reports
 
         headers.concat(profile_config.all_titles) if @include_profile
 
-        if @include_auth && @de_pseudonymized
-          headers.concat(auth_fields.headers)
-        end
+        headers.concat(auth_fields.headers) if @include_auth && @de_pseudonymized
 
-        if @include_consents
-          headers.concat(treatments.map {|t| "Consent: #{t['name']}" })
-        end
+        headers.concat(treatments.map {|t| "Consent: #{t['name']}" }) if @include_consents
 
-        if @include_features
-          headers.concat(reportable_features.map {|f| "Feature: #{f}" })
-        end
+        headers.concat(reportable_features.map {|f| "Feature: #{f}" }) if @include_features
 
         if @include_email_subscriptions
           headers.append(
@@ -159,9 +151,7 @@ module Reports
           values.concat(profile_config.for(profile).values)
         end
 
-        if @include_auth && @de_pseudonymized
-          values.concat(auth_fields.values(user['id']))
-        end
+        values.concat(auth_fields.values(user['id'])) if @include_auth && @de_pseudonymized
 
         if @include_consents
           consents = Xikolo::RetryingPromise.new(
@@ -200,9 +190,7 @@ module Reports
           )
         end
 
-        if @include_last_activity
-          values.append(last_activity(user)&.dig('timestamp'))
-        end
+        values.append(last_activity(user)&.dig('timestamp')) if @include_last_activity
 
         if @include_enrollment_evaluation
           enrollments = load_all_user_enrollments(user['id'])

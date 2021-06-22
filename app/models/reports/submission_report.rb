@@ -51,7 +51,6 @@ module Reports
       )
     end
 
-    # rubocop:disable Metrics/BlockLength
     def each_submission
       i = 0
 
@@ -84,8 +83,7 @@ module Reports
         quiz_service.rel(:quiz_submission_questions).get(
           quiz_submission_id: submission['id'], per_page: 250,
         ).value!.each do |submission_question|
-          submission_hash[:questions][submission_question['quiz_question_id']]\
-            [:selected_answers] = []
+          submission_hash[:questions][submission_question['quiz_question_id']][:selected_answers] = []
 
           quiz_service.rel(:quiz_submission_answers).get(
             quiz_submission_question_id: submission_question['id'],
@@ -112,8 +110,8 @@ module Reports
         @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
       end
     end
-    # rubocop:enable all
 
+    # rubocop:disable Metrics/PerceivedComplexity
     def transform_submission(row)
       values = [
         if @de_pseudonymized
@@ -140,12 +138,11 @@ module Reports
       values + all_quiz_questions.flat_map do |key, question|
         # Special case: Essay questions do not have answer objects, thus the
         # following +map+ would have no effect.
-        if question[:answers].empty?
-          next [row[:questions][key][:freetext_answer]]
-        end
+        next [row[:questions][key][:freetext_answer]] if question[:answers].empty?
 
         # For each question, we add an empty column (for the quiz question)
         # and one column for each possible answer.
+        # rubocop:disable Performance/CollectionLiteralInLoop
         [''] + question[:answers].map do |answer|
           if row[:questions][key][:selected_answers].include? answer[:id]
             '1'
@@ -155,6 +152,7 @@ module Reports
         end
       end
     end
+    # rubocop:enable all
 
     def all_quiz_questions
       @all_quiz_questions ||= load_all_quiz_questions

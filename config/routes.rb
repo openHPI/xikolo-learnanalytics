@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   defaults format: 'json' do
     root to: 'root#index'
@@ -11,23 +13,23 @@ Rails.application.routes.draw do
 
     # reports
 
-    resources :report_jobs, only: [:index, :show, :create, :update, :destroy]
+    resources :report_jobs, only: %i[index show create update destroy]
 
     # statistics
 
-    resources :course_statistics, only: [:index, :show]
+    resources :course_statistics, only: %i[index show]
     resources :section_conversions, param: :course_id, only: [:show]
 
     # qc rules
 
-    resources :qc_rules, only: [:index, :show, :create, :update]
-    resources :qc_recommendations, only: [:index, :show]
-    resources :qc_alerts, only: [:index, :show, :create, :update] do
+    resources :qc_rules, only: %i[index show create update]
+    resources :qc_recommendations, only: %i[index show]
+    resources :qc_alerts, only: %i[index show create update] do
       collection do
         post :ignore
       end
     end
-    resources :qc_alert_statuses, only: [:index, :show, :create]
-    resources :qc_course_statuses, only: [:index, :show, :create, :update]
+    resources :qc_alert_statuses, only: %i[index show create]
+    resources :qc_course_statuses, only: %i[index show create update]
   end
 end
