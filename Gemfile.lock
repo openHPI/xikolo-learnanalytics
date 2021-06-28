@@ -104,13 +104,13 @@ GEM
       activemodel-serializers-xml (>= 1.0)
       activesupport (>= 5.0)
       request_store (>= 1.0)
-    elasticsearch (7.5.0)
-      elasticsearch-api (= 7.5.0)
-      elasticsearch-transport (= 7.5.0)
-    elasticsearch-api (7.5.0)
+    elasticsearch (7.13.1)
+      elasticsearch-api (= 7.13.1)
+      elasticsearch-transport (= 7.13.1)
+    elasticsearch-api (7.13.1)
       multi_json
-    elasticsearch-transport (7.5.0)
-      faraday (>= 0.14, < 1)
+    elasticsearch-transport (7.13.1)
+      faraday (~> 1)
       multi_json
     erubi (1.10.0)
     et-orbi (1.2.4)
@@ -122,8 +122,19 @@ GEM
     factory_bot_rails (6.2.0)
       factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faraday (0.17.3)
+    faraday (1.4.2)
+      faraday-em_http (~> 1.0)
+      faraday-em_synchrony (~> 1.0)
+      faraday-excon (~> 1.1)
+      faraday-net_http (~> 1.0)
+      faraday-net_http_persistent (~> 1.1)
       multipart-post (>= 1.2, < 3)
+      ruby2_keywords (>= 0.0.4)
+    faraday-em_http (1.0.0)
+    faraday-em_synchrony (1.0.0)
+    faraday-excon (1.1.0)
+    faraday-net_http (1.0.1)
+    faraday-net_http_persistent (1.1.0)
     ffi (1.13.1)
     forgery (0.8.1)
     fugit (1.4.1)
@@ -340,8 +351,19 @@ GEM
       rubocop-ast (>= 1.1.0)
     ruby-prof (1.4.2)
     ruby-progressbar (1.11.0)
-    sentry-raven (2.13.0)
-      faraday (>= 0.7.6, < 1.0)
+    ruby2_keywords (0.0.4)
+    sentry-rails (4.5.1)
+      railties (>= 5.0)
+      sentry-ruby-core (~> 4.5.0)
+    sentry-ruby (4.5.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      faraday (>= 1.0)
+      sentry-ruby-core (= 4.5.1)
+    sentry-ruby-core (4.5.1)
+      concurrent-ruby
+      faraday
+    sentry-sidekiq (4.5.1)
+      sentry-ruby-core (~> 4.5.0)
     sidekiq (6.1.2)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
@@ -451,7 +473,9 @@ DEPENDENCIES
   rubocop-rspec (~> 2.4.0)
   ruby-prof
   ruby-progressbar
-  sentry-raven (~> 2.11)
+  sentry-rails
+  sentry-ruby
+  sentry-sidekiq
   sidekiq (~> 6.0)
   sidekiq-cron
   simplecov

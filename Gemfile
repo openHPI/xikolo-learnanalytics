@@ -19,7 +19,9 @@ gem 'restify', '~> 1.8'
 
 gem 'concurrent-ruby', '~> 1.0'
 gem 'mnemosyne-ruby', '~> 1.3'
-gem 'sentry-raven', '~> 2.11'
+gem 'sentry-rails'
+gem 'sentry-ruby'
+gem 'sentry-sidekiq'
 gem 'telegraf', '~> 1.0'
 
 gem 'forgery'
