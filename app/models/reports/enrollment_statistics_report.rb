@@ -2,6 +2,83 @@
 
 module Reports
   class EnrollmentStatisticsReport < Base
+    class << self
+      def structure
+        {
+          type: :enrollment_statistics_report,
+          name: I18n.t(:'reports.enrollment_statistics_report'),
+          description: I18n.t(:'reports.enrollment_statistics_report_explanation'),
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'date_field',
+              name: :first_date,
+              options: {
+                min: '2013-01-01',
+                required: true,
+              },
+              label: I18n.t(:'reports.first_date'),
+            },
+            {
+              type: 'date_field',
+              name: :last_date,
+              options: {
+                min: '2013-01-01',
+                required: true,
+              },
+              label: I18n.t(:'reports.last_date'),
+            },
+            {
+              type: 'radio_group',
+              name: :window_unit,
+              values: {
+                days: I18n.t(:'reports.window_unit_days'),
+                months: I18n.t(:'reports.window_unit_months'),
+              },
+              label: I18n.t(:'reports.window_unit'),
+            },
+            {
+              type: 'number_field',
+              name: :window_size,
+              options: {
+                value: 1,
+                min: 1,
+                input_size: 'extra-small',
+              },
+              label: I18n.t(:'reports.window_size'),
+            },
+            {
+              type: 'checkbox',
+              name: :sliding_window,
+              label: I18n.t(:'reports.sliding_window'),
+            },
+            {
+              type: 'checkbox',
+              name: :include_all_classifiers,
+              label: I18n.t(:'reports.all_classifiers'),
+            },
+            {
+              type: 'checkbox',
+              name: :include_active_users,
+              label: I18n.t(:'reports.active_users'),
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def initialize(job)
       super
 

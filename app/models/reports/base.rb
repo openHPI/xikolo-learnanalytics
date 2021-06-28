@@ -11,6 +11,10 @@ module Reports
         @queue_name || :reports_default
       end
 
+      def structure
+        {}
+      end
+
       protected
 
       def queue_as(queue_name)

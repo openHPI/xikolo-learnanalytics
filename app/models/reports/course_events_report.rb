@@ -6,6 +6,53 @@ module Reports
 
     DEPRECATED_EVENTS = %w[VISITED VIEWED_PAGE].freeze
 
+    class << self
+      def structure
+        {
+          type: :course_events_report,
+          name: I18n.t(:'reports.course_events_report'),
+          description: I18n.t(:'reports.course_events_report_explanation'),
+          scope: {
+            type: 'select',
+            name: :task_scope,
+            values: :courses,
+            options: {
+              include_blank: I18n.t(:'reports.select'),
+              required: true,
+            },
+          },
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'checkbox',
+              name: :de_pseudonymized,
+              label: I18n.t(:'reports.de_pseudonymized'),
+            },
+            {
+              type: 'text_field',
+              name: :verb,
+              options: {
+                placeholder: I18n.t(:'reports.verb'),
+                input_size: 'medium',
+              },
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def initialize(job)
       super
 

@@ -2,6 +2,45 @@
 
 module Reports
   class SubmissionReport < Base
+    class << self
+      def structure
+        {
+          type: :submission_report,
+          name: I18n.t(:'reports.submission_report'),
+          description: I18n.t(:'reports.submission_report_explanation'),
+          scope: {
+            type: 'text_field',
+            name: :task_scope,
+            options: {
+              placeholder: 'quiz-id',
+              input_size: 'large',
+              required: true,
+            },
+          },
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'checkbox',
+              name: :de_pseudonymized,
+              label: I18n.t(:'reports.de_pseudonymized'),
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def initialize(job)
       super
 

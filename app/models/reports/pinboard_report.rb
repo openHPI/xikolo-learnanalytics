@@ -2,6 +2,55 @@
 
 module Reports
   class PinboardReport < Base
+    class << self
+      def structure
+        {
+          type: :pinboard_report,
+          name: I18n.t(:'reports.pinboard_report'),
+          description: I18n.t(:'reports.pinboard_report_explanation'),
+          scope: {
+            type: 'select',
+            name: :task_scope,
+            values: :courses,
+            options: {
+              include_blank: I18n.t(:'reports.select'),
+              required: true,
+            },
+          },
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'checkbox',
+              name: :de_pseudonymized,
+              label: I18n.t(:'reports.de_pseudonymized'),
+            },
+            {
+              type: 'checkbox',
+              name: :include_collab_spaces,
+              label: I18n.t(:'reports.include_collab_spaces'),
+            },
+            {
+              type: 'checkbox',
+              name: :include_permission_groups,
+              label: I18n.t(:'reports.include_permission_groups'),
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def initialize(job)
       super
 

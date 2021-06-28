@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     # reports
 
     resources :report_jobs, only: %i[index show create update destroy]
+    resources :report_types, only: %i[index]
 
     # statistics
 

@@ -2,6 +2,42 @@
 
 module Reports
   class OverallCourseSummaryReport < Base
+    class << self
+      def structure
+        {
+          type: :overall_course_summary_report,
+          name: I18n.t(:'reports.overall_course_summary_report'),
+          description: I18n.t(:'reports.overall_course_summary_report_explanation'),
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'checkbox',
+              name: :include_statistics,
+              label: I18n.t(:'reports.include_statistics'),
+            },
+            {
+              type: 'date_field',
+              name: :end_date,
+              options: {min: '2013-01-01'},
+              label: I18n.t(:'reports.end_date'),
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def initialize(job)
       super
 
