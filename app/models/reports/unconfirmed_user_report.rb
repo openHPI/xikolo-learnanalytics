@@ -2,6 +2,31 @@
 
 module Reports
   class UnconfirmedUserReport < Base
+    class << self
+      def structure
+        {
+          type: :unconfirmed_user_report,
+          name: I18n.t(:'reports.unconfirmed_user_report'),
+          description: I18n.t(:'reports.unconfirmed_user_report_explanation'),
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def generate!
       csv_file 'UnconfirmedUserReport', headers, &method(:each_user)
     end

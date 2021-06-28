@@ -2,6 +2,40 @@
 
 module Reports
   class CourseContentReport < Base
+    class << self
+      def structure
+        {
+          type: :course_content_report,
+          name: I18n.t(:'reports.course_content_report'),
+          description: I18n.t(:'reports.course_content_report_explanation'),
+          scope: {
+            type: 'select',
+            name: :task_scope,
+            values: :courses,
+            options: {
+              include_blank: I18n.t(:'reports.select'),
+              required: true,
+            },
+          },
+          options: [
+            {
+              type: 'checkbox',
+              name: :machine_headers,
+              label: I18n.t(:'reports.machine_headers'),
+            },
+            {
+              type: 'text_field',
+              name: :zip_password,
+              options: {
+                placeholder: I18n.t(:'reports.zip_password'),
+                input_size: 'large',
+              },
+            },
+          ],
+        }
+      end
+    end
+
     def generate!
       @job.update(annotation: course['course_code'])
 
