@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Xikolo
   class RetryingPromise
     def initialize(*dependencies, &task)
@@ -11,7 +13,7 @@ module Xikolo
           dep.value!
         rescue Restify::GatewayError, Restify::Timeout::Error => e
           ::Mnemosyne.attach_error(e)
-          ::Raven.capture_exception(e)
+          ::Sentry.capture_exception(e)
           dep.retry!
         end
 
