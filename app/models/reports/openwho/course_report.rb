@@ -74,13 +74,13 @@ module Reports::Openwho
         @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
         'User Created',
         'Enrollment Date',
-        'Language',
+        'User Language',
         'Affiliated',
         'Age Group',
-        'Primary Language',
-        'Gender',
-        'Affiliation',
-        'Country of Nationality',
+        'Primary Language (Profile)',
+        'Gender (Profile)',
+        'Affiliation (Profile)',
+        'Country of Nationality (Profile)',
         'Last Country (Name)',
       ].tap do |headers|
         headers.append('Last Country (Region)') if reportable_country_regions.any?
@@ -94,7 +94,10 @@ module Reports::Openwho
           )
         end
 
-        headers.append('Course Code')
+        headers.append(
+          'Course Code',
+          'Course Language',
+        )
       end
     end
 
@@ -187,7 +190,10 @@ module Reports::Openwho
             )
           end
 
-          values.append(course['course_code'])
+          values.append(
+            course['course_code'],
+            course['lang'],
+          )
 
           yield values
 
