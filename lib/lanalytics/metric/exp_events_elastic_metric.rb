@@ -12,7 +12,7 @@ module Lanalytics
       end
 
       def self.course_filter(course_id)
-        return nil if course_id.nil?
+        return if course_id.nil?
 
         {
           bool: {
@@ -26,29 +26,36 @@ module Lanalytics
       end
 
       def self.user_filter(user_id)
-        return nil if user_id.nil?
+        return if user_id.nil?
 
         {match: {'user.resource_uuid' => user_id}}
       end
 
       def self.resource_filter(resource_id)
-        return nil if resource_id.nil?
+        return if resource_id.nil?
 
         {match: {'resource.resource_uuid' => resource_id}}
       end
 
+      def self.resources_filter(resource_ids)
+        return if resource_ids.blank?
+
+        {
+          bool: {
+            minimum_should_match: 1,
+            should: resource_ids.map {|id| {match: {'resource.resource_uuid' => id}} },
+          },
+        }
+      end
+
       def self.date_filter(start_date, end_date)
-        return nil if start_date.nil? && end_date.nil?
+        return if start_date.nil? && end_date.nil?
 
         df = {range: {timestamp: {}}}
 
-        if start_date.present?
-          df[:range][:timestamp][:gte] = DateTime.parse(start_date).iso8601
-        end
+        df[:range][:timestamp][:gte] = DateTime.parse(start_date).iso8601 if start_date.present?
 
-        if end_date.present?
-          df[:range][:timestamp][:lte] = DateTime.parse(end_date).iso8601
-        end
+        df[:range][:timestamp][:lte] = DateTime.parse(end_date).iso8601 if end_date.present?
 
         df
       end
