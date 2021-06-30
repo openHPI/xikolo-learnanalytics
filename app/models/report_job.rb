@@ -63,10 +63,10 @@ class ReportJob < ApplicationRecord
     #
     def tmp_root
       @tmp_root ||= begin
-                      Pathname.new ENV.fetch 'RUNTIME_DIRECTORY'
-                    rescue KeyError
-                      Rails.root.join('tmp')
-                    end
+        Pathname.new ENV.fetch 'RUNTIME_DIRECTORY'
+      rescue KeyError
+        Rails.root.join('tmp')
+      end
     end
 
     def queue_name(job_id)
@@ -92,7 +92,6 @@ class ReportJob < ApplicationRecord
     end
   end
 
-  # rubocop:disable Naming/UncommunicativeMethodParamName
   def progress_to(part, of:)
     part = part.to_i
     of = of.to_i
@@ -120,7 +119,6 @@ class ReportJob < ApplicationRecord
       update progress: progress
     end
   end
-  # rubocop:enable all
 
   # Mark a job as complete and set the given attributes
   def finish_with(attributes)
@@ -197,6 +195,7 @@ class ReportJob < ApplicationRecord
       user_report
       unconfirmed_user_report
       overall_course_summary_report
+      enrollment_statistics_report
     ].exclude? task_type
   end
 end

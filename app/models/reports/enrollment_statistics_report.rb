@@ -94,7 +94,7 @@ module Reports
     end
 
     def generate!
-      @job.update(annotation: @job.task_scope)
+      @job.update(annotation: annotation)
 
       @reports_count = 1
       @report_index = 0
@@ -121,7 +121,7 @@ module Reports
       end
 
       csv_file(
-        "EnrollmentStatisticsReport_#{@job.task_scope}_overall",
+        "EnrollmentStatisticsReport_#{annotation}_overall",
         headers,
         &each_timeframe
       )
@@ -131,7 +131,7 @@ module Reports
       clusters.each do |cluster|
         @report_index += 1
         csv_file(
-          "EnrollmentStatisticsReport_#{@job.task_scope}_" \
+          "EnrollmentStatisticsReport_#{annotation}_" \
             "#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}",
           headers(cluster),
           &each_timeframe(cluster)
@@ -140,6 +140,18 @@ module Reports
     end
 
     private
+
+    def annotation
+      @annotation ||= begin
+        date_format = if @window_unit == 'months'
+                        '%m_%Y'
+                      else
+                        '%d_%m_%Y'
+                      end
+
+        "#{@first_date.strftime(date_format)}_#{@last_date.strftime(date_format)}_#{@window_size}_#{@window_unit}"
+      end
+    end
 
     def extract_window_unit(job)
       window_unit = job.options['window_unit']
