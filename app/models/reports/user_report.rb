@@ -7,77 +7,77 @@ module Reports
     queue_as :reports_long_running
 
     class << self
-      def structure
+      def form_data
         {
           type: :user_report,
-          name: I18n.t(:'reports.user_report'),
-          description: I18n.t(:'reports.user_report_explanation'),
+          name: I18n.t(:'reports.user_report.name'),
+          description: I18n.t(:'reports.user_report.desc'),
           options: [
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'checkbox',
               name: :de_pseudonymized,
-              label: I18n.t(:'reports.de_pseudonymized'),
+              label: I18n.t(:'reports.shared_options.de_pseudonymized'),
             },
             {
               type: 'checkbox',
               name: :include_top_location,
-              label: I18n.t(:'reports.include_top_location'),
+              label: I18n.t(:'reports.user_report.options.top_location'),
             },
             {
               type: 'checkbox',
               name: :include_access_groups,
-              label: I18n.t(:'reports.include_access_groups'),
+              label: I18n.t(:'reports.shared_options.access_groups'),
             },
             {
               type: 'checkbox',
               name: :include_profile,
-              label: I18n.t(:'reports.include_profile'),
+              label: I18n.t(:'reports.shared_options.profile'),
             },
             {
               type: 'checkbox',
               name: :include_auth,
-              label: I18n.t(:'reports.include_auth'),
+              label: I18n.t(:'reports.shared_options.auth'),
             },
             {
               type: 'checkbox',
               name: :include_consents,
-              label: I18n.t(:'reports.include_consents'),
+              label: I18n.t(:'reports.user_report.options.consents'),
             },
             {
               type: 'checkbox',
               name: :include_features,
-              label: I18n.t(:'reports.include_features'),
+              label: I18n.t(:'reports.user_report.options.features'),
             },
             {
               type: 'checkbox',
               name: :include_email_subscriptions,
-              label: I18n.t(:'reports.include_email_subscriptions'),
+              label: I18n.t(:'reports.user_report.options.email_subscriptions'),
             },
             {
               type: 'checkbox',
               name: :include_last_activity,
-              label: I18n.t(:'reports.include_last_activity'),
+              label: I18n.t(:'reports.user_report.options.last_activity'),
             },
             {
               type: 'checkbox',
               name: :include_enrollment_evaluation,
-              label: I18n.t(:'reports.include_enrollment_evaluation'),
+              label: I18n.t(:'reports.shared_options.enrollment_evaluation'),
             },
             {
               type: 'checkbox',
               name: :combine_enrollment_info,
-              label: I18n.t(:'reports.combine_enrollment_info'),
+              label: I18n.t(:'reports.user_report.options.combine_enrollment_info'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },

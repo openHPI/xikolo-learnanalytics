@@ -5,17 +5,17 @@ module Reports
     queue_as :reports_long_running
 
     class << self
-      def structure
+      def form_data
         {
           type: :course_report,
-          name: I18n.t(:'reports.course_report'),
-          description: I18n.t(:'reports.course_report_explanation'),
+          name: I18n.t(:'reports.course_report.name'),
+          description: I18n.t(:'reports.course_report.desc'),
           scope: {
             type: 'select',
             name: :task_scope,
             values: :courses,
             options: {
-              include_blank: I18n.t(:'reports.select'),
+              include_blank: I18n.t(:'reports.shared_options.select_blank'),
               required: true,
             },
           },
@@ -23,43 +23,43 @@ module Reports
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'checkbox',
               name: :de_pseudonymized,
-              label: I18n.t(:'reports.de_pseudonymized'),
+              label: I18n.t(:'reports.shared_options.de_pseudonymized'),
             },
             {
               type: 'checkbox',
               name: :include_access_groups,
-              label: I18n.t(:'reports.include_access_groups'),
+              label: I18n.t(:'reports.shared_options.access_groups'),
             },
             {
               type: 'checkbox',
               name: :include_profile,
-              label: I18n.t(:'reports.include_profile'),
+              label: I18n.t(:'reports.shared_options.profile'),
             },
             {
               type: 'checkbox',
               name: :include_auth,
-              label: I18n.t(:'reports.include_auth'),
+              label: I18n.t(:'reports.shared_options.auth'),
             },
             {
               type: 'checkbox',
               name: :include_analytics_metrics,
-              label: I18n.t(:'reports.include_analytics_metrics'),
+              label: I18n.t(:'reports.shared_options.analytics_metrics'),
             },
             {
               type: 'checkbox',
               name: :include_all_quizzes,
-              label: I18n.t(:'reports.include_all_quizzes'),
+              label: I18n.t(:'reports.course_report.options.all_quizzes'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },
@@ -606,8 +606,7 @@ module Reports
           s['id'] == q['section_id']
         end || {'title' => ''}
 
-        "#{section['title'].titleize} - " \
-        "#{q['title'].titleize} Percentage (Quiz)"
+        "#{section['title'].titleize} - #{q['title'].titleize} Percentage (Quiz)"
       end
     end
 

@@ -3,16 +3,16 @@
 module Reports
   class EnrollmentStatisticsReport < Base
     class << self
-      def structure
+      def form_data
         {
           type: :enrollment_statistics_report,
-          name: I18n.t(:'reports.enrollment_statistics_report'),
-          description: I18n.t(:'reports.enrollment_statistics_report_explanation'),
+          name: I18n.t(:'reports.enrollment_statistics_report.name'),
+          description: I18n.t(:'reports.enrollment_statistics_report.desc'),
           options: [
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'date_field',
@@ -21,7 +21,7 @@ module Reports
                 min: '2013-01-01',
                 required: true,
               },
-              label: I18n.t(:'reports.first_date'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.first_date'),
             },
             {
               type: 'date_field',
@@ -30,16 +30,16 @@ module Reports
                 min: '2013-01-01',
                 required: true,
               },
-              label: I18n.t(:'reports.last_date'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.last_date'),
             },
             {
               type: 'radio_group',
               name: :window_unit,
               values: {
-                days: I18n.t(:'reports.window_unit_days'),
-                months: I18n.t(:'reports.window_unit_months'),
+                days: I18n.t(:'reports.enrollment_statistics_report.options.window_unit_days'),
+                months: I18n.t(:'reports.enrollment_statistics_report.options.window_unit_months'),
               },
-              label: I18n.t(:'reports.window_unit'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.window_unit'),
             },
             {
               type: 'number_field',
@@ -49,28 +49,28 @@ module Reports
                 min: 1,
                 input_size: 'extra-small',
               },
-              label: I18n.t(:'reports.window_size'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.window_size'),
             },
             {
               type: 'checkbox',
               name: :sliding_window,
-              label: I18n.t(:'reports.sliding_window'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.sliding_window'),
             },
             {
               type: 'checkbox',
               name: :include_all_classifiers,
-              label: I18n.t(:'reports.all_classifiers'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.all_classifiers'),
             },
             {
               type: 'checkbox',
               name: :include_active_users,
-              label: I18n.t(:'reports.active_users'),
+              label: I18n.t(:'reports.enrollment_statistics_report.options.active_users'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },
@@ -131,8 +131,7 @@ module Reports
       clusters.each do |cluster|
         @report_index += 1
         csv_file(
-          "EnrollmentStatisticsReport_#{annotation}_" \
-            "#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}",
+          "EnrollmentStatisticsReport_#{annotation}_#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}",
           headers(cluster),
           &each_timeframe(cluster)
         )

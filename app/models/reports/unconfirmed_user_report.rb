@@ -3,22 +3,22 @@
 module Reports
   class UnconfirmedUserReport < Base
     class << self
-      def structure
+      def form_data
         {
           type: :unconfirmed_user_report,
-          name: I18n.t(:'reports.unconfirmed_user_report'),
-          description: I18n.t(:'reports.unconfirmed_user_report_explanation'),
+          name: I18n.t(:'reports.unconfirmed_user_report.name'),
+          description: I18n.t(:'reports.unconfirmed_user_report.desc'),
           options: [
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },

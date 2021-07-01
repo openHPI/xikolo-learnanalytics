@@ -11,8 +11,8 @@ module Reports
         @queue_name || :reports_default
       end
 
-      def structure
-        {}
+      def form_data
+        raise NotImplementedError.new 'This method has to be implemented in the subclass!'
       end
 
       protected

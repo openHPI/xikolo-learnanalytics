@@ -104,6 +104,12 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Max: 5
 
+#
+# TODO: We have too many specs with too many lets
+#
+RSpec/MultipleMemoizedHelpers:
+  Max: 52
+
 # -----------------------------------------------------------------------------
 #                                   Layout
 

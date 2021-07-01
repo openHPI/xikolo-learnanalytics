@@ -21,6 +21,6 @@ class ReportTypesController < ApplicationController
       end
     end.flatten
 
-    report_classes.map {|klass| klass.constantize.structure }
+    report_classes.map {|klass| klass.constantize.form_data }
   end
 end

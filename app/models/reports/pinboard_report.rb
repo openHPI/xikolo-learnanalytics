@@ -3,17 +3,17 @@
 module Reports
   class PinboardReport < Base
     class << self
-      def structure
+      def form_data
         {
           type: :pinboard_report,
-          name: I18n.t(:'reports.pinboard_report'),
-          description: I18n.t(:'reports.pinboard_report_explanation'),
+          name: I18n.t(:'reports.pinboard_report.name'),
+          description: I18n.t(:'reports.pinboard_report.desc'),
           scope: {
             type: 'select',
             name: :task_scope,
             values: :courses,
             options: {
-              include_blank: I18n.t(:'reports.select'),
+              include_blank: I18n.t(:'reports.shared_options.select_blank'),
               required: true,
             },
           },
@@ -21,28 +21,28 @@ module Reports
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'checkbox',
               name: :de_pseudonymized,
-              label: I18n.t(:'reports.de_pseudonymized'),
+              label: I18n.t(:'reports.shared_options.de_pseudonymized'),
             },
             {
               type: 'checkbox',
               name: :include_collab_spaces,
-              label: I18n.t(:'reports.include_collab_spaces'),
+              label: I18n.t(:'reports.pinboard_report.options.collab_spaces'),
             },
             {
               type: 'checkbox',
               name: :include_permission_groups,
-              label: I18n.t(:'reports.include_permission_groups'),
+              label: I18n.t(:'reports.pinboard_report.options.permission_groups'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },

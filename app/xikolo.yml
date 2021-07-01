@@ -57,9 +57,10 @@ reports:
   #     - AO
   #     - BJ
   country_regions: {}
-  # List of report types available at the /report_types endpoint. The class name is infered by the report type.
-  # Can be customized according to the reports available by each platform.
-  # It support submodules, and its key will be used to infer the class name.
+  # List of available report types exposed through the /report_types endpoint.
+  # Each entry here represents the snake case version of a report class name
+  # in /app/models/reports. Submodules in nested folders are supported through
+  # nested lists. Example:
   #
   # types:
   #   - course_report
