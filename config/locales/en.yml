@@ -1,56 +1,75 @@
 en:
   reports:
-    select: Please select...
-    course_report: Course Report
-    course_report_explanation: This report includes data about each enrollment of a course.
-    combined_course_report: Combined Course Report
-    combined_course_report_explanation: This report combines multiple course reports which are tagged with the same selected classifier.
-    user_report: User Report
-    user_report_explanation: This report includes data about each registered and confirmed user of the platform.
-    unconfirmed_user_report: Unconfirmed User Report
-    unconfirmed_user_report_explanation: This report includes identifiable data about each registered but unconfirmed user of the platform. Attention! Only generate this report if the further processing of the data is in compliance with the data protection regulations of the platform.
-    submission_report: Quiz Submissions Report
-    submission_report_explanation: This report includes data about each submission of a quiz.
-    pinboard_report: Course Pinboard Report
-    pinboard_report_explanation: This report includes data about each forum post of a course.
-    enrollment_statistics_report: Enrollment Statistics Report
-    enrollment_statistics_report_explanation: This report includes the total enrollments count and unique enrolled users count for a given timeframe.
-    course_events_report: Course Events Report
-    course_events_report_explanation: This report includes data about each learning analytics event of a course. The course must have a start and end date.
-    course_content_report: Course Content Report
-    course_content_report_explanation: This report includes data about each learning item of a course.
-    overall_course_summary_report: Overall Course Summary Report
-    overall_course_summary_report_explanation: This report includes data about each course of the platform.
-    de_pseudonymized: De-pseudonymize report. Attention! Only use this option if the further processing of the data is in compliance with the data protection regulations of the platform.
-    include_analytics_metrics: Include learning analytics metrics. This can significantly increase the time to create the report.
-    include_access_groups: Include data about the users' memberships in configured access groups.
-    include_profile: Include additional profile data. Sensitive data is omitted if pseudonymized.
-    include_consents: Include the user's given consents.
-    include_all_quizzes: Include all quizzes.
-    include_top_location: Include the top country and top city for every user.
-    include_features: Include data if the user has certain configured features enabled.
-    include_auth: Include certain configured authorization attributes of users (de-pseudonymization required).
-    include_email_subscriptions: Include data if the user subscribed to email announcements.
-    include_last_activity: Include the timestamp of the user's last activity.
-    include_enrollment_evaluation: Include enrollment evaluation for all courses for every user. This can significantly increase the time to create the report.
-    combine_enrollment_info: Combine enrollment evaluation data.
-    zip_password: ZIP password
-    all_classifiers: Include a filtered report for all defined course classifiers.
-    active_users: Include active users (experimental analytics metric).
-    first_date: "First date:"
-    last_date: "Last date:"
-    end_date: "Optional latest date for statistics:"
-    window_size: "Length of time window:"
-    window_unit: "Unit of time window:"
-    window_unit_days: Days
-    window_unit_months: Months (the day input fields are ignored)
-    sliding_window: Sliding window instead of fixed interval.
-    include_collab_spaces: Include collab spaces.
-    include_permission_groups: Include the user's global and course permission groups.
-    include_statistics: Include course statistics.
-    verb: verb (wildcard)
-    machine_headers: Better machine-readable headers (lowercase and underscored).
-    openwho_course_report: OpenWHO Course Report
-    openwho_course_report_explanation: Custom course report for OpenWHO.
-    openwho_combined_course_report: OpenWHO Combined Course Report
-    openwho_combined_course_report_explanation: Custom combined course report for OpenWHO.
+    course_report:
+      name: Course Report
+      desc: This report includes data about each enrollment of a course.
+      options:
+        all_quizzes: Include all quizzes.
+    combined_course_report:
+      name: Combined Course Report
+      desc: This report combines multiple course reports which are tagged with the same selected classifier.
+    user_report:
+      name: User Report
+      desc: This report includes data about each registered and confirmed user of the platform.
+      options:
+        consents: Include the user's given consents.
+        top_location: Include the top country and top city for every user.
+        features: Include data if the user has certain configured features enabled.
+        email_subscriptions: Include data if the user subscribed to email announcements.
+        last_activity: Include the timestamp of the user's last activity.
+        combine_enrollment_info: Combine enrollment evaluation data.
+    unconfirmed_user_report:
+      name: Unconfirmed User Report
+      desc: This report includes identifiable data about each registered but unconfirmed user of the platform. Attention! Only generate this report if the further processing of the data is in compliance with the data protection regulations of the platform.
+    submission_report:
+      name: Quiz Submissions Report
+      desc: This report includes data about each submission of a quiz.
+    pinboard_report:
+      name: Course Pinboard Report
+      desc: This report includes data about each forum post of a course.
+      options:
+        collab_spaces: Include collab spaces.
+        permission_groups: Include the user's global and course permission groups.
+    enrollment_statistics_report:
+      name: Enrollment Statistics Report
+      desc: This report includes the total enrollments count and unique enrolled users count for a given timeframe.
+      options:
+        active_users: Include active users (experimental analytics metric).
+        first_date: "First date:"
+        last_date: "Last date:"
+        window_size: "Length of time window:"
+        window_unit: "Unit of time window:"
+        window_unit_days: Days
+        window_unit_months: Months (the day input fields are ignored)
+        sliding_window: Sliding window instead of fixed interval.
+        all_classifiers: Include a filtered report for all defined course classifiers.
+    course_events_report:
+      name: Course Events Report
+      desc: This report includes data about each learning analytics event of a course. The course must have a start and end date.
+      options:
+        verb: verb (wildcard)
+    course_content_report:
+      name: Course Content Report
+      desc: This report includes data about each learning item of a course.
+    overall_course_summary_report:
+      name: Overall Course Summary Report
+      desc: This report includes data about each course of the platform.
+      options:
+        course_statistics: Include course statistics.
+        end_date: "Optional latest date for statistics:"
+    openwho_course_report:
+      name: OpenWHO Course Report
+      desc: Custom course report for OpenWHO.
+    openwho_combined_course_report:
+      name: OpenWHO Combined Course Report
+      desc: Custom combined course report for OpenWHO.
+    shared_options:
+      machine_headers: Better machine-readable headers (lowercase and underscored).
+      de_pseudonymized: De-pseudonymize report. Attention! Only use this option if the further processing of the data is in compliance with the data protection regulations of the platform.
+      zip_password: ZIP password
+      select_blank: Please select...
+      analytics_metrics: Include learning analytics metrics. This can significantly increase the time to create the report.
+      access_groups: Include data about the users' memberships in configured access groups.
+      profile: Include additional profile data. Sensitive data is omitted if pseudonymized.
+      auth: Include certain configured authorization attributes of users (de-pseudonymization required).
+      enrollment_evaluation: Include enrollment evaluation for all courses for every user. This can significantly increase the time to create the report.

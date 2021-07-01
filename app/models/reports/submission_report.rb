@@ -3,11 +3,11 @@
 module Reports
   class SubmissionReport < Base
     class << self
-      def structure
+      def form_data
         {
           type: :submission_report,
-          name: I18n.t(:'reports.submission_report'),
-          description: I18n.t(:'reports.submission_report_explanation'),
+          name: I18n.t(:'reports.submission_report.name'),
+          description: I18n.t(:'reports.submission_report.desc'),
           scope: {
             type: 'text_field',
             name: :task_scope,
@@ -21,18 +21,18 @@ module Reports
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'checkbox',
               name: :de_pseudonymized,
-              label: I18n.t(:'reports.de_pseudonymized'),
+              label: I18n.t(:'reports.shared_options.de_pseudonymized'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },

@@ -3,33 +3,33 @@
 module Reports
   class OverallCourseSummaryReport < Base
     class << self
-      def structure
+      def form_data
         {
           type: :overall_course_summary_report,
-          name: I18n.t(:'reports.overall_course_summary_report'),
-          description: I18n.t(:'reports.overall_course_summary_report_explanation'),
+          name: I18n.t(:'reports.overall_course_summary_report.name'),
+          description: I18n.t(:'reports.overall_course_summary_report.desc'),
           options: [
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'checkbox',
               name: :include_statistics,
-              label: I18n.t(:'reports.include_statistics'),
+              label: I18n.t(:'reports.overall_course_summary_report.options.course_statistics'),
             },
             {
               type: 'date_field',
               name: :end_date,
               options: {min: '2013-01-01'},
-              label: I18n.t(:'reports.end_date'),
+              label: I18n.t(:'reports.overall_course_summary_report.options.end_date'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },

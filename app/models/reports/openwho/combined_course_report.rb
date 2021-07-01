@@ -5,19 +5,17 @@ module Reports::Openwho
     queue_as :reports_long_running
 
     class << self
-      def structure
+      def form_data
         {
           type: :openwho_combined_course_report,
-          name: I18n.t(:'reports.openwho_combined_course_report'),
-          description: I18n.t(
-            :'reports.openwho_combined_course_report_explanation',
-          ),
+          name: I18n.t(:'reports.openwho_combined_course_report.name'),
+          description: I18n.t(:'reports.openwho_combined_course_report.desc'),
           scope: {
             type: 'select',
             name: :task_scope,
             values: :classifiers,
             options: {
-              include_blank: I18n.t(:'reports.select'),
+              include_blank: I18n.t(:'reports.shared_options.select_blank'),
               required: true,
             },
           },
@@ -25,23 +23,23 @@ module Reports::Openwho
             {
               type: 'checkbox',
               name: :machine_headers,
-              label: I18n.t(:'reports.machine_headers'),
+              label: I18n.t(:'reports.shared_options.machine_headers'),
             },
             {
               type: 'checkbox',
               name: :de_pseudonymized,
-              label: I18n.t(:'reports.de_pseudonymized'),
+              label: I18n.t(:'reports.shared_options.de_pseudonymized'),
             },
             {
               type: 'checkbox',
               name: :include_enrollment_evaluation,
-              label: I18n.t(:'reports.include_enrollment_evaluation'),
+              label: I18n.t(:'reports.shared_options.enrollment_evaluation'),
             },
             {
               type: 'text_field',
               name: :zip_password,
               options: {
-                placeholder: I18n.t(:'reports.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password'),
                 input_size: 'large',
               },
             },
