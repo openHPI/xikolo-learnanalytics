@@ -31,6 +31,11 @@ qc_alert:
     correct_submissions_threshold: 0.7
     # Threshold for minimum submissions to question
     minimum_submissions: 20
+
+# NOTE: Always add nested `reports` config options to all production machines,
+#       i.e., do not rely on the fallback to this file. This is required as
+#       the `s3_bucket` option is set on every production machine and only
+#       top-level keys will be merged.
 reports:
   # The name of the S3 bucket where reports can be stored for downloading
   s3_bucket: xikolo-reports
