@@ -12,6 +12,8 @@ class ReportTypesController < ApplicationController
   private
 
   def report_types
+    return [] unless Lanalytics.config.reports&.key? 'types'
+
     report_classes = Lanalytics.config.reports['types'].map do |type|
       if type.is_a?(Hash)
         key = type.keys.first
