@@ -563,6 +563,16 @@ describe 'ReportTypes: List', type: :request do
     }
   end
 
+  context 'empty config' do
+    let(:report_types) do
+      <<~YML
+        reports: ~
+      YML
+    end
+
+    it { expect(resource).to eq [] }
+  end
+
   context 'general reports' do
     let(:report_types) do
       <<~YML
