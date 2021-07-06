@@ -152,7 +152,7 @@ class ReportJob < ApplicationRecord
         status: 'failing',
         error: title,
         env_path: ENV['PATH'],
-        tmp_dir: tmp_directory,
+        tmp_dir: tmp_directory.to_s,
       },
     )
 
