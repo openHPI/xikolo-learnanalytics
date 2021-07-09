@@ -15,7 +15,7 @@ gem 'nokogiri', '~> 1.11'
 gem 'jbuilder', '~> 2.0'
 
 gem 'rails-rfc6570', '~> 2.3'
-gem 'restify', '~> 1.8'
+gem 'restify', '~> 1.15'
 
 gem 'concurrent-ruby', '~> 1.0'
 gem 'mnemosyne-ruby', '~> 1.3'
