@@ -41,9 +41,6 @@ override_dh_auto_build:
 		--install-dir $(GEM_PATH) \
 		--bindir bin
 
-	# Force nokogiri to use system libraries
-	$(RUBY) -S bin/bundle config build.nokogiri --use-system-libraries
-
 	$(RUBY) -S bin/bundle install \
 		--path vendor \
 		--deployment \
