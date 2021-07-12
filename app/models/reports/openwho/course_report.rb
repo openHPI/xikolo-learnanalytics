@@ -110,7 +110,7 @@ module Reports::Openwho
         enrollments_promise =
           Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
             course_service.rel(:enrollments).get(
-              course_id: course['id'], per_page: 50, deleted: true,
+              course_id: course['id'], per_page: 1000, deleted: true,
             )
           end
 
