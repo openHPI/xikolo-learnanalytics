@@ -73,13 +73,12 @@ gem 'paper_trail'
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'memory_profiler'
   gem 'meta_request'
   gem 'os'
-  gem 'spring' # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-
-  gem 'ruby-prof' # To do performance evaluation
-
   gem 'pry-byebug'
+  gem 'ruby-prof' # To do performance evaluation
+  gem 'spring' # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 end
 
 group :development, :test do
