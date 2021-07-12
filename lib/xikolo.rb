@@ -5,4 +5,5 @@ module Xikolo
   require 'xikolo/reconnect'
   require 'xikolo/retryable'
   require 'xikolo/retrying_promise'
+  require 'xikolo/progress'
 end

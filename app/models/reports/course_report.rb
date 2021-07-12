@@ -94,325 +94,349 @@ module Reports
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def each_row
+    def each_row(&block)
       # Initialize access groups to preload some data.
       access_groups if @include_access_groups
 
-      courses.each_with_index do |course, course_index|
-        index = 0
+      # Global progress manager for this report
+      @progress = Xikolo::Progress.new do |summary|
+        @job.progress_to(summary.value, of: summary.total)
+      end
 
-        # these metrics are fetched for all users at once from postgres
-        # needs more memory but much faster performance
-        if @include_analytics_metrics
-          clustering_metrics = fetch_clustering_metrics(course)
+      # Pre-warm progress counter with current maximum values. They might change
+      # while processing but will give a good expectation for the actual target.
+      # This will make progress basically linear.
+      courses.each do |course|
+        total_count = Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
+            course_service
+              .rel(:enrollments)
+              .get(course_id: course['id'], per_page: 1, deleted: true)
+          end,
+        ).value!.first.response.headers['X_TOTAL_COUNT'].to_i
 
-          video_count ||= Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-              course_service.rel(:items).get(
-                course_id: course['id'],
-                content_type: 'video',
-                was_available: true,
-              )
-            end,
-          ).value!.first.count
+        @progress.update(course['id'], 0, max: total_count)
+      end
 
-          start_date = Date.parse(course['start_date'])
-          end_date = if course['end_date'].present?
-                       Date.parse(course['end_date'])
-                     else
-                       Time.zone.today
-                     end
-          course_days = (end_date - start_date).to_i
-        end
+      courses.each do |course| # rubocop:disable Style/CombinableLoops
+        each_course(course, &block)
+      end
+    end
 
-        enrollments_promise = Xikolo.paginate_with_retries(
-          max_retries: 3, wait: 60.seconds,
-        ) do
-          course_service.rel(:enrollments).get(
-            course_id: course['id'], per_page: 1000, deleted: true,
-          )
-        end
+    def each_course(course)
+      enrollments_counter = 0
 
-        enrollments_promise.each_item do |e, enrollment_page|
-          user = Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-              account_service.rel(:user).get(id: e['user_id'])
-            end,
-          ).value!.first
+      # these metrics are fetched for all users at once from postgres
+      # needs more memory but much faster performance
+      if @include_analytics_metrics
+        clustering_metrics = fetch_clustering_metrics(course)
 
-          Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-              course_service.rel(:enrollments).get(
-                course_id: course['id'],
-                user_id: e['user_id'],
-                deleted: true,
-                learning_evaluation: true,
-              )
-            end,
-            Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-              pinboard_service.rel(:statistic).get(
-                id: course['id'],
-                user_id: user['id'],
-              )
-            end,
-          ) do |enrollments, stat_pinboard|
-            enrollment = enrollments.first
-            course_start_date = as_date(course['start_date'])
-            birth_compare_date = course_start_date || DateTime.now
-            enrollment_date = as_date(enrollment['created_at'])
+        video_count ||= Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+            course_service.rel(:items).get(
+              course_id: course['id'],
+              content_type: 'video',
+              was_available: true,
+            )
+          end,
+        ).value!.first.count
 
-            age_data = BirthDate.new(user['born_at'])
-            age_group = age_data.age_group_at(birth_compare_date)
+        start_date = Date.parse(course['start_date'])
+        end_date = if course['end_date'].present?
+                     Date.parse(course['end_date'])
+                   else
+                     Time.zone.today
+                   end
+        course_days = (end_date - start_date).to_i
+      end
 
-            user_id = if @de_pseudonymized
-                        user['id']
-                      else
-                        Digest::SHA256.hexdigest(user['id'])
-                      end
+      enrollments_promise = Xikolo.paginate_with_retries(
+        max_retries: 3, wait: 60.seconds,
+      ) do
+        course_service.rel(:enrollments).get(
+          course_id: course['id'], per_page: 1000, deleted: true,
+        )
+      end
 
-            values = [
-              user_id,
-              enrollment_date,
-              first_enrollment?(enrollment),
-              user['created_at'],
-              user['language'],
-              age_group,
+      enrollments_promise.each_item do |e, enrollment_page|
+        user = Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
+            account_service.rel(:user).get(id: e['user_id'])
+          end,
+        ).value!.first
+
+        Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+            course_service.rel(:enrollments).get(
+              course_id: course['id'],
+              user_id: e['user_id'],
+              deleted: true,
+              learning_evaluation: true,
+            )
+          end,
+          Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+            pinboard_service.rel(:statistic).get(
+              id: course['id'],
+              user_id: user['id'],
+            )
+          end,
+        ) do |enrollments, stat_pinboard|
+          enrollment = enrollments.first
+          course_start_date = as_date(course['start_date'])
+          birth_compare_date = course_start_date || DateTime.now
+          enrollment_date = as_date(enrollment['created_at'])
+
+          age_data = BirthDate.new(user['born_at'])
+          age_group = age_data.age_group_at(birth_compare_date)
+
+          user_id = if @de_pseudonymized
+                      user['id']
+                    else
+                      Digest::SHA256.hexdigest(user['id'])
+                    end
+
+          values = [
+            user_id,
+            enrollment_date,
+            first_enrollment?(enrollment),
+            user['created_at'],
+            user['language'],
+            age_group,
+          ]
+
+          if @de_pseudonymized
+            values += [
+              escape_csv_string(user['full_name']),
+              user['email'],
+              user['born_at'],
             ]
+          end
 
-            if @de_pseudonymized
-              values += [
-                escape_csv_string(user['full_name']),
-                user['email'],
-                user['born_at'],
-              ]
-            end
+          if @include_access_groups
+            memberships = access_groups.memberships_for(user['id'])
+            values.append(escape_csv_string(memberships.join('; ')))
+          end
 
-            if @include_access_groups
-              memberships = access_groups.memberships_for(user['id'])
-              values.append(escape_csv_string(memberships.join('; ')))
-            end
+          if @include_profile
+            values += [user['avatar_url'].present? ? 'true' : '']
 
-            if @include_profile
-              values += [user['avatar_url'].present? ? 'true' : '']
+            profile = Xikolo::RetryingPromise.new(
+              Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
+                user.rel(:profile).get
+              end,
+            ).value!.first
+            values += profile_config.for(profile).values
+          end
 
-              profile = Xikolo::RetryingPromise.new(
-                Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-                  user.rel(:profile).get
-                end,
-              ).value!.first
-              values += profile_config.for(profile).values
-            end
+          values.concat(auth_fields.values(user['id'])) if @include_auth && @de_pseudonymized
 
-            values.concat(auth_fields.values(user['id'])) if @include_auth && @de_pseudonymized
-
-            # get elasticsearch / postgres metrics per user
-            if @include_analytics_metrics
-              user_course_country = fetch_metric(
-                'UserCourseCountry', course['id'], user['id']
-              ) || ''
-              user_course_city = fetch_metric(
-                'UserCourseCity', course['id'], user['id']
-              ) || ''
-              device_usage = fetch_device_usage(
-                course['id'], user['id']
-              )
-              first_action = fetch_metric(
-                'FirstAction', course['id'], user['id']
-              )
-              first_visited_item = fetch_metric(
-                'FirstVisitedItem', course['id'], user['id']
-              )
-              last_action = fetch_metric(
-                'LastAction', course['id'], user['id']
-              )
-              last_visited_item = fetch_metric(
-                'LastVisitedItem', course['id'], user['id']
-              )
-              forum_activity = fetch_metric(
-                'ForumActivity', course['id'], user['id']
-              )&.dig(:total)
-              forum_write_activity = fetch_metric(
-                'ForumWriteActivity', course['id'], user['id']
-              )&.dig(:total)
-
-              values += [
-                user_course_country,
-                suppress(IsoCountryCodes::UnknownCodeError) do
-                  IsoCountryCodes.find(user_course_country)&.name
-                end,
-                user_course_city,
-                device_usage['desktop web'],
-                device_usage['mobile web'],
-                device_usage['mobile app'],
-                first_action&.dig('timestamp') || '',
-                first_visited_item&.dig('timestamp') || '',
-                last_action&.dig('timestamp') || '',
-                last_visited_item&.dig('timestamp') || '',
-                last_visited_item&.dig(
-                  'resource', 'resource_uuid'
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'sessions'
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'average_session_duration'
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'total_session_duration'
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'unique_video_play_activity'
-                ) || '',
-                percentage(
-                  clustering_metrics.dig(
-                    user['id'], 'unique_video_play_activity'
-                  ),
-                  of: video_count,
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'unique_video_downloads_activity'
-                ) || '',
-                percentage(
-                  clustering_metrics.dig(
-                    user['id'], 'unique_video_downloads_activity'
-                  ),
-                  of: video_count,
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'unique_slide_downloads_activity'
-                ) || '',
-                percentage(
-                  clustering_metrics.dig(
-                    user['id'], 'unique_slide_downloads_activity'
-                  ),
-                  of: video_count,
-                ) || '',
-                forum_activity,
-                forum_activity.to_f / course_days,
-                forum_write_activity,
-                clustering_metrics.dig(
-                  user['id'], 'quiz_performance'
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'graded_quiz_performance'
-                ) || '',
-                clustering_metrics.dig(
-                  user['id'], 'ungraded_quiz_performance'
-                ) || '',
-              ]
-            end
-
-            # Try to calculate enrollment delta
-            values << if course_start_date && enrollment_date
-                        (enrollment_date - course_start_date).to_i
-                      else
-                        ''
-                      end
-
-            top_performance = if enrollment['quantile'].present?
-                                calculate_top_performance(
-                                  enrollment['quantile'],
-                                )
-                              else
-                                ''
-                              end
+          # get elasticsearch / postgres metrics per user
+          if @include_analytics_metrics
+            user_course_country = fetch_metric(
+              'UserCourseCountry', course['id'], user['id']
+            ) || ''
+            user_course_city = fetch_metric(
+              'UserCourseCity', course['id'], user['id']
+            ) || ''
+            device_usage = fetch_device_usage(
+              course['id'], user['id']
+            )
+            first_action = fetch_metric(
+              'FirstAction', course['id'], user['id']
+            )
+            first_visited_item = fetch_metric(
+              'FirstVisitedItem', course['id'], user['id']
+            )
+            last_action = fetch_metric(
+              'LastAction', course['id'], user['id']
+            )
+            last_visited_item = fetch_metric(
+              'LastVisitedItem', course['id'], user['id']
+            )
+            forum_activity = fetch_metric(
+              'ForumActivity', course['id'], user['id']
+            )&.dig(:total)
+            forum_write_activity = fetch_metric(
+              'ForumWriteActivity', course['id'], user['id']
+            )&.dig(:total)
 
             values += [
-              stat_pinboard['posts'],
-              stat_pinboard['threads'],
-              enrollment['forced_submission_date'].present? || '',
-              enrollment['forced_submission_date'] || '',
-              enrollment.dig(
-                'certificates', 'confirmation_of_participation'
+              user_course_country,
+              suppress(IsoCountryCodes::UnknownCodeError) do
+                IsoCountryCodes.find(user_course_country)&.name
+              end,
+              user_course_city,
+              device_usage['desktop web'],
+              device_usage['mobile web'],
+              device_usage['mobile app'],
+              first_action&.dig('timestamp') || '',
+              first_visited_item&.dig('timestamp') || '',
+              last_action&.dig('timestamp') || '',
+              last_visited_item&.dig('timestamp') || '',
+              last_visited_item&.dig(
+                'resource', 'resource_uuid'
               ) || '',
-              enrollment.dig('certificates', 'record_of_achievement') || '',
-              enrollment.dig('certificates', 'certificate') || '',
-              enrollment['completed'] || '',
-              enrollment['deleted'] || '',
-              enrollment['quantile'] || '',
-              top_performance,
-              enrollment.dig('visits', 'visited'),
-              enrollment.dig('visits', 'percentage'),
-              enrollment.dig('points', 'achieved'),
-              enrollment.dig('points', 'percentage'),
+              clustering_metrics.dig(
+                user['id'], 'sessions'
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'average_session_duration'
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'total_session_duration'
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'unique_video_play_activity'
+              ) || '',
+              percentage(
+                clustering_metrics.dig(
+                  user['id'], 'unique_video_play_activity'
+                ),
+                of: video_count,
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'unique_video_downloads_activity'
+              ) || '',
+              percentage(
+                clustering_metrics.dig(
+                  user['id'], 'unique_video_downloads_activity'
+                ),
+                of: video_count,
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'unique_slide_downloads_activity'
+              ) || '',
+              percentage(
+                clustering_metrics.dig(
+                  user['id'], 'unique_slide_downloads_activity'
+                ),
+                of: video_count,
+              ) || '',
+              forum_activity,
+              forum_activity.to_f / course_days,
+              forum_write_activity,
+              clustering_metrics.dig(
+                user['id'], 'quiz_performance'
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'graded_quiz_performance'
+              ) || '',
+              clustering_metrics.dig(
+                user['id'], 'ungraded_quiz_performance'
+              ) || '',
             ]
+          end
 
-            # For each section, append visit percentage and points percentage
-            if @include_sections
-              progresses = Xikolo::RetryingPromise.new(
-                Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-                  course_service.rel(:progresses).get(
-                    user_id: user['id'],
-                    course_id: course['id'],
-                  )
-                end,
-              ).value!.first
+          # Try to calculate enrollment delta
+          values << if course_start_date && enrollment_date
+                      (enrollment_date - course_start_date).to_i
+                    else
+                      ''
+                    end
 
-              values += course_sections.map do |s|
-                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+          top_performance = if enrollment['quantile'].present?
+                              calculate_top_performance(
+                                enrollment['quantile'],
+                              )
+                            else
+                              ''
+                            end
 
-                next unless p
+          values += [
+            stat_pinboard['posts'],
+            stat_pinboard['threads'],
+            enrollment['forced_submission_date'].present? || '',
+            enrollment['forced_submission_date'] || '',
+            enrollment.dig(
+              'certificates', 'confirmation_of_participation'
+            ) || '',
+            enrollment.dig('certificates', 'record_of_achievement') || '',
+            enrollment.dig('certificates', 'certificate') || '',
+            enrollment['completed'] || '',
+            enrollment['deleted'] || '',
+            enrollment['quantile'] || '',
+            top_performance,
+            enrollment.dig('visits', 'visited'),
+            enrollment.dig('visits', 'percentage'),
+            enrollment.dig('points', 'achieved'),
+            enrollment.dig('points', 'percentage'),
+          ]
 
-                total = p.dig('visits', 'total').to_f
-                n = p.dig('visits', 'user').to_f
-                percentage n, of: total
-              end
+          # For each section, append visit percentage and points percentage
+          if @include_sections
+            progresses = Xikolo::RetryingPromise.new(
+              Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+                course_service.rel(:progresses).get(
+                  user_id: user['id'],
+                  course_id: course['id'],
+                )
+              end,
+            ).value!.first
 
-              values += course_sections.map do |s|
-                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+            values += course_sections.map do |s|
+              p = progresses.find {|pr| pr['resource_id'] == s['id'] }
 
-                next unless p
+              next unless p
 
-                total = p.dig('selftest_exercises', 'max_points').to_f
-                n = p.dig('selftest_exercises', 'graded_points').to_f
-                percentage n, of: total
-              end
-
-              values += course_sections.map do |s|
-                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
-
-                next unless p
-
-                total = p.dig('main_exercises', 'max_points').to_f
-                n = p.dig('main_exercises', 'graded_points').to_f
-                percentage n, of: total
-              end
-
-              values += course_sections.map do |s|
-                p = progresses.find {|pr| pr['resource_id'] == s['id'] }
-
-                next unless p
-
-                total = p.dig('bonus_exercises', 'max_points').to_f
-                n = p.dig('bonus_exercises', 'graded_points').to_f
-                percentage n, of: total
-              end
-            end
-
-            all_submissions = all_user_submissions(user['id'])
-            values += quizzes.map do |q|
-              s = all_submissions[q['content_id']]
-
-              next unless s
-
-              total = q['max_points'].to_f
-              n = s['points'].to_f + s['fudge_points'].to_f
+              total = p.dig('visits', 'total').to_f
+              n = p.dig('visits', 'user').to_f
               percentage n, of: total
             end
 
-            values += [course['course_code']]
+            values += course_sections.map do |s|
+              p = progresses.find {|pr| pr['resource_id'] == s['id'] }
 
-            yield values
+              next unless p
 
-            index += 1
-            @job.progress_to(
-              (course_index *
-                enrollment_page.response.headers['X_TOTAL_COUNT'].to_i) + index,
-              of: courses.count *
-                enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,
-            )
-          end.value!
-        end
+              total = p.dig('selftest_exercises', 'max_points').to_f
+              n = p.dig('selftest_exercises', 'graded_points').to_f
+              percentage n, of: total
+            end
+
+            values += course_sections.map do |s|
+              p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+
+              next unless p
+
+              total = p.dig('main_exercises', 'max_points').to_f
+              n = p.dig('main_exercises', 'graded_points').to_f
+              percentage n, of: total
+            end
+
+            values += course_sections.map do |s|
+              p = progresses.find {|pr| pr['resource_id'] == s['id'] }
+
+              next unless p
+
+              total = p.dig('bonus_exercises', 'max_points').to_f
+              n = p.dig('bonus_exercises', 'graded_points').to_f
+              percentage n, of: total
+            end
+          end
+
+          all_submissions = all_user_submissions(user['id'])
+          values += quizzes.map do |q|
+            s = all_submissions[q['content_id']]
+
+            next unless s
+
+            total = q['max_points'].to_f
+            n = s['points'].to_f + s['fudge_points'].to_f
+            percentage n, of: total
+          end
+
+          values += [course['course_code']]
+
+          yield values
+
+          # Update report progress
+          enrollments_counter += 1
+          @progress.update(
+            course['id'],
+            enrollments_counter,
+            max: enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,
+          )
+        end.value!
       end
     end
     # rubocop:enable all
