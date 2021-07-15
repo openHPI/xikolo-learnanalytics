@@ -115,6 +115,10 @@ class ReportJob < ApplicationRecord
       },
     )
 
+    # No need to check for stale connection if there is no actual change to be
+    # saved. Avoids opening a transaction without saving anything.
+    return if self.progress == progress
+
     Xikolo::Reconnect.on_stale_connection do
       update progress: progress
     end
