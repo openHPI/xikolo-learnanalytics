@@ -14,7 +14,6 @@ config/environments         usr/lib/${PACKAGE}/config/
 config/initializers         usr/lib/${PACKAGE}/config/
 config/locales              usr/lib/${PACKAGE}/config/
 config/msgr.rb              usr/lib/${PACKAGE}/config/
-config/permissions.yml      usr/lib/${PACKAGE}/config/
 config/routes.rb            usr/lib/${PACKAGE}/config/
 config/sidekiq.yml          usr/lib/${PACKAGE}/config/
 config/unicorn.rb           usr/lib/${PACKAGE}/config/
