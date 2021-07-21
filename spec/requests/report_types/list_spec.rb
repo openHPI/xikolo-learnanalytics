@@ -17,9 +17,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a course:',
         'values' => 'courses',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -62,8 +64,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -79,9 +82,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a classifier:',
         'values' => 'classifiers',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -119,8 +124,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -197,8 +203,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -220,8 +227,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -237,7 +245,8 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'text_field',
         'name' => 'task_scope',
-        'options' => {'placeholder' => 'quiz-id', 'input_size' => 'large', 'required' => true},
+        'label' => 'Enter a Quiz ID (the Content ID of the item):',
+        'options' => {'placeholder' => 'Quiz ID', 'input_size' => 'large', 'required' => true},
       },
       'options' => [
         {
@@ -253,8 +262,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -270,9 +280,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a course:',
         'values' => 'courses',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -300,8 +312,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -362,8 +375,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -379,9 +393,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a course:',
         'values' => 'courses',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -399,13 +415,15 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'verb',
-          'options' => {'placeholder' => 'verb (wildcard)', 'input_size' => 'medium'},
+          'label' => 'Optional event filter based on the verb field, the wildcard operators ? and * are supported:',
+          'options' => {'placeholder' => 'Verb', 'input_size' => 'large'},
         },
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -421,9 +439,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a course:',
         'values' => 'courses',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -436,8 +456,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -470,8 +491,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -487,9 +509,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a course:',
         'values' => 'courses',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -512,8 +536,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },
@@ -529,9 +554,11 @@ describe 'ReportTypes: List', type: :request do
       'scope' => {
         'type' => 'select',
         'name' => 'task_scope',
+        'label' => 'Select a classifier:',
         'values' => 'classifiers',
         'options' => {
-          'include_blank' => 'Please select...',
+          'prompt' => 'Please select...',
+          'disabled' => '',
           'required' => true,
         },
       },
@@ -554,8 +581,9 @@ describe 'ReportTypes: List', type: :request do
         {
           'type' => 'text_field',
           'name' => 'zip_password',
+          'label' => 'Optional password for the generated ZIP archive:',
           'options' => {
-            'placeholder' => 'ZIP password',
+            'placeholder' => 'Password',
             'input_size' => 'large',
           },
         },

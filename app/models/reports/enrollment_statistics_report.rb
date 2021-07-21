@@ -69,8 +69,9 @@ module Reports
             {
               type: 'text_field',
               name: :zip_password,
+              label: I18n.t(:'reports.shared_options.zip_password'),
               options: {
-                placeholder: I18n.t(:'reports.shared_options.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password_placeholder'),
                 input_size: 'large',
               },
             },

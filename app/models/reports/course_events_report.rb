@@ -15,9 +15,11 @@ module Reports
           scope: {
             type: 'select',
             name: :task_scope,
+            label: I18n.t(:'reports.shared_options.select_course'),
             values: :courses,
             options: {
-              include_blank: I18n.t(:'reports.shared_options.select_blank'),
+              prompt: I18n.t(:'reports.shared_options.select_blank'),
+              disabled: '', # disable prompt option (rails 6)
               required: true,
             },
           },
@@ -35,16 +37,18 @@ module Reports
             {
               type: 'text_field',
               name: :verb,
+              label: I18n.t(:'reports.course_events_report.options.verb'),
               options: {
-                placeholder: I18n.t(:'reports.course_events_report.options.verb'),
-                input_size: 'medium',
+                placeholder: I18n.t(:'reports.course_events_report.options.verb_placeholder'),
+                input_size: 'large',
               },
             },
             {
               type: 'text_field',
               name: :zip_password,
+              label: I18n.t(:'reports.shared_options.zip_password'),
               options: {
-                placeholder: I18n.t(:'reports.shared_options.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password_placeholder'),
                 input_size: 'large',
               },
             },
