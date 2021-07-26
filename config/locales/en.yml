@@ -24,6 +24,9 @@ en:
     submission_report:
       name: Quiz Submissions Report
       desc: This report includes data about each submission of a quiz.
+      options:
+        quiz_id: 'Enter a Quiz ID (the Content ID of the item):'
+        quiz_id_placeholder: Quiz ID
     pinboard_report:
       name: Course Pinboard Report
       desc: This report includes data about each forum post of a course.
@@ -35,10 +38,10 @@ en:
       desc: This report includes the total enrollments count and unique enrolled users count for a given timeframe.
       options:
         active_users: Include active users (experimental analytics metric).
-        first_date: "First date:"
-        last_date: "Last date:"
-        window_size: "Length of time window:"
-        window_unit: "Unit of time window:"
+        first_date: 'First date:'
+        last_date: 'Last date:'
+        window_size: 'Length of time window:'
+        window_unit: 'Unit of time window:'
         window_unit_days: Days
         window_unit_months: Months (the day input fields are ignored)
         sliding_window: Sliding window instead of fixed interval.
@@ -47,7 +50,8 @@ en:
       name: Course Events Report
       desc: This report includes data about each learning analytics event of a course. The course must have a start and end date.
       options:
-        verb: verb (wildcard)
+        verb: 'Optional event filter based on the verb field, the wildcard operators ? and * are supported:'
+        verb_placeholder: Verb
     course_content_report:
       name: Course Content Report
       desc: This report includes data about each learning item of a course.
@@ -56,7 +60,7 @@ en:
       desc: This report includes data about each course of the platform.
       options:
         course_statistics: Include course statistics.
-        end_date: "Optional latest date for statistics:"
+        end_date: 'Optional latest date for statistics:'
     openwho_course_report:
       name: OpenWHO Course Report
       desc: Custom course report for OpenWHO.
@@ -66,7 +70,10 @@ en:
     shared_options:
       machine_headers: Better machine-readable headers (lowercase and underscored).
       de_pseudonymized: De-pseudonymize report. Attention! Only use this option if the further processing of the data is in compliance with the data protection regulations of the platform.
-      zip_password: ZIP password
+      zip_password: 'Optional password for the generated ZIP archive:'
+      zip_password_placeholder: Password
+      select_course: 'Select a course:'
+      select_classifier: 'Select a classifier:'
       select_blank: Please select...
       analytics_metrics: Include learning analytics metrics. This can significantly increase the time to create the report.
       access_groups: Include data about the users' memberships in configured access groups.

@@ -13,9 +13,11 @@ module Reports::Openwho
           scope: {
             type: 'select',
             name: :task_scope,
+            label: I18n.t(:'reports.shared_options.select_course'),
             values: :courses,
             options: {
-              include_blank: I18n.t(:'reports.shared_options.select_blank'),
+              prompt: I18n.t(:'reports.shared_options.select_blank'),
+              disabled: '', # disable prompt option (rails 6)
               required: true,
             },
           },
@@ -38,8 +40,9 @@ module Reports::Openwho
             {
               type: 'text_field',
               name: :zip_password,
+              label: I18n.t(:'reports.shared_options.zip_password'),
               options: {
-                placeholder: I18n.t(:'reports.shared_options.zip_password'),
+                placeholder: I18n.t(:'reports.shared_options.zip_password_placeholder'),
                 input_size: 'large',
               },
             },
