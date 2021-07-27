@@ -42,7 +42,9 @@ module Reports
     def generate!
       @job.update(annotation: course['course_code'])
 
-      csv_file "CourseContentReport_#{course['course_code']}", headers, &method(:each_item)
+      csv_file("CourseContentReport_#{course['course_code']}", headers) do |&write|
+        each_item(&write)
+      end
     end
 
     private

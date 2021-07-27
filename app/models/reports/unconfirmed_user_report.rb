@@ -29,7 +29,9 @@ module Reports
     end
 
     def generate!
-      csv_file 'UnconfirmedUserReport', headers, &method(:each_user)
+      csv_file('UnconfirmedUserReport', headers) do |&write|
+        each_user(&write)
+      end
     end
 
     private

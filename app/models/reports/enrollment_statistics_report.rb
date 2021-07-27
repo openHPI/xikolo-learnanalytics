@@ -121,11 +121,9 @@ module Reports
         @reports_count += clusters.size
       end
 
-      csv_file(
-        "EnrollmentStatisticsReport_#{annotation}_overall",
-        headers,
-        &each_timeframe
-      )
+      csv_file("EnrollmentStatisticsReport_#{annotation}_overall", headers) do |&write|
+        each_timeframe.call(&write)
+      end
 
       return unless @include_all_classifiers
 
@@ -133,9 +131,10 @@ module Reports
         @report_index += 1
         csv_file(
           "EnrollmentStatisticsReport_#{annotation}_#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}",
-          headers(cluster),
-          &each_timeframe(cluster)
-        )
+          headers(cluster)
+        ) do |&write|
+          each_timeframe(cluster).call(&write)
+        end
       end
     end
 

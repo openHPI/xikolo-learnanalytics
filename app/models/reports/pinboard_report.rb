@@ -65,11 +65,9 @@ module Reports
     def generate!
       @job.update(annotation: course['course_code'])
 
-      csv_file(
-        "PinboardReport_#{course['course_code']}",
-        headers,
-        &method(:each_post)
-      )
+      csv_file("PinboardReport_#{course['course_code']}", headers) do |&write|
+        each_post(&write)
+      end
     end
 
     private

@@ -56,11 +56,9 @@ module Reports
                     "(#{@job.task_scope})",
       )
 
-      csv_file(
-        "SubmissionReport_#{course['course_code']}_#{@job.task_scope}",
-        headers,
-        &method(:each_submission)
-      )
+      csv_file("SubmissionReport_#{course['course_code']}_#{@job.task_scope}", headers) do |&write|
+        each_submission(&write)
+      end
     end
 
     private

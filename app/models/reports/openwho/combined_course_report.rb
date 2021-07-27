@@ -66,11 +66,9 @@ module Reports::Openwho
 
       @job.update(annotation: annotation)
 
-      csv_file(
-        "OpenWHO_CombinedCourseReport_#{@job.annotation}",
-        headers,
-        &method(:each_row)
-      )
+      csv_file("OpenWHO_CombinedCourseReport_#{@job.annotation}", headers) do |&write|
+        each_row(&write)
+      end
     end
 
     private

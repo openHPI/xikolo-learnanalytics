@@ -59,7 +59,9 @@ module Reports
         end
       end
 
-      csv_file file_name, headers, &method(:each_course)
+      csv_file(file_name, headers) do |&write|
+        each_course(&write)
+      end
     end
 
     private

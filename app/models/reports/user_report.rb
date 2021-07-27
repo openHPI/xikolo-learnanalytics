@@ -115,7 +115,9 @@ module Reports
     end
 
     def generate!
-      csv_file 'UserReport', headers, &method(:each_user)
+      csv_file('UserReport', headers) do |&write|
+        each_user(&write)
+      end
     end
 
     private

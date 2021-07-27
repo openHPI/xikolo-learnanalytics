@@ -211,15 +211,6 @@ Metrics/CyclomaticComplexity:
 
 
 # -----------------------------------------------------------------------------
-#                                   Performance
-
-Performance/MethodObjectAsBlock:
-  Exclude:
-    - 'app/models/reports/**/*.rb'
-
-
-
-# -----------------------------------------------------------------------------
 #                                   Style
 
 #
