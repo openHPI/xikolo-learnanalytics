@@ -11,7 +11,7 @@ module Lanalytics
 
       optional_parameter :course_id, :start_date, :end_date
 
-      # rubocop:disable Metric/BlockLength
+      # rubocop:disable Metrics/BlockLength
       exec do |params|
         # Build filters for different client types
         mobile_web_platforms_conditions = mobile_platforms.map do |platform|

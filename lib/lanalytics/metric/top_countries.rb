@@ -9,7 +9,7 @@ module Lanalytics
 
       optional_parameter :course_id, :start_date, :end_date
 
-      # rubocop:disable Metric/BlockLength
+      # rubocop:disable Metrics/BlockLength
       exec do |params|
         course_id = params[:course_id]
 

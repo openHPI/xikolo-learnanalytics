@@ -5,7 +5,7 @@ CreateCommand   = Lanalytics::Processing::LoadORM::CreateCommand
 Entity          = Lanalytics::Processing::LoadORM::Entity
 ExpApiStatement = Lanalytics::Model::ExpApiStatement
 
-# rubocop:disable Metrics/ClassLength, Metrics/LineLength
+# rubocop:disable Metrics/ClassLength, Layout/LineLength
 class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformStep
   def transform(_original_event, processing_units, load_commands, pipeline_ctx)
     processing_action = pipeline_ctx.processing_action.to_s.downcase

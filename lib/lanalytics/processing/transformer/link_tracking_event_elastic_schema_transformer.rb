@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/LineLength, Metrics/AbcSize, Metrics/MethodLength
+# rubocop:disable Layout/LineLength, Metrics/AbcSize, Metrics/MethodLength
 module Lanalytics
   module Processing
     module Transformer
