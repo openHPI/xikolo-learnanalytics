@@ -6,7 +6,7 @@ require:
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.7
-  TargetRailsVersion: 5.2
+  TargetRailsVersion: 6.1
   Exclude:
     - 'bin/**'
     - 'config/initializers/integration*'

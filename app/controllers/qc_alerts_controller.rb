@@ -40,7 +40,7 @@ class QcAlertsController < ApplicationController
 
   def update
     q = QcAlert.find(params[:id])
-    q.update_attributes(qc_alert_params)
+    q.update(qc_alert_params)
     respond_with q
   end
 

@@ -27,7 +27,7 @@ class QcRulesController < ApplicationController
 
   def update
     q = QcRule.find(params[:id])
-    q.update_attributes(rule_params)
+    q.update(rule_params)
     respond_with q
   end
 

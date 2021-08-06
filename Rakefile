@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
-
-require File.expand_path('../config/application', __FILE__)
+require File.expand_path('config/application', __dir__)
 
 require 'lanalytics/s3'
 
-Rails.application.load_tasks
+Lanalytics::Application.load_tasks
 
 namespace :ci do
   desc 'Setup service for CI'
@@ -14,7 +15,7 @@ namespace :ci do
   desc 'Run specs for CI'
   task spec: %w[^spec]
 
-  task :env do
+  task env: :environment do
     ENV['DISABLE_DATABASE_ENVIRONMENT_CHECK'] = '1'
   end
 end
@@ -23,7 +24,7 @@ namespace :qc do
   desc 'Run all rules'
   task run_all_rules: :environment do
     QcRunAllRules.new.perform
-    puts "finished"
+    puts 'Finished.'
   end
 end
 
@@ -35,10 +36,10 @@ namespace :s3 do
     )
 
     if reports.exists?
-      puts "Bucket already exists. Done."
+      puts 'Bucket already exists. Done.'
     else
       reports.create
-      puts "Bucket created."
+      puts 'Bucket created.'
     end
   end
 end

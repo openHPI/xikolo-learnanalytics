@@ -39,7 +39,7 @@ class ReportJobsController < ApplicationController
   end
 
   def update
-    respond_with ReportJob.find(params[:id]).update_attributes(job_params)
+    respond_with ReportJob.find(params[:id]).update(job_params)
   end
 
   def destroy

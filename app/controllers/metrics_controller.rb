@@ -1,4 +1,4 @@
-require_dependency 'lanalytics/metric/base'
+require 'lanalytics/metric/base'
 
 class MetricsController < ApplicationController
 

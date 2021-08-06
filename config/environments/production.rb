@@ -39,7 +39,7 @@ Rails.application.configure do
   # Use Redis for caching
   redis = Rails.application.config_for(:cache_redis)
   config.cache_store = :redis_cache_store, {
-    url: redis.fetch('url'),
+    url: redis.fetch(:url),
     expires_in: 1.day,
   }
 end
