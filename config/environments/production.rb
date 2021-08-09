@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -25,7 +27,7 @@ Rails.application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   config.logger = ActiveSupport::TaggedLogging.new(
-    ActiveSupport::Logger.new(STDOUT, formatter: config.log_formatter)
+    ActiveSupport::Logger.new($stdout, formatter: config.log_formatter),
   )
 
   config.action_mailer.perform_caching = false

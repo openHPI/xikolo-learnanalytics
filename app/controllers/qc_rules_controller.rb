@@ -1,15 +1,16 @@
+# frozen_string_literal: true
+
 class QcRulesController < ApplicationController
   responders Responders::DecorateResponder,
-             Responders::HttpCacheResponder,
-             Responders::PaginateResponder
+    Responders::HttpCacheResponder,
+    Responders::PaginateResponder
 
   respond_to :json
 
   def index
     rules = QcRule.all
-    unless params[:show_all].present?# and params[:show_all] == true
-      rules.where! is_active: true
-    end
+
+    rules.where!(is_active: true) if params[:show_all].blank?
 
     respond_with rules
   end
@@ -26,9 +27,9 @@ class QcRulesController < ApplicationController
   end
 
   def update
-    q = QcRule.find(params[:id])
-    q.update(rule_params)
-    respond_with q
+    rule = QcRule.find(params[:id])
+    rule.update(rule_params)
+    respond_with rule
   end
 
   private
@@ -36,5 +37,4 @@ class QcRulesController < ApplicationController
   def rule_params
     params.permit(:worker, :is_active)
   end
-
 end

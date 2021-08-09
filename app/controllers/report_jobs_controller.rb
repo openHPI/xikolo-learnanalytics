@@ -21,9 +21,8 @@ class ReportJobsController < ApplicationController
         DateTime.now,
       )
       jobs.where!(
-        "status = 'failed' and created_at >= " \
-          "'#{(Time.zone.now - 5.days).utc.iso8601}' " \
-          "OR updated_at >= '#{(Time.zone.now - 3.days).utc.iso8601}'",
+        "status = 'failed' AND created_at >= '#{(Time.zone.now - 5.days).utc.iso8601}' " \
+        "OR updated_at >= '#{(Time.zone.now - 3.days).utc.iso8601}'",
       )
     end
 
