@@ -220,7 +220,7 @@ GEM
       activerecord (>= 5.2)
       request_store (~> 1.1)
     parallel (1.20.1)
-    parser (3.0.1.1)
+    parser (3.0.2.0)
       ast (~> 2.4.1)
     pg (1.2.3)
     pry (0.13.1)
@@ -329,16 +329,16 @@ GEM
     rspec-support (3.10.0)
     rspec-teamcity (1.0.0)
       rspec (>= 2.99, >= 2.14.2, < 4)
-    rubocop (1.18.0)
+    rubocop (1.19.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
-      rubocop-ast (>= 1.7.0, < 2.0)
+      rubocop-ast (>= 1.9.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.7.0)
+    rubocop-ast (1.9.1)
       parser (>= 3.0.1.1)
     rubocop-performance (1.11.3)
       rubocop (>= 1.7.0, < 2.0)
@@ -469,7 +469,7 @@ DEPENDENCIES
   rspec-rails
   rspec-sidekiq
   rspec-teamcity
-  rubocop (~> 1.18.0)
+  rubocop (~> 1.19.0)
   rubocop-performance (~> 1.11.3)
   rubocop-rails (~> 2.11.0)
   rubocop-rspec (~> 2.4.0)
