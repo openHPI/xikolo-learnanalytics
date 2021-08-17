@@ -53,8 +53,8 @@ RSpec.configure do |config|
       .to_rack(Lanalytics::Application)
   end
 
-  config.around(:each) do |example|
-    DatabaseCleaner.strategy = :truncation
+  config.around do |example|
+    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.cleaning(&example)
   end
 
