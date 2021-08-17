@@ -4,7 +4,7 @@
 
 worker_processes ENV.fetch('WORKER', 1).to_i
 
-logger Logger.new(STDOUT)
+logger Logger.new($stdout)
 preload_app true
 check_client_connection false
 

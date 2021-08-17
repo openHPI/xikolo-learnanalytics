@@ -18,10 +18,10 @@ require 'telegraf/rails'
 module Lanalytics
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 6.1
 
-    config.autoload_paths += %W(#{config.root}/lib)
-    config.eager_load_paths += %W(#{config.root}/lib)
+    config.autoload_paths += %W[#{config.root}/lib]
+    config.eager_load_paths += %W[#{config.root}/lib]
 
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
@@ -41,7 +41,7 @@ module Lanalytics
 
     # Register service URLs from services.yml in the Restify registry
     initializer 'restify-services' do |app|
-      services = app.config_for(:services).fetch('services', {})
+      services = app.config_for(:services).fetch(:services, {})
 
       services.each do |service, location|
         Restify::Registry.store service.to_sym, location
@@ -68,7 +68,7 @@ module Lanalytics
       # By using an after_initialize callback, we make sure that Redis can be
       # configured properly before we try to store any cron job information.
       app.config.after_initialize do
-        Sidekiq::Cron::Job.load_from_hash! app.config_for(:cron)
+        Sidekiq::Cron::Job.load_from_hash! app.config_for(:cron) || {}
       end
     end
 

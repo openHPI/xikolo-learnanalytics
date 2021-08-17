@@ -1,7 +1,8 @@
-require_dependency 'lanalytics/metric/base'
+# frozen_string_literal: true
+
+require 'lanalytics/metric/base'
 
 class MetricsController < ApplicationController
-
   def show
     name = params[:name]
     metric = Lanalytics::Metric.resolve(name)
@@ -20,7 +21,7 @@ class MetricsController < ApplicationController
   end
 
   def index
-    render(json: Lanalytics::Metric.all.map { |name|
+    metrics = Lanalytics::Metric.all.map do |name|
       metric = Lanalytics::Metric.resolve(name)
       {
         name: name.underscore,
@@ -28,9 +29,11 @@ class MetricsController < ApplicationController
         datasources: metric.datasource_keys,
         description: metric.desc,
         required_params: metric.required_params,
-        optional_params: metric.optional_params
+        optional_params: metric.optional_params,
       }
-    })
+    end
+
+    render(json: metrics)
   end
 
   private
@@ -42,17 +45,16 @@ class MetricsController < ApplicationController
   def metric_not_found_error
     render json: {
       error: {
-        name: "The metric name must be one of #{Lanalytics::Metric.all.join(', ')}"
-      }
-    }, status: 422
+        name: "The metric name must be one of #{Lanalytics::Metric.all.join(', ')}",
+      },
+    }, status: :unprocessable_entity
   end
 
   def metric_not_available_error
     render json: {
       error: {
-        name: 'The metric is not available'
-      }
-    }, status: 422
+        name: 'The metric is not available',
+      },
+    }, status: :unprocessable_entity
   end
-
 end

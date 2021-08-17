@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 ruby '~> 2.7.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.0'
+gem 'rails', '~> 6.1'
 
 gem 'bundler', '~> 2.0'
 
@@ -52,6 +52,7 @@ gem 'sidekiq-cron'
 
 # Use unicorn as the app server
 gem 'unicorn'
+gem 'unicorn-rails'
 
 gem 'iso_country_codes' # converting ISO country codes
 gem 'maxminddb' # Location tracking
@@ -68,13 +69,12 @@ gem 'responders'
 gem 'will_paginate'
 
 # for versioning
-gem 'paper_trail'
+gem 'paper_trail', '~> 12.0'
 
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'memory_profiler'
-  gem 'meta_request'
   gem 'os'
   gem 'pry-byebug'
   gem 'ruby-prof' # To do performance evaluation
