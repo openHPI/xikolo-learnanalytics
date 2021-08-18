@@ -50,6 +50,15 @@ module Reports
       end
     end
 
+    protected
+
+    # Global progress manager for this report
+    def progress
+      @progress ||= Xikolo::Progress.new do |summary|
+        @job.progress_to(summary.value, of: summary.total)
+      end
+    end
+
     private
 
     def csv_file(target, headers, &block)

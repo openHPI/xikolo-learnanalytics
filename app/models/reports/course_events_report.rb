@@ -107,19 +107,26 @@ module Reports
     # Scroll through the course events, page by page,
     # and yield each page to the caller
     def each_page
-      page = 1
+      page_number = 1
       scroll_id = nil
+      progress.update(course['id'], 0)
 
       loop do
-        paged = query_events(page, scroll_id)
-        yield paged
+        page = query_events(page_number, scroll_id)
+
+        yield page
+
+        progress.update(
+          course['id'],
+          page_number,
+          max: page[:total_pages].to_i,
+        )
 
         # When we reach the last page, bail out!
-        break unless paged[:next]
+        break unless page[:next]
 
-        @job.progress_to(page, of: paged[:total_pages])
-        page += 1
-        scroll_id = paged[:scroll_id]
+        page_number += 1
+        scroll_id = page[:scroll_id]
       end
     end
 

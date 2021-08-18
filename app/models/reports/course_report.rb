@@ -99,11 +99,6 @@ module Reports
       # Initialize access groups to preload some data.
       access_groups if @include_access_groups
 
-      # Global progress manager for this report
-      @progress = Xikolo::Progress.new do |summary|
-        @job.progress_to(summary.value, of: summary.total)
-      end
-
       # Pre-warm progress counter with current maximum values. They might change
       # while processing but will give a good expectation for the actual target.
       # This will make progress basically linear.
@@ -116,15 +111,15 @@ module Reports
           end,
         ).value!.first.response.headers['X_TOTAL_COUNT'].to_i
 
-        @progress.update(course['id'], 0, max: total_count)
+        progress.update(course['id'], 0, max: total_count)
       end
 
       courses.each do |course| # rubocop:disable Style/CombinableLoops
-        each_course(course, &block)
+        row_for_course(course, &block)
       end
     end
 
-    def each_course(course)
+    def row_for_course(course)
       enrollments_counter = 0
 
       # these metrics are fetched for all users at once from postgres
@@ -432,7 +427,7 @@ module Reports
 
           # Update report progress
           enrollments_counter += 1
-          @progress.update(
+          progress.update(
             course['id'],
             enrollments_counter,
             max: enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,

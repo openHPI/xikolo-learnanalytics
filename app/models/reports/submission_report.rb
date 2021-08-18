@@ -91,7 +91,8 @@ module Reports
     end
 
     def each_submission
-      i = 0
+      submissions_counter = 0
+      progress.update(item['content_id'], 0)
 
       submissions_promise = Xikolo.paginate_with_retries(
         max_retries: 3, wait: 60.seconds,
@@ -145,8 +146,12 @@ module Reports
 
         yield transform_submission(submission_hash)
 
-        i += 1
-        @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
+        submissions_counter += 1
+        progress.update(
+          item['content_id'],
+          submissions_counter,
+          max: page.response.headers['X_TOTAL_COUNT'].to_i,
+        )
       end
     end
 
