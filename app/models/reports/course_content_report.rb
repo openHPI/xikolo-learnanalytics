@@ -66,7 +66,8 @@ module Reports
     end
 
     def each_item
-      index = 0
+      items_counter = 0
+      progress.update(course['id'], 0)
 
       items_promise = Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
         course_service.rel(:items).get(
@@ -93,8 +94,12 @@ module Reports
 
         yield values
 
-        index += 1
-        @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
+        items_counter += 1
+        progress.update(
+          course['id'],
+          items_counter,
+          max: page.response.headers['X_TOTAL_COUNT'].to_i,
+        )
       end
     end
 

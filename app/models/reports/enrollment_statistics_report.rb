@@ -97,9 +97,6 @@ module Reports
     def generate!
       @job.update(annotation: annotation)
 
-      @reports_count = 1
-      @report_index = 0
-
       # We have to fetch these already at this point for cluster grouping and
       # progress calculation.
       if @include_all_classifiers
@@ -110,16 +107,19 @@ module Reports
         ) { course_service.rel(:classifiers).get }
 
         classifiers_promise.each_item do |classifier|
-          # filter classifiers only if explicitly configured
-          if reportable_classifiers.nil? ||
-             reportable_classifiers.include?(classifier['cluster'])
-            @classifiers.append(classifier)
-          end
+          # Filter classifiers only if explicitly configured, otherwise take all.
+          next if reportable_classifiers.present? && reportable_classifiers.exclude?(classifier['cluster'])
+
+          @classifiers.append(classifier)
+
+          # Pre-warm progress counter with maximum values per cluster. This will make progress basically linear.
+          progress.update(classifier['cluster'], 0, max: timeframe_count.to_i)
         end
 
         clusters = @classifiers.map {|c| c['cluster'] }.uniq
-        @reports_count += clusters.size
       end
+
+      progress.update('overall', 0, max: timeframe_count.to_i)
 
       csv_file("EnrollmentStatisticsReport_#{annotation}_overall", headers) do |&write|
         each_timeframe.call(&write)
@@ -128,10 +128,9 @@ module Reports
       return unless @include_all_classifiers
 
       clusters.each do |cluster|
-        @report_index += 1
         csv_file(
           "EnrollmentStatisticsReport_#{annotation}_#{cluster.underscore.gsub(/[^0-9A-Z]/i, '_')}",
-          headers(cluster)
+          headers(cluster),
         ) do |&write|
           each_timeframe(cluster).call(&write)
         end
@@ -255,10 +254,7 @@ module Reports
 
     def each_timeframe(cluster = nil)
       proc do |&block|
-        timeframe_index = 0
-        timeframe_count = dates.size
-
-        timeframe_count = (timeframe_count / @window_size.to_f).ceil unless @sliding_window
+        timeframe_counter = 0
 
         dates.each do |date|
           first_date = date.to_s
@@ -284,13 +280,22 @@ module Reports
 
           block.call values
 
-          timeframe_index += 1
-          @job.progress_to(
-            (@report_index * timeframe_count) + timeframe_index,
-            of: @reports_count * timeframe_count,
+          timeframe_counter += 1
+          progress.update(
+            cluster.presence || 'overall',
+            timeframe_counter,
+            max: timeframe_count.to_i,
           )
         end
       end
+    end
+
+    def timeframe_count
+      count = dates.size
+
+      return count if @sliding_window
+
+      (count / @window_size.to_f).ceil
     end
 
     def fetch_data(start_date, end_date, c_id = nil)

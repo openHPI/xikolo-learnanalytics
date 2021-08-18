@@ -112,7 +112,8 @@ module Reports
     end
 
     def each_post(&block)
-      i = 0
+      topics_counter = 0
+      progress.update(course['id'], 0)
 
       each_topic do |topic, page|
         yield transform_topic(topic)
@@ -120,8 +121,12 @@ module Reports
         each_comment(topic, 'Question', &block)
         each_answer(topic, &block) unless topic['discussion_flag']
 
-        i += 1
-        @job.progress_to(i, of: page.response.headers['X_TOTAL_COUNT'])
+        topics_counter += 1
+        progress.update(
+          course['id'],
+          topics_counter,
+          max: page.response.headers['X_TOTAL_COUNT'].to_i,
+        )
       end
     end
 

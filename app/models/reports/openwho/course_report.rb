@@ -104,108 +104,127 @@ module Reports::Openwho
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def each_row
-      courses.each_with_index do |course, course_index|
-        index = 0
+    def each_row(&block)
+      # Pre-warm progress counter with current maximum values. They might change
+      # while processing but will give a good expectation for the actual target.
+      # This will make progress basically linear.
+      courses.each do |course|
+        total_count = Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
+            course_service
+              .rel(:enrollments)
+              .get(course_id: course['id'], per_page: 1, deleted: true)
+          end,
+        ).value!.first.response.headers['X_TOTAL_COUNT'].to_i
 
-        enrollments_promise =
-          Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-            course_service.rel(:enrollments).get(
-              course_id: course['id'], per_page: 1000, deleted: true,
-            )
-          end
+        progress.update(course['id'], 0, max: total_count)
+      end
 
-        enrollments_promise.each_item do |enrollment, enrollment_page|
-          user = Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-              account_service.rel(:user).get(id: enrollment['user_id'])
-            end,
-          ).value!.first
+      courses.each do |course| # rubocop:disable Style/CombinableLoops
+        row_for_course(course, &block)
+      end
+    end
 
-          profile = Xikolo::RetryingPromise.new(
-            Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-              user.rel(:profile).get
-            end,
-          ).value!.first
+    def row_for_course(course)
+      enrollments_counter = 0
 
-          course_start_date = course['start_date']&.to_datetime
-          birth_compare_date = course_start_date || Time.zone.now
-          age_data = BirthDate.new(user['born_at'])
-          age_group = age_data.age_group_at(birth_compare_date)
-
-          profile_fields = profile_config.for(profile)
-
-          user_id = if @de_pseudonymized
-                      user['id']
-                    else
-                      Digest::SHA256.hexdigest(user['id'])
-                    end
-
-          values = [
-            user_id,
-            user['created_at'],
-            enrollment['created_at'],
-            user['language'],
-            user['affiliated'],
-            age_group,
-            profile_fields['primary_language'],
-            profile_fields['gender'],
-            profile_fields['affiliation'],
-            profile_fields['country'],
-          ]
-
-          last_country_code = fetch_metric(
-            'LastCountry', course['id'], user['id']
-          )[:code]
-          last_country_name = suppress(IsoCountryCodes::UnknownCodeError) do
-            IsoCountryCodes.find(last_country_code)&.name
-          end
-
-          values.append(last_country_name || last_country_code)
-
-          if reportable_country_regions.any?
-            regions = reportable_country_regions.select do |_, countries|
-              countries.any? {|c| c.casecmp(last_country_code) == 0 }
-            end
-
-            values.append(regions.keys.join(';'))
-          end
-
-          if @include_enrollment_evaluation
-            evaluation = Xikolo::RetryingPromise.new(
-              Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-                course_service.rel(:enrollments).get(
-                  course_id: course['id'],
-                  user_id: enrollment['user_id'],
-                  deleted: true,
-                  learning_evaluation: true,
-                )
-              end,
-            ).value!.first.first # destruct promise array and then response
-
-            values.append(
-              evaluation.dig('visits', 'visited'),
-              evaluation.dig('visits', 'percentage'),
-              evaluation.dig('points', 'achieved'),
-              evaluation.dig('points', 'percentage'),
-            )
-          end
-
-          values.append(
-            course['course_code'],
-            course['lang'],
-          )
-
-          yield values
-
-          index += 1
-          @job.progress_to(
-            (course_index *
-              enrollment_page.response.headers['X_TOTAL_COUNT'].to_i) + index,
-            of: courses.count *
-              enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,
+      enrollments_promise =
+        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+          course_service.rel(:enrollments).get(
+            course_id: course['id'], per_page: 1000, deleted: true,
           )
         end
+
+      enrollments_promise.each_item do |enrollment, enrollment_page|
+        user = Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
+            account_service.rel(:user).get(id: enrollment['user_id'])
+          end,
+        ).value!.first
+
+        profile = Xikolo::RetryingPromise.new(
+          Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
+            user.rel(:profile).get
+          end,
+        ).value!.first
+
+        course_start_date = course['start_date']&.to_datetime
+        birth_compare_date = course_start_date || Time.zone.now
+        age_data = BirthDate.new(user['born_at'])
+        age_group = age_data.age_group_at(birth_compare_date)
+
+        profile_fields = profile_config.for(profile)
+
+        user_id = if @de_pseudonymized
+                    user['id']
+                  else
+                    Digest::SHA256.hexdigest(user['id'])
+                  end
+
+        values = [
+          user_id,
+          user['created_at'],
+          enrollment['created_at'],
+          user['language'],
+          user['affiliated'],
+          age_group,
+          profile_fields['primary_language'],
+          profile_fields['gender'],
+          profile_fields['affiliation'],
+          profile_fields['country'],
+        ]
+
+        last_country_code = fetch_metric(
+          'LastCountry', course['id'], user['id']
+        )[:code]
+        last_country_name = suppress(IsoCountryCodes::UnknownCodeError) do
+          IsoCountryCodes.find(last_country_code)&.name
+        end
+
+        values.append(last_country_name || last_country_code)
+
+        if reportable_country_regions.any?
+          regions = reportable_country_regions.select do |_, countries|
+            countries.any? {|c| c.casecmp(last_country_code) == 0 }
+          end
+
+          values.append(regions.keys.join(';'))
+        end
+
+        if @include_enrollment_evaluation
+          evaluation = Xikolo::RetryingPromise.new(
+            Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+              course_service.rel(:enrollments).get(
+                course_id: course['id'],
+                user_id: enrollment['user_id'],
+                deleted: true,
+                learning_evaluation: true,
+              )
+            end,
+          ).value!.first.first # destruct promise array and then response
+
+          values.append(
+            evaluation.dig('visits', 'visited'),
+            evaluation.dig('visits', 'percentage'),
+            evaluation.dig('points', 'achieved'),
+            evaluation.dig('points', 'percentage'),
+          )
+        end
+
+        values.append(
+          course['course_code'],
+          course['lang'],
+        )
+
+        yield values
+
+        # Update report progress
+        enrollments_counter += 1
+        progress.update(
+          course['id'],
+          enrollments_counter,
+          max: enrollment_page.response.headers['X_TOTAL_COUNT'].to_i,
+        )
       end
     end
     # rubocop:enable all

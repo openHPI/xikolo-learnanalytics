@@ -145,7 +145,8 @@ module Reports
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def each_course
-      index = 0
+      courses_counter = 0
+      progress.update('courses', 0)
 
       courses_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
@@ -248,8 +249,12 @@ module Reports
 
         yield values
 
-        index += 1
-        @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
+        courses_counter += 1
+        progress.update(
+          'courses',
+          courses_counter,
+          max: page.response.headers['X_TOTAL_COUNT'].to_i,
+        )
       end
     end
     # rubocop:enable all

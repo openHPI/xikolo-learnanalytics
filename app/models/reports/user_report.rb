@@ -175,10 +175,11 @@ module Reports
     end
 
     def each_user
+      users_counter = 0
+      progress.update('users', 0)
+
       # Initialize access groups to preload some data.
       access_groups if @include_access_groups
-
-      index = 0
 
       users_promise =
         Xikolo.paginate_with_retries(max_retries: 5, wait: 90.seconds) do
@@ -286,8 +287,12 @@ module Reports
 
         yield values
 
-        index += 1
-        @job.progress_to(index, of: page.response.headers['X_TOTAL_COUNT'])
+        users_counter += 1
+        progress.update(
+          'users',
+          users_counter,
+          max: page.response.headers['X_TOTAL_COUNT'].to_i,
+        )
       end
     end
 
