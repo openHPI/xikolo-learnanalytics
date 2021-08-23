@@ -8,13 +8,15 @@ module Lanalytics
       required_parameter :course_id
 
       exec do |params|
+        items = video_items(params[:course_id])
+
         body = {
           size: 0,
           query: {
             bool: {
               must: [
                 {match: {verb: 'video_play'}},
-              ] + all_filters(nil, params[:course_id], nil),
+              ].append(resources_filter(items.pluck('id'))).compact,
             },
           },
           aggs: {
@@ -45,6 +47,27 @@ module Lanalytics
         end
 
         {count: result.dig('aggregations', 'sum', 'value').to_i}
+      end
+
+      class << self
+        private
+
+        def video_items(course_id)
+          videos = []
+          Xikolo.paginate(
+            course_api.rel(:items).get(
+              course_id: course_id,
+              content_type: 'video',
+            ),
+          ) do |video|
+            videos.append(video)
+          end
+          videos
+        end
+
+        def course_api
+          @course_api ||= Restify.new(:course).get.value!
+        end
       end
     end
   end
