@@ -1,7 +1,9 @@
-class AddJob < ActiveRecord::Migration[4.2]
+# frozen_string_literal: true
 
+class AddJob < ActiveRecord::Migration[4.2]
   def change
     enable_extension 'uuid-ossp'
+
     create_table :jobs, id: :uuid do |t|
       t.string  :task_type
       t.string  :task_scope
@@ -10,9 +12,8 @@ class AddJob < ActiveRecord::Migration[4.2]
       t.timestamps
       t.uuid  :user_id
       t.uuid  :file_id
-      t.datetime  :file_expire_date
+      t.datetime :file_expire_date
       t.integer :progress
-
     end
   end
 end

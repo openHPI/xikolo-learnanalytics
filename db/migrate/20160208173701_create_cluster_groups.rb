@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateClusterGroups < ActiveRecord::Migration[4.2]
   def change
     create_table :cluster_groups do |t|

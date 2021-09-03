@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateTeacherActions < ActiveRecord::Migration[4.2]
   def change
     create_table :teacher_actions, id: :uuid do |t|

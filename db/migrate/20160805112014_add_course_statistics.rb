@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddCourseStatistics < ActiveRecord::Migration[4.2]
   def change
     create_table :course_statistics, id: :uuid do |t|
@@ -29,7 +31,7 @@ class AddCourseStatistics < ActiveRecord::Migration[4.2]
       t.datetime :start_date
       t.datetime :end_date
       t.integer :new_users
-      t.json  :enrollments_per_day
+      t.json :enrollments_per_day
       t.boolean :hidden
       t.timestamps
     end

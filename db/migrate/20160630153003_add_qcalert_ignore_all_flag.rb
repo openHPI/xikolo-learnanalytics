@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddQcalertIgnoreAllFlag < ActiveRecord::Migration[4.2]
   def change
     change_table :qc_alerts do |t|
