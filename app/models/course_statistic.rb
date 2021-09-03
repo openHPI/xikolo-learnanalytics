@@ -1,18 +1,36 @@
+# frozen_string_literal: true
+
 class CourseStatistic < ApplicationRecord
   has_paper_trail
 
+  # rubocop:disable Metrics/BlockLength
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable Metrics/PerceivedComplexity
   def calculate!
     course = course_service.rel(:course).get(id: course_id).value!
 
     Xikolo::RetryingPromise.new(
-      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { course_service.rel(:course_statistic).get(course_id: course['id']) },
-      Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) { course_service.rel(:stats).get(course_id: course['id'], key: 'extended') },
-      Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) { course_service.rel(:stats).get(course_id: course['id'], key: 'enrollments_by_day') },
-      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { pinboard_service.rel(:statistic).get(id: course['id']) },
-      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { helpdesk_service.rel(:statistics).get(course_id: course['id']) },
-      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) { certificate_service.rel(:open_badge_statistics).get(course_id: course['id']) }
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+        course_service.rel(:course_statistic).get(course_id: course['id'])
+      end,
+      Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+        course_service.rel(:stats).get(course_id: course['id'], key: 'extended')
+      end,
+      Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
+        course_service.rel(:stats).get(course_id: course['id'], key: 'enrollments_by_day')
+      end,
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+        pinboard_service.rel(:statistic).get(id: course['id'])
+      end,
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+        helpdesk_service.rel(:statistics).get(course_id: course['id'])
+      end,
+      Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+        certificate_service.rel(:open_badge_statistics).get(course_id: course['id'])
+      end,
     ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats, badge_stats|
-      days_since_course_start = course['start_date'] && (Date.today - course['start_date'].to_date).to_i
+      days_since_course_start = course['start_date'] && (Time.zone.today - course['start_date'].to_date).to_i
 
       enrollments_per_day = []
       if course['status'] == 'active'
@@ -29,17 +47,19 @@ class CourseStatistic < ApplicationRecord
 
       certificates = Lanalytics::Metric::Certificates.query(course_id: course['id'])
 
-      if certificates['record_of_achievement'] > 0 && extended_course_stats['shows_at_middle'].to_i > 0
-        completion_rate = certificates['record_of_achievement'] / extended_course_stats['shows_at_middle'].to_f
-      else
-        completion_rate = 0
-      end
+      completion_rate =
+        if certificates['record_of_achievement'] > 0 && extended_course_stats['shows_at_middle'].to_i > 0
+          certificates['record_of_achievement'] / extended_course_stats['shows_at_middle'].to_f
+        else
+          0
+        end
 
-      if certificates['confirmation_of_participation'] > 0 && extended_course_stats['shows'].to_i > 0
-        consumption_rate = certificates['confirmation_of_participation'] / extended_course_stats['shows'].to_f
-      else
-        consumption_rate = 0
-      end
+      consumption_rate =
+        if certificates['confirmation_of_participation'] > 0 && extended_course_stats['shows'].to_i > 0
+          certificates['confirmation_of_participation'] / extended_course_stats['shows'].to_f
+        else
+          0
+        end
 
       update(
         course_id: course['id'],
@@ -75,12 +95,12 @@ class CourseStatistic < ApplicationRecord
         # active users
         active_users_last_day: Lanalytics::Metric::ActiveUserCount.query(
           course_id: course['id'],
-          start_date: (DateTime.now - 1.day).iso8601(3)
+          start_date: (DateTime.now - 1.day).iso8601(3),
         )[:active_users].to_i,
 
         active_users_last_7days: Lanalytics::Metric::ActiveUserCount.query(
           course_id: course['id'],
-          start_date: (DateTime.now - 7.days).iso8601(3)
+          start_date: (DateTime.now - 7.days).iso8601(3),
         )[:active_users].to_i,
 
         # success
@@ -105,8 +125,12 @@ class CourseStatistic < ApplicationRecord
         answers_last_day_in_learning_rooms: 0,
         comments_on_answers_in_learning_rooms: 0,
         comments_on_answers_last_day_in_learning_rooms: 0,
-        comments_on_questions_in_learning_rooms: pinboard_stats['posts_in_collab_spaces'].to_i - pinboard_stats['threads_in_collab_spaces'].to_i,
-        comments_on_questions_last_day_in_learning_rooms: pinboard_stats['posts_last_day_in_collab_spaces'].to_i - pinboard_stats['threads_last_day_in_collab_spaces'].to_i,
+        comments_on_questions_in_learning_rooms:
+          pinboard_stats['posts_in_collab_spaces'].to_i -
+            pinboard_stats['threads_in_collab_spaces'].to_i,
+        comments_on_questions_last_day_in_learning_rooms:
+          pinboard_stats['posts_last_day_in_collab_spaces'].to_i -
+            pinboard_stats['threads_last_day_in_collab_spaces'].to_i,
 
         # helpdesk
         helpdesk_tickets: ticket_stats['ticket_count'],
@@ -119,6 +143,7 @@ class CourseStatistic < ApplicationRecord
       )
     end.value!
   end
+  # rubocop:enable all
 
   def threads
     questions.to_i
@@ -129,11 +154,17 @@ class CourseStatistic < ApplicationRecord
   end
 
   def posts
-    questions.to_i + answers.to_i + comments_on_questions.to_i + comments_on_answers.to_i
+    questions.to_i +
+      answers.to_i +
+      comments_on_questions.to_i +
+      comments_on_answers.to_i
   end
 
   def posts_last_day
-    questions_last_day.to_i + answers_last_day.to_i + comments_on_questions_last_day.to_i + comments_on_answers_last_day.to_i
+    questions_last_day.to_i +
+      answers_last_day.to_i +
+      comments_on_questions_last_day.to_i +
+      comments_on_answers_last_day.to_i
   end
 
   def threads_in_collab_spaces
@@ -145,11 +176,17 @@ class CourseStatistic < ApplicationRecord
   end
 
   def posts_in_collab_spaces
-    questions_in_learning_rooms.to_i + answers_in_learning_rooms.to_i + comments_on_questions_in_learning_rooms.to_i + comments_on_answers_in_learning_rooms.to_i
+    questions_in_learning_rooms.to_i +
+      answers_in_learning_rooms.to_i +
+      comments_on_questions_in_learning_rooms.to_i +
+      comments_on_answers_in_learning_rooms.to_i
   end
 
   def posts_last_day_in_collab_spaces
-    questions_last_day_in_learning_rooms.to_i + answers_last_day_in_learning_rooms.to_i + comments_on_questions_last_day_in_learning_rooms.to_i + comments_on_answers_last_day_in_learning_rooms.to_i
+    questions_last_day_in_learning_rooms.to_i +
+      answers_last_day_in_learning_rooms.to_i +
+      comments_on_questions_last_day_in_learning_rooms.to_i +
+      comments_on_answers_last_day_in_learning_rooms.to_i
   end
 
   private

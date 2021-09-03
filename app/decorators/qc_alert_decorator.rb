@@ -1,4 +1,6 @@
-class QcAlertDecorator< ApplicationDecorator
+# frozen_string_literal: true
+
+class QcAlertDecorator < ApplicationDecorator
   delegate_all
 
   def as_json(opts = {})
@@ -16,7 +18,7 @@ class QcAlertDecorator< ApplicationDecorator
       qc_alert_data: model.qc_alert_data,
       is_global_ignored: model.is_global_ignored,
       url: h.qc_alert_path(model),
-      ignore_url: h.ignore_qc_alerts_path(qc_alert_id: model.id)
+      ignore_url: h.ignore_qc_alerts_path(qc_alert_id: model.id),
     }.as_json(opts)
   end
 end

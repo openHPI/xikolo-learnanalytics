@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CalculateCourseStatsWorker
   include Sidekiq::Worker
 
@@ -13,11 +15,10 @@ class CalculateCourseStatsWorker
 
   def each_course
     Xikolo.paginate(
-      course_service.rel(:courses).get(
-        groups: 'any'
-      )
+      course_service.rel(:courses).get(groups: 'any'),
     ) do |course|
-      next if course['status'] == 'preparation' or course['external_course_url'].present?
+      next if course['status'] == 'preparation' || course['external_course_url'].present?
+
       yield course
     end
   end
@@ -27,7 +28,7 @@ class CalculateCourseStatsWorker
   end
 
   def notify!
-    Msgr.publish Hash.new, to: 'xikolo.lanalytics.course_stats.calculate'
+    Msgr.publish({}, to: 'xikolo.lanalytics.course_stats.calculate')
   end
 
   def course_service

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module QcRules
   class SlidesForAllCourseVideos
     def initialize(rule)
@@ -14,7 +16,7 @@ module QcRules
       else
         @rule.alerts_for(course_id: course['id']).open!(
           severity: 'high',
-          annotation: "Slide based Navigation #{video_titles.join ', '}"
+          annotation: "Slide based Navigation #{video_titles.join ', '}",
         )
       end
     end
@@ -31,14 +33,13 @@ module QcRules
       result = []
 
       Xikolo.paginate(
-        course_service.rel(:items).get(course_id: course['id'], content_type: 'video')
+        course_service.rel(:items).get(course_id: course['id'], content_type: 'video'),
       ) do |item|
         next if item['content_id'].blank?
 
         video = video_service.rel(:video).get(id: item['content_id']).value!
-        if video['thumbnail_archive_id'].blank?
-          result << video['title']
-        end
+
+        result << video['title'] if video['thumbnail_archive_id'].blank?
       end
 
       result

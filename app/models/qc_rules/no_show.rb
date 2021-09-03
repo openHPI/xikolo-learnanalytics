@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module QcRules
   class NoShow
     def initialize(rule)
@@ -11,7 +13,7 @@ module QcRules
       if no_show_rate >= threshold_for(course['start_date'].to_datetime)
         @rule.alerts_for(course_id: course['id']).open!(
           severity: 'medium',
-          annotation: "High no-show rate: #{no_show_rate}"
+          annotation: "High no-show rate: #{no_show_rate}",
         )
       else
         @rule.alerts_for(course_id: course['id']).close!
@@ -30,13 +32,13 @@ module QcRules
 
     def no_show_rate_for(course)
       course_stats = course_service.rel(:stats).get(
-        course_id: course['id'], key: 'extended'
+        course_id: course['id'], key: 'extended',
       ).value!
 
       enrollments = course_stats['student_enrollments']
       no_shows = course_stats['no_shows']
 
-      if enrollments.to_f == 0
+      if enrollments.to_i.zero?
         0
       else
         (no_shows * 100 / enrollments.to_f).round(2)

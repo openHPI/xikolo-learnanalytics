@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class UserGroups
-  def initialize(*args)
+  def initialize(*)
     @users = {}
     @groups = keys.map do |group_key|
       group_name = group_name(group_key)
       user_ids = account_service.rel(:group).get(id: group_name).then do |group|
         ids = []
         Xikolo.paginate(
-          group.rel(:members).get
+          group.rel(:members).get,
         ) do |member|
           ids << member['id']
         end
@@ -20,7 +22,7 @@ class UserGroups
     []
   end
 
-  def group_name(group_key)
+  def group_name(_)
     nil
   end
 
@@ -36,15 +38,13 @@ class UserGroups
     @account_service ||= Restify.new(:account).get.value!
   end
 
-  public
-
   class GlobalGroups < UserGroups
     def keys
       Lanalytics.config.global_permission_groups
     end
 
     def group_name(group_key)
-      'xikolo.' + group_key
+      "xikolo.#{group_key}"
     end
   end
 

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class QcAlert < ApplicationRecord
-  has_many :qc_alert_statuses
-  has_many :qc_course_statuses
+  has_many :qc_alert_statuses, dependent: :destroy
+  has_many :qc_recommendations, dependent: :destroy
   belongs_to :qc_rule, optional: true
 
   default_scope { order updated_at: :desc }
@@ -13,7 +15,7 @@ class QcAlert < ApplicationRecord
       statuses_table
         .where(statuses_table[:user_id].eq(user_id))
         .where(statuses_table[:ignored].eq(true))
-        .project(:qc_alert_id)
+        .project(:qc_alert_id),
     ))
   }
 

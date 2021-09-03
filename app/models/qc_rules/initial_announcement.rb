@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module QcRules
   class InitialAnnouncement
     def initialize(rule)
@@ -8,7 +10,7 @@ module QcRules
       if raise_alert?(course)
         @rule.alerts_for(course_id: course['id']).open!(
           severity: course['start_date'].to_datetime < 4.business_days.from_now ? 'high' : 'low',
-          annotation: 'No initial mail announcement before course start'
+          annotation: 'No initial mail announcement before course start',
         )
       else
         @rule.alerts_for(course_id: course['id']).close!
@@ -33,7 +35,7 @@ module QcRules
 
     def no_start_announcement?(course)
       Xikolo.paginate(
-        news_service.rel(:news_index).get(course_id: course['id'], published: true)
+        news_service.rel(:news_index).get(course_id: course['id'], published: true),
       ) do |announcement|
         next if announcement['publish_at'].blank?
         next if announcement['sending_state'].to_i == 0

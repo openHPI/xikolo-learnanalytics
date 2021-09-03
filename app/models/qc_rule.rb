@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 class QcRule < ApplicationRecord
-  has_many :qc_alert
-  has_many :qc_recommendations
-  has_many :qc_course_statuses
+  has_many :qc_alert, dependent: :destroy
+  has_many :qc_course_statuses, dependent: :destroy
 
   scope :active, -> { where is_active: true }
   scope :global, -> { where is_global: true }
@@ -20,8 +21,6 @@ class QcRule < ApplicationRecord
   end
 
   def alerts_for(**attributes)
-    QcAlertCollection.new(
-      qc_alert.where(attributes)
-    )
+    QcAlertCollection.new(qc_alert.where(attributes))
   end
 end
