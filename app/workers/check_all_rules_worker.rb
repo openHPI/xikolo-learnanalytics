@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class CheckAllRulesWorker
   include Sidekiq::Worker
+
   sidekiq_options queue: :high, retry: false
 
   def perform
@@ -8,10 +11,7 @@ class CheckAllRulesWorker
 
     # Course-specific rules
     Xikolo.paginate(
-      course_service.rel(:courses).get(
-        groups: 'any',
-        public: true
-      )
+      course_service.rel(:courses).get(groups: 'any', public: true),
     ) do |course|
       # We might want to run checks for external courses too later, so we fetch them
       next if course['external_course_url'].present?

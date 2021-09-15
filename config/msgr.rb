@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #
 #
 #
@@ -17,7 +19,6 @@ route 'xikolo.account.user.destroy', to: 'Lanalytics#destroy'
 
 # route 'xikolo.account.session.create', to: 'Lanalytics#create'
 
-
 # ------------------- Course Domain Entities -------------------
 route 'xikolo.course.course.create', to: 'Lanalytics#create'
 route 'xikolo.course.course.update', to: 'Lanalytics#update'
@@ -34,7 +35,6 @@ route 'xikolo.course.enrollment.completed', to: 'Lanalytics#create'
 route 'xikolo.course.enrollment.create', to: 'Lanalytics#create'
 route 'xikolo.course.enrollment.update', to: 'Lanalytics#update'
 
-
 # ------------------- Learning Room Domain Entities -------------------
 route 'xikolo.collabspace.collab_space.create', to: 'Lanalytics#create'
 route 'xikolo.collabspace.collab_space.update', to: 'Lanalytics#update'
@@ -44,10 +44,8 @@ route 'xikolo.collabspace.membership.create', to: 'Lanalytics#create'
 route 'xikolo.collabspace.membership.update', to: 'Lanalytics#update'
 route 'xikolo.collabspace.membership.destroy', to: 'Lanalytics#destroy'
 
-
 # ------------------- Submissions Domain Entities -------------------
 route 'xikolo.submission.submission.create', to: 'Lanalytics#create'
-
 
 # ------------------- Pinboard Domain Entities -------------------
 route 'xikolo.pinboard.question.create', to: 'Lanalytics#create'
@@ -62,17 +60,14 @@ route 'xikolo.pinboard.watch.create', to: 'Lanalytics#create'
 route 'xikolo.pinboard.watch.update', to: 'Lanalytics#update'
 route 'xikolo.pinboard.answer.accept', to: 'Lanalytics#create'
 
-
 # ------------------- Helpdesk Domain Entities -------------------
 route 'xikolo.helpdesk.ticket.create', to: 'Lanalytics#create'
-
 
 # ------------------- Web Events -------------------
 route 'xikolo.web.exp_event.create', to: 'Lanalytics#handle_user_event'
 
 route 'xikolo.web.referrer', to: 'Lanalytics#create'
 route 'xikolo.web.tracking', to: 'Lanalytics#create'
-
 
 # If you want to know how the routes look like, you can puts them with the following line:x
 # puts @routes.inspect

@@ -1,7 +1,9 @@
-class QcCourseStatusesController< ApplicationController
+# frozen_string_literal: true
+
+class QcCourseStatusesController < ApplicationController
   responders Responders::DecorateResponder,
-             Responders::HttpCacheResponder,
-             Responders::PaginateResponder
+    Responders::HttpCacheResponder,
+    Responders::PaginateResponder
 
   respond_to :json
 
@@ -22,6 +24,6 @@ class QcCourseStatusesController< ApplicationController
   private
 
   def qc_course_status_params
-    params.permit( :qc_rule_id, :course_id, :status)
+    params.permit(:qc_rule_id, :course_id, :status)
   end
 end

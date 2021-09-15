@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module QcRules
   class AnnouncementFailed
     def initialize(rule)
@@ -6,11 +8,9 @@ module QcRules
 
     def run
       Xikolo.paginate(
-        news_service.rel(:news_index).get(
-          published: true
-        )
+        news_service.rel(:news_index).get(published: true),
       ) do |announcement|
-        if announcement['publish_at'].blank? or announcement['publish_at'].to_datetime < 2.weeks.ago
+        if announcement['publish_at'].blank? || announcement['publish_at'].to_datetime < 2.weeks.ago
           alerts_for(announcement).close!
           next
         end
@@ -21,7 +21,7 @@ module QcRules
         if announcement_failed?(announcement, mail_logs)
           alerts_for(announcement).open!(
             severity: 'high',
-            annotation: "Announcement failed #{announcement['title']} (#{announcement['id']})"
+            annotation: "Announcement failed #{announcement['title']} (#{announcement['id']})",
           )
         else
           alerts_for(announcement).close!
@@ -33,9 +33,9 @@ module QcRules
 
     def alerts_for(announcement)
       @rule.alerts_for(
-        course_id: announcement['course_id'] # may be nil
+        course_id: announcement['course_id'], # may be nil
       ).with_data(
-        resource_id: announcement['id']
+        resource_id: announcement['id'],
       )
     end
 

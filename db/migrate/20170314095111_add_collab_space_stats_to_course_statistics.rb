@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 class AddCollabSpaceStatsToCourseStatistics < ActiveRecord::Migration[4.2]
+  # rubocop:disable Rails/BulkChangeTable
   def change
     rename_column :course_statistics, :total_questions, :questions
     rename_column :course_statistics, :total_answers, :answers
@@ -13,4 +16,5 @@ class AddCollabSpaceStatsToCourseStatistics < ActiveRecord::Migration[4.2]
     add_column :course_statistics, :comments_on_questions_in_learning_rooms, :integer
     add_column :course_statistics, :comments_on_questions_last_day_in_learning_rooms, :integer
   end
+  # rubocop:enable all
 end

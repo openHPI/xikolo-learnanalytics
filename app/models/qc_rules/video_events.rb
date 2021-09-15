@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module QcRules
   class VideoEvents
-
     # The percentage from which we consider the amount of play/pause events suspicious
     THRESHOLD_PERCENTAGE = 0.20
 
@@ -15,8 +16,8 @@ module QcRules
         course_service.rel(:items).get(
           course_id: course['id'],
           content_type: 'video',
-          published: true
-        )
+          published: true,
+        ),
       ) do |item|
         video_result = calculate_metrics(item)
         if video_result.empty?
@@ -24,13 +25,13 @@ module QcRules
             .with_data(resource_id: item['id'])
             .close!
         else
-          video_positions = video_result.map { |s| convert_seconds_to_time(s) }
+          video_positions = video_result.map {|s| convert_seconds_to_time(s) }
           @rule.alerts_for(course_id: course['id'])
             .with_data(resource_id: item['id'])
             .open!(
               severity: 'low',
               annotation: "Many Pause/Play Events in '#{item.title}' at positions: #{video_positions.join ', '}",
-              qc_alert_data: {'video_events' => video_result.to_s}
+              qc_alert_data: {'video_events' => video_result.to_s},
             )
         end
       end
@@ -59,7 +60,7 @@ module QcRules
       threshold = start_value * THRESHOLD_PERCENTAGE
 
       start_pause_time
-        .select { |_time, result| result > threshold }
+        .select {|_time, result| result > threshold }
         .keys
         .slice(1..-2) # Cut off first and last one
     end

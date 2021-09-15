@@ -1,7 +1,9 @@
-class QcRecommendationsController< ApplicationController
+# frozen_string_literal: true
+
+class QcRecommendationsController < ApplicationController
   responders Responders::DecorateResponder,
-             Responders::HttpCacheResponder,
-             Responders::PaginateResponder
+    Responders::HttpCacheResponder,
+    Responders::PaginateResponder
 
   respond_to :json
 
@@ -12,5 +14,4 @@ class QcRecommendationsController< ApplicationController
   def show
     respond_with QcRecommendation.find params[:id]
   end
-
 end

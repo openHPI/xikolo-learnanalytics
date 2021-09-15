@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 class ReportJobDecorator < ApplicationDecorator
   delegate_all
 
   def as_json(opts = {})
-    { id: model.id,
+    {
+      id: model.id,
       task_type: model.task_type,
       task_scope: model.task_scope,
       status: model.status,
@@ -12,9 +15,9 @@ class ReportJobDecorator < ApplicationDecorator
       user_id: model.user_id,
       options: model.options,
       progress: model.progress,
-      annotation: model.annotation
-    }.tap { |fields|
+      annotation: model.annotation,
+    }.tap do |fields|
       fields[:error_text] = model.error_text if report_job.failing?
-    }.as_json(opts)
+    end.as_json(opts)
   end
 end

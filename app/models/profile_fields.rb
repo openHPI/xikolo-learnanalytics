@@ -37,7 +37,7 @@ class ProfileFields
     if from_field['type'] == 'CustomTextField'
       "\"#{from_field.dig('values', 0)}\""
     else
-      from_field.dig('values')&.join(';')
+      from_field['values']&.join(';')
     end
   end
 end

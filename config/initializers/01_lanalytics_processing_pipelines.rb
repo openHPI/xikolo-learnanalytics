@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # run before integration initializers
 
 # needed for autoloading constants in development

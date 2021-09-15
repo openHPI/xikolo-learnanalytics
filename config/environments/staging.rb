@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -19,7 +21,7 @@ Rails.application.configure do
 
   # Set to :debug to see everything in the log.
   config.log_level = :info
-  Rails.logger = Logger.new(STDOUT)
+  Rails.logger = Logger.new($stdout)
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify

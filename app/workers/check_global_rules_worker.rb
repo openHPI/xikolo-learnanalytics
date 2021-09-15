@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class CheckGlobalRulesWorker
   include Sidekiq::Worker
+
   sidekiq_options queue: :high, retry: false
 
   def perform

@@ -9,7 +9,6 @@ AllCops:
   TargetRailsVersion: 6.1
   Exclude:
     - 'bin/**'
-    - 'config/initializers/integration*'
     - 'db/schema.rb'
     - 'vendor/**'
 
@@ -122,12 +121,6 @@ Layout/CaseIndentation:
     - case
     - end
   IndentOneStep: true
-
-# This is currently broken:
-#   https://github.com/rubocop-hq/rubocop/issues/7212
-#
-Layout/EmptyLinesAroundAccessModifier:
-  Enabled: false
 
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent

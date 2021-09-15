@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 class QcRecommendationDecorator < ApplicationDecorator
   delegate_all
 
   def as_json(opts = {})
-    { id: model.id,
+    {
+      id: model.id,
       qc_alert_id: model.qc_alert_id,
     }.as_json(opts)
   end

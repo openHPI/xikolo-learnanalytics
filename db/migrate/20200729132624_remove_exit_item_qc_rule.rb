@@ -2,9 +2,13 @@
 
 class RemoveExitItemQcRule < ActiveRecord::Migration[5.2]
   class QcRule < ActiveRecord::Base; end
+
   class QcCourseStatus < ActiveRecord::Base; end
+
   class QcAlert < ActiveRecord::Base; end
+
   class QcAlertStatus < ActiveRecord::Base; end
+
   class QcRecommendation < ActiveRecord::Base; end
 
   def up

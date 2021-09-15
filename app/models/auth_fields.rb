@@ -15,8 +15,7 @@ class AuthFields
     reportable_auth_fields.map do |f|
       authorizations
         .select {|auth| auth['provider'] == f.split('.').first }
-        .map {|auth| auth.dig(*f.split('.').drop(1)) }
-        .compact
+        .filter_map {|auth| auth.dig(*f.split('.').drop(1)) }
         .join(',')
     end
   end

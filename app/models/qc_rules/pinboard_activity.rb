@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module QcRules
   class PinboardActivity
     # The percentage of users that should take part in the forum activity in the last week
@@ -14,17 +16,19 @@ module QcRules
       end
 
       total_enrollments = enrollment_count(course)
-      if total_enrollments >= 100 and course['start_date'].to_datetime < 2.day.ago
-        activity = calculate_activity(course, total_enrollments)
 
-        if activity < THRESHOLD
-          @rule.alerts_for(course_id: course['id']).open!(
-            severity: severity(activity, THRESHOLD),
-            annotation: "Norm. activity #{activity}"
-          )
-        else
-          @rule.alerts_for(course_id: course['id']).close!
-        end
+      return unless total_enrollments >= 100 &&
+                    course['start_date'].to_datetime < 2.days.ago
+
+      activity = calculate_activity(course, total_enrollments)
+
+      if activity < THRESHOLD
+        @rule.alerts_for(course_id: course['id']).open!(
+          severity: severity(activity, THRESHOLD),
+          annotation: "Norm. activity #{activity}",
+        )
+      else
+        @rule.alerts_for(course_id: course['id']).close!
       end
     end
 
@@ -51,14 +55,14 @@ module QcRules
       Lanalytics::Metric::PinboardActivity.query(
         course_id: course['id'],
         start_date: start_time.iso8601,
-        end_date: Time.now.iso8601
+        end_date: Time.now.iso8601,
       )[:count]
     end
 
     def calculate_activity(course, total_enrollments)
       start_time_for_activity = [course['start_date'].to_datetime, 7.days.ago.to_datetime].max
       activity = activity_count(course, start_time_for_activity)
-      course_analysis_time = Date.today - start_time_for_activity
+      course_analysis_time = Time.zone.today - start_time_for_activity
 
       # Normalize to the length of the analyzed period
       activity / (total_enrollments.to_f * course_analysis_time.to_f)
