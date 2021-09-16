@@ -52,7 +52,7 @@ lint:rubocop:master:
 
 fossa:analyze:
   stage: test
-  image: registry.xikolo.de/docker/fossa:latest@sha256:d1843954e86d6992fce8607c4e54d28ea8528983bf0c123c7c3a0375b269e88c
+  image: registry.xikolo.de/docker/fossa:latest@sha256:722a79e124220b1ebe544d168f696d277f7488d1c443a53c0afae191c2b577c5
   cache:
     key: ${CI_COMMIT_REF_SLUG}---fossa
     paths:
