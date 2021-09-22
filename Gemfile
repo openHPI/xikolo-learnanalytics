@@ -92,7 +92,7 @@ group :development, :test do
   gem 'rubocop', '~> 1.21.0'
   gem 'rubocop-performance', '~> 1.11.3'
   gem 'rubocop-rails', '~> 2.12.0'
-  gem 'rubocop-rspec', '~> 2.4.0'
+  gem 'rubocop-rspec', '~> 2.5.0'
 end
 
 group :test do
