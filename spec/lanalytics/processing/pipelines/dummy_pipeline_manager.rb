@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 pipeline_for('xikolo.lanalytics.pipeline_manager.pipeline1', :pipeline_manager_spec, Lanalytics::Processing::Action::CREATE) do
   extractor Lanalytics::Processing::Extractor::ExtractStep.new
   transformer Lanalytics::Processing::Transformer::TransformStep.new

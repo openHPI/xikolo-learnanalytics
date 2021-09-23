@@ -1,29 +1,33 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe CourseStatisticsController do
-  let(:default_params) { {format: 'json'}}
+  let(:default_params) { {format: 'json'} }
   let(:json) { JSON.parse response.body }
-  let(:course_id) {'00000001-3300-4444-9999-000000000006'}
+  let(:course_id) { '00000001-3300-4444-9999-000000000006' }
 
   describe '#index' do
-    subject { get :index, params: params }
+    subject(:index) { get :index, params: params }
+
     let(:params) { {} }
 
     it { is_expected.to have_http_status :ok }
 
     it 'responds with an empty list' do
-      subject
+      index
       expect(json).to be_empty
     end
 
     context 'when fetching historic data for a course', versioning: true do
       before { FactoryBot.create :course_statistic, :calculated }
+
       let(:params) { super().merge(historic_data: 'true', course_id: course_id, start_date: 2.days.ago.to_s) }
 
       it { is_expected.to have_http_status :ok }
 
-      it 'should retrieve historic data' do
-        subject
+      it 'retrieves historic data' do
+        index
         expect(json).to have(1).item
         expect(json[0]['course_id']).to eq course_id
       end
@@ -33,8 +37,8 @@ describe CourseStatisticsController do
 
         it { is_expected.to have_http_status :ok }
 
-        it 'should retrieve empty array if historic data parameters are wrong' do
-          subject
+        it 'retrieves empty array if historic data parameters are wrong' do
+          index
           expect(json).to be_empty
         end
       end
@@ -43,6 +47,7 @@ describe CourseStatisticsController do
 
   describe '#show' do
     subject { get :show, params: {id: course_id} }
+
     before { FactoryBot.create :course_statistic, :calculated }
 
     it { is_expected.to have_http_status :ok }

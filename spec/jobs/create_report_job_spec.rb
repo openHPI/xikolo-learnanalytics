@@ -40,7 +40,8 @@ describe CreateReportJob do
 
   context 'successful report generation' do
     before do
-      allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
+      allow(ReportJob).to receive(:start).with(report_job.id).and_return report_job
+      allow(report_job).to receive(:generate!).and_return(report_stub)
 
       Lanalytics::S3.stub_responses!(head_object: {expiration: 'Hans'})
     end
@@ -57,7 +58,8 @@ describe CreateReportJob do
 
   context 'error during report upload' do
     before do
-      allow_any_instance_of(ReportJob).to receive(:generate!).and_return(report_stub)
+      allow(ReportJob).to receive(:start).with(report_job.id).and_return report_job
+      allow(report_job).to receive(:generate!).and_return(report_stub)
 
       Lanalytics::S3.stub_responses!(put_object: 'NotSuchBucket')
     end
@@ -74,7 +76,8 @@ describe CreateReportJob do
 
   context 'error during report generation' do
     before do
-      allow_any_instance_of(Reports::CourseReport).to receive(:generate!).and_raise('Report failed')
+      allow(ReportJob).to receive(:start).with(report_job.id).and_return report_job
+      allow(report_job).to receive(:generate!).and_raise('Report failed')
     end
 
     it 'marks the report job as failed' do

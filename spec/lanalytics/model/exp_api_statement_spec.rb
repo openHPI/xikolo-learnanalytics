@@ -54,7 +54,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     context 'when "type" of stmt_resource is empty' do
-      let(:resource) { Lanalytics::Model::StmtResource.new('') }
+      let(:resource) { Lanalytics::Model::StmtResource.new('', '') }
 
       it 'does not initialize' do
         expect { statement }.to raise_error(ArgumentError)
@@ -62,7 +62,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     context 'when a critical component (user, verb, resource) is missing' do
-      subject(:statement) { described_class.new }
+      subject(:statement) { described_class.new('', '', '') }
 
       it 'does not initialize' do
         expect { statement }.to raise_error(ArgumentError)
@@ -71,9 +71,9 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
 
     it 'does not initialize when some combination of critical components is missing' do
       (0...7).each do |i|
-        user = (i & 1) > 0 ? user : nil
-        verb = (i & 2) > 0 ? verb : nil
-        resource = (i & 4) > 0 ? resource : nil
+        user = nil unless (i & 1) > 0
+        verb = nil unless (i & 2) > 0
+        resource = nil unless (i & 4) > 0
 
         failure_message = "user: #{user ? 'not nil' : 'nil'}, verb: #{verb ? 'not nil' : 'nil'}, resource: #{resource ? 'not nil' : 'nil'}"
 

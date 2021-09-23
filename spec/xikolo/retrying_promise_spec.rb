@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Xikolo::RetryingPromise do
@@ -11,49 +13,49 @@ describe Xikolo::RetryingPromise do
     Stub.request(
       :course, :get, '/stats1'
     ).to_return Stub.json(
-      kpi: 1000
+      kpi: 1000,
     )
     Stub.request(
       :course, :get, '/stats2'
     ).to_return Stub.json(
-      kpi: 2000
+      kpi: 2000,
     )
   end
 
   let(:retrying_promise) { described_class.new(dependencies, &task) }
-  let(:dependencies) { [retryable_1, retryable_2, retryable_3] }
+  let(:dependencies) { [retryable1, retryable2, retryable3] }
   let(:task) do
-    Proc.new do |retryable_1, retryable_2, retryable_3|
-      "#{retryable_1['kpi']}, #{retryable_2['kpi']}, #{retryable_3['kpi']}"
+    proc do |retryable1, retryable2, retryable3|
+      "#{retryable1['kpi']}, #{retryable2['kpi']}, #{retryable3['kpi']}"
     end
   end
 
-  let(:retryable_1) do
+  let(:retryable1) do
     Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats1).get }
   end
 
-  let(:retryable_2) do
+  let(:retryable2) do
     Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats2).get }
   end
 
-  let(:retryable_3) do
+  let(:retryable3) do
     Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats3).get }
   end
 
   describe '#value!' do
-    subject { retrying_promise.value! }
+    subject(:value) { retrying_promise.value! }
 
     context 'with all promises succeeding' do
       before do
         Stub.request(
           :course, :get, '/stats3'
         ).to_return Stub.json(
-          kpi: 3000
+          kpi: 3000,
         )
       end
 
       it 'returns all promise results' do
-        expect(subject).to eq '1000, 2000, 3000'
+        expect(value).to eq '1000, 2000, 3000'
       end
     end
 
@@ -62,18 +64,18 @@ describe Xikolo::RetryingPromise do
         Stub.request(
           :course, :get, '/stats3'
         ).to_return(
-          status: 502
+          status: 502,
         ).to_return(
-          status: 503
+          status: 503,
         ).to_return(
-          status: 504
+          status: 504,
         ).to_return Stub.json(
-          kpi: 3000
+          kpi: 3000,
         )
       end
 
       it 'returns all promise results' do
-        expect(subject).to eq '1000, 2000, 3000'
+        expect(value).to eq '1000, 2000, 3000'
       end
     end
 
@@ -82,12 +84,12 @@ describe Xikolo::RetryingPromise do
         Stub.request(
           :course, :get, '/stats3'
         ).to_return(
-          status: 502
+          status: 502,
         )
       end
 
-      it 'should raise error' do
-        expect { subject }.to raise_error(RuntimeError)
+      it 'raises error' do
+        expect { value }.to raise_error(RuntimeError)
       end
     end
 
@@ -96,12 +98,12 @@ describe Xikolo::RetryingPromise do
         Stub.request(
           :course, :get, '/stats3'
         ).to_return(
-          status: 500
+          status: 500,
         )
       end
 
-      it 'should raise error' do
-        expect { subject }.to raise_error(Restify::ServerError)
+      it 'raises error' do
+        expect { value }.to raise_error(Restify::ServerError)
       end
     end
   end

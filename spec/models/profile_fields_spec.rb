@@ -12,7 +12,7 @@ describe ProfileFields do
         'en' => 'Full Name',
       },
       'type' => 'CustomTextField',
-      'values' => %w[Max\ Muster],
+      'values' => ['Max Muster'],
     }
   end
   let(:gender) do
@@ -108,7 +108,7 @@ describe ProfileFields do
     context 'pseudonymized' do
       let(:profile_config) { ProfileFieldConfiguration.pseudonymized }
 
-      it { is_expected.to match_array ['male', '"Berlin"', 'de;en;fr'] }
+      it { is_expected.to match_array %w[male "Berlin" de;en;fr] } # rubocop:disable Lint/PercentStringArray
     end
 
     context 'de_pseudonymized' do
@@ -130,7 +130,7 @@ describe ProfileFields do
     context 'de_pseudonymized' do
       let(:profile_config) { ProfileFieldConfiguration.de_pseudonymized }
 
-      it { is_expected.to match_array %w[Full\ Name Gender City Languages] }
+      it { is_expected.to match_array ['Full Name', 'Gender', 'City', 'Languages'] }
     end
   end
 end

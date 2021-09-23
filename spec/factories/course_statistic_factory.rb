@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :course_statistic do
     course_id { '00000001-3300-4444-9999-000000000006' }
@@ -29,7 +31,7 @@ FactoryBot.define do
           comments_on_questions_in_learning_rooms: 30,
           comments_on_questions_last_day_in_learning_rooms: 3,
           enrollments_per_day: [0, 0, 0, 0, 0, 0, 0, 0, 0, 199],
-          days_since_coursestart: 10
+          days_since_coursestart: 10,
         )
       end
     end
