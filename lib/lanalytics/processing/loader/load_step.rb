@@ -1,16 +1,12 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Processing
     module Loader
-
       class LoadStep
         attr_reader :datasource
 
-        def initialize(datasource = nil)
-          # Needs to be taken care of in the child class
-          raise NotImplementedError.new 'This method has to be implemented in the subclass!'
-        end
-
-        def load(original_event, load_commands, pipeline_ctx)
+        def load(_original_event, _load_commands, _pipeline_ctx)
           raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
 
@@ -18,7 +14,6 @@ module Lanalytics
           raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
       end
-
     end
   end
 end

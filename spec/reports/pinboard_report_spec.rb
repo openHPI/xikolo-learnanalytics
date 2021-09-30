@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'Pinboard Report' do
+describe Reports::PinboardReport do
+  subject(:report) { report_job.generate! }
+
   let!(:report_job) { FactoryBot.create :report_job, :pinboard_report, options: {'include_collab_spaces' => true} }
 
-  subject { report_job.generate! }
+  let(:collab_space_id) { SecureRandom.uuid }
 
   around do |example|
     report_job.with_tmp_directory(&example)
@@ -16,16 +20,16 @@ describe 'Pinboard Report' do
       :course, :get, "/courses/#{report_job.task_scope}"
     ).to_return Stub.json(
       id: report_job.task_scope,
-      course_code: 'report_course'
+      course_code: 'report_course',
     )
 
     Stub.request(:collabspace, :get)
       .to_return Stub.json(collab_spaces_url: '/collab_spaces')
     Stub.request(
       :collabspace, :get, '/collab_spaces',
-      query: { course_id: report_job.task_scope }
+      query: {course_id: report_job.task_scope}
     ).to_return Stub.json([
-      {id: collab_space_id}
+      {id: collab_space_id},
     ])
 
     Stub.request(:pinboard, :get)
@@ -36,18 +40,17 @@ describe 'Pinboard Report' do
       )
     Stub.request(
       :pinboard, :get, '/questions',
-      query: { course_id: report_job.task_scope, per_page: 50 }
+      query: {course_id: report_job.task_scope, per_page: 50}
     ).to_return Stub.json([])
     Stub.request(
       :pinboard, :get, '/questions',
-      query: { learning_room_id: collab_space_id, per_page: 50 }
+      query: {learning_room_id: collab_space_id, per_page: 50}
     ).to_return Stub.json([])
   end
-  let(:collab_space_id) { SecureRandom.uuid }
 
   it 'generates one CSV file' do
-    subject
-    expect(subject.files.count).to eq 1
-    expect(subject.files.names.first).to end_with '.csv'
+    report
+    expect(report.files.count).to eq 1
+    expect(report.files.names.first).to end_with '.csv'
   end
 end

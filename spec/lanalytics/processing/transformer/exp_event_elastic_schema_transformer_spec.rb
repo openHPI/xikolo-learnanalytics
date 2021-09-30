@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 shared_examples 'an experience statement' do
@@ -8,12 +10,11 @@ shared_examples 'an experience statement' do
   its(:entity_key) { is_expected.to eq :exp_event }
 
   it 'has the correct attributes' do
-    expect(subject.attributes.map(&:name)).to match_array(
-      %i(user verb resource timestamp in_context))
+    expect(subject.attributes.map(&:name)).to match_array(%i[user verb resource timestamp in_context])
   end
 
   it 'has only non-nil attributes' do
-    expect(subject.attributes.map(&:value).select(&:nil?).size).to eq 0
+    expect(subject.attributes.map(&:value).count(&:nil?)).to eq 0
   end
 
   it 'has iso8601 formatted timestamp' do
@@ -22,25 +23,31 @@ shared_examples 'an experience statement' do
 end
 
 describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer do
-  before(:each) do
-    @original_event = FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
-    @processing_units = [Lanalytics::Processing::Unit.new(:exp_event, @original_event)]
-    @load_commands = []
-    @pipeline_ctx = OpenStruct.new processing_action: :CREATE
+  subject(:event) do
+    transform_method.call(processing_unit, load_commands)
+    load_commands.first.entity
   end
 
+  let(:original_event) { FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access }
+  let(:processing_units) { [Lanalytics::Processing::Unit.new(:exp_event, original_event)] }
+  let(:processing_unit) { nil }
+  let(:load_commands) { [] }
+  let(:pipeline_ctx) { OpenStruct.new processing_action: :CREATE }
   let(:exp_event_elastic_transformer) { described_class.new }
+  let(:transform_method) do
+    exp_event_elastic_transformer.method("transform_#{type}_punit_to_create")
+  end
 
-  it 'should transform processing unit to nested (LoaORM) entity' do
+  it 'transforms processing unit to nested (LoaORM) entity' do
     exp_event_elastic_transformer.transform(
-      @original_event,
-      @processing_units,
-      @load_commands,
-      @pipeline_ctx
+      original_event,
+      processing_units,
+      load_commands,
+      pipeline_ctx,
     )
 
-    expect(@load_commands.length).to eq(1)
-    create_exp_event_command = @load_commands.first
+    expect(load_commands.length).to eq(1)
+    create_exp_event_command = load_commands.first
     expect(create_exp_event_command).to be_a(Lanalytics::Processing::LoadORM::CreateCommand)
     entity = create_exp_event_command.entity
     expect(entity).to be_a(Lanalytics::Processing::LoadORM::Entity)
@@ -94,17 +101,6 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
     expect(in_context_attribute.value.attributes[8].value).to eq('1080')
   end
 
-  let(:transformer) { described_class.new }
-  let(:load_commands) { [] }
-  let(:transform_method) do
-    transformer.method("transform_#{type}_punit_to_create")
-  end
-
-  subject do
-    transform_method.call(processing_unit, load_commands)
-    load_commands.first.entity
-  end
-
   describe 'ask question' do
     let(:type) { 'question' }
     let(:processing_unit) do
@@ -115,13 +111,14 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
         technical: false,
-        created_at: Time.now
+        created_at: Time.zone.now,
       }
     end
 
     it_behaves_like 'an experience statement'
+
     it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :ASKED_QUESTION
+      expect(event[:verb].value).to eq :ASKED_QUESTION
     end
   end
 
@@ -133,13 +130,14 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
         technical: false,
-        created_at: Time.now
+        created_at: Time.zone.now,
       }
     end
 
     it_behaves_like 'an experience statement'
+
     it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :ANSWERED_QUESTION
+      expect(event[:verb].value).to eq :ANSWERED_QUESTION
     end
   end
 
@@ -152,13 +150,14 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
         technical: false,
-        created_at: Time.now
+        created_at: Time.zone.now,
       }
     end
 
     it_behaves_like 'an experience statement'
+
     it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :COMMENTED
+      expect(event[:verb].value).to eq :COMMENTED
     end
   end
 
@@ -171,13 +170,14 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
         content_type: 'video',
         user_id: '00000001-3300-4444-9999-000000000001',
         course_id: SecureRandom.uuid,
-        created_at: Time.now
+        created_at: Time.zone.now,
       }
     end
 
     it_behaves_like 'an experience statement'
+
     it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :VISITED
+      expect(event[:verb].value).to eq :VISITED
     end
   end
 
@@ -189,31 +189,14 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
         question_id: SecureRandom.uuid,
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
-        updated_at: Time.now
+        updated_at: Time.zone.now,
       }
     end
 
     it_behaves_like 'an experience statement'
-    it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :WATCHED_QUESTION
-    end
-  end
 
-  describe 'watch' do
-    let(:type) { 'watch' }
-    let(:processing_unit) do
-      {
-        id: '00000003-3500-4444-9999-000000000001',
-        question_id: SecureRandom.uuid,
-        user_id: SecureRandom.uuid,
-        course_id: SecureRandom.uuid,
-        updated_at: Time.now
-      }
-    end
-
-    it_behaves_like 'an experience statement'
     it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :WATCHED_QUESTION
+      expect(event[:verb].value).to eq :WATCHED_QUESTION
     end
   end
 
@@ -224,52 +207,52 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
         id: '00000003-3500-4444-9999-000000000001',
         user_id: SecureRandom.uuid,
         course_id: SecureRandom.uuid,
-        updated_at: Time.now,
+        updated_at: Time.zone.now,
         points: {
           achieved: 156.2,
           maximal: 180.0,
-          percentage: 86.8
+          percentage: 86.8,
         },
         certificates: {
           confirmation_of_participation: true,
           record_of_achievement: false,
-          certificate: nil
+          certificate: nil,
         },
         completed: true,
-        quantile: 0.88
+        quantile: 0.88,
       }
     end
 
     it_behaves_like 'an experience statement'
 
     it 'has the correct verb' do
-      expect(subject[:verb].value).to eq :COMPLETED_COURSE
+      expect(event[:verb].value).to eq :COMPLETED_COURSE
     end
 
     it 'has the correct attributes' do
-      [:course_id, :quantile].each do |key|
-        expect(subject[:in_context].value[key.to_s].value).to eq processing_unit[key]
+      %i[course_id quantile].each do |key|
+        expect(event[:in_context].value[key.to_s].value).to eq processing_unit[key]
       end
     end
 
     it 'has the correct points' do
-      [:achieved, :maximal, :percentage].each do |key|
-        points = subject[:in_context].value["points_#{key}"].value
+      %i[achieved maximal percentage].each do |key|
+        points = event[:in_context].value["points_#{key}"].value
 
         expect(points).to eq processing_unit[:points][key]
       end
     end
 
-    it 'has the correct points' do
-      [
-        :received_confirmation_of_participation,
-        :received_record_of_achievement,
-        :received_certificate
+    it 'has the correct certificates' do
+      %i[
+        received_confirmation_of_participation
+        received_record_of_achievement
+        received_certificate
       ].each do |key|
-        # Towards correct boolean naming received_ ...
+        # Towards correct boolean naming received
         value = processing_unit[:certificates][key.to_s.gsub('received_', '').to_sym]
-        expect(subject[:in_context].value[key.to_s].value).to eq(
-          value.nil? ? false : value
+        expect(event[:in_context].value[key.to_s].value).to eq(
+          value.nil? ? false : value,
         )
       end
     end

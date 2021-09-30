@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe LanalyticsConsumer do
   include LanalyticsConsumerSpecsHelper
 
-  before(:each) do
+  before do
     stub_request(:head, 'http://localhost:9200/')
       .to_return(status: 200)
 
@@ -13,15 +15,15 @@ describe LanalyticsConsumer do
   let(:consumer) { described_class.new }
   let(:dummy_event_data) { {dummy_property: 'dummy_value'} }
 
-  describe "(:create)" do
+  describe '(:create)' do
     let(:routing_key) { 'xikolo.lanalytics.test_event.create' }
 
-    it 'should find and trigger the correct pipeline' do
+    it 'finds and triggers the correct pipeline' do
       # Add dummy pipeline to PipelineManager
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::Action::CREATE
+        Lanalytics::Processing::Action::CREATE,
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
@@ -31,23 +33,23 @@ describe LanalyticsConsumer do
       consumer.create
     end
 
-    it 'should trigger all registered pipelines' do
+    it 'triggers all registered pipelines' do
       dummy_pipeline1 = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::Action::CREATE
+        Lanalytics::Processing::Action::CREATE,
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline1)
       dummy_pipeline2 = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec2,
-        Lanalytics::Processing::Action::CREATE
+        Lanalytics::Processing::Action::CREATE,
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline2)
       dummy_pipeline3 = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.create',
         :lanalytics_consumer_spec3,
-        Lanalytics::Processing::Action::CREATE
+        Lanalytics::Processing::Action::CREATE,
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline3)
 
@@ -61,15 +63,15 @@ describe LanalyticsConsumer do
     end
   end
 
-  describe "(:update)" do
+  describe '(:update)' do
     let(:routing_key) { 'xikolo.lanalytics.test_event.update' }
 
-    it 'should find and trigger the correct pipeline' do
+    it 'finds and triggers the correct pipeline' do
       # Add dummy pipeline to PipelineManager
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.update',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::Action::UPDATE
+        Lanalytics::Processing::Action::UPDATE,
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
@@ -80,7 +82,7 @@ describe LanalyticsConsumer do
     end
   end
 
-  describe "(:destroy)" do
+  describe '(:destroy)' do
     let(:routing_key) { 'xikolo.lanalytics.test_event.destroy' }
 
     it 'finds and triggers the correct pipeline' do
@@ -88,7 +90,7 @@ describe LanalyticsConsumer do
       dummy_pipeline = Lanalytics::Processing::Pipeline.new(
         'xikolo.lanalytics.test_event.destroy',
         :lanalytics_consumer_spec,
-        Lanalytics::Processing::Action::DESTROY
+        Lanalytics::Processing::Action::DESTROY,
       )
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
 
@@ -99,8 +101,8 @@ describe LanalyticsConsumer do
     end
   end
 
-  describe "(:handle_user_event)" do
-    before(:each) do
+  describe '(:handle_user_event)' do
+    before do
       Lanalytics::Processing::PipelineManager.instance.register_pipeline(dummy_pipeline)
     end
 
