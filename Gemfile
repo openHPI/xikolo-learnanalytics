@@ -22,7 +22,7 @@ gem 'mnemosyne-ruby', '~> 1.12'
 gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'sentry-sidekiq'
-gem 'telegraf', '~> 1.0'
+gem 'telegraf', '~> 2.0'
 
 gem 'forgery'
 gem 'validates_email_format_of'
