@@ -90,7 +90,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rspec-teamcity', require: false
   gem 'rubocop', '~> 1.22.0'
-  gem 'rubocop-performance', '~> 1.11.3'
+  gem 'rubocop-performance', '~> 1.12.0'
   gem 'rubocop-rails', '~> 2.12.0'
   gem 'rubocop-rspec', '~> 2.5.0'
 end
