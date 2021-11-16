@@ -98,7 +98,7 @@ module Reports
         'Rating Votes',
       ]
 
-      headers += Lanalytics.config.classifiers.map(&:humanize)
+      headers += clusters.map(&:humanize)
 
       if @include_statistics
         headers += [
@@ -191,7 +191,7 @@ module Reports
           course['rating_votes'],
         ]
 
-        Lanalytics.config.classifiers.each do |c|
+        clusters.each do |c|
           values.append(
             escape_csv_string(course.dig('classifiers', c)&.join(',')),
           )
@@ -258,6 +258,10 @@ module Reports
       end
     end
     # rubocop:enable all
+
+    def clusters
+      @clusters ||= Lanalytics.config.reports['classifiers'] || []
+    end
 
     def extract_end_date(job)
       key = 'end_date'

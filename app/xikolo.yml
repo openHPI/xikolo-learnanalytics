@@ -85,9 +85,6 @@ reports:
     - course_content_report
     - overall_course_summary_report
 
-# A list of categories (simple strings) which can be used to loosely group courses.
-classifiers: []
-
 # A list of special groups that can be assigned to users with system-wide effects.
 # These will be prefixed with "xikolo.".
 global_permission_groups:
