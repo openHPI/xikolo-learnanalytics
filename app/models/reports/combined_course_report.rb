@@ -78,8 +78,8 @@ module Reports
     def generate!
       @job.update(
         annotation:
-          "#{classifier['cluster'].underscore}_" \
-          "#{classifier['title'].underscore}",
+          "#{classifier['cluster'].parameterize(separator: '_')}_" \
+          "#{classifier['title'].parameterize(separator: '_')}",
       )
 
       csv_file("CombinedCourseReport_#{@job.annotation}", headers) do |&write|

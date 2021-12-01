@@ -61,10 +61,11 @@ module Reports::Openwho
     end
 
     def generate!
-      annotation =
-        "#{classifier['cluster'].underscore}_#{classifier['title'].underscore}"
-
-      @job.update(annotation: annotation)
+      @job.update(
+        annotation:
+          "#{classifier['cluster'].parameterize(separator: '_')}_" \
+          "#{classifier['title'].parameterize(separator: '_')}",
+      )
 
       csv_file("OpenWHO_CombinedCourseReport_#{@job.annotation}", headers) do |&write|
         each_row(&write)
