@@ -28,7 +28,7 @@ gem 'forgery'
 gem 'validates_email_format_of'
 
 # Connecting to RabbitMQ
-gem 'msgr', '~> 1.3'
+gem 'msgr', '~> 1.4'
 
 gem 'connection_pool'
 
