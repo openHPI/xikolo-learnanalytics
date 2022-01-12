@@ -14,9 +14,6 @@ Xikolo's Learning Analytics Engine
 * `bundle install`
 * `bundle exec rake db:drop db:create db:migrate`
 * `bundle exec rake db:seed`
-* `bundle exec rake xikolo:migrate_permissions`
-  * For that, xi-account must be running.
-  * After that, either xi-account must be re-seeded, or the [reporting permission must be granted manually](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Reporting+Permission) to an admin account.
 * `bundle exec rake elastic:setup`
 * `bundle exec rake s3:setup`
   * Minio must be running. If Minio uses default port and credentials, no further setup is needed.
@@ -121,10 +118,10 @@ POST 0.0.0.0:9200/_search
 
 {
   "size": 10,
-  "sort": { 
-    "timestamp": { 
-      "order":"desc" 
-    } 
+  "sort": {
+    "timestamp": {
+      "order":"desc"
+    }
   },
   "query": {
     "bool": {
