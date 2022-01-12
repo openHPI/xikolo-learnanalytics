@@ -34,8 +34,8 @@ gem 'connection_pool'
 
 # Different storage backends for data and files
 gem 'aws-sdk-s3', '~> 1.16'
-gem 'elasticsearch'
-gem 'elasticsearch-transport'
+gem 'elasticsearch', '~> 7.13.1'
+gem 'elasticsearch-transport', '~> 7.13.1'
 gem 'pg', '~> 1.1'
 gem 'redis', '~> 4.0'
 
