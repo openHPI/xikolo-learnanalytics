@@ -4,8 +4,6 @@ require 'spec_helper'
 
 describe CheckAllRulesWorker do
   before do
-    Sidekiq::Testing.fake!
-
     Stub.request(:course, :get)
       .to_return Stub.json(courses_url: '/courses')
     Stub.request(
