@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class CourseEvents < ExpEventsElasticMetric
-
       description 'Returns raw course events (paginated).'
 
       required_parameter :course_id
@@ -26,7 +25,7 @@ module Lanalytics
         scroll_id = params[:scroll_id]
 
         start_date = start_date.present? ? DateTime.parse(start_date) : (DateTime.now - 1.day)
-        end_date = end_date.present? ? DateTime.parse(end_date) : (DateTime.now)
+        end_date = end_date.present? ? DateTime.parse(end_date) : DateTime.now
 
         verb = params[:verb]
 
@@ -63,9 +62,11 @@ module Lanalytics
           end
 
           result = datasource.exec do |client|
-            client.search index: datasource.index,
-                          scroll: '5m',
-                          body: body
+            client.search(
+              index: datasource.index,
+              scroll: '5m',
+              body: body,
+            )
           end
         else
           result = datasource.exec do |client|
@@ -89,7 +90,7 @@ module Lanalytics
           processed_result << ev
         end
 
-        current_last = result['hits']['hits'].count + (page.to_i - 1) * per_page
+        current_last = result['hits']['hits'].count + ((page.to_i - 1) * per_page)
 
         {
           data: processed_result,
@@ -100,7 +101,6 @@ module Lanalytics
           ).ceil,
         }
       end
-
     end
   end
 end
