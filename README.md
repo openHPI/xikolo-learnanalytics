@@ -26,7 +26,7 @@ To get a clean state during development, run:
 * `bundle exec rake sidekiq:clear`
 * `bundle exec rake msgr:drain`
 
-## Lanalytics Data Processing Library
+## Lanalytics Event Processing Library
 
 Most of the code for the processing can be found in the folder `lib/lanalytics/processing/`.
 
@@ -36,7 +36,7 @@ Pipelines and data sources can be activated in the `config/lanalytics_pipeline_f
 
 Each pipeline consists of extractors, transformers and loaders, where each is responsible for a certain processing task, e.g. anonymization and data type processing. The implementation of the different classes can be found in the `lib/lanalytics/processing/{extractor,transformer,loader}/*.rb`.
 
-## How to include a new pipeline?
+### How to include a new pipeline?
 
 * Add new pipeline file in `config/lanalytics_pipeline_flipper.yml`
 * Implement the pipeline file in a new `lib/lanalytics/processing/pipelines/new_pipelines.prb`
@@ -91,9 +91,13 @@ The Elasticsearch data schema can be found in `config/elasticsearch/link_trackin
 
 A good starting point for this is `web/app/controllers/concerns/tracks_referrers.rb`.
 
-## Query Elasticsearch Events
+## Metrics
 
-Get familiar with the [Elasticsearch API](elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html) and a HTTP client, either CLI or GUI-based (e.g., [Postman](https://www.postman.com/)).
+All available metrics are self-documented and can be retrieved by directly calling the index endpoint, i.e., http://0.0.0.0:5900/metrics. The code for metrics is placed under `lib/lanalytics/metric`.
+
+### Query Elasticsearch Events
+
+A majority of the metrics use Elasticsearch. Get familiar with the [Elasticsearch API](https://elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html) and a HTTP client, either CLI or GUI-based (e.g., [Postman](https://www.postman.com/)).
 
 As a warm-up, query all available verbs (aka event types):
 ```
@@ -133,10 +137,10 @@ POST 0.0.0.0:9200/_search
 }
 ```
 
-## Metrics
-
-All available metrics are self-documented and can be retrieved by directly calling the index endpoint, i.e., http://0.0.0.0:5900/metrics.
-
 ## Reports
 
 To generate reports, a user must have the `lanalytics.report.admin` role. Check the [Reporting Permission](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Reporting+Permission) page on how to grant this. And make sure MinIO runs properly.
+
+The code for reports is placed under `app/models/reports`. The report UI is generated dynamically based on the exposed `form_data`. Check the existing reports and their tests for examples.
+
+Available reports must be configured. The default configuration can be found under `app/xikolo.yml` (`reports.types`).
