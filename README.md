@@ -1,6 +1,6 @@
 # The Lanalytics Service
 
-Xikolo's Learning Analytics Engine
+The lanalytics service is responsible for the processing of tracked learner interaction events, reports, and course statistics. Other unfinished features are quality control alerts and section conversion statistics.
 
 ## Dependencies
 
