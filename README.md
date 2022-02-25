@@ -50,7 +50,7 @@ Our event schema is close to xAPI: a `user` does `verb` for `resource` in `conte
 
 ### Data Schema Updates
 
-The Elasticsearch data schema can be found in `config/elasticsearch/exp_events.json`. It needs to be updated when new fields are added. Make sure to update [pillars](https://gitlab.hpi.de/xopic/xikolo/pillars/-/blob/master/site/default/includes/elasticsearch/template_exp.sls) as well and increase the version number there.
+The Elasticsearch data schema can be found in `config/elasticsearch/exp_events.json`. It needs to be updated when new fields are added. Make sure to update [pillars](https://dev.xikolo.de/gitlab/devops/salt/xikolo/blob/main/pillar/site/default/includes/elasticsearch/template_exp.sls) as well and increase the version number there.
 
 ### Web Frontend
 
