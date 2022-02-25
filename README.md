@@ -4,8 +4,9 @@ The lanalytics service is responsible for the processing of tracked learner inte
 
 ## Dependencies
 
+* PostgreSQL and RabbitMQ, just like our other services.
 * [Elasticsearch 7](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
-* [MinIO](https://github.com/minio/minio) (for reports)
+* [MinIO](https://github.com/minio/minio), for storing reports.
 
 ## Setup
 
@@ -30,19 +31,18 @@ To get a clean state during development, run:
 
 Most of the code for the processing can be found in the folder `lib/lanalytics/processing/`.
 
-The starting point for the data processing can be found in the initializer `lanalytics_processing_pipelines.rb`. This initializer will look for setup the data sources and processing pipelines. The data sources are defined in `config/datasources/*.yml`. The pipelines are defined in `lib/lanalytics/processing/pipelines/*.prb`.
+The starting point for the data processing can be found in the rails initializer `config/initializers/01_lanalytics_processing_pipelines.rb`. This initializer will setup the data sources and processing pipelines. The data sources are defined in `config/datasources/*.yml`. The pipelines are defined in `lib/lanalytics/processing/pipelines/*.prb`.
 
 Pipelines and data sources can be activated in the `config/lanalytics_pipeline_flipper.yml`.
 
-Each pipeline consists of extractors, transformers and loaders, where each is responsible for a certain processing task, e.g. anonymization and data type processing. The implementation of the different classes can be found in the `lib/lanalytics/processing/{extractor,transformer,loader}/*.rb`.
+Each pipeline consists of extractor, transformer and loader steps (ETL process), where each is responsible for a certain processing task, e.g., anonymization and data type processing. The implementation of the different classes can be found in the `lib/lanalytics/processing/{extractor,transformer,loader}/*.rb`.
 
 ### How to include a new pipeline?
 
-* Add new pipeline file in `config/lanalytics_pipeline_flipper.yml`
-* Implement the pipeline file in a new `lib/lanalytics/processing/pipelines/new_pipelines.prb`
-* Define all the desired pipelines like in `lib/lanalytics/processing/pipelines/exp_events_pipeline.prb`
-* Implement new transformers when necessary
-* Register the event type in the `config/msgr.rb` file.
+* Implement the new pipeline in `lib/lanalytics/processing/pipelines/{new_pipelines}.prb`
+* Define all the desired steps like in `lib/lanalytics/processing/pipelines/exp_events_pipeline.prb` or implement new ETL steps.
+* Enable the new pipeline in `config/lanalytics_pipeline_flipper.yml`
+* If you consume new messages, register them in `config/msgr.rb`
 
 ## Event Tracking
 
@@ -139,8 +139,9 @@ POST 0.0.0.0:9200/_search
 
 ## Reports
 
-To generate reports, a user must have the `lanalytics.report.admin` role. Check the [Reporting Permission](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Reporting+Permission) page on how to grant this. And make sure MinIO runs properly.
-
 The code for reports is placed under `app/models/reports`. The report UI is generated dynamically based on the exposed `form_data`. Check the existing reports and their tests for examples.
 
-Available reports must be configured. The default configuration can be found under `app/xikolo.yml` (`reports.types`).
+To generate reports:
+* MinIO must run properly to store reports in an S3 bucket.
+* Available reports must be configured to be displayed in the web client under http://0.0.0.0:3000/reports. The default configuration can be found under `app/xikolo.yml` (see `reports.types`).
+* A user must have the `lanalytics.report.admin` role to access this page. Check the [Reporting Permission](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Reporting+Permission) page on how to grant this.
