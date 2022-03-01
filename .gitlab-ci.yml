@@ -7,7 +7,7 @@ cache:
     - .cache/bundle
 
 .ruby:
-  image: ruby:2.7-slim@sha256:5010135d8918ce08a38174e73f25894a2ac0aa9961c64d7f2e4f0c1f51e28039
+  image: ruby:2.7-slim@sha256:ff0705d54d1740ddd11f999c7b77ea8016bd708ce57b93466efae1a7b2581261
   before_script:
     - apt-get -qq update
     - apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential libpq-dev libxml2-dev git
