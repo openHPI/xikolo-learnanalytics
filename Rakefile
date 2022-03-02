@@ -58,6 +58,27 @@ namespace :elastic do
       mapping      = interface.mapping
       mapping_json = ActiveSupport::JSON.encode mapping
       client.perform_request 'PUT', index, {}, mapping_json
+
+      puts "Created Elasticsearch index #{index}"
     end
   end
+
+  desc 'Deletes elasticsearch indexes and mappings'
+  task delete: :environment do
+    interfaces = [
+      Elasticsearch::ExpEventsInterface,
+      Elasticsearch::LinkTrackingEventsInterface,
+    ]
+
+    interfaces.each do |interface|
+      client       = interface.client
+      index        = interface.index
+      client.perform_request 'DELETE', index
+
+      puts "Deleted Elasticsearch index #{index}"
+    end
+  end
+
+  desc 'Deletes and creates elasticsearch indexes and mappings'
+  task reset: %i[delete setup]
 end

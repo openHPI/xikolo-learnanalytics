@@ -171,6 +171,7 @@ Metrics/BlockLength:
     - 'config/**/*'
     - 'lib/lanalytics/metric/*.rb'
     - 'app/models/reports/**/*.rb'
+    - 'Rakefile'
     - '**/*.rake'
 
 Metrics/ClassLength:

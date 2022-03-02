@@ -54,7 +54,7 @@ Our Elasticsearch mapping file and additional settings can be found in `config/e
 
 >If new fields are detected, an exception is thrown and the document is rejected. New fields must be explicitly added to the mapping.
 
-To do this, update the mapping file in this repo and make sure to update [pillars](https://dev.xikolo.de/gitlab/devops/salt/xikolo/blob/main/pillar/site/default/includes/elasticsearch/template_exp.sls) as well and increase the version number there.
+To do this, update the mapping file in this repo and make sure to copy the same changes to [pillars](https://dev.xikolo.de/gitlab/devops/salt/xikolo/blob/main/pillar/site/default/includes/elasticsearch/template_exp.sls) as well and increase the version number there. To update your local setup, run `bundle exec rake elastic:reset`—but be careful, that deletes the index first and with it all data.
 
 Note: Using `dynamic` mapping would require a complete [re-indexing](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html) if a field was added automatically and its data type should be changed afterwards. Data types of already known fields of an index cannot be changed otherwise. A simple update of the mapping is only possible if the field has not been added yet. To avoid auto-updates of the mapping by new events, we use the `strict` mapping in production.
 
