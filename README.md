@@ -44,13 +44,23 @@ Each pipeline consists of extractor, transformer and loader steps (ETL process),
 * Enable the new pipeline in `config/lanalytics_pipeline_flipper.yml`
 * If you consume new messages, register them in `config/msgr.rb`
 
+## Elasticsearch Schema Mapping
+
+Get yourself familiar how [mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html) in Elasticsearch works:
+
+>Mapping is the process of defining how a document, and the fields it contains, are stored and indexed.
+
+Our Elasticsearch mapping file and additional settings can be found in `config/elasticsearch/exp_events.json`. **It needs to be updated every time when new fields are added.** On production, the setting [`strict`](https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic.html#dynamic-parameters) is used for the mapping:
+
+>If new fields are detected, an exception is thrown and the document is rejected. New fields must be explicitly added to the mapping.
+
+To do this, update the mapping file in this repo and make sure to update [pillars](https://dev.xikolo.de/gitlab/devops/salt/xikolo/blob/main/pillar/site/default/includes/elasticsearch/template_exp.sls) as well and increase the version number there.
+
+Note: Using `dynamic` mapping would require a complete [re-indexing](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html) if a field was added automatically and its data type should be changed afterwards. Data types of already known fields of an index cannot be changed otherwise. A simple update of the mapping is only possible if the field has not been added yet. To avoid auto-updates of the mapping by new events, we use the `strict` mapping in production.
+
 ## Event Tracking
 
 Our event schema is close to xAPI: a `user` does `verb` for `resource` in `context` with `result`. All events are stored redundant in Elasticsearch and Postres.
-
-### Data Schema Updates
-
-The Elasticsearch data schema can be found in `config/elasticsearch/exp_events.json`. It needs to be updated when new fields are added. Make sure to update [pillars](https://dev.xikolo.de/gitlab/devops/salt/xikolo/blob/main/pillar/site/default/includes/elasticsearch/template_exp.sls) as well and increase the version number there.
 
 ### Web Frontend
 
