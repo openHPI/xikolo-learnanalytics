@@ -6,7 +6,7 @@ module Lanalytics
       attr_reader :db
 
       def initialize
-        @db = MaxMindDB.new('vendor/lib/GeoLite2-City.mmdb')
+        @db = MaxMindDB.new('vendor/lib/geo_ip/GeoLite2-City/GeoLite2-City.mmdb')
       end
 
       def self.lookup(user_ip)
