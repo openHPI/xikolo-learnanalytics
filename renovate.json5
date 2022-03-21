@@ -1,36 +1,36 @@
-// vim: ft=jsonc
+// vim: ft=json5
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  //
-  // Reduce concurrent load for maintainers
-  //
-  "prHourlyLimit": 1,
-  "prConcurrentLimit": 4,
-  //
-  // Keep PR and lock files up-to-date
-  //
-  "rebaseWhen": "behind-base-branch",
-  "lockFileMaintenance": {
-    "automerge": true
-  },
-  "packageRules": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:base"],
+
+  // Only check for new updates and maintenance jobs weekly, on Sunday. New
+  // merge requests should then bde ready to be merged (CI etc.) on Monday.
+  schedule: ["every sunday"],
+
+  // Use semantic commits for renovate commits and MRs. This makes it easier to
+  // identify MR and when browsing the Git history. In the future, automatic
+  // changelog scripts can detect and classify changes correctly.
+  semanticCommits: "enabled",
+
+  packageRules: [
     // Do not bump ruby version (only security patches)
     {
-      "matchManagers": [
-        "gitlabci",
-        "ruby-version"
-      ],
-      "matchPackageNames": [
-        "ruby"
-      ],
-      "matchUpdateTypes": [
-        "major",
-        "minor"
-      ],
-      "enabled": false
-    }
-  ]
+      matchPackageNames: ["ruby"],
+      matchUpdateTypes: ["major", "minor"],
+      enabled: false,
+    },
+    // Disable major and minor updates (usually of docker images) in Gitlab CI
+    // and docker-compose. They are carefully chosen to match the production
+    // environment.
+    {
+      matchManagers: ["gitlabci", "docker-compose"],
+      matchUpdateTypes: ["major", "minor"],
+      enabled: false,
+    },
+    // Auto-merge digest updates e.g. in .gitlab-ci.yml
+    {
+      matchUpdateTypes: ["digest", "lockFileMaintenance", "pin"],
+      automerge: true,
+    },
+  ],
 }
