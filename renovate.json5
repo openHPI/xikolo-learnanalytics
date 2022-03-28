@@ -32,5 +32,11 @@
       matchUpdateTypes: ["digest", "lockFileMaintenance", "pin"],
       automerge: true,
     },
+    // Group updates of all elasticsearch gems
+    {
+      matchDatasources: ["rubygems"],
+      matchPackagePrefixes: ["elasticsearch"],
+      groupName: "elasticsearch packages",
+    }
   ],
 }
