@@ -16,7 +16,7 @@ For more context, you should also link to related merge requests as well as corr
 Finally, feel free to @tag other developers to ask them to review your work. Always start with reviewing your own MR first. You can do so by scrolling down and checking the "Changes" tab.
 
 ## Release Notes
-*Add a bullet point for customer-facing release notes as described in the [release-note Repository](https://dev.xikolo.de/gitlab/xikolo/release-notes/blob/master/README.md) or `N/A`*
+*Add a bullet point for customer-facing release notes as described in the [release-note Repository](https://lab.xikolo.de/xikolo/release-notes/blob/master/README.md) or `N/A`*
 
 ## Acceptance Criteria Checklist
 
