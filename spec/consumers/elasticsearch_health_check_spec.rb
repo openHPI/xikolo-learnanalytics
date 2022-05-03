@@ -15,7 +15,7 @@ describe 'Elasticsearch Health Check' do # rubocop:disable RSpec/DescribeClass
   end
 
   it 'retries until elasticsearch is available again' do
-    Msgr.publish(FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access, to: 'xikolo.web.exp_event.create')
+    Msgr.publish(attributes_for(:amqp_exp_stmt).with_indifferent_access, to: 'xikolo.web.exp_event.create')
 
     # the consumer should be executed twice
     Msgr::TestPool.run count: 2
