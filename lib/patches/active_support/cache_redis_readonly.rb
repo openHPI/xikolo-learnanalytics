@@ -8,8 +8,8 @@ module Patches
       def failsafe(method, returning: nil)
         retryable = true
 
-        begin
-          super
+        super(method, returning: returning) do
+          yield
         rescue ::Redis::CommandError => e
           if retryable && e.message.include?('READONLY')
             redis.respond_to?(:disconnect!) ? redis.disconnect! : redis.reload { nil }
