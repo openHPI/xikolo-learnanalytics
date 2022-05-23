@@ -243,7 +243,9 @@ module Reports
 
     def item
       @item ||= course_service.rel(:items)
-        .get(content_id: @job.task_scope).value!.first
+        .get(content_id: @job.task_scope).value!.first.tap do |item|
+        raise 'Quiz not found. Did you provide the Item ID instead of the Content ID?' if item.nil?
+      end
     end
 
     def course
