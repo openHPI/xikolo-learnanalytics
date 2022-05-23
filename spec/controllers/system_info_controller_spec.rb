@@ -20,7 +20,7 @@ describe SystemInfoController, type: :controller do
     end
 
     it 'returns a running state' do
-      expect(response_body[:running]).to eq true
+      expect(response_body[:running]).to be true
     end
 
     context 'with debian version number' do

@@ -65,7 +65,7 @@ describe Xikolo::Retryable do
     let(:max_retries) { 1 }
 
     it 'returns true' do
-      expect(retryable?).to eq true
+      expect(retryable?).to be true
     end
 
     context 'retries exhausted' do
@@ -74,7 +74,7 @@ describe Xikolo::Retryable do
       end
 
       it 'returns false' do
-        expect(retryable?).to eq false
+        expect(retryable?).to be false
       end
     end
   end
@@ -109,7 +109,7 @@ describe Xikolo::Retryable do
 
       it 'returns true' do
         retryable.value!
-        expect(success).to eq true
+        expect(success).to be true
       end
     end
 
@@ -124,7 +124,7 @@ describe Xikolo::Retryable do
 
       it 'returns false' do
         expect { retryable.value! }.to raise_error(Restify::ServerError)
-        expect(success).to eq false
+        expect(success).to be false
       end
     end
   end
