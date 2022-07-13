@@ -10,11 +10,7 @@ Group=www-data
 
 SyslogIdentifier=${PACKAGE}-reporting
 WorkingDirectory=/usr/lib/${PACKAGE}
-RuntimeDirectory=${PACKAGE}-reporting
-
-# More modern versions of systemd would set this environment variable
-# for us automatically.
-Environment=RUNTIME_DIRECTORY=/run/${PACKAGE}-reporting
+StateDirectory=${PACKAGE}/reports
 
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
