@@ -58,9 +58,7 @@ module Lanalytics
       # Optional: Redis Sentinel support
       # Both Sidekiq server and client do write operations, so we always need
       # to connect to the master.
-      if redis_config[:sentinels]
-        redis_config[:role] = 'master'
-      end
+      redis_config[:role] = 'master' if redis_config[:sentinels]
 
       ::Sidekiq.configure_server do |config|
         config.redis = redis_config
