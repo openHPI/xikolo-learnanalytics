@@ -33,6 +33,8 @@ class Lanalytics::Clustering::Dimensions
   #      - the user uuid
   #      - the aggregated metric, named: foo_metric
   #   Indentation indicates metric hierarchy (some metrics are abstractions / aggregations of others)
+  #
+  # rubocop:disable Layout/ArrayAlignment
   ALLOWED_METRICS = [
     'sessions',
     'total_session_duration',
@@ -57,6 +59,7 @@ class Lanalytics::Clustering::Dimensions
         'bonus_quiz_performance',
     'course_performance'
   ].sort
+  # rubocop:enable all
 
   MIN_SESSION_GAP_SECONDS = 1800
 
