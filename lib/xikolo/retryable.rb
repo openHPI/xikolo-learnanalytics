@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Xikolo
   class Retryable
     def initialize(max_retries:, wait:, &promise_block)

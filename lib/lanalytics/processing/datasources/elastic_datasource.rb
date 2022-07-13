@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'typhoeus/adapters/faraday'
 module Lanalytics
   module Processing

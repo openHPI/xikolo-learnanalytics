@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'stmt_resource'
 
 module Lanalytics

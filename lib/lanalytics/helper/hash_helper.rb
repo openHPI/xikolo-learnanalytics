@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lanalytics::Helper::HashHelper
   # http://stackoverflow.com/questions/8706930/converting-nested-hash-keys-from-camelcase-to-snake-case-in-ruby
   def underscore_key(k)

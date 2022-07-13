@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FileCollection
   def initialize(base_path)
     @files = {}

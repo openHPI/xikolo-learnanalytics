@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lanalytics
   module Metric
     class BonusQuizPerformance < ClusteringMetric
