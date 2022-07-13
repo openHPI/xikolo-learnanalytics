@@ -49,6 +49,9 @@ module Lanalytics
       services.each do |service, location|
         Restify::Registry.store service.to_sym, location
       end
+
+      Restify::Registry.store :xikolo, Lanalytics.config.bridge_api_url,
+        headers: {'Authorization' => app.secrets.bridge_api_token}
     end
 
     # Setup Sidekiq Redis connection as configured in config/sidekiq_redis.yml
