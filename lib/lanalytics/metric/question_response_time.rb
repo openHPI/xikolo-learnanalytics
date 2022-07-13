@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class QuestionResponseTime < ExpEventsElasticMetric
-
       description 'Average time between asked and answered question.'
 
       required_parameter :user_id, :course_id
@@ -19,7 +18,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  { match: { verb: 'ANSWERED_QUESTION' } }
+                  {match: {verb: 'ANSWERED_QUESTION'}}
                 ] + (all_filters(user_id, course_id, nil))
               }
             }
@@ -36,7 +35,7 @@ module Lanalytics
           client.search index: datasource.index, body: query
         end['hits']['hits']
 
-        { average: calculate_average(answer_statements) }
+        {average: calculate_average(answer_statements)}
       end
 
       def self.calculate_average(answer_statements)
@@ -49,8 +48,8 @@ module Lanalytics
               query: {
                 bool: {
                   must: [
-                    { match_phrase: { 'resource.resource_uuid' => question_id } },
-                    { match: { verb: 'ASKED_QUESTION' } }
+                    {match_phrase: {'resource.resource_uuid' => question_id}},
+                    {match: {verb: 'ASKED_QUESTION'}}
                   ]
                 }
               }
@@ -67,7 +66,6 @@ module Lanalytics
 
         response_times.sum.to_f / response_times.size
       end
-
     end
   end
 end

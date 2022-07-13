@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ActiveUserCount < ExpEventsElasticMetric
-
       description 'The number of distinct active users. The default time range is 30 minutes.'
 
       optional_parameter :start_date, :end_date, :course_id, :resource_id
@@ -43,8 +42,8 @@ module Lanalytics
           if course_id.present?
             body[:query][:bool][:minimum_should_match] = 1
             body[:query][:bool][:should] = []
-            body[:query][:bool][:should] << { match: { 'in_context.course_id' => course_id } }
-            body[:query][:bool][:should] << { match: { 'resource.resource_uuid' => course_id } }
+            body[:query][:bool][:should] << {match: {'in_context.course_id' => course_id}}
+            body[:query][:bool][:should] << {match: {'resource.resource_uuid' => course_id}}
           end
 
           if resource_id.present?
@@ -53,17 +52,16 @@ module Lanalytics
             body[:query][:bool][:minimum_should_match] = 1
             body[:query][:bool][:should] = []
             courses.each do |course|
-              body[:query][:bool][:should] << { match: { 'in_context.course_id' => course['id'] } }
-              body[:query][:bool][:should] << { match: { 'resource.resource_uuid' => course['id'] } }
+              body[:query][:bool][:should] << {match: {'in_context.course_id' => course['id']}}
+              body[:query][:bool][:should] << {match: {'resource.resource_uuid' => course['id']}}
             end
           end
 
           client.search index: datasource.index, body: body
         end
 
-        { active_users: result['aggregations']['distinct_user_count']['value'] }
+        {active_users: result['aggregations']['distinct_user_count']['value']}
       end
-
     end
   end
 end

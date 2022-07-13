@@ -61,8 +61,6 @@ module Lanalytics
       def add_datasource(datasource)
         @datasources[datasource.key] = datasource
       end
-
     end
   end
 end
-

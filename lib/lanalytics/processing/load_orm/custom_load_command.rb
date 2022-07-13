@@ -14,7 +14,6 @@ module Lanalytics
           @loader_type = loader_type.to_sym.downcase
           @query       = query.to_s
         end
-
       end
     end
   end

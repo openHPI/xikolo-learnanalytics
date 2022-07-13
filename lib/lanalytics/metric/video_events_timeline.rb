@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class VideoEventsTimeline < ExpEventsElasticMetric
-
       description 'Counts per video event type.'
 
       required_parameter :item_id
@@ -98,7 +97,6 @@ module Lanalytics
 
         values
       end
-
     end
   end
 end

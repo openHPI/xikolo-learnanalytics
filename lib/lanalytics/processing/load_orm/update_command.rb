@@ -3,6 +3,7 @@ module Lanalytics
     module LoadORM
       class UpdateCommand
         attr_reader :entity
+
         def self.with(entity)
           new(entity)
         end

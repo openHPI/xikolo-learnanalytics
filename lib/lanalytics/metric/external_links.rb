@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ExternalLinks < LinkTrackingEventsElasticMetric
-
       description 'Counts the total and unique clicks for a given announcement tracking id.'
 
       required_parameter :tracking_id
@@ -17,15 +16,15 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  { match: { 'tracking_type' => 'news' } },
-                  { exists: { 'field' => 'tracking_external_link' } },
-                  { bool: {
-                      minimum_should_match: 1,
-                      should: [
-                        { match: { 'tracking_id' => tracking_id.to_s(format: :default) } },
-                        { match: { 'tracking_id' => tracking_id.to_s(format: :base62) } }
-                      ]
-                  } }
+                  {match: {'tracking_type' => 'news'}},
+                  {exists: {'field' => 'tracking_external_link'}},
+                  {bool: {
+                    minimum_should_match: 1,
+                    should: [
+                      {match: {'tracking_id' => tracking_id.to_s(format: :default)}},
+                      {match: {'tracking_id' => tracking_id.to_s(format: :base62)}}
+                    ]
+                  }}
                 ]
               }
             },
@@ -54,7 +53,6 @@ module Lanalytics
           }
         end
       end
-
     end
   end
 end

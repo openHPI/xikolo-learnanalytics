@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ForumWriteActivity < ExpEventsElasticMetric
-
       description 'Total number of forum write events and its unique users.'
 
       optional_parameter :course_id, :user_id
@@ -18,9 +17,9 @@ module Lanalytics
                     bool: {
                       minimum_should_match: 1,
                       should: [
-                        { match: { 'verb' => 'asked_question' } },
-                        { match: { 'verb' => 'answered_question' } },
-                        { match: { 'verb' => 'commented' } }
+                        {match: {'verb' => 'asked_question'}},
+                        {match: {'verb' => 'answered_question'}},
+                        {match: {'verb' => 'commented'}}
                       ]
                     }
                   }
@@ -41,7 +40,6 @@ module Lanalytics
           user: result.dig('aggregations', 'user', 'value')
         }
       end
-
     end
   end
 end

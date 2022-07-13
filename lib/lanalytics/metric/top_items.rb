@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class TopItems < ExpEventsElasticMetric
-
       description 'Returns all course items with visits.'
 
       required_parameter :course_id
@@ -13,7 +12,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  match: { verb: 'visited_item' }
+                  match: {verb: 'visited_item'}
                 ] + all_filters(nil, params[:course_id], nil)
               }
             },
@@ -43,7 +42,6 @@ module Lanalytics
           }
         end
       end
-
     end
   end
 end

@@ -1,7 +1,6 @@
 module Lanalytics
   module Processing
     module Datasources
-
       # Responsible for handling the connections
       class Datasource
         attr_reader :key, :name, :description
@@ -31,8 +30,6 @@ module Lanalytics
           raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
       end
-
     end
   end
 end
-

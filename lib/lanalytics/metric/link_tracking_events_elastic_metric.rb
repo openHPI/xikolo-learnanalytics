@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class LinkTrackingEventsElasticMetric < Base
-
       def self.datasource_keys
         %w[link_tracking_events_elastic]
       end
@@ -11,7 +10,6 @@ module Lanalytics
       def self.datasource
         datasources.first
       end
-
     end
   end
 end

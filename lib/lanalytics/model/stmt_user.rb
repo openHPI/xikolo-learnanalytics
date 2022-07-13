@@ -3,7 +3,6 @@ require_relative 'stmt_resource'
 module Lanalytics
   module Model
     class Lanalytics::Model::StmtUser < Lanalytics::Model::StmtResource
-
       def initialize(uuid)
         super(:User, uuid)
       end
@@ -29,7 +28,6 @@ module Lanalytics
       def self._load(marshalled_stmt_user)
         new(marshalled_stmt_user)
       end
-
     end
   end
 end

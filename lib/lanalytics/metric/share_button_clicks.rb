@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ShareButtonClicks < ExpEventsElasticMetric
-
       description 'Top 25 share button click services with count.'
 
       optional_parameter :user_id, :course_id, :start_date, :end_date
@@ -19,8 +18,8 @@ module Lanalytics
             bool: {
               minimum_should_match: 1,
               should: [
-                { match: { 'verb' => 'share_button_click' } },
-                { match: { 'verb' => 'share_course' } }
+                {match: {'verb' => 'share_button_click'}},
+                {match: {'verb' => 'share_course'}}
               ]
             }
           }
@@ -60,7 +59,6 @@ module Lanalytics
           hash[service['key']] = service['doc_count']
         end
       end
-
     end
   end
 end

@@ -13,7 +13,7 @@ class FileCollection
   end
 
   def make(path)
-    @base_path.join(path).tap { |file|
+    @base_path.join(path).tap {|file|
       @files[path] = file
     }
   end

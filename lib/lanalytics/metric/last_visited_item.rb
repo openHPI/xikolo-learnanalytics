@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class LastVisitedItem < ExpEventsElasticMetric
-
       description 'Last visited item of user.'
 
       required_parameter :user_id
@@ -15,7 +14,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  { match: { 'verb' => 'visited_item' } }
+                  {match: {'verb' => 'visited_item'}}
                 ] + all_filters(params[:user_id], params[:course_id], nil),
               }
             },
@@ -28,7 +27,6 @@ module Lanalytics
         end
         result.dig('hits', 'hits', 0, '_source') || {}
       end
-
     end
   end
 end

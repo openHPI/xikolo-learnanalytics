@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class UserActivityCount < ExpEventsElasticMetric
-
       description 'Overall platform activity (events), defaults to 30 minutes.'
 
       optional_parameter :start_date, :end_date
@@ -29,7 +28,6 @@ module Lanalytics
         end
         result['hits']['total']['value']
       end
-
     end
   end
 end

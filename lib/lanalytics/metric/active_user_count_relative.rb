@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ActiveUserCountRelative < ExpEventsElasticMetric
-
       description """
 Calculates activity compared to the platform and itself for the last day.
 Result if course_id present:
@@ -86,14 +85,15 @@ Default active users of last day.
         if days_since_start <= 0
           result[:kpi_activity] = nil
         else
-          avg_activity_per_day = CourseActivity.query(course_id: course_id, start_date: start_date.to_s, end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
-          activity_today = CourseActivity.query(course_id: course_id, start_date: (DateTime.now - 1.day).to_s, end_date: DateTime.now.to_s)[:count].to_f
+          avg_activity_per_day = CourseActivity.query(course_id: course_id, start_date: start_date.to_s,
+            end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
+          activity_today = CourseActivity.query(course_id: course_id, start_date: (DateTime.now - 1.day).to_s,
+            end_date: DateTime.now.to_s)[:count].to_f
           result[:kpi_activity] = (avg_activity_per_day != 0 ? activity_today / avg_activity_per_day : 0).round(2)
         end
 
         result
       end
-
     end
   end
 end

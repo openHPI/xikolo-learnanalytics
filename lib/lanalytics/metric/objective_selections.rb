@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ObjectiveSelections < ExpEventsElasticMetric
-
       description 'Learning objective measures including the number of users with objective, selections by objective, average number of objectives, and distribution of selected objectives.'
 
       optional_parameter :course_id, :user_id
@@ -11,14 +10,14 @@ module Lanalytics
         user_id = params[:user_id]
 
         result = datasource.exec do |client|
-          query_must = [ { match: { 'verb' => 'selected_objective' } } ]
+          query_must = [{match: {'verb' => 'selected_objective'}}]
 
           if user_id.present?
-            query_must << { match: { 'user.resource_uuid' => user_id } }
+            query_must << {match: {'user.resource_uuid' => user_id}}
           end
 
           if course_id.present?
-            query_must << { match: { 'in_context.context_id' => course_id } }
+            query_must << {match: {'in_context.context_id' => course_id}}
           end
 
           body = {
@@ -42,7 +41,7 @@ module Lanalytics
                 },
                 aggs: {
                   initial_objectives: {
-                    missing: { field: 'in_context.old_objective' }
+                    missing: {field: 'in_context.old_objective'}
                   },
                 }
               },
@@ -55,7 +54,7 @@ module Lanalytics
                 aggs: {
                   current_objective: {
                     top_hits: {
-                      sort: { timestamp: { order: 'desc' } },
+                      sort: {timestamp: {order: 'desc'}},
                       size: 1,
                       _source: 'in_context.new_objective'
                     }
@@ -63,7 +62,7 @@ module Lanalytics
                 }
               },
               initial_objectives: {
-                missing: { field: 'in_context.old_objective' },
+                missing: {field: 'in_context.old_objective'},
                 aggs: {
                   by_modal_context: {
                     terms: {
@@ -80,15 +79,17 @@ module Lanalytics
 
         active_objectives = result.dig('aggregations', 'by_user', 'buckets')&.map do |b|
           b.dig('current_objective', 'hits', 'hits', 0, '_source', 'in_context', 'new_objective')
-        end.each_with_object(Hash.new(0)) { |e, h| h[e] += 1 }
-        total_selections_by_objective = result.dig('aggregations', 'by_objective', 'buckets')&.each_with_object({}) do |e, h|
+        end.each_with_object(Hash.new(0)) {|e, h| h[e] += 1 }
+        total_selections_by_objective = result.dig('aggregations', 'by_objective',
+          'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e['doc_count']
         end
-        objectives_per_user = result.dig('aggregations', 'by_user', 'buckets')&.map  { |b| b['doc_count'] }
+        objectives_per_user = result.dig('aggregations', 'by_user', 'buckets')&.map {|b| b['doc_count'] }
         initial_objectives = result.dig('aggregations', 'by_objective', 'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e.dig('initial_objectives', 'doc_count')
         end
-        initial_selections_by_context = result.dig('aggregations', 'initial_objectives', 'by_modal_context', 'buckets')&.each_with_object({}) do |e, h|
+        initial_selections_by_context = result.dig('aggregations', 'initial_objectives', 'by_modal_context',
+          'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e['doc_count']
         end
 

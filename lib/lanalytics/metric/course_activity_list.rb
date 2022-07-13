@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class CourseActivityList < ExpEventsElasticMetric
-
       description 'Returns the top 10 active courses, defaults to last 24h.'
 
       optional_parameter :start_date, :end_date
@@ -41,13 +40,11 @@ module Lanalytics
               }
             }
           }
-
-
         end
         result = {}
         exp_result.with_indifferent_access[:aggregations][:group_by_field][:buckets].each do |bucket|
           buckets = bucket.with_indifferent_access[:group_by_field][:buckets]
-          #add new verbs here if needed
+          # add new verbs here if needed
 
           result[bucket.with_indifferent_access[:key]] = {
             course_id: bucket.with_indifferent_access[:key],
@@ -62,14 +59,13 @@ module Lanalytics
       end
 
       def self.get_agg_value(buckets, verb)
-        b = buckets.find { |hash| hash["key"] == verb }
+        b = buckets.find {|hash| hash["key"] == verb }
         if b.present?
           b[:doc_count].to_i
         else
           0
         end
       end
-
     end
   end
 end

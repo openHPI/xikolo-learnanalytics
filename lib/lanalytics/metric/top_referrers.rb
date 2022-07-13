@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class TopReferrers < LinkTrackingEventsElasticMetric
-
       description 'Top 25 referrer with count.'
 
       optional_parameter :course_id, :group_hosts
@@ -9,24 +8,24 @@ module Lanalytics
       exec do |params|
         result = datasource.exec do |client|
           body = {
-              size: 0,
-              aggregations: {
-                  referrer: {
-                      terms: {
-                          field: 'referrer',
-                          size: 25
-                      }
-                  }
+            size: 0,
+            aggregations: {
+              referrer: {
+                terms: {
+                  field: 'referrer',
+                  size: 25
+                }
               }
+            }
           }
 
           if params[:course_id].present?
             body[:query] = {
-                bool: {
-                    must: [
-                        { match: { 'course_id' => params[:course_id] } }
-                    ]
-                }
+              bool: {
+                must: [
+                  {match: {'course_id' => params[:course_id]}}
+                ]
+              }
             }
           end
 
@@ -44,7 +43,6 @@ module Lanalytics
         end
         result_set
       end
-
     end
   end
 end

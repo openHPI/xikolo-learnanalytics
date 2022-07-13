@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class RichTextLinkClickTotalCount < LinkTrackingEventsElasticMetric
-
       description 'Counts all link clicks for all rich text items of a course.'
 
       required_parameter :course_id
@@ -28,7 +27,6 @@ module Lanalytics
 
         {count: result.dig('hits', 'total', 'value').to_i}
       end
-
     end
   end
 end

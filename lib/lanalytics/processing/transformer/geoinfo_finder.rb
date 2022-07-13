@@ -1,7 +1,6 @@
 module Lanalytics
   module Processing
     module Transformer
-
       class GeoinfoFinder < TransformStep
         def transform(original_event, processing_units, load_commands, pipeline_ctx)
           processing_units.each do |processing_unit|
@@ -26,7 +25,6 @@ module Lanalytics
           end
         end
       end
-
     end
   end
 end

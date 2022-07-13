@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class RichTextLinkClickCount < LinkTrackingEventsElasticMetric
-
       description 'Counts all link clicks for all rich text items of a course.'
 
       required_parameter :course_id
@@ -16,8 +15,8 @@ module Lanalytics
           query: {
             bool: {
               must: [
-                { match: { tracking_type: 'rich_text_item_link' } },
-                { match: { course_id: params[:course_id] } }
+                {match: {tracking_type: 'rich_text_item_link'}},
+                {match: {course_id: params[:course_id]}}
               ]
             }
           },
@@ -37,7 +36,7 @@ module Lanalytics
                 earliest_timestamp: {
                   top_hits: {
                     sort: [
-                      { timestamp: { order: 'asc' } }
+                      {timestamp: {order: 'asc'}}
                     ],
                     _source: ['timestamp'],
                     size: 1
@@ -46,7 +45,7 @@ module Lanalytics
                 latest_timestamp: {
                   top_hits: {
                     sort: [
-                      { timestamp: { order: 'desc' } }
+                      {timestamp: {order: 'desc'}}
                     ],
                     _source: ['timestamp'],
                     size: 1
@@ -58,7 +57,7 @@ module Lanalytics
         }
 
         if params[:item_id]
-          body[:query][:bool][:must] << { match: { tracking_id: params[:item_id] } }
+          body[:query][:bool][:must] << {match: {tracking_id: params[:item_id]}}
         end
 
         result = datasource.exec do |client|
@@ -122,7 +121,6 @@ module Lanalytics
         end
         rich_texts
       end
-
     end
   end
 end

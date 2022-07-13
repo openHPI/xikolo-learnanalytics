@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class UserCourseCity < ExpEventsElasticMetric
-
       description 'Returns city with most activity.'
 
       optional_parameter :course_id, :user_id
@@ -53,7 +52,6 @@ module Lanalytics
           ''
         end
       end
-
     end
   end
 end

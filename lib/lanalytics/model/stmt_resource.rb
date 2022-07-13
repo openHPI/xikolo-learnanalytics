@@ -10,6 +10,7 @@ module Lanalytics
 
         raise ArgumentError.new "'uuid' argument cannot be nil" unless uuid
         raise ArgumentError.new "'uuid' argument cannot be empty" if uuid.to_s.empty?
+
         @uuid = uuid.to_s
 
         properties ||= {}
@@ -61,7 +62,6 @@ module Lanalytics
         @type == other.type && @uuid == other.uuid
       end
       alias_method :eql?, :==
-
     end
   end
 end

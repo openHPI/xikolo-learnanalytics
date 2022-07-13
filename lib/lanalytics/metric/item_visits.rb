@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class ItemVisits < ExpEventsElasticMetric
-
       description 'Total and unique user item visits; for last day, last 15 minutes (now) and overall.'
 
       required_parameter :resource_id
@@ -38,8 +37,8 @@ module Lanalytics
           query: {
             bool: {
               must: [
-                { match: { 'resource.resource_uuid' => resource_id } },
-                { match: { verb: 'visited_item' } }
+                {match: {'resource.resource_uuid' => resource_id}},
+                {match: {verb: 'visited_item'}}
               ]
             }
           }
@@ -84,7 +83,6 @@ module Lanalytics
         end
         result.with_indifferent_access
       end
-
     end
   end
 end

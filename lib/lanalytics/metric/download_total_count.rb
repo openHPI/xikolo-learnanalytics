@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class DownloadTotalCount < ExpEventsElasticMetric
-
       description 'Counts all downloads for all video items of a course.'
 
       required_parameter :course_id
@@ -46,7 +45,6 @@ module Lanalytics
         end
         filter
       end
-
     end
   end
 end

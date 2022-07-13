@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class CoursePoints < ExpEventsElasticMetric
-
       description 'Achieved points of user in course.'
 
       required_parameter :user_id, :course_id, :start_date, :end_date
@@ -19,8 +18,8 @@ module Lanalytics
                 query: {
                   bool: {
                     must: [
-                      { match: { 'user.resource_uuid' => user_id } },
-                      { match: { verb: 'COMPLETED_COURSE' } }
+                      {match: {'user.resource_uuid' => user_id}},
+                      {match: {verb: 'COMPLETED_COURSE'}}
                     ] + (all_filters(nil, course_id, nil)),
                     filter: {
                       range: {
@@ -37,11 +36,10 @@ module Lanalytics
           }
         end['hits']['hits']
 
-        next { points: nil } if completed_statements.empty?
+        next {points: nil} if completed_statements.empty?
 
-        { points: completed_statements.first['_source']['in_context']['points_achieved'] }
+        {points: completed_statements.first['_source']['in_context']['points_achieved']}
       end
-
     end
   end
 end

@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ForumActivity < ExpEventsElasticMetric
-
       description 'Total number of all forum events and its unique users.'
 
       optional_parameter :course_id, :user_id
@@ -18,12 +17,12 @@ module Lanalytics
                     bool: {
                       minimum_should_match: 1,
                       should: [
-                        { match: { 'verb' => 'visited_pinboard' } },
-                        { match: { 'verb' => 'visited_question' } },
-                        { match: { 'verb' => 'toggled_subscription' } },
-                        { match: { 'verb' => 'asked_question' } },
-                        { match: { 'verb' => 'answered_question' } },
-                        { match: { 'verb' => 'commented' } }
+                        {match: {'verb' => 'visited_pinboard'}},
+                        {match: {'verb' => 'visited_question'}},
+                        {match: {'verb' => 'toggled_subscription'}},
+                        {match: {'verb' => 'asked_question'}},
+                        {match: {'verb' => 'answered_question'}},
+                        {match: {'verb' => 'commented'}}
                       ]
                     }
                   }
@@ -44,7 +43,6 @@ module Lanalytics
           user: result.dig('aggregations', 'user', 'value')
         }
       end
-
     end
   end
 end

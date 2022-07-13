@@ -3,7 +3,6 @@
 # legacy code; still used by metrics
 
 class Lanalytics::Clustering::Dimensions
-
   # To add a verb:
   #   1) make sure it has the course id in 'in_context'
   #   2) add it to the list
@@ -68,8 +67,8 @@ class Lanalytics::Clustering::Dimensions
 
     return [] if verbs.length == 0 && metrics.length == 0
 
-    verb_queries   = verbs.map{ |verb| build_verb_query(verb, course_uuid, user_uuids) }
-    metric_queries = metrics.map{ |metric| build_metric_query(metric, course_uuid, user_uuids) }
+    verb_queries   = verbs.map {|verb| build_verb_query(verb, course_uuid, user_uuids) }
+    metric_queries = metrics.map {|metric| build_metric_query(metric, course_uuid, user_uuids) }
 
     queries = verb_queries + metric_queries
 
@@ -97,19 +96,19 @@ class Lanalytics::Clustering::Dimensions
   # COMBINE DIMENSIONS - BUILD A SINGLE BIG QUERY
   # -----------------------
   def self.aggregate_dimensions_data(queries, dimensions, cluster_group_user_uuids)
-    user_uuids = (0..dimensions.length - 1).map{ |i|
+    user_uuids = (0..dimensions.length - 1).map {|i|
       "query#{i}.user_uuid"
     }.join(', ')
 
-    coalesce_dimensions = dimensions.each_with_index.map{ |dimension, i|
+    coalesce_dimensions = dimensions.each_with_index.map {|dimension, i|
       "cast(coalesce(#{dimension}_metric, 0) as float) as #{dimension}"
     }.join(', ')
 
-    dimensions_not_zero = dimensions.map{ |dimension|
+    dimensions_not_zero = dimensions.map {|dimension|
       "#{dimension}_metric != 0"
     }.join(' or ')
 
-    max_dimensions = dimensions.map{ |dimension|
+    max_dimensions = dimensions.map {|dimension|
       "max(#{dimension}) as #{dimension}"
     }.join(', ')
 
@@ -123,6 +122,7 @@ class Lanalytics::Clustering::Dimensions
     subqueries_joined = "#{subqueries.first} #{full_outer_join} "
     subqueries.each_with_index do |query, i|
       next if i == 0
+
       join = " on query#{i - 1}.user_uuid = query#{i}.user_uuid"
       next_join = ' FULL OUTER JOIN '
       subqueries_joined += query + join
@@ -140,10 +140,10 @@ class Lanalytics::Clustering::Dimensions
     "
 
     if cluster_group_user_uuids.present?
-      dimension_selection = dimensions.map{ |dimension|
+      dimension_selection = dimensions.map {|dimension|
         "avg(subq.#{dimension}) as #{dimension}"
       }.join(', ')
-      cluster_group_filter = cluster_group_user_uuids.map{|uuid| "'#{uuid}'" }.join(', ')
+      cluster_group_filter = cluster_group_user_uuids.map {|uuid| "'#{uuid}'" }.join(', ')
 
       final_query = "
         select #{dimension_selection}
@@ -174,7 +174,7 @@ class Lanalytics::Clustering::Dimensions
     if user_uuids.size == 1
       result = " user_uuid = '#{user_uuids.first}'"
     else
-      result =  " user_uuid ANY (#{user_uuids.explode(',')})"
+      result = " user_uuid ANY (#{user_uuids.explode(',')})"
     end
     append_and ? " AND " + result : " WHERE " + result
   end
@@ -188,7 +188,7 @@ class Lanalytics::Clustering::Dimensions
 
     # Some verbs don't have a course_id. This is why we only allow
     # users who have at least one other event in this course
-    s1 ="select user_uuid, count(distinct(verb_id)) as platform_exploration_metric
+    s1 = "select user_uuid, count(distinct(verb_id)) as platform_exploration_metric
      from events
      where user_uuid in (
        select user_uuid
@@ -290,8 +290,8 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.quiz_type_performance(course_uuid, metric, types, user_uuids = nil)
-    type_query = types.map{ |type| "e.in_context->>'quiz_type' = '#{type}'" }
-                      .join(' or ')
+    type_query = types.map {|type| "e.in_context->>'quiz_type' = '#{type}'" }
+      .join(' or ')
 
     s1 = "select e.user_uuid, round(
         avg(
@@ -303,7 +303,7 @@ class Lanalytics::Clustering::Dimensions
       ,3) as #{metric}_performance_metric
      from events as e, verbs as v
      where e.verb_id = v.id "
-    s2 = course_uuid.present? ?  " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
+    s2 = course_uuid.present? ? " and e.in_context->>'course_id' = '#{course_uuid}' " : ""
     s3 = user_uuids.present? ? userfilter_query(user_uuids, true) : ""
     s4 = " and v.verb = 'submitted_quiz'
      and (#{type_query})
@@ -330,7 +330,7 @@ class Lanalytics::Clustering::Dimensions
        from events "
     s2 = course_uuid.present? ? " where in_context->>'course_id' = '#{course_uuid}' " : ""
     s3 = user_uuids.present? ? userfilter_query(user_uuids, course_uuid.present?) : ""
-    s4 =  " ) as q
+    s4 = " ) as q
      group by user_uuid"
     s1 + s2 + s3 + s4
   end
@@ -380,7 +380,7 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.download_activity(course_uuid, user_uuids = nil)
-    s1 ="select e.user_uuid, count(*) as download_activity_metric
+    s1 = "select e.user_uuid, count(*) as download_activity_metric
      from events as e, verbs as v
      where e.verb_id = v.id
      and (v.verb = 'downloaded_slides' or
@@ -394,7 +394,7 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.unique_video_downloads_activity(course_uuid, user_uuids = nil)
-    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_video_downloads_activity_metric
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as unique_video_downloads_activity_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
      and (v.verb = 'downloaded_sd_video' or
@@ -408,7 +408,7 @@ class Lanalytics::Clustering::Dimensions
   end
 
   def self.unique_slide_downloads_activity(course_uuid, user_uuids = nil)
-    s1 ="select e.user_uuid, count(distinct(r.uuid)) as unique_slide_downloads_activity_metric
+    s1 = "select e.user_uuid, count(distinct(r.uuid)) as unique_slide_downloads_activity_metric
      from events as e, verbs as v, resources as r
      where e.verb_id = v.id
      and v.verb = 'downloaded_slides'

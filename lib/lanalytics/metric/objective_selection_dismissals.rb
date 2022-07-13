@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ObjectiveSelectionDismissals < ExpEventsElasticMetric
-
       description 'Number of objectives selection dismissals by type (modal/infobox) and number of occurrences where both were dismissed.'
 
       optional_parameter :course_id, :user_id
@@ -13,16 +12,16 @@ module Lanalytics
         result = datasource.exec do |client|
           query_must = []
           if user_id.present?
-            query_must << { match: { 'user.resource_uuid' => user_id } }
+            query_must << {match: {'user.resource_uuid' => user_id}}
           end
 
           if course_id.present?
-            query_must << { match: { 'in_context.context_id' => course_id } }
+            query_must << {match: {'in_context.context_id' => course_id}}
           end
 
           query_should = [
-            { match: { 'verb' => 'dismissed_objectives_modal' } },
-            { match: { 'verb' => 'dismissed_objectives_infobox' } }
+            {match: {'verb' => 'dismissed_objectives_modal'}},
+            {match: {'verb' => 'dismissed_objectives_infobox'}}
           ]
 
           body = {
@@ -44,7 +43,7 @@ module Lanalytics
                 }
               },
               grouped_by_verb: {
-                terms: { field: 'verb' }
+                terms: {field: 'verb'}
               },
               grouped_by_user: {
                 terms: {

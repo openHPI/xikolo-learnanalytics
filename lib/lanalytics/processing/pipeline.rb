@@ -111,11 +111,11 @@ module Lanalytics
           loader.load(original_event, load_commands, pipeline_ctx)
         end
       end
-
     end
 
     class PipelineContext
       attr_reader :pipeline
+
       def initialize(pipeline, opts = {})
         @pipeline = pipeline
 

@@ -3,6 +3,7 @@ module Lanalytics
     module LoadORM
       class MergeEntityCommand
         attr_reader :entity
+
         def self.with(entity)
           new(entity)
         end

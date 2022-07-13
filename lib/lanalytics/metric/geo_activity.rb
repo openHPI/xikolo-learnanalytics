@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class GeoActivity < ExpEventsElasticMetric
-
       description 'Counted geo locations, defaults to 1 minute.'
 
       optional_parameter :course_id, :start_date, :end_date
@@ -19,7 +18,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  { exists: { field: 'in_context.user_location_longitude' } }
+                  {exists: {field: 'in_context.user_location_longitude'}}
                 ] + (all_filters(nil, course_id, nil)),
                 filter: {
                   range: {
@@ -42,13 +41,13 @@ module Lanalytics
           if processed_result[key]
             processed_result[key][:count] += 1
           else
-            processed_result[key] = { count: 1, lon: item['user_location_longitude'], lat: item['user_location_latitude'] }
+            processed_result[key] =
+              {count: 1, lon: item['user_location_longitude'], lat: item['user_location_latitude']}
           end
         end
         # we dont need the keys in our return value
         processed_result.values
       end
-
     end
   end
 end

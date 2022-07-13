@@ -33,7 +33,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
 
       unless exp_stmt.resource.nil?
         resource = Resource.find_or_create_by(
-          uuid:          exp_stmt.resource.uuid.to_s,
+          uuid: exp_stmt.resource.uuid.to_s,
           resource_type: exp_stmt.resource.type.downcase.to_s
         )
         with_attribute :resource_id, :int, resource.id
@@ -62,7 +62,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
 
       unless attrs[:resource].nil?
         resource = Resource.find_or_create_by(
-          uuid:          attrs[:resource][:uuid].to_s,
+          uuid: attrs[:resource][:uuid].to_s,
           resource_type: attrs[:resource][:type].to_s
         )
         with_attribute :resource_id, :int, resource.id
@@ -79,123 +79,122 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
 
   def transform_question_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :asked_question,
-                              resource: {
-                                uuid: processing_unit[:id],
-                                type: :question
-                              },
-                              timestamp: processing_unit[:created_at],
-                              in_context: {
-                                text: processing_unit[:text],
-                                course_id: processing_unit[:course_id],
-                                video_id: processing_unit[:video_id],
-                                video_timestamp: processing_unit[:video_timestamp],
-                                learning_room_id: processing_unit[:learning_room_id],
-                                implicit_tags: processing_unit[:implicit_tags],
-                                user_tags: processing_unit[:user_tags],
-                                technical: processing_unit[:technical]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :asked_question,
+      resource: {
+        uuid: processing_unit[:id],
+        type: :question
+      },
+      timestamp: processing_unit[:created_at],
+      in_context: {
+        text: processing_unit[:text],
+        course_id: processing_unit[:course_id],
+        video_id: processing_unit[:video_id],
+        video_timestamp: processing_unit[:video_timestamp],
+        learning_room_id: processing_unit[:learning_room_id],
+        implicit_tags: processing_unit[:implicit_tags],
+        user_tags: processing_unit[:user_tags],
+        technical: processing_unit[:technical]
+      }
   end
-
 
   def transform_answer_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :answered_question,
-                              resource: {
-                                uuid: processing_unit[:id],
-                                type: :answer
-                              },
-                              timestamp: processing_unit[:created_at],
-                              in_context: {
-                                text: processing_unit[:text],
-                                question_id: processing_unit[:question_id],
-                                course_id: processing_unit[:course_id],
-                                technical: processing_unit[:technical]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :answered_question,
+      resource: {
+        uuid: processing_unit[:id],
+        type: :answer
+      },
+      timestamp: processing_unit[:created_at],
+      in_context: {
+        text: processing_unit[:text],
+        question_id: processing_unit[:question_id],
+        course_id: processing_unit[:course_id],
+        technical: processing_unit[:technical]
+      }
   end
 
   def transform_comment_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :commented,
-                              resource: {
-                                uuid: processing_unit[:id],
-                                type: :comment
-                              },
-                              timestamp: processing_unit[:created_at],
-                              in_context: {
-                                text: processing_unit[:text],
-                                commentable_id: processing_unit[:commentable_id],
-                                commentable_type: processing_unit[:commentable_type],
-                                course_id: processing_unit[:course_id],
-                                technical: processing_unit[:technical]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :commented,
+      resource: {
+        uuid: processing_unit[:id],
+        type: :comment
+      },
+      timestamp: processing_unit[:created_at],
+      in_context: {
+        text: processing_unit[:text],
+        commentable_id: processing_unit[:commentable_id],
+        commentable_type: processing_unit[:commentable_type],
+        course_id: processing_unit[:course_id],
+        technical: processing_unit[:technical]
+      }
   end
 
   def transform_visit_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :visited,
-                              resource: {
-                                uuid: processing_unit[:item_id],
-                                type: processing_unit[:content_type]
-                              },
-                              timestamp: processing_unit[:created_at],
-                              in_context: {
-                                course_id: processing_unit[:course_id]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :visited,
+      resource: {
+        uuid: processing_unit[:item_id],
+        type: processing_unit[:content_type]
+      },
+      timestamp: processing_unit[:created_at],
+      in_context: {
+        course_id: processing_unit[:course_id]
+      }
   end
 
   def transform_watch_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :watched_question,
-                              resource: {
-                                uuid: processing_unit[:question_id],
-                                type: :question
-                              },
-                              timestamp: processing_unit[:updated_at],
-                              in_context: {
-                                course_id: processing_unit[:course_id]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :watched_question,
+      resource: {
+        uuid: processing_unit[:question_id],
+        type: :question
+      },
+      timestamp: processing_unit[:updated_at],
+      in_context: {
+        course_id: processing_unit[:course_id]
+      }
   end
 
   def transform_enrollment_completed_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :completed_course,
-                              resource: {
-                                uuid: processing_unit[:course_id],
-                                type: :course
-                              },
-                              timestamp: processing_unit[:updated_at],
-                              in_context: {
-                                course_id: processing_unit[:course_id],
-                                points_achieved: processing_unit[:points][:achieved],
-                                points_maximal: processing_unit[:points][:maximal],
-                                points_percentage: processing_unit[:points][:percentage],
-                                received_confirmation_of_participation: processing_unit[:certificates][:confirmation_of_participation],
-                                received_record_of_achievement: processing_unit[:certificates][:record_of_achievement],
-                                received_certificate: processing_unit[:certificates][:certificate],
-                                quantile: processing_unit[:quantile]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :completed_course,
+      resource: {
+        uuid: processing_unit[:course_id],
+        type: :course
+      },
+      timestamp: processing_unit[:updated_at],
+      in_context: {
+        course_id: processing_unit[:course_id],
+        points_achieved: processing_unit[:points][:achieved],
+        points_maximal: processing_unit[:points][:maximal],
+        points_percentage: processing_unit[:points][:percentage],
+        received_confirmation_of_participation: processing_unit[:certificates][:confirmation_of_participation],
+        received_record_of_achievement: processing_unit[:certificates][:record_of_achievement],
+        received_certificate: processing_unit[:certificates][:certificate],
+        quantile: processing_unit[:quantile]
+      }
   end
 
   def transform_answer_accepted_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :answer_accepted,
-                              resource: {
-                                  uuid: processing_unit[:id],
-                                  type: :answer
-                              },
-                              timestamp: processing_unit[:created_at],
-                              in_context: {
-                                  course_id: processing_unit[:course_id],
-                                  question_id: processing_unit[:question_id]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :answer_accepted,
+      resource: {
+        uuid: processing_unit[:id],
+        type: :answer
+      },
+      timestamp: processing_unit[:created_at],
+      in_context: {
+        course_id: processing_unit[:course_id],
+        question_id: processing_unit[:question_id]
+      }
   end
 
   def transform_enrollment_punit_to_create(processing_unit, load_commands)
@@ -209,53 +208,53 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
   def save_enrollment(processing_unit, load_commands)
     verb = processing_unit[:deleted] ? :un_enrolled : :enrolled
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: verb,
-                              resource: {
-                                uuid: processing_unit[:course_id],
-                                type: :course
-                              },
-                              timestamp: processing_unit[:updated_at],
-                              in_context: {
-                                course_id: processing_unit[:course_id]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: verb,
+      resource: {
+        uuid: processing_unit[:course_id],
+        type: :course
+      },
+      timestamp: processing_unit[:updated_at],
+      in_context: {
+        course_id: processing_unit[:course_id]
+      }
   end
 
   def transform_user_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:id],
-                              verb: :confirmed,
-                              timestamp: processing_unit[:updated_at],
-                              in_context: {
-                                affiliated: processing_unit[:affiliated],
-                                admin: processing_unit[:admin],
-                                policy_accepted: processing_unit[:policy_accepted],
-                                preferred_language: processing_unit[:preferred_language]
-                              }
+      user_uuid: processing_unit[:id],
+      verb: :confirmed,
+      timestamp: processing_unit[:updated_at],
+      in_context: {
+        affiliated: processing_unit[:affiliated],
+        admin: processing_unit[:admin],
+        policy_accepted: processing_unit[:policy_accepted],
+        preferred_language: processing_unit[:preferred_language]
+      }
   end
 
   def transform_submission_punit_to_create(processing_unit, load_commands)
     transform_punit_to_create load_commands,
-                              user_uuid: processing_unit[:user_id],
-                              verb: :submitted_quiz,
-                              resource: {
-                                uuid: processing_unit[:quiz_id],
-                                type: :quiz
-                              },
-                              timestamp: processing_unit[:quiz_submission_time] || DateTime.now.to_s,
-                              in_context: {
-                                course_id: processing_unit[:course_id],
-                                item_id: processing_unit[:item_id],
-                                quiz_access_time: processing_unit[:quiz_access_time],
-                                quiz_submission_time: processing_unit[:quiz_submission_time],
-                                quiz_version_at: processing_unit[:quiz_version_at],
-                                quiz_submission_deadline: processing_unit[:quiz_submission_deadline],
-                                quiz_type: processing_unit[:quiz_type],
-                                attempt: processing_unit[:attempt],
-                                points: processing_unit[:points],
-                                max_points: processing_unit[:max_points],
-                                estimated_time_effort: processing_unit[:estimated_time_effort]
-                              }
+      user_uuid: processing_unit[:user_id],
+      verb: :submitted_quiz,
+      resource: {
+        uuid: processing_unit[:quiz_id],
+        type: :quiz
+      },
+      timestamp: processing_unit[:quiz_submission_time] || DateTime.now.to_s,
+      in_context: {
+        course_id: processing_unit[:course_id],
+        item_id: processing_unit[:item_id],
+        quiz_access_time: processing_unit[:quiz_access_time],
+        quiz_submission_time: processing_unit[:quiz_submission_time],
+        quiz_version_at: processing_unit[:quiz_version_at],
+        quiz_submission_deadline: processing_unit[:quiz_submission_deadline],
+        quiz_type: processing_unit[:quiz_type],
+        attempt: processing_unit[:attempt],
+        points: processing_unit[:points],
+        max_points: processing_unit[:max_points],
+        estimated_time_effort: processing_unit[:estimated_time_effort]
+      }
   end
 end
 # rubocop:enable all

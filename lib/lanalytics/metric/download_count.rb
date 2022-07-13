@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class DownloadCount < ExpEventsElasticMetric
-
       description 'Counts all downloads for all video items of a course.'
 
       required_parameter :course_id
@@ -48,7 +47,7 @@ module Lanalytics
             filter: {
               bool: {
                 must: [
-                  { match: { verb: "downloaded_#{verb}" } }
+                  {match: {verb: "downloaded_#{verb}"}}
                 ]
               }
             },
@@ -124,13 +123,12 @@ module Lanalytics
       end
 
       def self.download_verbs_filter(verbs)
-        filter = [{ bool: { should: [] } }]
+        filter = [{bool: {should: []}}]
         verbs.each do |verb|
-          filter[0][:bool][:should] << { match: { verb: "downloaded_#{verb}" } }
+          filter[0][:bool][:should] << {match: {verb: "downloaded_#{verb}"}}
         end
         filter
       end
-
     end
   end
 end

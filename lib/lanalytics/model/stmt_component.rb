@@ -31,7 +31,6 @@ module Lanalytics
         @type == other.type
       end
       alias_method :eql?, :==
-
     end
   end
 end

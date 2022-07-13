@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class LastActivity < ExpEventsElasticMetric
-
       description 'Last activity of user.'
 
       required_parameter :user_id
@@ -26,7 +25,6 @@ module Lanalytics
         end
         result.dig('hits', 'hits', 0, '_source') || {}
       end
-
     end
   end
 end

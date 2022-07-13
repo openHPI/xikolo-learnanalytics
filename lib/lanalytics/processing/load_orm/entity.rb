@@ -1,7 +1,6 @@
 module Lanalytics
   module Processing
     module LoadORM
-
       class Entity
         include Lanalytics::Helper::HashHelper
 
@@ -14,7 +13,6 @@ module Lanalytics
 
           entity
         end
-
 
         def initialize(entity_key, attributes = [])
           # Ensure not nil
@@ -35,7 +33,7 @@ module Lanalytics
         end
 
         def all_non_nil_attributes
-          all_non_nil_attributes = @attributes.reject { |attr| attr.value.nil? }
+          all_non_nil_attributes = @attributes.reject {|attr| attr.value.nil? }
           all_non_nil_attributes.unshift(@primary_attribute) if @primary_attribute
 
           all_non_nil_attributes
@@ -50,12 +48,13 @@ module Lanalytics
         end
 
         def [](name)
-          @attributes.find { |a| a.name == name }
+          @attributes.find {|a| a.name == name }
         end
       end
 
       class Attribute
         attr_reader :name, :data_type, :value
+
         def initialize(name, data_type, value = nil)
           @name = name
           @data_type = data_type
@@ -80,7 +79,6 @@ module Lanalytics
           'Primary ' + super.inspect
         end
       end
-
     end
   end
 end

@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class QuizPointsTimebased < ExpEventsElasticMetric
-
       description 'Returns the cumulated scored and maximum points for quizzes(!) over the specified time span (per day).'
 
       required_parameter :start_date, :end_date
@@ -19,8 +18,8 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: [{ match: { verb: 'SUBMITTED_QUIZ' } }] + all_filters(user_id, course_id, nil),
-                must_not: [{ term: { 'in_context.quiz_type': 'survey' } }],
+                must: [{match: {verb: 'SUBMITTED_QUIZ'}}] + all_filters(user_id, course_id, nil),
+                must_not: [{term: {'in_context.quiz_type': 'survey'}}],
                 filter: {
                   range: {
                     timestamp: {

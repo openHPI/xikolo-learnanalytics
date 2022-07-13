@@ -3,7 +3,6 @@ module Lanalytics
   module Processing
     module Datasources
       class ElasticDatasource < Datasource
-
         attr_reader :host, :port, :client, :index
 
         def initialize(elastic_config)
@@ -13,7 +12,7 @@ module Lanalytics
 
         def setup
           non_elasticsearch_opts = [:client, :name, :key, :description, :index]
-          config = instance_values.symbolize_keys.reject { |k, v| non_elasticsearch_opts.include? k }
+          config = instance_values.symbolize_keys.reject {|k, v| non_elasticsearch_opts.include? k }
 
           @client = Elasticsearch::Client.new config
 
@@ -24,6 +23,7 @@ module Lanalytics
 
         def exec
           return unless block_given?
+
           yield @client
         end
 
@@ -41,4 +41,3 @@ module Lanalytics
     end
   end
 end
-

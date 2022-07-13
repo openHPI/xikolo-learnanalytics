@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class LearnerDashboardLinkCounts < ExpEventsElasticMetric
-
       description 'Counts the number of clicks on links (to forum, items, sections) in the learner dashboard.'
 
       optional_parameter :user_id, :course_id, :start_date, :end_date
@@ -25,7 +24,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  match: { verb: verb }
+                  match: {verb: verb}
                 ] + all_filters(params[:user_id], params[:course_id], nil)
               }
             }

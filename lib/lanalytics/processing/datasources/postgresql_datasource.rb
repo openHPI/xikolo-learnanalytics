@@ -44,11 +44,9 @@ module Lanalytics
             dbname: database,
             user: user, password: password,
             connect_timeout: timeout
-          }.reject { |_, v| v.nil? }
+          }.reject {|_, v| v.nil? }
         end
-
       end
     end
   end
 end
-

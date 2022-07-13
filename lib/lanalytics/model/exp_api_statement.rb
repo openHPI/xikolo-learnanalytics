@@ -9,22 +9,26 @@ module Lanalytics
         unless user.is_a? Lanalytics::Model::StmtUser
           raise ArgumentError.new "'user' argument cannot be nil and should be Lanalytics::Model::StmtUser"
         end
+
         @user = user
 
         unless verb.is_a? Lanalytics::Model::StmtVerb
           raise ArgumentError.new "'verb' argument cannot be nil and should be Lanalytics::Model::StmtVerb"
         end
+
         @verb = verb
 
         unless resource.is_a? Lanalytics::Model::StmtResource
           raise ArgumentError.new "'resource' argument cannot be nil and should be Lanalytics::Model::StmtResource"
         end
+
         @resource = resource
 
         timestamp = DateTime.now if timestamp.nil?
         unless timestamp.is_a?(DateTime) || timestamp.is_a?(String)
           raise ArgumentError.new "'timestamp' argument should be DateTime or String"
         end
+
         timestamp = DateTime.parse(timestamp) if timestamp.is_a? String
         @timestamp = timestamp
 
@@ -43,12 +47,12 @@ module Lanalytics
 
       def as_json
         {
-          user:         @user.as_json,
-          verb:         @verb.as_json,
-          resource:     @resource.as_json,
-          timestamp:    @timestamp,
-          with_result:  @with_result,
-          in_context:   @in_context
+          user: @user.as_json,
+          verb: @verb.as_json,
+          resource: @resource.as_json,
+          timestamp: @timestamp,
+          with_result: @with_result,
+          in_context: @in_context
         }
       end
 
@@ -92,7 +96,7 @@ module Lanalytics
       end
 
       def self._load(serialized_stmt_array)
-        new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! { |arg| Marshal.load(arg) })
+        new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! {|arg| Marshal.load(arg) })
       end
 
       # Implementing the equals method

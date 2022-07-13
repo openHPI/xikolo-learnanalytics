@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class ExpEventsPostgresMetric < Base
-
       def self.datasource_keys
         %w[exp_events_postgres]
       end
@@ -16,7 +15,6 @@ module Lanalytics
         loader = Lanalytics::Processing::Loader::PostgresLoader.new(datasource)
         loader.execute_sql(query)
       end
-
     end
   end
 end

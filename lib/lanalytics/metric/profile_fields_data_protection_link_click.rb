@@ -3,9 +3,8 @@
 module Lanalytics
   module Metric
     class ProfileFieldsDataProtectionLinkClick < LinkTrackingEventsElasticMetric
-
-      description 'Check if a user has clicked on the '\
-        'profile_fields_data_protection_link (A/B test)'
+      description 'Check if a user has clicked on the ' \
+                  'profile_fields_data_protection_link (A/B test)'
 
       required_parameter :course_id, :user_id
 
@@ -15,9 +14,9 @@ module Lanalytics
           query: {
             bool: {
               must: [
-                { match: { tracking_type: 'profile_fields_data_protection_link' } },
-                { match: { course_id: params[:course_id] } },
-                { match: { user_id: params[:user_id] } }
+                {match: {tracking_type: 'profile_fields_data_protection_link'}},
+                {match: {course_id: params[:course_id]}},
+                {match: {user_id: params[:user_id]}}
               ]
             }
           }
@@ -29,7 +28,6 @@ module Lanalytics
 
         {clicked: result.dig('hits', 'total', 'value').to_i.positive?}
       end
-
     end
   end
 end

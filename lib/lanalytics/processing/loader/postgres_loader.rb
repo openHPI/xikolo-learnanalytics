@@ -2,7 +2,6 @@ module Lanalytics
   module Processing
     module Loader
       class PostgresLoader < LoadStep
-
         def initialize(datasource = nil)
           @postgres_datasource = datasource
         end
@@ -32,7 +31,7 @@ module Lanalytics
 
           table   = entity.entity_key
           columns = entity.all_attribute_names.join(', ')
-          values  = entity.all_non_nil_attributes.map{ |attr| sql_value_of(attr) }.join(', ')
+          values  = entity.all_non_nil_attributes.map {|attr| sql_value_of(attr) }.join(', ')
 
           execute_sql(%Q{
             INSERT INTO #{table} (#{columns})
@@ -45,9 +44,9 @@ module Lanalytics
           table, column, value = tableColumnValueFromEntity(entity)
 
           columns = entity.all_attribute_names.join(', ')
-          values  = entity.all_non_nil_attributes.map { |attr| sql_value_of(attr) }.join(', ')
+          values  = entity.all_non_nil_attributes.map {|attr| sql_value_of(attr) }.join(', ')
 
-          set_statements = entity.all_non_nil_attributes.collect{ |attr|
+          set_statements = entity.all_non_nil_attributes.collect {|attr|
             attr.name.to_s + ' = ' + sql_value_of(attr)
           }.join(', ')
 
@@ -68,7 +67,7 @@ module Lanalytics
           entity = update_command.entity
           table, column, value = tableColumnValueFromEntity(entity)
 
-          set_statements = entity.all_non_nil_attributes.collect{ |attr|
+          set_statements = entity.all_non_nil_attributes.collect {|attr|
             attr.name.to_s + ' = ' + sql_value_of(attr)
           }.join(', ')
 

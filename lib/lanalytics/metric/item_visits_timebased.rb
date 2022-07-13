@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ItemVisitsTimebased < ExpEventsElasticMetric
-
       description 'Returns the cumulated unique and total visits over the specified time span (per day).'
 
       required_parameter :start_date, :end_date
@@ -19,7 +18,7 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: [{ match: { verb: 'VISITED_ITEM' } }] + all_filters(user_id, course_id, nil),
+                must: [{match: {verb: 'VISITED_ITEM'}}] + all_filters(user_id, course_id, nil),
                 filter: {
                   range: {
                     timestamp: {
@@ -70,7 +69,7 @@ module Lanalytics
       def self.unique_visits(buckets)
         visited_items = []
         buckets&.each_with_object({}) do |b, h|
-          bucket_visits = b.dig('by_resource', 'buckets')&.map { |e| e['key']}
+          bucket_visits = b.dig('by_resource', 'buckets')&.map {|e| e['key'] }
           new_visits = bucket_visits - visited_items
           visited_items += new_visits
           h[Time.parse(b['key_as_string'].to_s).utc.strftime('%F')] = {

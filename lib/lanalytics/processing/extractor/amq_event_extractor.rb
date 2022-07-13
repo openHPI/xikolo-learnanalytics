@@ -1,7 +1,6 @@
 module Lanalytics
   module Processing
     module Extractor
-
       class AmqEventExtractor < ExtractStep
         def initialize(type = nil)
           @type = type
@@ -11,7 +10,6 @@ module Lanalytics
           processing_units << Lanalytics::Processing::Unit.new(@type, original_event)
         end
       end
-
     end
   end
 end

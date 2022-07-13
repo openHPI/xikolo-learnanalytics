@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ClusteringMetric < Base
-
       def self.datasource_keys
         [Lanalytics::Clustering::Dimensions.datasource.key]
       end
@@ -17,7 +16,6 @@ module Lanalytics
           ).first[name].to_i
         end
       end
-
     end
   end
 end

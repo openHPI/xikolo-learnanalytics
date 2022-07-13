@@ -3,7 +3,6 @@
 module Lanalytics
   module Metric
     class PinboardSummary < ExpEventsElasticMetric
-
       description 'Returns the total number of events for the different pinboard activities.'
 
       optional_parameter :user_id, :course_id
@@ -18,16 +17,16 @@ module Lanalytics
             query: {
               bool: {
                 must: all_filters(user_id, course_id, nil) + [
-                  { bool: {
+                  {bool: {
                     minimum_should_match: 1,
                     should: [
-                      { match: { 'verb' => 'asked_question' } },
-                      { match: { 'verb' => 'answered_question' } },
-                      { match: { 'verb' => 'commented' } },
-                      { match: { 'verb' => 'visited_pinboard' } },
-                      { match: { 'verb' => 'visited_question' } }
-                    ]}
-                  }
+                      {match: {'verb' => 'asked_question'}},
+                      {match: {'verb' => 'answered_question'}},
+                      {match: {'verb' => 'commented'}},
+                      {match: {'verb' => 'visited_pinboard'}},
+                      {match: {'verb' => 'visited_question'}}
+                    ]
+                  }}
                 ],
               }
             },

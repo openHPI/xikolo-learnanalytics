@@ -1,9 +1,7 @@
 module Lanalytics
   module Processing
     module Loader
-
       class ElasticLoader < LoadStep
-
         def initialize(datasource = nil)
           @elastic_datasource = datasource
         end
@@ -16,7 +14,9 @@ module Lanalytics
 
               method("do_#{command}_for_#{entity}").call(load_command)
             rescue StandardError => e
-              Rails.logger.error { "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}" }
+              Rails.logger.error {
+                "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}"
+              }
               Rails.logger.error { original_event.inspect }
               Rails.logger.error { e.backtrace }
             end
@@ -71,7 +71,6 @@ module Lanalytics
           end
         end
       end
-
     end
   end
 end

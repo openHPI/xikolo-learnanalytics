@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class VideoEvents < ExpEventsElasticMetric
-
       description 'Counts per video event type.'
 
       required_parameter :resource_id
@@ -14,8 +13,9 @@ module Lanalytics
         change_speed =   get_data('VIDEO_CHANGE_SPEED', resource_id)
         seek =           get_data('VIDEO_SEEK', resource_id)
         stop =           get_data('VIDEO_STOP', resource_id)
-        fullscreen =     get_data('VIDEO_FULLSCREEN', resource_id,  { match: { 'in_context.new_state' => 'fullscreen' } })
-        fullscreen_off = get_data('VIDEO_FULLSCREEN', resource_id,  { match: { 'in_context.new_state' => 'player' } })
+        fullscreen =     get_data('VIDEO_FULLSCREEN', resource_id,
+          {match: {'in_context.new_state' => 'fullscreen'}})
+        fullscreen_off = get_data('VIDEO_FULLSCREEN', resource_id, {match: {'in_context.new_state' => 'player'}})
 
         result = {}
         result = add_to_total(result, pause, 'pause')
@@ -85,7 +85,6 @@ module Lanalytics
 
         result['aggregations']['timestamps']['buckets']
       end
-
     end
   end
 end

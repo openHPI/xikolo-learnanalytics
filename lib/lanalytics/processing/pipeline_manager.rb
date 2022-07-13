@@ -25,12 +25,11 @@ module Lanalytics
         instance
       end
 
-
       def initialize
         @pipelines = Hash.new do |hash, key|
           hash[key] = {
-            Lanalytics::Processing::Action::CREATE  => {},
-            Lanalytics::Processing::Action::UPDATE  => {},
+            Lanalytics::Processing::Action::CREATE => {},
+            Lanalytics::Processing::Action::UPDATE => {},
             Lanalytics::Processing::Action::DESTROY => {}
           }
         end
@@ -39,7 +38,9 @@ module Lanalytics
       def register_pipeline(pipeline)
         @pipelines[pipeline.schema][pipeline.processing_action][pipeline.name] = pipeline
 
-        Rails.logger.debug { "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'" }
+        Rails.logger.debug {
+          "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'"
+        }
       end
 
       def pipeline_for(name, schema, processing_action, &block)
@@ -50,7 +51,9 @@ module Lanalytics
           &block
         )
 
-        Rails.logger.debug { "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'" }
+        Rails.logger.debug {
+          "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'"
+        }
       end
 
       # -----------------------
@@ -75,6 +78,7 @@ module Lanalytics
         if schema.nil? || schema.empty?
           return schema_pipelines_with(processing_action, pipeline_name).values
         end
+
         pipeline = @pipelines[schema.to_sym][processing_action.to_sym][pipeline_name.to_s]
 
         return [] unless pipeline

@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class ExpEventsCountElasticMetric < ExpEventsElasticMetric
-
       def self.verbs
         @verbs ||= []
       end
@@ -37,7 +36,7 @@ module Lanalytics
 
             client.count index: datasource.index, body: query
           end
-          { count: result['count'] }
+          {count: result['count']}
         end
       end
 
@@ -46,13 +45,12 @@ module Lanalytics
           return []
         end
 
-        filter = [ { bool: { should: [] } } ]
+        filter = [{bool: {should: []}}]
         verbs.each do |verb|
-          filter[0][:bool][:should] << { match: { verb: verb } }
+          filter[0][:bool][:should] << {match: {verb: verb}}
         end
         filter
       end
-
     end
   end
 end

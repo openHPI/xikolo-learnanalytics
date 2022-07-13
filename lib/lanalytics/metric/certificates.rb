@@ -1,7 +1,6 @@
 module Lanalytics
   module Metric
     class Certificates < ExpEventsElasticMetric
-
       description 'Returns the number of gained certificates.'
 
       optional_parameter :course_id
@@ -14,7 +13,7 @@ module Lanalytics
           query: {
             bool: {
               must: [
-                { match: { 'verb' => 'completed_course' } }
+                {match: {'verb' => 'completed_course'}}
               ]
             }
           },
@@ -22,7 +21,7 @@ module Lanalytics
         }
 
         if course_id
-          body[:query][:bool][:must].append({ match: { 'in_context.course_id' => course_id } })
+          body[:query][:bool][:must].append({match: {'in_context.course_id' => course_id}})
         end
 
         types = %w(record_of_achievement confirmation_of_participation certificate)
@@ -32,7 +31,7 @@ module Lanalytics
             filter: {
               bool: {
                 must: [
-                  { match: { "in_context.received_#{type}" => 'true' } }
+                  {match: {"in_context.received_#{type}" => 'true'}}
                 ]
               }
             },
@@ -70,9 +69,8 @@ module Lanalytics
           certificates[type] = result.dig('aggregations', type, 'total', 'value').to_i
         end
 
-        certificates.tap { |it| it['qualified_certificate'] = it.delete('certificate') }
+        certificates.tap {|it| it['qualified_certificate'] = it.delete('certificate') }
       end
-
     end
   end
 end

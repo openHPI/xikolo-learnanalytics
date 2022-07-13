@@ -9,13 +9,13 @@ module Lanalytics
 
       exec do |params|
         mobile_conditions = mobile_app_runtimes.map do |runtime|
-          { match: { 'in_context.runtime' => runtime } }
+          {match: {'in_context.runtime' => runtime}}
         end
 
         # build conditions for query
         conditions = all_filters(nil, params[:course_id], params[:resource_id])
 
-        conditions << { exists: { field: 'in_context.runtime' }}
+        conditions << {exists: {field: 'in_context.runtime'}}
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -63,7 +63,7 @@ module Lanalytics
           }
         end
 
-        #process results
+        # process results
         {
           user: result['aggregations']['user']['value'],
           web: result['aggregations']['web']['count']['value'],
@@ -71,7 +71,6 @@ module Lanalytics
           mixed: result['aggregations']['mobile']['count']['value'] + result['aggregations']['web']['count']['value'] - result['aggregations']['user']['value']
         }
       end
-
     end
   end
 end
