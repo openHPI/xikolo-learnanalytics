@@ -90,8 +90,6 @@ module Reports
         'File ID',
         'Commentable ID',
         'Commentable Type',
-        'Answer Prediction',
-        'Sentiment',
         'Sticky',
         'Deleted',
         'Closed',
@@ -161,8 +159,6 @@ module Reports
         '',
         '',
         '',
-        '',
-        topic['sentimental_value'],
         topic['sticky'],
         topic['deleted'],
         topic['closed'],
@@ -219,8 +215,6 @@ module Reports
           answer['file_id'],
           '',
           '',
-          answer['answer_prediction'],
-          answer['sentimental_value'],
         ]
 
         # get comments for each answer
@@ -258,8 +252,6 @@ module Reports
           '',
           comment['commentable_id'],
           comment['commentable_type'],
-          '',
-          comment['sentimental_value'],
         ]
       end
     end
