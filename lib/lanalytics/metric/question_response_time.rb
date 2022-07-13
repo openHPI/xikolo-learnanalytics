@@ -19,17 +19,17 @@ module Lanalytics
               bool: {
                 must: [
                   {match: {verb: 'ANSWERED_QUESTION'}}
-                ] + (all_filters(user_id, course_id, nil))
-              }
-            }
+                ] + (all_filters(user_id, course_id, nil)),
+              },
+            },
           }
           query[:query][:bool][:filter] = {
             range: {
               timestamp: {
                 gte: DateTime.parse(start_date).iso8601,
-                lte: DateTime.parse(end_date).iso8601
-              }
-            }
+                lte: DateTime.parse(end_date).iso8601,
+              },
+            },
           } if start_date.present? and end_date.present?
 
           client.search index: datasource.index, body: query
@@ -50,9 +50,9 @@ module Lanalytics
                   must: [
                     {match_phrase: {'resource.resource_uuid' => question_id}},
                     {match: {verb: 'ASKED_QUESTION'}}
-                  ]
-                }
-              }
+                  ],
+                },
+              },
             }
           end['hits']['hits']
           next if question.empty?

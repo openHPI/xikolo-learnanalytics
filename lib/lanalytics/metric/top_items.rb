@@ -13,24 +13,24 @@ module Lanalytics
               bool: {
                 must: [
                   match: {verb: 'visited_item'}
-                ] + all_filters(nil, params[:course_id], nil)
-              }
+                ] + all_filters(nil, params[:course_id], nil),
+              },
             },
             aggregations: {
               items: {
                 terms: {
                   field: 'resource.resource_uuid',
-                  size: 1000
+                  size: 1000,
                 },
                 aggregations: {
                   user: {
                     cardinality: {
-                      field: 'user.resource_uuid'
-                    }
-                  }
-                }
-              }
-            }
+                      field: 'user.resource_uuid',
+                    },
+                  },
+                },
+              },
+            },
           }
         end
 
@@ -38,7 +38,7 @@ module Lanalytics
           {
             item_id: bucket['key'],
             visits: bucket['doc_count'],
-            user: bucket.dig('user', 'value')
+            user: bucket.dig('user', 'value'),
           }
         end
       end

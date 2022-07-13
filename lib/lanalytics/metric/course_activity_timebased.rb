@@ -24,11 +24,11 @@ module Lanalytics
                   range: {
                     timestamp: {
                       gte: DateTime.parse(start_date).iso8601,
-                      lte: DateTime.parse(end_date).iso8601
-                    }
-                  }
-                }
-              }
+                      lte: DateTime.parse(end_date).iso8601,
+                    },
+                  },
+                },
+              },
             },
             aggs: {
               timestamps: {
@@ -38,11 +38,11 @@ module Lanalytics
                   min_doc_count: 0,
                   extended_bounds: {
                     min: DateTime.parse(start_date).iso8601,
-                    max: DateTime.parse(end_date).iso8601
-                  }
-                }
-              }
-            }
+                    max: DateTime.parse(end_date).iso8601,
+                  },
+                },
+              },
+            },
           }
         end
 

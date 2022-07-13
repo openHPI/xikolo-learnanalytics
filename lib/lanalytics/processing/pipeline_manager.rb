@@ -30,7 +30,7 @@ module Lanalytics
           hash[key] = {
             Lanalytics::Processing::Action::CREATE => {},
             Lanalytics::Processing::Action::UPDATE => {},
-            Lanalytics::Processing::Action::DESTROY => {}
+            Lanalytics::Processing::Action::DESTROY => {},
           }
         end
       end

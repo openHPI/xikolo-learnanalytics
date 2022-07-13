@@ -12,10 +12,10 @@ module Lanalytics
             aggregations: {
               referrer: {
                 value_count: {
-                  field: 'referrer'
-                }
-              }
-            }
+                  field: 'referrer',
+                },
+              },
+            },
           }
 
           if params[:course_id].present?
@@ -23,8 +23,8 @@ module Lanalytics
               bool: {
                 must: [
                   {match: {'course_id' => params[:course_id]}}
-                ]
-              }
+                ],
+              },
             }
           end
 

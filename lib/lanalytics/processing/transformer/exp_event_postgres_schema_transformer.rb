@@ -83,7 +83,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :asked_question,
       resource: {
         uuid: processing_unit[:id],
-        type: :question
+        type: :question,
       },
       timestamp: processing_unit[:created_at],
       in_context: {
@@ -94,7 +94,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
         learning_room_id: processing_unit[:learning_room_id],
         implicit_tags: processing_unit[:implicit_tags],
         user_tags: processing_unit[:user_tags],
-        technical: processing_unit[:technical]
+        technical: processing_unit[:technical],
       }
   end
 
@@ -104,14 +104,14 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :answered_question,
       resource: {
         uuid: processing_unit[:id],
-        type: :answer
+        type: :answer,
       },
       timestamp: processing_unit[:created_at],
       in_context: {
         text: processing_unit[:text],
         question_id: processing_unit[:question_id],
         course_id: processing_unit[:course_id],
-        technical: processing_unit[:technical]
+        technical: processing_unit[:technical],
       }
   end
 
@@ -121,7 +121,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :commented,
       resource: {
         uuid: processing_unit[:id],
-        type: :comment
+        type: :comment,
       },
       timestamp: processing_unit[:created_at],
       in_context: {
@@ -129,7 +129,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
         commentable_id: processing_unit[:commentable_id],
         commentable_type: processing_unit[:commentable_type],
         course_id: processing_unit[:course_id],
-        technical: processing_unit[:technical]
+        technical: processing_unit[:technical],
       }
   end
 
@@ -139,11 +139,11 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :visited,
       resource: {
         uuid: processing_unit[:item_id],
-        type: processing_unit[:content_type]
+        type: processing_unit[:content_type],
       },
       timestamp: processing_unit[:created_at],
       in_context: {
-        course_id: processing_unit[:course_id]
+        course_id: processing_unit[:course_id],
       }
   end
 
@@ -153,11 +153,11 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :watched_question,
       resource: {
         uuid: processing_unit[:question_id],
-        type: :question
+        type: :question,
       },
       timestamp: processing_unit[:updated_at],
       in_context: {
-        course_id: processing_unit[:course_id]
+        course_id: processing_unit[:course_id],
       }
   end
 
@@ -167,7 +167,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :completed_course,
       resource: {
         uuid: processing_unit[:course_id],
-        type: :course
+        type: :course,
       },
       timestamp: processing_unit[:updated_at],
       in_context: {
@@ -178,7 +178,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
         received_confirmation_of_participation: processing_unit[:certificates][:confirmation_of_participation],
         received_record_of_achievement: processing_unit[:certificates][:record_of_achievement],
         received_certificate: processing_unit[:certificates][:certificate],
-        quantile: processing_unit[:quantile]
+        quantile: processing_unit[:quantile],
       }
   end
 
@@ -188,12 +188,12 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :answer_accepted,
       resource: {
         uuid: processing_unit[:id],
-        type: :answer
+        type: :answer,
       },
       timestamp: processing_unit[:created_at],
       in_context: {
         course_id: processing_unit[:course_id],
-        question_id: processing_unit[:question_id]
+        question_id: processing_unit[:question_id],
       }
   end
 
@@ -212,11 +212,11 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: verb,
       resource: {
         uuid: processing_unit[:course_id],
-        type: :course
+        type: :course,
       },
       timestamp: processing_unit[:updated_at],
       in_context: {
-        course_id: processing_unit[:course_id]
+        course_id: processing_unit[:course_id],
       }
   end
 
@@ -229,7 +229,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
         affiliated: processing_unit[:affiliated],
         admin: processing_unit[:admin],
         policy_accepted: processing_unit[:policy_accepted],
-        preferred_language: processing_unit[:preferred_language]
+        preferred_language: processing_unit[:preferred_language],
       }
   end
 
@@ -239,7 +239,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       verb: :submitted_quiz,
       resource: {
         uuid: processing_unit[:quiz_id],
-        type: :quiz
+        type: :quiz,
       },
       timestamp: processing_unit[:quiz_submission_time] || DateTime.now.to_s,
       in_context: {
@@ -253,7 +253,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
         attempt: processing_unit[:attempt],
         points: processing_unit[:points],
         max_points: processing_unit[:max_points],
-        estimated_time_effort: processing_unit[:estimated_time_effort]
+        estimated_time_effort: processing_unit[:estimated_time_effort],
       }
   end
 end

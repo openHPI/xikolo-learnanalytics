@@ -27,19 +27,19 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: query_must
-              }
+                must: query_must,
+              },
             },
             aggs: {
               old_objective: {
                 terms: {field: 'in_context.old_objective'},
                 aggs: {
                   new_objective: {
-                    terms: {field: 'in_context.new_objective'}
-                  }
-                }
+                    terms: {field: 'in_context.new_objective'},
+                  },
+                },
               },
-            }
+            },
           }
 
           client.search index: datasource.index, body: body
@@ -51,7 +51,7 @@ module Lanalytics
               res << {old: old['key'], new: new['key'], count: new['doc_count']}
             end
             res
-          end
+          end,
         }
       end
     end

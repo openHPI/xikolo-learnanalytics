@@ -33,27 +33,27 @@ Default active users of last day.
                   range: {
                     timestamp: {
                       gte: start_date.iso8601,
-                      lte: end_date.iso8601
-                    }
-                  }
-                }
-              }
+                      lte: end_date.iso8601,
+                    },
+                  },
+                },
+              },
             },
             aggs: {
               courses: {
                 terms: {
                   field: 'in_context.course_id',
-                  size: 1000
+                  size: 1000,
                 },
                 aggs: {
                   distinct_user_count: {
                     cardinality: {
-                      field: 'user.resource_uuid'
-                    }
-                  }
-                }
-              }
-            }
+                      field: 'user.resource_uuid',
+                    },
+                  },
+                },
+              },
+            },
           }
           client.search index: datasource.index, body: body
         end

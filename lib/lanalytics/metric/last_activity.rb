@@ -14,13 +14,13 @@ module Lanalytics
             query: {
               bool: {
                 must: all_filters(params[:user_id], params[:course_id], nil),
-              }
+              },
             },
             sort: {
               timestamp: {
-                order: 'desc'
-              }
-            }
+                order: 'desc',
+              },
+            },
           }
         end
         result.dig('hits', 'hits', 0, '_source') || {}

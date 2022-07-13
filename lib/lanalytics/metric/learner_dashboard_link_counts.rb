@@ -11,7 +11,7 @@ module Lanalytics
           ld_pinboard_forum_visit: count_for_verb(params, 'ld_pinboard_forum_visit'),
           ld_suggestion_item_visit: count_for_verb(params, 'ld_suggestion_item_visit'),
           ld_suggestion_forum_visit: count_for_verb(params, 'ld_suggestion_forum_visit'),
-          ld_suggestion_recap_visit: count_for_verb(params, 'ld_suggestion_recap_visit')
+          ld_suggestion_recap_visit: count_for_verb(params, 'ld_suggestion_recap_visit'),
         }
       end
 
@@ -25,17 +25,17 @@ module Lanalytics
               bool: {
                 must: [
                   match: {verb: verb}
-                ] + all_filters(params[:user_id], params[:course_id], nil)
-              }
-            }
+                ] + all_filters(params[:user_id], params[:course_id], nil),
+              },
+            },
           }
           query[:query][:bool][:filter] = {
             range: {
               timestamp: {
                 gte: DateTime.parse(start_date).iso8601,
-                lte: DateTime.parse(end_date).iso8601
-              }
-            }
+                lte: DateTime.parse(end_date).iso8601,
+              },
+            },
           } if start_date.present? and end_date.present?
 
           client.count index: datasource.index, body: query

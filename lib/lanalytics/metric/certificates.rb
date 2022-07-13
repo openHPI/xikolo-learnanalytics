@@ -14,10 +14,10 @@ module Lanalytics
             bool: {
               must: [
                 {match: {'verb' => 'completed_course'}}
-              ]
-            }
+              ],
+            },
           },
-          aggs: {}
+          aggs: {},
         }
 
         if course_id
@@ -32,30 +32,30 @@ module Lanalytics
               bool: {
                 must: [
                   {match: {"in_context.received_#{type}" => 'true'}}
-                ]
-              }
+                ],
+              },
             },
             aggs: {
               course: {
                 terms: {
                   field: 'in_context.course_id',
-                  size: 1_000_000
+                  size: 1_000_000,
                 },
                 aggs: {
                   user: {
                     cardinality: {
                       field: 'user.resource_uuid',
-                      precision_threshold: 40_000
-                    }
-                  }
-                }
+                      precision_threshold: 40_000,
+                    },
+                  },
+                },
               },
               total: {
                 sum_bucket: {
-                  buckets_path: "course>user"
-                }
-              }
-            }
+                  buckets_path: "course>user",
+                },
+              },
+            },
           }
         end
 

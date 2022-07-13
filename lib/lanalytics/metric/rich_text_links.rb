@@ -13,21 +13,21 @@ module Lanalytics
               must: [
                 {match: {tracking_type: 'rich_text_item_link'}},
                 {match: {tracking_id: params[:item_id]}}
-              ]
-            }
+              ],
+            },
           },
           aggs: {
             links: {
               terms: {
                 field: 'tracking_external_link',
-                size: 10_000
+                size: 10_000,
               },
               aggs: {
                 user: {
                   cardinality: {
                     field: 'user_id',
-                    precision_threshold: 40_000
-                  }
+                    precision_threshold: 40_000,
+                  },
                 },
                 earliest_timestamp: {
                   top_hits: {
@@ -35,8 +35,8 @@ module Lanalytics
                       {timestamp: {order: 'asc'}}
                     ],
                     _source: ['timestamp'],
-                    size: 1
-                  }
+                    size: 1,
+                  },
                 },
                 latest_timestamp: {
                   top_hits: {
@@ -44,12 +44,12 @@ module Lanalytics
                       {timestamp: {order: 'desc'}}
                     ],
                     _source: ['timestamp'],
-                    size: 1
-                  }
-                }
-              }
-            }
-          }
+                    size: 1,
+                  },
+                },
+              },
+            },
+          },
         }
 
         result = datasource.exec do |client|
@@ -62,7 +62,7 @@ module Lanalytics
             total_clicks: item.dig('doc_count').to_i,
             total_clicks_unique_users: item.dig('user', 'value').to_i,
             earliest_timestamp: item.dig('earliest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
-            latest_timestamp: item.dig('latest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp')
+            latest_timestamp: item.dig('latest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
           }
         end
       end

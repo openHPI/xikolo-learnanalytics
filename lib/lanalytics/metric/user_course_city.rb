@@ -14,16 +14,16 @@ module Lanalytics
         if course_id.present?
           conditions << {
             match: {
-              'in_context.course_id' => course_id
-            }
+              'in_context.course_id' => course_id,
+            },
           }
         end
 
         if user_id.present?
           conditions << {
             match: {
-              'user.resource_uuid' => user_id
-            }
+              'user.resource_uuid' => user_id,
+            },
           }
         end
 
@@ -32,17 +32,17 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: conditions
-              }
+                must: conditions,
+              },
             },
             aggregations: {
               cities: {
                 terms: {
                   field: 'in_context.user_location_city',
-                  size: 100
+                  size: 100,
                 },
-              }
-            }
+              },
+            },
           }
         end
 

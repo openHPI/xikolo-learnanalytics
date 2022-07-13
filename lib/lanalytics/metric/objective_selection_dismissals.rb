@@ -31,37 +31,37 @@ module Lanalytics
                 must: query_must,
                 filter: {
                   bool: {
-                    should: query_should
-                  }
-                }
-              }
+                    should: query_should,
+                  },
+                },
+              },
             },
             aggs: {
               distinct_user_count: {
                 cardinality: {
-                  field: 'user.resource_uuid'
-                }
+                  field: 'user.resource_uuid',
+                },
               },
               grouped_by_verb: {
-                terms: {field: 'verb'}
+                terms: {field: 'verb'},
               },
               grouped_by_user: {
                 terms: {
                   field: 'user.resource_uuid',
-                  order: {_count: 'desc'}
+                  order: {_count: 'desc'},
                 },
                 aggs: {
                   with_two_dismissals: {
                     bucket_selector: {
                       buckets_path: {
-                        dismissals_count: '_count'
+                        dismissals_count: '_count',
                       },
-                      script: 'params.dismissals_count == 2'
-                    }
-                  }
-                }
-              }
-            }
+                      script: 'params.dismissals_count == 2',
+                    },
+                  },
+                },
+              },
+            },
           }
 
           client.search index: datasource.index, body: body
@@ -75,7 +75,7 @@ module Lanalytics
             h[e['key']] = e['doc_count']
           end,
           # Count if both the modal and infobox were dismissed
-          both_dismissed_count: result.dig('aggregations', 'grouped_by_user', 'buckets')&.size
+          both_dismissed_count: result.dig('aggregations', 'grouped_by_user', 'buckets')&.size,
         }
       end
     end

@@ -16,13 +16,13 @@ module Lanalytics
                 must: [
                   {match: {'verb' => 'visited_item'}}
                 ] + all_filters(params[:user_id], params[:course_id], nil),
-              }
+              },
             },
             sort: {
               timestamp: {
-                order: 'desc'
-              }
-            }
+                order: 'desc',
+              },
+            },
           }
         end
         result.dig('hits', 'hits', 0, '_source') || {}

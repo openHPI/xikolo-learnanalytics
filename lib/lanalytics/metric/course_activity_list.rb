@@ -19,26 +19,26 @@ module Lanalytics
               range: {
                 timestamp: {
                   gte: start_date.iso8601,
-                  lte: end_date.iso8601
-                }
-              }
+                  lte: end_date.iso8601,
+                },
+              },
             },
             aggs: {
               group_by_field: {
                 terms: {
                   field: 'in_context.course_id',
-                  order: {_count: 'desc'}
+                  order: {_count: 'desc'},
                 },
                 aggs: {
                   group_by_field: {
                     terms: {
                       field: 'verb',
-                      order: {_count: 'desc'}
-                    }
-                  }
-                }
-              }
-            }
+                      order: {_count: 'desc'},
+                    },
+                  },
+                },
+              },
+            },
           }
         end
         result = {}
@@ -52,7 +52,7 @@ module Lanalytics
             watched_question: get_agg_value(buckets, 'watched_question'),
             asked_question: get_agg_value(buckets, 'asked_question'),
             answered_question: get_agg_value(buckets, 'answered_question'),
-            commented: get_agg_value(buckets, 'commented')
+            commented: get_agg_value(buckets, 'commented'),
           }
         end
         result

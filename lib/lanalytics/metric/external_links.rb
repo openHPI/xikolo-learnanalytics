@@ -23,33 +23,33 @@ module Lanalytics
                     should: [
                       {match: {'tracking_id' => tracking_id.to_s(format: :default)}},
                       {match: {'tracking_id' => tracking_id.to_s(format: :base62)}}
-                    ]
+                    ],
                   }}
-                ]
-              }
+                ],
+              },
             },
             aggregations: {
               external_links: {
                 terms: {
                   field: 'tracking_external_link',
-                  size: 100
+                  size: 100,
                 },
                 aggregations: {
                   unique_users: {
                     cardinality: {
-                      field: 'user_id'
-                    }
-                  }
-                }
-              }
-            }
+                      field: 'user_id',
+                    },
+                  },
+                },
+              },
+            },
           }
         end
 
         result['aggregations']['external_links']['buckets'].each_with_object({}) do |link, hash|
           hash[link['key']] = {
             total_clicks: link['doc_count'],
-            unique_clicks: link['unique_users']['value']
+            unique_clicks: link['unique_users']['value'],
           }
         end
       end

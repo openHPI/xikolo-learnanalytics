@@ -9,7 +9,7 @@ module Lanalytics
 
       def as_json
         {
-          type: @type
+          type: @type,
         }
       end
 

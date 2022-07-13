@@ -41,7 +41,7 @@ module Lanalytics
         {
           timestamp: @timestamp.to_s,
           with_result: @with_result.symbolize_keys,
-          in_context: @in_context.symbolize_keys
+          in_context: @in_context.symbolize_keys,
         }
       end
 
@@ -52,7 +52,7 @@ module Lanalytics
           resource: @resource.as_json,
           timestamp: @timestamp,
           with_result: @with_result,
-          in_context: @in_context
+          in_context: @in_context,
         }
       end
 
@@ -80,7 +80,7 @@ module Lanalytics
       def to_json(*a)
         {
           json_class: self.class.name,
-          data: as_json
+          data: as_json,
         }.to_json(*a)
       end
 

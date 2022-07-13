@@ -20,25 +20,25 @@ module Lanalytics
               should: [
                 {match: {'verb' => 'share_button_click'}},
                 {match: {'verb' => 'share_course'}}
-              ]
-            }
+              ],
+            },
           }
 
           query = {
             size: 0,
             query: {
               bool: {
-                must: query_must
-              }
+                must: query_must,
+              },
             },
             aggregations: {
               services: {
                 terms: {
                   field: 'in_context.service',
-                  size: 25
-                }
-              }
-            }
+                  size: 25,
+                },
+              },
+            },
           }
 
           if start_date.present? and end_date.present?
@@ -46,9 +46,9 @@ module Lanalytics
               range: {
                 timestamp: {
                   gte: DateTime.parse(start_date).iso8601,
-                  lte: DateTime.parse(end_date).iso8601
-                }
-              }
+                  lte: DateTime.parse(end_date).iso8601,
+                },
+              },
             }
           end
 

@@ -24,12 +24,12 @@ module Lanalytics
                   range: {
                     timestamp: {
                       gte: start_date.iso8601,
-                      lte: end_date.iso8601
-                    }
-                  }
-                }
-              }
-            }
+                      lte: end_date.iso8601,
+                    },
+                  },
+                },
+              },
+            },
           }
         end
 

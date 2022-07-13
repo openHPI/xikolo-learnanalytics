@@ -20,24 +20,24 @@ module Lanalytics
                         {match: {'verb' => 'asked_question'}},
                         {match: {'verb' => 'answered_question'}},
                         {match: {'verb' => 'commented'}}
-                      ]
-                    }
+                      ],
+                    },
                   }
                 ] + all_filters(params[:user_id], params[:course_id], nil),
-              }
+              },
             },
             aggs: {
               user: {
                 cardinality: {
-                  field: 'user.resource_uuid'
-                }
-              }
-            }
+                  field: 'user.resource_uuid',
+                },
+              },
+            },
           }
         end
         {
           total: result.dig('hits', 'total', 'value'),
-          user: result.dig('aggregations', 'user', 'value')
+          user: result.dig('aggregations', 'user', 'value'),
         }
       end
     end

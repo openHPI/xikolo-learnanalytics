@@ -20,7 +20,7 @@ module Lanalytics
       def as_json
         {
           type: @type,
-          uuid: @uuid
+          uuid: @uuid,
         }
       end
 

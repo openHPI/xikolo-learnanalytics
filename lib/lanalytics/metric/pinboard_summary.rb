@@ -25,20 +25,20 @@ module Lanalytics
                       {match: {'verb' => 'commented'}},
                       {match: {'verb' => 'visited_pinboard'}},
                       {match: {'verb' => 'visited_question'}}
-                    ]
+                    ],
                   }}
                 ],
-              }
+              },
             },
             aggs: {
               by_verb: {
                 terms: {
                   field: 'verb',
                   order: {_count: 'desc'},
-                  size: 5
-                }
-              }
-            }
+                  size: 5,
+                },
+              },
+            },
           }
         end
 

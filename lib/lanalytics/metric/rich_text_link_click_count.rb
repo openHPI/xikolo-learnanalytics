@@ -17,21 +17,21 @@ module Lanalytics
               must: [
                 {match: {tracking_type: 'rich_text_item_link'}},
                 {match: {course_id: params[:course_id]}}
-              ]
-            }
+              ],
+            },
           },
           aggs: {
             items: {
               terms: {
                 field: 'tracking_id',
-                size: 1_000
+                size: 1_000,
               },
               aggs: {
                 user: {
                   cardinality: {
                     field: 'user_id',
-                    precision_threshold: 40_000
-                  }
+                    precision_threshold: 40_000,
+                  },
                 },
                 earliest_timestamp: {
                   top_hits: {
@@ -39,8 +39,8 @@ module Lanalytics
                       {timestamp: {order: 'asc'}}
                     ],
                     _source: ['timestamp'],
-                    size: 1
-                  }
+                    size: 1,
+                  },
                 },
                 latest_timestamp: {
                   top_hits: {
@@ -48,12 +48,12 @@ module Lanalytics
                       {timestamp: {order: 'desc'}}
                     ],
                     _source: ['timestamp'],
-                    size: 1
-                  }
-                }
-              }
-            }
-          }
+                    size: 1,
+                  },
+                },
+              },
+            },
+          },
         }
 
         if params[:item_id]
@@ -89,7 +89,7 @@ module Lanalytics
             total_clicks: ri&.dig('doc_count').to_i,
             total_clicks_unique_users: ri&.dig('user', 'value').to_i,
             earliest_timestamp: ri&.dig('earliest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
-            latest_timestamp: ri&.dig('latest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp')
+            latest_timestamp: ri&.dig('latest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
           }
         end
 
@@ -113,7 +113,7 @@ module Lanalytics
             {
               course_id: course_id,
               content_type: 'rich_text',
-              id: item_id
+              id: item_id,
             }.compact
           )
         ) do |rich_text|

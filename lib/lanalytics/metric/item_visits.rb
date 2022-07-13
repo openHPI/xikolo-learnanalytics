@@ -39,9 +39,9 @@ module Lanalytics
               must: [
                 {match: {'resource.resource_uuid' => resource_id}},
                 {match: {verb: 'visited_item'}}
-              ]
-            }
-          }
+              ],
+            },
+          },
         }
 
         if last_day_only
@@ -51,9 +51,9 @@ module Lanalytics
             range: {
               timestamp: {
                 gte: DateTime.parse(start_time.to_s).iso8601,
-                lte: DateTime.parse(end_time.to_s).iso8601
-              }
-            }
+                lte: DateTime.parse(end_time.to_s).iso8601,
+              },
+            },
           }
         end
 
@@ -64,18 +64,18 @@ module Lanalytics
             range: {
               timestamp: {
                 gte: DateTime.parse(start_time.to_s).iso8601,
-                lte: DateTime.parse(end_time.to_s).iso8601
-              }
-            }
+                lte: DateTime.parse(end_time.to_s).iso8601,
+              },
+            },
           }
         end
 
         query[:aggs] = {
           distinct_user_count: {
             cardinality: {
-              field: 'user.resource_uuid'
-            }
-          }
+              field: 'user.resource_uuid',
+            },
+          },
         }
 
         result = datasource.exec do |client|

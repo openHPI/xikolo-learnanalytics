@@ -22,44 +22,44 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: conditions
-              }
+                must: conditions,
+              },
             },
             aggs: {
               user: {
                 cardinality: {
-                  field: 'user.resource_uuid'
-                }
+                  field: 'user.resource_uuid',
+                },
               },
               mobile: {
                 filter: {
                   bool: {
-                    should: mobile_conditions
-                  }
+                    should: mobile_conditions,
+                  },
                 },
                 aggs: {
                   count: {
                     cardinality: {
-                      field: 'user.resource_uuid'
-                    }
-                  }
-                }
+                      field: 'user.resource_uuid',
+                    },
+                  },
+                },
               },
               web: {
                 filter: {
                   bool: {
-                    must_not: mobile_conditions
-                  }
+                    must_not: mobile_conditions,
+                  },
                 },
                 aggs: {
                   count: {
                     cardinality: {
-                      field: 'user.resource_uuid'
-                    }
-                  }
-                }
-              }
-            }
+                      field: 'user.resource_uuid',
+                    },
+                  },
+                },
+              },
+            },
           }
         end
 
@@ -68,7 +68,7 @@ module Lanalytics
           user: result['aggregations']['user']['value'],
           web: result['aggregations']['web']['count']['value'],
           mobile: result['aggregations']['mobile']['count']['value'],
-          mixed: result['aggregations']['mobile']['count']['value'] + result['aggregations']['web']['count']['value'] - result['aggregations']['user']['value']
+          mixed: result['aggregations']['mobile']['count']['value'] + result['aggregations']['web']['count']['value'] - result['aggregations']['user']['value'],
         }
       end
     end

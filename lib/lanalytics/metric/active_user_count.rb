@@ -24,19 +24,19 @@ module Lanalytics
                   range: {
                     timestamp: {
                       gte: start_date.iso8601,
-                      lte: end_date.iso8601
-                    }
-                  }
-                }
-              }
+                      lte: end_date.iso8601,
+                    },
+                  },
+                },
+              },
             },
             aggs: {
               distinct_user_count: {
                 cardinality: {
-                  field: 'user.resource_uuid'
-                }
-              }
-            }
+                  field: 'user.resource_uuid',
+                },
+              },
+            },
           }
 
           if course_id.present?

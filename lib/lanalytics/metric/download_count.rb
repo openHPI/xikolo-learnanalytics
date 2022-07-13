@@ -21,25 +21,25 @@ module Lanalytics
           size: 0,
           query: {
             bool: {
-              must: all_filters(nil, params[:course_id], nil) + download_verbs_filter(verbs)
-            }
+              must: all_filters(nil, params[:course_id], nil) + download_verbs_filter(verbs),
+            },
           },
           aggs: {
             items: {
               terms: {
                 field: 'resource.resource_uuid',
-                size: 1_000
+                size: 1_000,
               },
               aggs: {
                 user: {
                   cardinality: {
                     field: 'user.resource_uuid',
-                    precision_threshold: 40_000
-                  }
-                }
-              }
-            }
-          }
+                    precision_threshold: 40_000,
+                  },
+                },
+              },
+            },
+          },
         }
 
         verbs.each do |verb|
@@ -48,17 +48,17 @@ module Lanalytics
               bool: {
                 must: [
                   {match: {verb: "downloaded_#{verb}"}}
-                ]
-              }
+                ],
+              },
             },
             aggs: {
               user: {
                 cardinality: {
                   field: 'user.resource_uuid',
-                  precision_threshold: 40_000
-                }
-              }
-            }
+                  precision_threshold: 40_000,
+                },
+              },
+            },
           }
         end
 
@@ -89,7 +89,7 @@ module Lanalytics
             position: "#{section['position']}.#{item['position']}",
             title: item['title'],
             total_downloads: ri&.dig('doc_count').to_i,
-            total_downloads_unique_users: ri&.dig('user', 'value').to_i
+            total_downloads_unique_users: ri&.dig('user', 'value').to_i,
           }
 
           verbs.each do |verb|

@@ -25,14 +25,14 @@ module Lanalytics
                       range: {
                         timestamp: {
                           gte: DateTime.parse(start_date).iso8601,
-                          lte: DateTime.parse(end_date).iso8601
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                          lte: DateTime.parse(end_date).iso8601,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           }
         end['hits']['hits']
 

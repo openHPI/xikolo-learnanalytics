@@ -13,10 +13,10 @@ module Lanalytics
               referrer: {
                 terms: {
                   field: 'referrer',
-                  size: 25
-                }
-              }
-            }
+                  size: 25,
+                },
+              },
+            },
           }
 
           if params[:course_id].present?
@@ -24,8 +24,8 @@ module Lanalytics
               bool: {
                 must: [
                   {match: {'course_id' => params[:course_id]}}
-                ]
-              }
+                ],
+              },
             }
           end
 

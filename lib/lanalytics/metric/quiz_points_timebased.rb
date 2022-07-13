@@ -24,11 +24,11 @@ module Lanalytics
                   range: {
                     timestamp: {
                       gte: DateTime.parse(start_date).iso8601,
-                      lte: DateTime.parse(end_date).iso8601
-                    }
-                  }
-                }
-              }
+                      lte: DateTime.parse(end_date).iso8601,
+                    },
+                  },
+                },
+              },
             },
             aggs: {
               by_day: {
@@ -38,29 +38,29 @@ module Lanalytics
                   min_doc_count: 0,
                   extended_bounds: {
                     min: DateTime.parse(start_date).iso8601,
-                    max: DateTime.parse(end_date).iso8601
-                  }
+                    max: DateTime.parse(end_date).iso8601,
+                  },
                 },
                 aggs: {
                   points_stats: {
-                    sum: {field: 'in_context.points'}
+                    sum: {field: 'in_context.points'},
                   },
                   max_points_stats: {
-                    sum: {field: 'in_context.max_points'}
+                    sum: {field: 'in_context.max_points'},
                   },
                   cumulative_points: {
                     cumulative_sum: {
-                      buckets_path: 'points_stats'
-                    }
+                      buckets_path: 'points_stats',
+                    },
                   },
                   cumulative_max_points: {
                     cumulative_sum: {
-                      buckets_path: 'max_points_stats'
-                    }
+                      buckets_path: 'max_points_stats',
+                    },
                   },
-                }
-              }
-            }
+                },
+              },
+            },
           }
         end
 
@@ -73,7 +73,7 @@ module Lanalytics
         buckets&.each_with_object({}) do |b, h|
           h[Time.parse(b['key_as_string'].to_s).utc.strftime('%F')] = {
             cumulative_points: b.dig('cumulative_points', 'value').round(2),
-            cumulative_max_points: b.dig('cumulative_max_points', 'value').round(2)
+            cumulative_max_points: b.dig('cumulative_max_points', 'value').round(2),
           }
         end
       end

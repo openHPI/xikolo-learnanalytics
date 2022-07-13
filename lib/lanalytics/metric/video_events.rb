@@ -51,13 +51,13 @@ module Lanalytics
         conditions = [
           {
             match: {
-              'resource.resource_uuid' => resource_id
-            }
+              'resource.resource_uuid' => resource_id,
+            },
           },
           {
             match: {
-              verb: verb
-            }
+              verb: verb,
+            },
           }
         ]
 
@@ -68,18 +68,18 @@ module Lanalytics
             size: 0,
             query: {
               bool: {
-                must: conditions
-              }
+                must: conditions,
+              },
             },
             aggs: {
               timestamps: {
                 histogram: {
                   field: 'in_context.current_time',
                   interval: '15',
-                  min_doc_count: '0'
-                }
-              }
-            }
+                  min_doc_count: '0',
+                },
+              },
+            },
           }
         end
 

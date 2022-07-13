@@ -21,7 +21,7 @@ module Lanalytics
       def to_json(*a)
         {
           json_class: self.class.name,
-          data: as_json
+          data: as_json,
         }.to_json(*a)
       end
 

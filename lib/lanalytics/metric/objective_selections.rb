@@ -25,53 +25,53 @@ module Lanalytics
             track_total_hits: true,
             query: {
               bool: {
-                must: query_must
-              }
+                must: query_must,
+              },
             },
             aggs: {
               distinct_user_count: {
                 cardinality: {
-                  field: 'user.resource_uuid'
-                }
+                  field: 'user.resource_uuid',
+                },
               },
               by_objective: {
                 terms: {
                   field: 'in_context.new_objective',
-                  order: {_count: 'desc'}
+                  order: {_count: 'desc'},
                 },
                 aggs: {
                   initial_objectives: {
-                    missing: {field: 'in_context.old_objective'}
+                    missing: {field: 'in_context.old_objective'},
                   },
-                }
+                },
               },
               by_user: {
                 terms: {
                   field: 'user.resource_uuid',
                   order: {_count: 'desc'},
-                  size: 30000
+                  size: 30000,
                 },
                 aggs: {
                   current_objective: {
                     top_hits: {
                       sort: {timestamp: {order: 'desc'}},
                       size: 1,
-                      _source: 'in_context.new_objective'
-                    }
-                  }
-                }
+                      _source: 'in_context.new_objective',
+                    },
+                  },
+                },
               },
               initial_objectives: {
                 missing: {field: 'in_context.old_objective'},
                 aggs: {
                   by_modal_context: {
                     terms: {
-                      field: 'in_context.objectives_modal_context'
-                    }
-                  }
-                }
-              }
-            }
+                      field: 'in_context.objectives_modal_context',
+                    },
+                  },
+                },
+              },
+            },
           }
 
           client.search index: datasource.index, body: body
@@ -107,7 +107,7 @@ module Lanalytics
           # Count how often an objective was selected as first objective
           initial_objectives: initial_objectives,
           # Count the number of initial selections per modal context in which they were selected (infobox, popup, progress)
-          initial_selections_by_context: initial_selections_by_context
+          initial_selections_by_context: initial_selections_by_context,
         }
       end
     end

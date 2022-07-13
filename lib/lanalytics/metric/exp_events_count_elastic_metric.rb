@@ -21,17 +21,17 @@ module Lanalytics
             query = {
               query: {
                 bool: {
-                  must: [] + verbs_filter + all_filters(user_id, course_id, nil)
-                }
-              }
+                  must: [] + verbs_filter + all_filters(user_id, course_id, nil),
+                },
+              },
             }
             query[:query][:bool][:filter] = {
               range: {
                 timestamp: {
                   gte: DateTime.parse(start_date).iso8601,
-                  lte: DateTime.parse(end_date).iso8601
-                }
-              }
+                  lte: DateTime.parse(end_date).iso8601,
+                },
+              },
             } if start_date.present? and end_date.present?
 
             client.count index: datasource.index, body: query

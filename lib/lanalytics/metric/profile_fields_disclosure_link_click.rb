@@ -16,9 +16,9 @@ module Lanalytics
                 {match: {tracking_type: 'profile_fields_disclosure_link'}},
                 {match: {course_id: params[:course_id]}},
                 {match: {user_id: params[:user_id]}}
-              ]
-            }
-          }
+              ],
+            },
+          },
         }
 
         result = datasource.exec do |client|
