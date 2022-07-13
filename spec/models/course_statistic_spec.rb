@@ -50,11 +50,15 @@ describe CourseStatistic do
       student_enrollments_by_day: {DateTime.now.iso8601.to_s => 199},
     )
 
-    Stub.request(:helpdesk, :get)
-      .to_return Stub.json(statistics_url: '/statistic{?course_id}')
     Stub.request(
-      :helpdesk, :get, '/statistic',
-      query: {course_id: course_id}
+      :xikolo, :get,
+      headers: {'Authorization' => /.+/}
+    ).to_return Stub.json(
+      course_ticket_stats_url: '/bridges/lanalytics/courses/{course_id}/ticket_stats',
+    )
+    Stub.request(
+      :xikolo, :get, "/courses/#{course_id}/ticket_stats",
+      headers: {'Authorization' => /.+/}
     ).to_return Stub.json(
       ticket_count: 1000,
       ticket_count_last_day: 100,
@@ -116,6 +120,8 @@ describe CourseStatistic do
       its(:questions_last_day) { is_expected.to eq 50 } # @deprecated
       its(:enrollments_per_day) { is_expected.to eq [0, 0, 0, 0, 0, 0, 0, 0, 0, 199] }
       its(:days_since_coursestart) { is_expected.to eq 10 }
+      its(:helpdesk_tickets) { is_expected.to eq 1_000 }
+      its(:helpdesk_tickets_last_day) { is_expected.to eq 100 }
     end
   end
 end

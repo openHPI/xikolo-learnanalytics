@@ -12,7 +12,6 @@ development: &dev
     certificate: <%= ENV['XIKOLO_SERVICE_CERTIFICATE'] || 'http://localhost:4100' %>
     log: <%= ENV['XIKOLO_SERVICE_LOG'] || 'http://localhost:4200' %>
     news: <%= ENV['XIKOLO_SERVICE_NEWS'] || 'http://localhost:4300' %>
-    helpdesk: <%= ENV['XIKOLO_SERVICE_HELPDESK'] || 'http://localhost:4700' %>
     learning_room: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
     collabspace: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
     progress: <%= ENV['XIKOLO_SERVICE_PROGRESS'] || 'http://localhost:4900' %>
@@ -26,7 +25,6 @@ test:
     certificate: http://certificate.xikolo.tld
     collabspace: http://collabspace.xikolo.tld
     course: http://course.xikolo.tld
-    helpdesk: http://helpdesk.xikolo.tld
     news: http://news.xikolo.tld
     notification: http://notification.xikolo.tld
     pinboard: http://pinboard.xikolo.tld
@@ -54,7 +52,6 @@ production:
     log: http://services:8080/log
     news: http://services:8080/news
     motivation: http://services:8080/motivation
-    helpdesk: http://services:8080/helpdesk
     learning_room: http://services:8080/learning-room
     progress: http://services:8080/progress
     lti: http://services:8080/lti
