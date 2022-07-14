@@ -58,12 +58,12 @@ class ReportJob < ApplicationRecord
     ###
     # Where should reports store CSV files while building them?
     #
-    # This should be set using the RUNTIME_DIRECTORY environment variable in
-    # production, but will fall back to Rails' own tmp dir locally.
+    # This should be set using the STATE_DIRECTORY environment variable
+    # in production, but will fall back to Rails' own tmp dir locally.
     #
     def tmp_root
       @tmp_root ||= begin
-        Pathname.new ENV.fetch 'RUNTIME_DIRECTORY'
+        Pathname.new ENV.fetch 'STATE_DIRECTORY'
       rescue KeyError
         Rails.root.join('tmp')
       end
@@ -155,7 +155,7 @@ class ReportJob < ApplicationRecord
         user_id: user_id,
         status: 'failing',
         error: title,
-        env_path: ENV['PATH'],
+        env_path: ENV.fetch('PATH', ''),
         tmp_dir: tmp_directory.to_s,
       },
     )
