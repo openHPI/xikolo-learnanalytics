@@ -24,7 +24,7 @@ class CourseStatistic < ApplicationRecord
         pinboard_service.rel(:statistic).get(id: course['id'])
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-        helpdesk_service.rel(:statistics).get(course_id: course['id'])
+        bridge_api.rel(:course_ticket_stats).get(course_id: course['id'])
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
         certificate_service.rel(:open_badge_statistics).get(course_id: course['id'])
@@ -191,16 +191,16 @@ class CourseStatistic < ApplicationRecord
 
   private
 
+  def bridge_api
+    @bridge_api ||= Restify.new(:xikolo).get.value!
+  end
+
   def course_service
     @course_service ||= Restify.new(:course).get.value!
   end
 
   def pinboard_service
     @pinboard_service ||= Restify.new(:pinboard).get.value!
-  end
-
-  def helpdesk_service
-    @helpdesk_service ||= Restify.new(:helpdesk).get.value!
   end
 
   def certificate_service

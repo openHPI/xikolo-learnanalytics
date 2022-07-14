@@ -7,6 +7,9 @@
 site: unknown
 brand: xikolo
 
+# Where do we host the API for loading data from the connected Xikolo platform?
+bridge_api_url: http://localhost:3000/bridges/lanalytics
+
 qc_alert:
   # Thresholds for video duration (in min) after which an alert with low/medium/high severity is created
   video_duration:
