@@ -52,13 +52,13 @@ describe CourseStatistic do
 
     Stub.request(
       :xikolo, :get,
-      headers: {'Authorization' => /.+/}
+      headers: {'Authorization' => /Bearer .+/}
     ).to_return Stub.json(
       course_ticket_stats_url: '/bridges/lanalytics/courses/{course_id}/ticket_stats',
     )
     Stub.request(
       :xikolo, :get, "/courses/#{course_id}/ticket_stats",
-      headers: {'Authorization' => /.+/}
+      headers: {'Authorization' => /Bearer .+/}
     ).to_return Stub.json(
       ticket_count: 1000,
       ticket_count_last_day: 100,
