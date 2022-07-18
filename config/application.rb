@@ -51,7 +51,7 @@ module Lanalytics
       end
 
       Restify::Registry.store :xikolo, Lanalytics.config.bridge_api_url,
-        headers: {'Authorization' => app.secrets.bridge_api_token}
+        headers: {'Authorization' => "Bearer #{app.secrets.bridge_api_token}"}
     end
 
     # Setup Sidekiq Redis connection as configured in config/sidekiq_redis.yml
