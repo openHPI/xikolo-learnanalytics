@@ -31,10 +31,6 @@ ExecStop=/bin/kill -TERM $MAINPID
 # not, it will just hang around forever...
 KillMode=none
 
-# To make sure that our zombie processes can continue writing files, we mark the
-# runtime directory to not be cleaned up when stopping the service.
-RuntimeDirectoryPreserve=yes
-
 Restart=on-failure
 RestartSec=60s
 

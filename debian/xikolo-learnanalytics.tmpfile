@@ -1,6 +1,4 @@
 # The state directory (where reports are written while being generated)
 # can be cleaned up once a day, in cases CSVs from reports that ran out of
 # memory linger around.
-# We keep the (outdated) cleanup rule for the RuntimeDirectory for a while.
 e /var/lib/xikolo-learnanalytics/reports - - - 1d -
-e /run/xikolo-learnanalytics-reporting   - - - 1d -
