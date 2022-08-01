@@ -26,6 +26,10 @@ module Lanalytics
     config.autoload_paths += %W[#{config.root}/lib]
     config.eager_load_paths += %W[#{config.root}/lib]
 
+    # When eager-loading, load the GeoIP database once to save memory.
+    require 'geo_ip/lookup'
+    config.eager_load_namespaces << GeoIP
+
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.

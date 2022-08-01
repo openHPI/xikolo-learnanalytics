@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
+require 'geo_ip/lookup'
+
 module Lanalytics
   module Processing
     module Transformer
       class GeoinfoFinder < TransformStep
-        def transform(original_event, processing_units, load_commands, pipeline_ctx)
+        def transform(_original_event, processing_units, _load_commands, _pipeline_ctx)
           processing_units.each do |processing_unit|
             next if processing_unit[:in_context].nil? || processing_unit[:in_context][:user_ip].nil?
 
             user_ip = processing_unit[:in_context][:user_ip]
-            geoip_info = Lanalytics::Processing::GeoIp.lookup(user_ip)
+            geoip_info = GeoIP::Lookup.resolve(user_ip)
 
             next unless geoip_info.found?
 
