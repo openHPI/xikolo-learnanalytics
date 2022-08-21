@@ -69,7 +69,7 @@ gem 'responders'
 gem 'will_paginate'
 
 # for versioning
-gem 'paper_trail', '~> 12.0'
+gem 'paper_trail', '~> 13.0'
 
 group :development do
   gem 'better_errors'
