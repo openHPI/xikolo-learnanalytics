@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CalculateCourseStatsWorker
-  include Sidekiq::Worker
+  include Sidekiq::Job
 
   def perform
     each_course do |course|
