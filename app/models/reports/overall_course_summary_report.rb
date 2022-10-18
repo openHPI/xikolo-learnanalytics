@@ -93,7 +93,6 @@ module Reports
         'Published Sections',
         'Peer Assessment',
         'Collab Space',
-        'Teleboard',
         'Rating Stars',
         'Rating Votes',
       ]
@@ -186,7 +185,6 @@ module Reports
           sections.count {|s| s['published'] },
           peer_assessment_type(course['id']),
           course['has_collab_space'],
-          course['has_teleboard'],
           course['rating_stars'],
           course['rating_votes'],
         ]
