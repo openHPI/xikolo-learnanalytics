@@ -22,3 +22,7 @@ Finally, feel free to @tag other developers to ask them to review your work. Alw
 
 - [ ] Your branch has no merge conflicts with master (otherwise, please rebase)
 - [ ] [All related commits are squashed together](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Squashing-Commits)
+- [ ] Documentation has been added if needed (Code, [Xikolo pages](https://xikolo.pages.xikolo.de/web/) / Confluence, [Teaching Team Guidelines](https://github.com/openHPI/TeachingTeamGuidelines))
+- For database changes:
+  - [ ] Schema is up-to-date with migrations
+  - [ ] Seed data is extended / updated
