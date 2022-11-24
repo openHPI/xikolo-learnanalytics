@@ -7,6 +7,7 @@ worker_processes ENV.fetch('WORKER', 1).to_i
 logger Logger.new($stdout)
 preload_app true
 check_client_connection false
+timeout ENV.fetch('UNICORN_TIMEOUT', 60).to_i
 
 before_fork do |server, _worker|
   ActiveRecord::Base.connection.disconnect!
