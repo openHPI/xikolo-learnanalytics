@@ -323,7 +323,7 @@ GEM
       ffi (~> 1.0)
     rbtree (0.4.6)
     redis (4.8.0)
-    regexp_parser (2.6.1)
+    regexp_parser (2.6.2)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.0.1)
@@ -388,6 +388,8 @@ GEM
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.24.1)
       parser (>= 3.1.1.0)
+    rubocop-capybara (2.17.0)
+      rubocop (~> 1.41)
     rubocop-performance (1.15.2)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
@@ -395,8 +397,9 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
-    rubocop-rspec (2.16.0)
+    rubocop-rspec (2.18.1)
       rubocop (~> 1.33)
+      rubocop-capybara (~> 2.17)
     ruby-prof (1.4.5)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
@@ -522,7 +525,7 @@ DEPENDENCIES
   rubocop (~> 1.43.0)
   rubocop-performance (~> 1.15.0)
   rubocop-rails (~> 2.17.0)
-  rubocop-rspec (~> 2.16.0)
+  rubocop-rspec (~> 2.18.0)
   ruby-prof
   ruby-progressbar
   sentry-rails
