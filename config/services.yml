@@ -3,20 +3,13 @@ development: &dev
     account: <%= ENV['XIKOLO_SERVICE_ACCOUNT'] || 'http://localhost:3100' %>
     notification: <%= ENV['XIKOLO_SERVICE_NOTIFICATION'] || 'http://localhost:3200' %>
     course: <%= ENV['XIKOLO_SERVICE_COURSE'] || 'http://localhost:3300' %>
-    gamification: <%= ENV['XIKOLO_SERVICE_GAMIFICATION'] || 'http://localhost:3400' %>
     pinboard: <%= ENV['XIKOLO_SERVICE_PINBOARD'] || 'http://localhost:3500' %>
     video: <%= ENV['XIKOLO_SERVICE_VIDEO'] || 'http://localhost:3600' %>
     quiz: <%= ENV['XIKOLO_SERVICE_QUIZ'] || 'http://localhost:3800' %>
-    submission: <%= ENV['XIKOLO_SERVICE_SUBMISSION'] || 'http://localhost:3900' %>
-    file: <%= ENV['XIKOLO_SERVICE_FILE'] || 'http://localhost:4000' %>
     certificate: <%= ENV['XIKOLO_SERVICE_CERTIFICATE'] || 'http://localhost:4100' %>
-    log: <%= ENV['XIKOLO_SERVICE_LOG'] || 'http://localhost:4200' %>
     news: <%= ENV['XIKOLO_SERVICE_NEWS'] || 'http://localhost:4300' %>
-    learning_room: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
     collabspace: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
     progress: <%= ENV['XIKOLO_SERVICE_PROGRESS'] || 'http://localhost:4900' %>
-    lti: <%= ENV['XIKOLO_SERVICE_LTI'] || 'http://localhost:5000' %>
-    game: <%= ENV['XIKOLO_SERVICE_GAME'] || 'http://localhost:5100' %>
     peerassessment: <%= ENV['XIKOLO_SERVICE_PEERASSESSMENT'] || 'http://localhost:5400' %>
 
 test:
@@ -40,21 +33,10 @@ production:
     account: http://services:8080/account
     notification: http://services:8080/notification
     course: http://services:8080/course
-    gamification: http://services:8080/gamification
     pinboard: http://services:8080/pinboard
     video: http://services:8080/video
     quiz: http://services:8080/quiz
-    submission: http://services:8080/submission
-    socialnetworking: http://services:8080/socialnetworking
-    crowdsourcing: http://services:8080/crowdsourcing
-    file: http://services:8080/file
     certificate: http://services:8080/certificate
-    log: http://services:8080/log
     news: http://services:8080/news
-    motivation: http://services:8080/motivation
-    learning_room: http://services:8080/learning-room
     progress: http://services:8080/progress
-    lti: http://services:8080/lti
-    game: http://services:8080/game
     peer_assessment: http://services:8080/peerassessment
-    usertesting: http://services:8080/usertesting
