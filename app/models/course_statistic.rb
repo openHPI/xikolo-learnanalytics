@@ -27,7 +27,7 @@ class CourseStatistic < ApplicationRecord
         bridge_api.rel(:course_ticket_stats).get(course_id: course['id'])
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-        certificate_service.rel(:open_badge_statistics).get(course_id: course['id'])
+        bridge_api.rel(:course_open_badge_stats).get(course_id: course['id'])
       end,
     ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats, badge_stats|
       days_since_course_start = course['start_date'] && (Time.zone.today - course['start_date'].to_date).to_i
@@ -137,7 +137,7 @@ class CourseStatistic < ApplicationRecord
         helpdesk_tickets_last_day: ticket_stats['ticket_count_last_day'],
 
         # open badges
-        badge_issues: badge_stats['issued'].to_i,
+        badge_issues: badge_stats['badges_issued'].to_i,
         badge_downloads: Lanalytics::Metric::BadgeDownloadCount.query(course_id: course['id'])[:count].to_i,
         badge_shares: Lanalytics::Metric::BadgeShareCount.query(course_id: course['id'])[:count].to_i,
       )
@@ -201,10 +201,6 @@ class CourseStatistic < ApplicationRecord
 
   def pinboard_service
     @pinboard_service ||= Restify.new(:pinboard).get.value!
-  end
-
-  def certificate_service
-    @certificate_service ||= Restify.new(:certificate).get.value!
   end
 
   class << self
