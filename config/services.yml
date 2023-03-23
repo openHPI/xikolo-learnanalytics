@@ -6,7 +6,6 @@ development: &dev
     pinboard: <%= ENV['XIKOLO_SERVICE_PINBOARD'] || 'http://localhost:3500' %>
     video: <%= ENV['XIKOLO_SERVICE_VIDEO'] || 'http://localhost:3600' %>
     quiz: <%= ENV['XIKOLO_SERVICE_QUIZ'] || 'http://localhost:3800' %>
-    certificate: <%= ENV['XIKOLO_SERVICE_CERTIFICATE'] || 'http://localhost:4100' %>
     news: <%= ENV['XIKOLO_SERVICE_NEWS'] || 'http://localhost:4300' %>
     collabspace: <%= ENV['XIKOLO_SERVICE_LEARNING_ROOM'] || 'http://localhost:4800' %>
     progress: <%= ENV['XIKOLO_SERVICE_PROGRESS'] || 'http://localhost:4900' %>
@@ -15,7 +14,6 @@ development: &dev
 test:
   services:
     account: http://account.xikolo.tld
-    certificate: http://certificate.xikolo.tld
     collabspace: http://collabspace.xikolo.tld
     course: http://course.xikolo.tld
     news: http://news.xikolo.tld
@@ -36,7 +34,6 @@ production:
     pinboard: http://services:8080/pinboard
     video: http://services:8080/video
     quiz: http://services:8080/quiz
-    certificate: http://services:8080/certificate
     news: http://services:8080/news
     progress: http://services:8080/progress
     peer_assessment: http://services:8080/peerassessment

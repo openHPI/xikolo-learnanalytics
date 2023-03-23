@@ -54,7 +54,14 @@ describe CourseStatistic do
       :xikolo, :get,
       headers: {'Authorization' => /Bearer .+/}
     ).to_return Stub.json(
+      course_open_badge_stats_url: '/bridges/lanalytics/courses/{course_id}/open_badge_stats',
       course_ticket_stats_url: '/bridges/lanalytics/courses/{course_id}/ticket_stats',
+    )
+    Stub.request(
+      :xikolo, :get, "/courses/#{course_id}/open_badge_stats",
+      headers: {'Authorization' => /Bearer .+/}
+    ).to_return Stub.json(
+      badges_issued: 185,
     )
     Stub.request(
       :xikolo, :get, "/courses/#{course_id}/ticket_stats",
@@ -73,15 +80,6 @@ describe CourseStatistic do
       threads_last_day: 50,
       questions: 500,
       questions_last_day: 50,
-    )
-
-    Stub.request(:certificate, :get)
-      .to_return Stub.json(open_badge_statistics_url: '/open_badge_statistics{?course_id}')
-    Stub.request(
-      :certificate, :get, '/open_badge_statistics',
-      query: {course_id: course_id}
-    ).to_return Stub.json(
-      issued: 1000,
     )
 
     # elasticsearch
@@ -122,6 +120,7 @@ describe CourseStatistic do
       its(:days_since_coursestart) { is_expected.to eq 10 }
       its(:helpdesk_tickets) { is_expected.to eq 1_000 }
       its(:helpdesk_tickets_last_day) { is_expected.to eq 100 }
+      its(:badge_issues) { is_expected.to eq 185 }
     end
   end
 end
