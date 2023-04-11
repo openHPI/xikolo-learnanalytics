@@ -1,5 +1,6 @@
 ruby: '2.7'
 script:
-  - bundle install --without development production integration
+  - bundle config set --local without 'development production integration'
+  - bundle install
   - bundle exec rake ci:setup
   - bundle exec rspec -r rspec/teamcity -f Spec::Runner::Formatter::TeamcityFormatter
