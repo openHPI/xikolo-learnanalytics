@@ -12,6 +12,12 @@
   // changelog scripts can detect and classify changes correctly.
   semanticCommits: "enabled",
 
+  postUpdateOptions: [
+    // bundler conservative mode avoids updating transitive dependencies
+    // when only parent packages are bumped. See bundler --conservative.
+    'bundlerConservative',
+  ],
+
   packageRules: [
     // Do not bump ruby version (only security patches)
     {
