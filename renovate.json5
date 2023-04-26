@@ -37,6 +37,12 @@
       matchDatasources: ["rubygems"],
       matchPackagePrefixes: ["elasticsearch"],
       groupName: "elasticsearch packages",
+    },
+    // Group sentry monorepo gems. They can only be upgraded together.
+    {
+      matchDatasources: ["rubygems"],
+      matchPackagePatterns: ["^sentry"],
+      groupName: 'sentry monorepo',
     }
   ],
 }
