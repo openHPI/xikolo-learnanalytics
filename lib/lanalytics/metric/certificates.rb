@@ -9,31 +9,33 @@ module Lanalytics
 
       exec do |params|
         course_id = params[:course_id]
+        start_date = params[:start_date]
 
         body = {
           size: 0,
           query: {
             bool: {
               must: [
-                {match: {'verb' => 'completed_course'}}
+                {match: {'verb' => 'completed_course'}},
               ],
             },
           },
           aggs: {},
         }
 
-        if course_id
-          body[:query][:bool][:must].append({match: {'in_context.course_id' => course_id}})
-        end
+        body[:query][:bool][:must].append(
+          course_filter(course_id),
+          date_filter(start_date, Time.zone.now.to_s),
+        ).compact
 
-        types = %w(record_of_achievement confirmation_of_participation certificate)
+        types = %w[record_of_achievement confirmation_of_participation certificate]
 
         types.each do |type|
           body[:aggs][type] = {
             filter: {
               bool: {
                 must: [
-                  {match: {"in_context.received_#{type}" => 'true'}}
+                  {match: {"in_context.received_#{type}" => 'true'}},
                 ],
               },
             },
@@ -54,7 +56,7 @@ module Lanalytics
               },
               total: {
                 sum_bucket: {
-                  buckets_path: "course>user",
+                  buckets_path: 'course>user',
                 },
               },
             },
