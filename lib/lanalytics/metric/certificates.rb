@@ -5,7 +5,7 @@ module Lanalytics
     class Certificates < ExpEventsElasticMetric
       description 'Returns the number of gained certificates.'
 
-      optional_parameter :course_id
+      optional_parameter :course_id, :start_date
 
       exec do |params|
         course_id = params[:course_id]
