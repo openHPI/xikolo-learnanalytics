@@ -47,7 +47,7 @@ gem 'ruby-progressbar'
 
 gem 'business_time'
 gem 'database_cleaner'
-gem 'sidekiq', '~> 6.0'
+gem 'sidekiq', '~> 7.0'
 gem 'sidekiq-cron', '~> 1.4'
 
 # Use unicorn as the app server
