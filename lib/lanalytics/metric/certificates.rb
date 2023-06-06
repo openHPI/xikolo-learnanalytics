@@ -8,26 +8,20 @@ module Lanalytics
       optional_parameter :course_id, :start_date, :end_date
 
       exec do |params|
-        course_id = params[:course_id]
-        start_date = params[:start_date]
-        end_date = params[:end_date]
-
         body = {
           size: 0,
           query: {
             bool: {
               must: [
                 {match: {'verb' => 'completed_course'}},
-              ],
+              ].append(
+                course_filter(params[:course_id]),
+                date_filter(params[:start_date], params[:end_date]),
+              ).compact,
             },
           },
           aggs: {},
         }
-
-        body[:query][:bool][:must].append(
-          course_filter(course_id),
-          date_filter(start_date, end_date),
-        ).compact
 
         types = %w[record_of_achievement confirmation_of_participation certificate]
 

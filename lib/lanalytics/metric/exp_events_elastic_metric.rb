@@ -55,7 +55,11 @@ module Lanalytics
 
         df[:range][:timestamp][:gte] = DateTime.parse(start_date).iso8601 if start_date.present?
 
-        df[:range][:timestamp][:lte] = DateTime.parse(end_date).iso8601 if end_date.present?
+        df[:range][:timestamp][:lte] = if end_date.present?
+                                         DateTime.parse(end_date).iso8601
+                                       else
+                                         Time.current
+                                       end
 
         df
       end
