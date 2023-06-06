@@ -6,6 +6,8 @@ RSpec.describe Lanalytics::Metric::Certificates do
   let(:user_id) { SecureRandom.uuid }
   let(:course_id) { SecureRandom.uuid }
   let(:start_date) { 2.weeks.ago.to_s }
+  let(:end_date) { 1.week.ago.to_s }
+
   let(:body) do
     {
       'aggregations' => {
@@ -48,7 +50,7 @@ RSpec.describe Lanalytics::Metric::Certificates do
 
   describe '#query' do
     subject(:query) do
-      described_class.query course_id: course_id, start_date: start_date
+      described_class.query course_id: course_id, start_date: start_date, end_date: end_date
     end
 
     before do
