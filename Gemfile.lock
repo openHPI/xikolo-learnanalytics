@@ -537,7 +537,7 @@ DEPENDENCIES
   sentry-ruby
   sentry-sidekiq
   sidekiq (~> 6.0)
-  sidekiq-cron
+  sidekiq-cron (~> 1.4)
   simplecov
   spring
   telegraf (~> 2.0)
