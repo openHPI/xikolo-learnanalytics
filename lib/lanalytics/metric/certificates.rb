@@ -5,11 +5,12 @@ module Lanalytics
     class Certificates < ExpEventsElasticMetric
       description 'Returns the number of gained certificates.'
 
-      optional_parameter :course_id, :start_date
+      optional_parameter :course_id, :start_date, :end_date
 
       exec do |params|
         course_id = params[:course_id]
         start_date = params[:start_date]
+        end_date = params[:end_date]
 
         body = {
           size: 0,
@@ -25,7 +26,7 @@ module Lanalytics
 
         body[:query][:bool][:must].append(
           course_filter(course_id),
-          date_filter(start_date, Time.zone.now.to_s),
+          date_filter(start_date, end_date),
         ).compact
 
         types = %w[record_of_achievement confirmation_of_participation certificate]
