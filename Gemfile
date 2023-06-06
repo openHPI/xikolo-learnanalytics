@@ -84,7 +84,7 @@ end
 group :development, :test do
   gem 'factory_bot_rails', '~> 6.0'
   gem 'listen'
-  gem 'rspec', '~> 3.7'
+  gem 'rspec', '~> 3.10'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails'

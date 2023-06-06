@@ -521,7 +521,7 @@ DEPENDENCIES
   responders
   rest-client
   restify (~> 1.15)
-  rspec (~> 3.7)
+  rspec (~> 3.10)
   rspec-collection_matchers
   rspec-its
   rspec-rails
