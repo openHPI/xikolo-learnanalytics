@@ -58,7 +58,7 @@ module Lanalytics
         df[:range][:timestamp][:lte] = if end_date.present?
                                          DateTime.parse(end_date).iso8601
                                        else
-                                         Time.current.to_datetime.iso8601
+                                         DateTime.current.iso8601
                                        end
 
         df
