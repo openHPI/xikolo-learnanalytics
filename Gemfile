@@ -37,7 +37,7 @@ gem 'aws-sdk-s3', '~> 1.16'
 gem 'elasticsearch', '~> 7.13.1'
 gem 'elasticsearch-transport', '~> 7.13.1'
 gem 'pg', '~> 1.1'
-gem 'redis', '~> 4.0'
+gem 'redis', '~> 5.0'
 
 gem 'multi_json'
 gem 'rest-client'

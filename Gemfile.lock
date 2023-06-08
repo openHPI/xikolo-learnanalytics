@@ -322,7 +322,8 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rbtree (0.4.6)
-    redis (4.8.1)
+    redis (5.0.6)
+      redis-client (>= 0.9.0)
     redis-client (0.14.1)
       connection_pool
     regexp_parser (2.8.0)
@@ -520,7 +521,7 @@ DEPENDENCIES
   rack-remote
   rails (~> 6.1)
   rails-rfc6570 (~> 2.3)
-  redis (~> 4.0)
+  redis (~> 5.0)
   responders
   rest-client
   restify (~> 1.15)
