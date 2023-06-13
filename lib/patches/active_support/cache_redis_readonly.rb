@@ -10,8 +10,8 @@ module Patches
 
         super(method, returning: returning) do
           yield
-        rescue ::Redis::CommandError => e
-          if retryable && e.message.include?('READONLY')
+        rescue ::Redis::ReadOnlyError, ::RedisClient::ReadOnlyError
+          if retryable
             redis.respond_to?(:disconnect!) ? redis.disconnect! : redis.reload { nil }
             retryable = false
             retry
