@@ -78,7 +78,6 @@ group :development do
   gem 'os'
   gem 'pry-byebug'
   gem 'ruby-prof' # To do performance evaluation
-  gem 'spring' # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 end
 
 group :development, :test do

@@ -438,7 +438,6 @@ GEM
     sorted_set (1.0.3)
       rbtree
       set (~> 1.0)
-    spring (4.1.1)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -543,7 +542,6 @@ DEPENDENCIES
   sidekiq (~> 7.0)
   sidekiq-cron (~> 1.4)
   simplecov
-  spring
   telegraf (~> 2.0)
   timecop
   unicorn
