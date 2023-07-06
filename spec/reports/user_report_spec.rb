@@ -61,12 +61,7 @@ RSpec.describe Reports::UserReport do
       file = File.open("#{Rails.root}/tmp/#{report_job.id}/#{user_report.files.names.first}")
       headers = CSV.read(file, headers: true).headers
 
-      expect(headers).to match_array [
-        'User Pseudo ID',
-        'Age Group',
-        'Language',
-        'Created',
-      ]
+      expect(headers).to contain_exactly('User Pseudo ID', 'Age Group', 'Language', 'Created')
     end
   end
 end

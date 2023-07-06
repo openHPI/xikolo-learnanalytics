@@ -35,7 +35,7 @@ describe CalculateCourseStatsWorker do
   it 'creates a new statistic object for each public, internal course' do
     expect(CourseStatistic.count).to eq 0
     perform
-    expect(CourseStatistic.pluck(:course_id)).to match_array [active_course1, active_course2]
+    expect(CourseStatistic.pluck(:course_id)).to contain_exactly(active_course1, active_course2)
   end
 
   it 'sends an event for other services to consume' do

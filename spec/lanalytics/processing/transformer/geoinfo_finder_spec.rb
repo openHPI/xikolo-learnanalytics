@@ -21,7 +21,7 @@ describe Lanalytics::Processing::Transformer::GeoinfoFinder do
       pipeline_ctx,
     )
 
-    expect(processing_units).to match_array([processing_unit])
+    expect(processing_units).to contain_exactly(processing_unit)
   end
 
   describe 'with a user ip' do

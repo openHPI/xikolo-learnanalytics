@@ -117,31 +117,7 @@ describe Reports::CourseReport do
       file = File.open("#{Rails.root}/tmp/#{report_job.id}/#{course_report.files.names.first}")
       headers = CSV.read(file, headers: true).headers
 
-      expect(headers).to match_array [
-        'User Pseudo ID',
-        'Enrollment Date',
-        'First Enrollment',
-        'User created',
-        'Language',
-        'Age Group',
-        'Enrollment Delta in Days',
-        'Forum Posts',
-        'Forum Threads',
-        'Reactivated',
-        'Reactivated Submission Date',
-        'Confirmation of Participation',
-        'Record of Achievement',
-        'Qualified Certificate',
-        'Course Completed',
-        'Un-enrolled',
-        'Quantile',
-        'Top Performance',
-        'Items Visited',
-        'Items Visited Percentage',
-        'Points',
-        'Points Percentage',
-        'Course Code',
-      ]
+      expect(headers).to contain_exactly('User Pseudo ID', 'Enrollment Date', 'First Enrollment', 'User created', 'Language', 'Age Group', 'Enrollment Delta in Days', 'Forum Posts', 'Forum Threads', 'Reactivated', 'Reactivated Submission Date', 'Confirmation of Participation', 'Record of Achievement', 'Qualified Certificate', 'Course Completed', 'Un-enrolled', 'Quantile', 'Top Performance', 'Items Visited', 'Items Visited Percentage', 'Points', 'Points Percentage', 'Course Code')
     end
   end
 end
