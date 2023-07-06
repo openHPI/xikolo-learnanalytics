@@ -87,17 +87,17 @@ module Lanalytics
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
               attrs[:in_context].each do |attribute, value|
-                if [
-                  :points_achieved,
-                  :points_maximal,
-                  :points_percentage,
-                  :quantile
+                if %i[
+                  points_achieved
+                  points_maximal
+                  points_percentage
+                  quantile
                 ].include? attribute
                   with_attribute attribute.to_s.downcase, :float, value
-                elsif [
-                  :received_confirmation_of_participation,
-                  :received_record_of_achievement,
-                  :received_certificate
+                elsif %i[
+                  received_confirmation_of_participation
+                  received_record_of_achievement
+                  received_certificate
                 ].include? attribute
                   with_attribute attribute.to_s.downcase, :bool, (value.nil? ? false : value)
                 else

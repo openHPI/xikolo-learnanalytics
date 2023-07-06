@@ -20,9 +20,9 @@ module Lanalytics
       def self.dependent_metrics(metrics)
         @dep_metrics = metrics
 
-        description("Combines the following metrics: #{dep_metrics.map {|metric|
+        description("Combines the following metrics: #{dep_metrics.map do |metric|
           "#{metric[:class].name.demodulize.underscore} (#{metric[:weight] || 1})"
-        }.join(', ')}.")
+        end.join(', ')}.")
 
         @exec = proc do |params|
           results = query_dependent(params)

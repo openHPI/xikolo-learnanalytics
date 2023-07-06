@@ -20,7 +20,7 @@ module Lanalytics
 
       def client_config
         Lanalytics.config.s3['connect_info'].transform_keys(&:to_sym).merge(
-          logger: ::Rails.logger
+          logger: ::Rails.logger,
         )
       end
     end

@@ -97,7 +97,7 @@ module Lanalytics
           verbs.each do |verb|
             stats.merge!(
               "#{verb}_downloads" => ri&.dig(verb, 'doc_count').to_i,
-              "#{verb}_downloads_unique_users" => ri&.dig(verb, 'user', 'value').to_i
+              "#{verb}_downloads_unique_users" => ri&.dig(verb, 'user', 'value').to_i,
             )
           end
 
@@ -116,8 +116,8 @@ module Lanalytics
         Xikolo.paginate(
           Restify.new(:course).get.value!.rel(:items).get(
             course_id: course_id,
-            content_type: 'video'
-          )
+            content_type: 'video',
+          ),
         ) do |video|
           videos.append(video)
         end

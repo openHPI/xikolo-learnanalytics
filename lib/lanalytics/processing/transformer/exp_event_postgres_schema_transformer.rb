@@ -34,7 +34,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       unless exp_stmt.resource.nil?
         resource = Resource.find_or_create_by(
           uuid: exp_stmt.resource.uuid.to_s,
-          resource_type: exp_stmt.resource.type.downcase.to_s
+          resource_type: exp_stmt.resource.type.downcase.to_s,
         )
         with_attribute :resource_id, :int, resource.id
       end
@@ -63,7 +63,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
       unless attrs[:resource].nil?
         resource = Resource.find_or_create_by(
           uuid: attrs[:resource][:uuid].to_s,
-          resource_type: attrs[:resource][:type].to_s
+          resource_type: attrs[:resource][:type].to_s,
         )
         with_attribute :resource_id, :int, resource.id
       end

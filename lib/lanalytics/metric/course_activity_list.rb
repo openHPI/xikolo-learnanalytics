@@ -61,7 +61,7 @@ module Lanalytics
       end
 
       def self.get_agg_value(buckets, verb)
-        b = buckets.find {|hash| hash["key"] == verb }
+        b = buckets.find {|hash| hash['key'] == verb }
         if b.present?
           b[:doc_count].to_i
         else

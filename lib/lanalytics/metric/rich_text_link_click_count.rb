@@ -116,8 +116,8 @@ module Lanalytics
               course_id: course_id,
               content_type: 'rich_text',
               id: item_id,
-            }.compact
-          )
+            }.compact,
+          ),
         ) do |rich_text|
           rich_texts.append(rich_text)
         end

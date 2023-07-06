@@ -38,7 +38,7 @@ module Xikolo::Paginate
           max_retries: @max_retries,
           wait: @wait,
           &request_blk
-        )
+        ),
       )
     end
   end

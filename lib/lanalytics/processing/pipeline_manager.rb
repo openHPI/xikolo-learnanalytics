@@ -40,9 +40,9 @@ module Lanalytics
       def register_pipeline(pipeline)
         @pipelines[pipeline.schema][pipeline.processing_action][pipeline.name] = pipeline
 
-        Rails.logger.debug {
+        Rails.logger.debug do
           "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'"
-        }
+        end
       end
 
       def pipeline_for(name, schema, processing_action, &block)
@@ -53,9 +53,9 @@ module Lanalytics
           &block
         )
 
-        Rails.logger.debug {
+        Rails.logger.debug do
           "Registered pipeline '#{name}' in schema '#{schema}' and for processing action '#{processing_action}'"
-        }
+        end
       end
 
       # -----------------------

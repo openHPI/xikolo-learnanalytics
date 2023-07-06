@@ -16,9 +16,9 @@ module Lanalytics
 
               method("do_#{command}_for_#{entity}").call(load_command)
             rescue StandardError => e
-              Rails.logger.error {
+              Rails.logger.error do
                 "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}"
-              }
+              end
               Rails.logger.error { original_event.inspect }
               Rails.logger.error { e.backtrace }
             end

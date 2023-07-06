@@ -48,9 +48,9 @@ module Lanalytics
           columns = entity.all_attribute_names.join(', ')
           values  = entity.all_non_nil_attributes.map {|attr| sql_value_of(attr) }.join(', ')
 
-          set_statements = entity.all_non_nil_attributes.collect {|attr|
+          set_statements = entity.all_non_nil_attributes.collect do |attr|
             attr.name.to_s + ' = ' + sql_value_of(attr)
-          }.join(', ')
+          end.join(', ')
 
           execute_sql(%Q{
             WITH upsert as (
@@ -69,9 +69,9 @@ module Lanalytics
           entity = update_command.entity
           table, column, value = tableColumnValueFromEntity(entity)
 
-          set_statements = entity.all_non_nil_attributes.collect {|attr|
+          set_statements = entity.all_non_nil_attributes.collect do |attr|
             attr.name.to_s + ' = ' + sql_value_of(attr)
-          }.join(', ')
+          end.join(', ')
 
           execute_sql(%Q{
             UPDATE #{table}
