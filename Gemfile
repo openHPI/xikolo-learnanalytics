@@ -7,8 +7,6 @@ ruby '~> 2.7.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1'
 
-gem 'bundler', '~> 2.0'
-
 gem 'nokogiri', '~> 1.11'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
