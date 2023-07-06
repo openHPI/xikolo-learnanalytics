@@ -49,21 +49,3 @@ lint:rubocop:master:
   only:
     refs: [master]
   allow_failure: true
-
-fossa:analyze:
-  stage: test
-  image: registry.xikolo.de/docker/fossa:latest@sha256:722a79e124220b1ebe544d168f696d277f7488d1c443a53c0afae191c2b577c5
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}---fossa
-    paths:
-      - vendor/ruby
-  only:
-    refs:
-      - merge_requests
-    changes:
-      - Gemfile.lock
-  before_script:
-    - bundle install --frozen --jobs 32 --retry 3 --clean --path vendor
-  script:
-    - fossa analyze
-    - fossa test --timeout 1200
