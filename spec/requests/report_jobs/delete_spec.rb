@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'ReportJob: Delete', type: :request do
+describe 'ReportJob: Delete' do
   subject(:delete) { api.rel(:report_job).delete(id: report_job.id).value! }
 
   let(:api) { Restify.new(:test).get.value! }

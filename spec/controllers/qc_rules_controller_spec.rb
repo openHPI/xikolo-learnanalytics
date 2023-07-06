@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe QcRulesController, type: :controller do
+describe QcRulesController do
   let(:qc_rule) { create(:qc_rule) }
   let(:json) { JSON.parse response.body }
   let(:default_params) { {format: 'json'} }

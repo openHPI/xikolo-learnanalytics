@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe ReportJob, type: :model do
+describe ReportJob do
   let(:params) do
     {
       task_type: 'course_report',
