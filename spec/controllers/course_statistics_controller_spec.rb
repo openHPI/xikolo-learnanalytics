@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe CourseStatisticsController do
   let(:default_params) { {format: 'json'} }
-  let(:json) { JSON.parse response.body }
+  let(:json) { response.parsed_body }
   let(:course_id) { '00000001-3300-4444-9999-000000000006' }
 
   describe '#index' do

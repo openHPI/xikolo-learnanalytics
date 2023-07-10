@@ -8,7 +8,7 @@ describe QcAlertsController do
   let!(:alert1) { create(:qc_alert, qc_rule_id: rule1.id) }
   let!(:alert2) { create(:qc_alert, :other_course, qc_rule_id: rule2.id) }
 
-  let(:json) { JSON.parse response.body }
+  let(:json) { response.parsed_body }
   let(:default_params) { {format: 'json'} }
 
   describe '#index' do

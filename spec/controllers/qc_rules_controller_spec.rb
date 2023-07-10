@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe QcRulesController do
   let(:qc_rule) { create(:qc_rule) }
-  let(:json) { JSON.parse response.body }
+  let(:json) { response.parsed_body }
   let(:default_params) { {format: 'json'} }
 
   describe '#index' do

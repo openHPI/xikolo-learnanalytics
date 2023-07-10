@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe ReportJobsController do
   let(:report_job) { create(:report_job, :course_report) }
-  let(:json) { JSON.parse response.body }
+  let(:json) { response.parsed_body }
   let(:params) { attributes_for(:report_job, :course_report) }
   let(:default_params) { {format: 'json'} }
 
