@@ -63,6 +63,13 @@ module Lanalytics
         # Method that should be called by all individual methods below
         # Transforms everything to super-fancy object-oriented attributes / entities
         #
+        CONTEXT_FLOAT_ATTRS = %i[points_achieved points_maximal points_percentage quantile].freeze
+        CONTEXT_BOOL_ATTRS = %i[
+          received_confirmation_of_participation
+          received_record_of_achievement
+          received_certificate
+        ].freeze
+
         def transform_punit_to_create(load_commands, attrs)
           entity = Lanalytics::Processing::LoadORM::Entity.create(:exp_event) do
             user_entity = Lanalytics::Processing::LoadORM::Entity.create(:user) do
@@ -87,18 +94,9 @@ module Lanalytics
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
               attrs[:in_context].each do |attribute, value|
-                if %i[
-                  points_achieved
-                  points_maximal
-                  points_percentage
-                  quantile
-                ].include? attribute
+                if CONTEXT_FLOAT_ATTRS.include? attribute
                   with_attribute attribute.to_s.downcase, :float, value
-                elsif %i[
-                  received_confirmation_of_participation
-                  received_record_of_achievement
-                  received_certificate
-                ].include? attribute
+                elsif CONTEXT_BOOL_ATTRS.include? attribute
                   with_attribute attribute.to_s.downcase, :bool, (value.nil? ? false : value)
                 else
                   with_attribute attribute.to_s.downcase, :string, value
