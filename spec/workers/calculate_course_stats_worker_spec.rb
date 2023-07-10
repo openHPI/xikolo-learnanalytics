@@ -5,8 +5,8 @@ require 'spec_helper'
 describe CalculateCourseStatsWorker do
   subject(:perform) { described_class.new.perform }
 
-  let(:active_course1)     { '00000001-3300-4444-9999-000000000001' }
-  let(:active_course2)     { '00000001-3300-4444-9999-000000000002' }
+  let(:active_course1)     { '00000001-3300-4444-9999-000000000001' } # rubocop:disable RSpec/IndexedLet
+  let(:active_course2)     { '00000001-3300-4444-9999-000000000002' } # rubocop:disable RSpec/IndexedLet
   let(:preparation_course) { '00000001-3300-4444-9999-000000000003' }
   let(:external_course)    { '00000001-3300-4444-9999-000000000004' }
 

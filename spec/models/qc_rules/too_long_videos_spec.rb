@@ -3,9 +3,9 @@
 require 'spec_helper'
 
 describe QcRules::TooLongVideos do
-  subject(:rule) { described_class.new qc_rule2 }
+  subject(:rule) { described_class.new qc_rule }
 
-  let!(:qc_rule2) { create(:qc_rule) }
+  let!(:qc_rule) { create(:qc_rule) }
   let!(:test_course) do
     build(:test_course,
       id: '00000001-3100-4444-9999-000000000002',
@@ -116,22 +116,22 @@ describe QcRules::TooLongVideos do
     context 'when the course is over' do
       let(:course) { test_course_over }
 
-      let(:alert1) do
+      let(:alert) do
         create(:qc_alert,
-          qc_rule_id: qc_rule2.id,
+          qc_rule_id: qc_rule.id,
           status: 'open',
           course_id: test_course_over['id'])
       end
-      let(:alert2) do
+      let(:alert_with_data) do
         create(:qc_alert,
-          qc_rule_id: qc_rule2.id,
+          qc_rule_id: qc_rule.id,
           status: 'open',
           course_id: test_course_over['id'],
           qc_alert_data: {'resource_id' => '00000001-3300-4444-9999-000000000003'})
       end
 
       it 'closes both alerts' do
-        expect { run }.to change { [alert1.reload.status, alert2.reload.status] }
+        expect { run }.to change { [alert.reload.status, alert_with_data.reload.status] }
           .from(%w[open open])
           .to(%w[closed closed])
       end
