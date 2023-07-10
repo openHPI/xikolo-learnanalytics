@@ -49,7 +49,7 @@ module Lanalytics
             filter: {
               bool: {
                 must: [
-                  {match: {verb: "downloaded_#{verb}"}}
+                  {match: {verb: "downloaded_#{verb}"}},
                 ],
               },
             },
@@ -84,7 +84,7 @@ module Lanalytics
           id = item['id']
           ri = item(id, from_result: result)
 
-          section = sections.find {|section| section['id'] == item['section_id'] }
+          section = sections.find {|s| s['id'] == item['section_id'] }
 
           stats = {
             id: id,
