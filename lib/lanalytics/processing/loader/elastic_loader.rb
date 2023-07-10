@@ -5,23 +5,23 @@ module Lanalytics
     module Loader
       class ElasticLoader < LoadStep
         def initialize(datasource = nil)
+          super()
+
           @elastic_datasource = datasource
         end
 
         def load(original_event, load_commands, pipeline_ctx)
           load_commands.each do |load_command|
-            begin
-              command = load_command.class.name.demodulize.underscore
-              entity = load_command.entity.class.name.demodulize.underscore
+            command = load_command.class.name.demodulize.underscore
+            entity = load_command.entity.class.name.demodulize.underscore
 
-              method("do_#{command}_for_#{entity}").call(load_command)
-            rescue StandardError => e
-              Rails.logger.error do
-                "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}"
-              end
-              Rails.logger.error { original_event.inspect }
-              Rails.logger.error { e.backtrace }
+            method("do_#{command}_for_#{entity}").call(load_command)
+          rescue StandardError => e
+            Rails.logger.error do
+              "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}"
             end
+            Rails.logger.error { original_event.inspect }
+            Rails.logger.error { e.backtrace }
           end
         end
 
@@ -51,10 +51,11 @@ module Lanalytics
           end
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity
         def json_value_of(attribute)
           case attribute.data_type
             when :bool
-              (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
+              attribute.value.to_s.casecmp('true').zero? ? 'TRUE' : 'FALSE'
             when :string, :date, :timestamp, :uuid
               attribute.value.to_s
             when :int
@@ -72,6 +73,7 @@ module Lanalytics
               "'#{attribute.value}'"
           end
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
       end
     end
   end
