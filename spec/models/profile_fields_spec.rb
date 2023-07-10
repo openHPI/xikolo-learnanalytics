@@ -64,8 +64,8 @@ describe ProfileFields do
   end
 
   before do
-    FactoryBot.create :profile_field_configuration, name: 'sap_id', sensitive: false, omittable: true
-    FactoryBot.create :profile_field_configuration, name: 'full_name', sensitive: true, omittable: false
+    create(:profile_field_configuration, name: 'sap_id', sensitive: false, omittable: true)
+    create(:profile_field_configuration, name: 'full_name', sensitive: true, omittable: false)
   end
 
   describe '#[]' do
@@ -114,7 +114,7 @@ describe ProfileFields do
     context 'de_pseudonymized' do
       let(:profile_config) { ProfileFieldConfiguration.de_pseudonymized }
 
-      it { is_expected.to match_array ['male', '"Max Muster"', '"Berlin"', 'de;en;fr'] }
+      it { is_expected.to contain_exactly('male', '"Max Muster"', '"Berlin"', 'de;en;fr') }
     end
   end
 
@@ -130,7 +130,7 @@ describe ProfileFields do
     context 'de_pseudonymized' do
       let(:profile_config) { ProfileFieldConfiguration.de_pseudonymized }
 
-      it { is_expected.to match_array ['Full Name', 'Gender', 'City', 'Languages'] }
+      it { is_expected.to contain_exactly('Full Name', 'Gender', 'City', 'Languages') }
     end
   end
 end

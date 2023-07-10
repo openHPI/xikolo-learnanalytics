@@ -24,7 +24,7 @@ Rails.application.configure do
   # should be sent to a better location, e.g. the syslog or a logging server.
   config.log_level = :warn
   config.log_tags = [:request_id]
-  config.log_formatter = ::Logger::Formatter.new
+  config.log_formatter = Logger::Formatter.new
 
   config.logger = ActiveSupport::TaggedLogging.new(
     ActiveSupport::Logger.new($stdout, formatter: config.log_formatter),

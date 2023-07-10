@@ -18,7 +18,7 @@ module Lanalytics
             bool: {
               must: [
                 {match: {tracking_type: 'rich_text_item_link'}},
-                {match: {course_id: params[:course_id]}}
+                {match: {course_id: params[:course_id]}},
               ],
             },
           },
@@ -38,7 +38,7 @@ module Lanalytics
                 earliest_timestamp: {
                   top_hits: {
                     sort: [
-                      {timestamp: {order: 'asc'}}
+                      {timestamp: {order: 'asc'}},
                     ],
                     _source: ['timestamp'],
                     size: 1,
@@ -47,7 +47,7 @@ module Lanalytics
                 latest_timestamp: {
                   top_hits: {
                     sort: [
-                      {timestamp: {order: 'desc'}}
+                      {timestamp: {order: 'desc'}},
                     ],
                     _source: ['timestamp'],
                     size: 1,
@@ -58,9 +58,7 @@ module Lanalytics
           },
         }
 
-        if params[:item_id]
-          body[:query][:bool][:must] << {match: {tracking_id: params[:item_id]}}
-        end
+        body[:query][:bool][:must] << {match: {tracking_id: params[:item_id]}} if params[:item_id]
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: body
@@ -82,7 +80,7 @@ module Lanalytics
           id = item['id']
           ri = item(id, from_result: result)
 
-          section = sections.find {|section| section['id'] == item['section_id'] }
+          section = sections.find {|s| s['id'] == item['section_id'] }
 
           {
             id: id,
@@ -116,8 +114,8 @@ module Lanalytics
               course_id: course_id,
               content_type: 'rich_text',
               id: item_id,
-            }.compact
-          )
+            }.compact,
+          ),
         ) do |rich_text|
           rich_texts.append(rich_text)
         end

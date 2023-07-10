@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'ReportTypes: List', type: :request do
+describe 'ReportTypes: List' do
   subject(:resource) { api.rel(:report_types).get.value! }
 
   before { Lanalytics.config.merge YAML.safe_load report_types }

@@ -16,4 +16,4 @@ module MsgrSentryIntegration
   end
 end
 
-::Msgr::Consumer.prepend MsgrSentryIntegration
+Msgr::Consumer.prepend MsgrSentryIntegration

@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe QcRulesController, type: :controller do
-  let(:qc_rule) { FactoryBot.create :qc_rule }
-  let(:json) { JSON.parse response.body }
+describe QcRulesController do
+  let(:qc_rule) { create(:qc_rule) }
+  let(:json) { response.parsed_body }
   let(:default_params) { {format: 'json'} }
 
   describe '#index' do
@@ -16,7 +16,7 @@ describe QcRulesController, type: :controller do
 
     context 'when an active rule exists' do
       before do
-        FactoryBot.create :qc_rule, is_active: true
+        create(:qc_rule, is_active: true)
       end
 
       it 'lists the active rule' do

@@ -2,18 +2,18 @@
 
 require 'spec_helper'
 
-describe 'ReportJob: Delete', type: :request do
+describe 'ReportJob: Delete' do
   subject(:delete) { api.rel(:report_job).delete(id: report_job.id).value! }
 
   let(:api) { Restify.new(:test).get.value! }
-  let(:report_job) { FactoryBot.create :report_job }
+  let(:report_job) { create(:report_job) }
 
   it 'responds with 204 No Content' do
     expect(delete.response.status).to eq :no_content
   end
 
   context 'for running report job' do
-    let(:report_job) { FactoryBot.create :report_job, status: 'started' }
+    let(:report_job) { create(:report_job, status: 'started') }
 
     it 'responds with 409 Conflict' do
       expect { delete }.to raise_error(Restify::ClientError) do |error|

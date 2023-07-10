@@ -12,7 +12,7 @@ module Lanalytics
         end_date = params[:end_date]
 
         start_date = start_date.present? ? DateTime.parse(start_date) : (DateTime.now - 1.day)
-        end_date = end_date.present? ? DateTime.parse(end_date) : (DateTime.now)
+        end_date = end_date.present? ? DateTime.parse(end_date) : DateTime.now
 
         exp_result = datasource.exec do |client|
           client.search index: datasource.index, body: {
@@ -61,7 +61,7 @@ module Lanalytics
       end
 
       def self.get_agg_value(buckets, verb)
-        b = buckets.find {|hash| hash["key"] == verb }
+        b = buckets.find {|hash| hash['key'] == verb }
         if b.present?
           b[:doc_count].to_i
         else

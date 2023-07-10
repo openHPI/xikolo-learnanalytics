@@ -70,7 +70,7 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
     end
 
     it 'does not initialize when some combination of critical components is missing' do
-      (0...7).each do |i|
+      7.times do |i|
         user = nil unless (i & 1) > 0
         verb = nil unless (i & 2) > 0
         resource = nil unless (i & 4) > 0

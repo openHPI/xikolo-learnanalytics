@@ -6,33 +6,33 @@ describe QcRules::PinboardClosedForCourses do
   subject(:rule) { described_class.new qc_rule }
 
   let!(:qc_rule) do
-    FactoryBot.create :qc_rule,
+    create(:qc_rule,
       is_active: true,
-      worker: 'PinboardClosedForCoursesWorker'
+      worker: 'PinboardClosedForCoursesWorker')
   end
   let!(:preparation_course) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000003',
       start_date: 30.days.from_now.iso8601,
       end_date: 60.days.from_now.iso8601,
       status: 'preparation',
-      forum_is_locked: nil
+      forum_is_locked: nil)
   end
   let!(:active_course) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000002',
       start_date: 30.days.from_now.iso8601,
       end_date: 60.days.from_now.iso8601,
       status: 'active',
-      forum_is_locked: nil
+      forum_is_locked: nil)
   end
   let!(:archive_course) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000004',
       start_date: 30.days.ago.iso8601,
       end_date: 10.days.ago.iso8601,
       status: 'archive',
-      forum_is_locked: nil
+      forum_is_locked: nil)
   end
 
   describe '#run' do
@@ -92,7 +92,7 @@ describe QcRules::PinboardClosedForCourses do
 
         context 'with existing alert' do
           let!(:alert) do
-            FactoryBot.create :qc_alert, qc_rule_id: qc_rule.id, course_id: course['id']
+            create(:qc_alert, qc_rule_id: qc_rule.id, course_id: course['id'])
           end
 
           it 'closes an existing alert' do

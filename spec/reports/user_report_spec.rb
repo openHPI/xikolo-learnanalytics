@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Reports::UserReport do
-  let(:report_job) { FactoryBot.create :report_job, task_scope: '00000001-3300-4444-9999-000000000001' }
+  let(:report_job) { create(:report_job, task_scope: '00000001-3300-4444-9999-000000000001') }
 
   let(:user_report) { described_class.new(report_job) }
 
@@ -61,12 +61,7 @@ RSpec.describe Reports::UserReport do
       file = File.open("#{Rails.root}/tmp/#{report_job.id}/#{user_report.files.names.first}")
       headers = CSV.read(file, headers: true).headers
 
-      expect(headers).to match_array [
-        'User Pseudo ID',
-        'Age Group',
-        'Language',
-        'Created',
-      ]
+      expect(headers).to contain_exactly('User Pseudo ID', 'Age Group', 'Language', 'Created')
     end
   end
 end

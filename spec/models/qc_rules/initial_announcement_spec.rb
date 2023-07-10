@@ -5,10 +5,10 @@ require 'spec_helper'
 describe QcRules::InitialAnnouncement do
   subject(:rule) { described_class.new qc_rule }
 
-  let!(:qc_rule) { FactoryBot.create :qc_rule }
-  let!(:test_course) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000002'} }
-  let!(:course_little_enrollments) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000003', end_date: 3.days.ago.iso8601} }
-  let!(:test_course2) { FactoryBot.build :test_course, {id: '00000001-3100-4444-9999-000000000015'} }
+  let!(:qc_rule) { create(:qc_rule) }
+  let!(:test_course) { build(:test_course, {id: '00000001-3100-4444-9999-000000000002'}) }
+  let!(:course_little_enrollments) { build(:test_course, {id: '00000001-3100-4444-9999-000000000003', end_date: 3.days.ago.iso8601}) }
+  let!(:test_course2) { build(:test_course, {id: '00000001-3100-4444-9999-000000000015'}) }
 
   let(:headers) do
     {

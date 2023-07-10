@@ -49,7 +49,7 @@ module Lanalytics
             filter: {
               bool: {
                 must: [
-                  {match: {verb: "downloaded_#{verb}"}}
+                  {match: {verb: "downloaded_#{verb}"}},
                 ],
               },
             },
@@ -84,7 +84,7 @@ module Lanalytics
           id = item['id']
           ri = item(id, from_result: result)
 
-          section = sections.find {|section| section['id'] == item['section_id'] }
+          section = sections.find {|s| s['id'] == item['section_id'] }
 
           stats = {
             id: id,
@@ -97,7 +97,7 @@ module Lanalytics
           verbs.each do |verb|
             stats.merge!(
               "#{verb}_downloads" => ri&.dig(verb, 'doc_count').to_i,
-              "#{verb}_downloads_unique_users" => ri&.dig(verb, 'user', 'value').to_i
+              "#{verb}_downloads_unique_users" => ri&.dig(verb, 'user', 'value').to_i,
             )
           end
 
@@ -116,8 +116,8 @@ module Lanalytics
         Xikolo.paginate(
           Restify.new(:course).get.value!.rel(:items).get(
             course_id: course_id,
-            content_type: 'video'
-          )
+            content_type: 'video',
+          ),
         ) do |video|
           videos.append(video)
         end

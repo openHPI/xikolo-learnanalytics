@@ -2,13 +2,13 @@
 
 require 'spec_helper'
 
-describe MetricsController, type: :controller do
+describe MetricsController do
   let(:default_params) { {format: 'json'} }
   let(:user_id) { SecureRandom.uuid }
   let(:course_id) { SecureRandom.uuid }
   let(:start_date) { 2.weeks.ago.to_s }
   let(:end_date) { Time.zone.now.to_s }
-  let(:json) { JSON.parse response.body }
+  let(:json) { response.parsed_body }
 
   describe '#show' do
     let(:params) do

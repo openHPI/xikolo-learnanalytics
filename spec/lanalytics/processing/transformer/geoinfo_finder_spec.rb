@@ -4,13 +4,13 @@ require 'rails_helper'
 
 describe Lanalytics::Processing::Transformer::GeoinfoFinder do
   let(:original_event) do
-    FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
+    attributes_for(:amqp_exp_stmt).with_indifferent_access
   end
 
   let(:processing_unit) { Lanalytics::Processing::Unit.new(:exp_event, original_event) }
   let(:processing_units) { [processing_unit] }
   let(:load_commands) { [] }
-  let(:pipeline_ctx) { OpenStruct.new processing_action: :CREATE }
+  let(:pipeline_ctx) { nil }
   let(:geoinfo_transformer) { described_class.new }
 
   it 'does nothing if there is no user ip' do
@@ -21,12 +21,12 @@ describe Lanalytics::Processing::Transformer::GeoinfoFinder do
       pipeline_ctx,
     )
 
-    expect(processing_units).to match_array([processing_unit])
+    expect(processing_units).to contain_exactly(processing_unit)
   end
 
   describe 'with a user ip' do
     let(:original_event) do
-      FactoryBot.attributes_for(
+      attributes_for(
         :amqp_exp_stmt,
         in_context: {user_ip: '123.21.23.1'},
       ).with_indifferent_access

@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe QcRecommendationsController do
-  let(:recommendation) { FactoryBot.create :qc_recommendation }
+  let(:recommendation) { create(:qc_recommendation) }
   let(:default_params) { {format: 'json'} }
 
   describe '#index' do

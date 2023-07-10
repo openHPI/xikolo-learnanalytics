@@ -5,10 +5,12 @@ module Lanalytics
     module Loader
       class PostgresLoader < LoadStep
         def initialize(datasource = nil)
+          super()
+
           @postgres_datasource = datasource
         end
 
-        def tableColumnValueFromEntity(entity)
+        def tableColumnValueFromEntity(entity) # rubocop:disable Naming/MethodName
           table  = entity.entity_key
           column = entity.primary_attribute.name
           value  = sql_value_of(entity.primary_attribute)
@@ -35,7 +37,7 @@ module Lanalytics
           columns = entity.all_attribute_names.join(', ')
           values  = entity.all_non_nil_attributes.map {|attr| sql_value_of(attr) }.join(', ')
 
-          execute_sql(%Q{
+          execute_sql(%{
             INSERT INTO #{table} (#{columns})
             VALUES (#{values});
           })
@@ -48,11 +50,11 @@ module Lanalytics
           columns = entity.all_attribute_names.join(', ')
           values  = entity.all_non_nil_attributes.map {|attr| sql_value_of(attr) }.join(', ')
 
-          set_statements = entity.all_non_nil_attributes.collect {|attr|
-            attr.name.to_s + ' = ' + sql_value_of(attr)
-          }.join(', ')
+          set_statements = entity.all_non_nil_attributes.collect do |attr|
+            "#{attr.name} = #{sql_value_of(attr)}"
+          end.join(', ')
 
-          execute_sql(%Q{
+          execute_sql(%{
             WITH upsert as (
               UPDATE #{table}
               SET #{set_statements}
@@ -69,25 +71,25 @@ module Lanalytics
           entity = update_command.entity
           table, column, value = tableColumnValueFromEntity(entity)
 
-          set_statements = entity.all_non_nil_attributes.collect {|attr|
-            attr.name.to_s + ' = ' + sql_value_of(attr)
-          }.join(', ')
+          set_statements = entity.all_non_nil_attributes.collect do |attr|
+            "#{attr.name} = #{sql_value_of(attr)}"
+          end.join(', ')
 
-          execute_sql(%Q{
+          execute_sql(%(
             UPDATE #{table}
             SET #{set_statements}
             WHERE #{column} = #{value}
-          })
+          ))
         end
 
         def do_destroy_command(destroy_command)
           entity = destroy_command.entity
           table, column, value = tableColumnValueFromEntity(entity)
 
-          execute_sql(%Q{
+          execute_sql(%(
             DELETE FROM #{table}
             WHERE #{column} = #{value}
-          })
+          ))
         end
 
         def do_custom_load_command(custom_load_command)
@@ -96,12 +98,14 @@ module Lanalytics
           execute_sql(custom_load_command.query)
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Lint/DuplicateBranch
         def sql_value_of(attribute)
           case attribute.data_type
             when :string
               "'#{escape_string(attribute.value)}'"
             when :bool
-              (attribute.value.to_s.downcase == 'true') ? 'TRUE' : 'FALSE'
+              attribute.value.to_s.casecmp('true').zero? ? 'TRUE' : 'FALSE'
             when :date, :timestamp, :uuid
               "'#{attribute.value}'"
             when :int, :float
@@ -110,12 +114,12 @@ module Lanalytics
               attribute.value.each do |key, val|
                 attribute.value[key] = escape_string(val) if val.is_a? String
               end
-
               "'#{attribute.value.to_json}'"
             else
               "'#{attribute.value}'"
           end
         end
+        # rubocop:enable all
 
         def escape_string(str)
           PG::Connection.escape_string(
@@ -124,21 +128,20 @@ module Lanalytics
         end
 
         def execute_sql(sql)
-          return if sql.nil? || sql.empty?
+          return if sql.blank?
 
           # Log what will be written to postgres
           Rails.logger.debug { "[POSTGRES SQL EXEC] - #{sql}" }
 
           @postgres_datasource.exec do |conn|
             # $postgres_connection.with do |conn|
-            begin
-              conn.exec(sql)
-            rescue StandardError => e
-              Rails.logger.error(%Q{
+
+            conn.exec(sql)
+          rescue StandardError => e
+            Rails.logger.error(%(
                 Following error occurred when executing a SQL query on Postgres: #{e.message}
                 #{sql}
-              })
-            end
+              ))
           end
         end
       end

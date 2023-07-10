@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Reports::PinboardReport do
   subject(:report) { report_job.generate! }
 
-  let!(:report_job) { FactoryBot.create :report_job, :pinboard_report, options: {'include_collab_spaces' => true} }
+  let!(:report_job) { create(:report_job, :pinboard_report, options: {'include_collab_spaces' => true}) }
 
   let(:collab_space_id) { SecureRandom.uuid }
 
