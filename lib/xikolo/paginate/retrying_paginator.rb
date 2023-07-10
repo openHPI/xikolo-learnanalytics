@@ -10,19 +10,19 @@ module Xikolo::Paginate
       @first_page = start(&request)
     end
 
-    def each_item(&block)
+    def each_item
       each_page do |page|
         page.each do |item|
-          block.call item, page
+          yield item, page
         end
       end
     end
 
-    def each_page(&block)
+    def each_page
       current_page = @first_page.value!.first
 
       loop do
-        block.call current_page
+        yield current_page
 
         break unless current_page.rel?(:next)
 
