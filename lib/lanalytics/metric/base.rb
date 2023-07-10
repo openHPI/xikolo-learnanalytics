@@ -9,22 +9,21 @@ module Lanalytics
         "Lanalytics::Metric::#{name.camelize}".constantize
       end
 
+      IGNORED_METRIC_CLASSES = %w[
+        Base
+        ExpEventsElasticMetric
+        ExpEventsCountElasticMetric
+        ExpEventsPostgresMetric
+        LinkTrackingEventsElasticMetric
+        ClusteringMetric
+        CombinedMetric
+      ].freeze
       def all
         Rails.root.join('lib/lanalytics/metric')
           .to_enum(:each_child)
-          .map {|i| i.basename.to_s.split('.').first.camelize }
+          .map { _1.basename.to_s.split('.').first.camelize }
           .sort
-          .reject do |c|
-            %w[
-              Base
-              ExpEventsElasticMetric
-              ExpEventsCountElasticMetric
-              ExpEventsPostgresMetric
-              LinkTrackingEventsElasticMetric
-              ClusteringMetric
-              CombinedMetric
-            ].include? c
-          end
+          .reject { IGNORED_METRIC_CLASSES.include? _1 }
       end
     end
 
