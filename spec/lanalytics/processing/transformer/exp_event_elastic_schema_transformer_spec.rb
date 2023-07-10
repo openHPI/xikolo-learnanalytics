@@ -32,7 +32,7 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
   let(:processing_units) { [Lanalytics::Processing::Unit.new(:exp_event, original_event)] }
   let(:processing_unit) { nil }
   let(:load_commands) { [] }
-  let(:pipeline_ctx) { OpenStruct.new processing_action: :CREATE }
+  let(:pipeline_ctx) { Struct.new(:processing_action).new(:CREATE) }
   let(:exp_event_elastic_transformer) { described_class.new }
   let(:transform_method) do
     exp_event_elastic_transformer.method("transform_#{type}_punit_to_create")

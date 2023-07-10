@@ -10,7 +10,7 @@ describe Lanalytics::Processing::Transformer::GeoinfoFinder do
   let(:processing_unit) { Lanalytics::Processing::Unit.new(:exp_event, original_event) }
   let(:processing_units) { [processing_unit] }
   let(:load_commands) { [] }
-  let(:pipeline_ctx) { OpenStruct.new processing_action: :CREATE }
+  let(:pipeline_ctx) { nil }
   let(:geoinfo_transformer) { described_class.new }
 
   it 'does nothing if there is no user ip' do

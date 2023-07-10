@@ -10,7 +10,7 @@ describe Lanalytics::Processing::Transformer::ContextData do
   let(:processing_unit) { Lanalytics::Processing::Unit.new(:exp_event, original_event) }
   let(:processing_units) { [processing_unit] }
   let(:load_commands) { [] }
-  let(:pipeline_ctx) { OpenStruct.new processing_action: :CREATE }
+  let(:pipeline_ctx) { nil }
   let(:context_data_transformer) { described_class.new }
 
   it 'does nothing if there is no user user-agent' do
