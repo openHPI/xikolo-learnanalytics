@@ -5,9 +5,9 @@ require 'spec_helper'
 describe QcRules::DifficultSelftest do
   subject(:rule) { described_class.new(qc_rule) }
 
-  let!(:qc_rule) { FactoryBot.create(:qc_rule) }
+  let!(:qc_rule) { create(:qc_rule) }
   let!(:course) do
-    FactoryBot.build(
+    build(
       :test_course,
       id: '00000001-3100-4444-9999-000000000002',
       start_date: 5.days.ago.iso8601,

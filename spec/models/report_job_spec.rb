@@ -39,7 +39,7 @@ describe ReportJob, type: :model do
   describe '::queue_name' do
     subject(:queue_name) { described_class.queue_name(report_job.id) }
 
-    let(:report_job) { FactoryBot.create :report_job, report_type }
+    let(:report_job) { create(:report_job, report_type) }
 
     %i[
       course_report

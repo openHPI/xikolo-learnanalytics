@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe Lanalytics::Processing::Transformer::ContextData do
   let(:original_event) do
-    FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
+    attributes_for(:amqp_exp_stmt).with_indifferent_access
   end
 
   let(:processing_unit) { Lanalytics::Processing::Unit.new(:exp_event, original_event) }
@@ -26,7 +26,7 @@ describe Lanalytics::Processing::Transformer::ContextData do
 
   describe 'with a mobile user-agent' do
     let(:original_event) do
-      FactoryBot.attributes_for(
+      attributes_for(
         :amqp_exp_stmt,
         in_context: {
           user_agent: 'Mozilla/5.0 (iPad; CPU OS 9_0 like Mac OS X) AppleWebKit/601.1.39 (KHTML, like Gecko) Version/9.0 Mobile/13A4305g Safari/601.1',
@@ -54,7 +54,7 @@ describe Lanalytics::Processing::Transformer::ContextData do
 
   describe 'with a desktop user-agent' do
     let(:original_event) do
-      FactoryBot.attributes_for(
+      attributes_for(
         :amqp_exp_stmt,
         in_context: {
           user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.86 Safari/537.36',

@@ -28,7 +28,7 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
     load_commands.first.entity
   end
 
-  let(:original_event) { FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access }
+  let(:original_event) { attributes_for(:amqp_exp_stmt).with_indifferent_access }
   let(:processing_units) { [Lanalytics::Processing::Unit.new(:exp_event, original_event)] }
   let(:processing_unit) { nil }
   let(:load_commands) { [] }

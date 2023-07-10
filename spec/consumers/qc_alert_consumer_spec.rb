@@ -25,8 +25,8 @@ RSpec.describe QcAlertConsumer do
 
   describe '#destroy_course' do
     before do
-      create :qc_alert, course_id: course_id1
-      create :qc_alert, course_id: course_id2
+      create(:qc_alert, course_id: course_id1)
+      create(:qc_alert, course_id: course_id2)
     end
 
     let(:msgr_route) { 'xikolo.course.course.destroy' }

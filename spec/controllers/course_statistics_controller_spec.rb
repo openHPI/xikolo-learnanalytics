@@ -20,7 +20,7 @@ describe CourseStatisticsController do
     end
 
     context 'when fetching historic data for a course', versioning: true do
-      before { FactoryBot.create :course_statistic, :calculated }
+      before { create(:course_statistic, :calculated) }
 
       let(:params) { super().merge(historic_data: 'true', course_id: course_id, start_date: 2.days.ago.to_s) }
 
@@ -48,7 +48,7 @@ describe CourseStatisticsController do
   describe '#show' do
     subject { get :show, params: {id: course_id} }
 
-    before { FactoryBot.create :course_statistic, :calculated }
+    before { create(:course_statistic, :calculated) }
 
     it { is_expected.to have_http_status :ok }
   end

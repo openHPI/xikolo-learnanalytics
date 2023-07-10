@@ -5,28 +5,28 @@ require 'spec_helper'
 describe QcRules::TooLongVideos do
   subject(:rule) { described_class.new qc_rule2 }
 
-  let!(:qc_rule2) { FactoryBot.create :qc_rule }
+  let!(:qc_rule2) { create(:qc_rule) }
   let!(:test_course) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000002',
       start_date: 11.days.ago.iso8601,
       end_date: 5.days.from_now.iso8601,
-      status: 'active'
+      status: 'active')
   end
 
   let!(:test_course_over) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000002',
       start_date: 11.days.ago.iso8601,
       end_date: 1.day.ago.iso8601,
-      status: 'active'
+      status: 'active')
   end
   let!(:test_course2) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000003',
       start_date: 11.days.ago.iso8601,
       end_date: 5.days.from_now.iso8601,
-      status: 'active'
+      status: 'active')
   end
 
   before do
@@ -117,17 +117,17 @@ describe QcRules::TooLongVideos do
       let(:course) { test_course_over }
 
       let(:alert1) do
-        FactoryBot.create :qc_alert,
+        create(:qc_alert,
           qc_rule_id: qc_rule2.id,
           status: 'open',
-          course_id: test_course_over['id']
+          course_id: test_course_over['id'])
       end
       let(:alert2) do
-        FactoryBot.create :qc_alert,
+        create(:qc_alert,
           qc_rule_id: qc_rule2.id,
           status: 'open',
           course_id: test_course_over['id'],
-          qc_alert_data: {'resource_id' => '00000001-3300-4444-9999-000000000003'}
+          qc_alert_data: {'resource_id' => '00000001-3300-4444-9999-000000000003'})
       end
 
       it 'closes both alerts' do

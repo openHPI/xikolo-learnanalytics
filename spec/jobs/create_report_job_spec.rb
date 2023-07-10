@@ -21,7 +21,7 @@ end
 describe CreateReportJob do
   subject(:perform_job) { described_class.new.perform(report_job.id) }
 
-  let(:report_job) { FactoryBot.create :report_job, :course_report }
+  let(:report_job) { create(:report_job, :course_report) }
   let(:report_stub) { ReportStub.new(report_job) }
 
   it 'enqueued on the queue for long running reports' do
@@ -30,7 +30,7 @@ describe CreateReportJob do
   end
 
   context 'pinboard_report' do
-    let(:report_job) { FactoryBot.create :report_job, :pinboard_report }
+    let(:report_job) { create(:report_job, :pinboard_report) }
 
     it 'enqueued on the default queue for reports' do
       ActiveJob::Base.queue_adapter = :test

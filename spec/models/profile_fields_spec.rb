@@ -64,8 +64,8 @@ describe ProfileFields do
   end
 
   before do
-    FactoryBot.create :profile_field_configuration, name: 'sap_id', sensitive: false, omittable: true
-    FactoryBot.create :profile_field_configuration, name: 'full_name', sensitive: true, omittable: false
+    create(:profile_field_configuration, name: 'sap_id', sensitive: false, omittable: true)
+    create(:profile_field_configuration, name: 'full_name', sensitive: true, omittable: false)
   end
 
   describe '#[]' do

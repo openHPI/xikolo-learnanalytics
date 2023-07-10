@@ -3,9 +3,9 @@
 require 'spec_helper'
 
 describe ReportJobsController do
-  let(:report_job) { FactoryBot.create :report_job, :course_report }
+  let(:report_job) { create(:report_job, :course_report) }
   let(:json) { JSON.parse response.body }
-  let(:params) { FactoryBot.attributes_for(:report_job, :course_report) }
+  let(:params) { attributes_for(:report_job, :course_report) }
   let(:default_params) { {format: 'json'} }
 
   describe '#index' do
@@ -29,9 +29,9 @@ describe ReportJobsController do
       subject(:job_user_index) { get :index, params: {user_id: '00000001-3100-4444-9999-000000000001'} }
 
       before do
-        FactoryBot.create(:report_job, :course_report, user_id: '00000001-3100-4444-9999-000000000001')
-        FactoryBot.create(:report_job, :course_report, user_id: '00000001-3100-4444-9999-000000000001')
-        FactoryBot.create(:report_job, :course_report, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f')
+        create(:report_job, :course_report, user_id: '00000001-3100-4444-9999-000000000001')
+        create(:report_job, :course_report, user_id: '00000001-3100-4444-9999-000000000001')
+        create(:report_job, :course_report, user_id: 'b2157ab3-454b-0000-bb31-976b99cb016f')
       end
 
       it { is_expected.to have_http_status :ok }

@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe QcAlertCollection do
-  let!(:rule) { FactoryBot.create :qc_rule }
+  let!(:rule) { create(:qc_rule) }
   let(:course_id) { SecureRandom.uuid }
 
   let(:alert_params) { {status: 'open', qc_rule_id: rule.id, course_id: course_id} }
@@ -19,7 +19,7 @@ describe QcAlertCollection do
     let(:attrs) { {severity: 'high', annotation: 'annotation'} }
 
     context 'with an existing closed alert' do
-      let!(:alert) { FactoryBot.create :qc_alert, closed_alert_params }
+      let!(:alert) { create(:qc_alert, closed_alert_params) }
 
       it 'reopens the alert' do
         expect { open }.to change { alert.reload.status }
@@ -35,7 +35,7 @@ describe QcAlertCollection do
     end
 
     context 'with an existing closed alert that is parameterized' do
-      let!(:alert) { FactoryBot.create :qc_alert, closed_parameterized_alert_params }
+      let!(:alert) { create(:qc_alert, closed_parameterized_alert_params) }
 
       before { collection.with_data(foo: 'bar') }
 
@@ -86,7 +86,7 @@ describe QcAlertCollection do
     subject(:close) { collection.close! }
 
     context 'with an existing open alert for the course' do
-      let!(:alert) { FactoryBot.create :qc_alert, alert_params }
+      let!(:alert) { create(:qc_alert, alert_params) }
 
       it 'closes the alert' do
         expect { close }.to change { alert.reload.status }.to('closed')
@@ -94,7 +94,7 @@ describe QcAlertCollection do
     end
 
     context 'with an existing open alert for the course that is parameterized' do
-      let!(:alert) { FactoryBot.create :qc_alert, parameterized_alert_params }
+      let!(:alert) { create(:qc_alert, parameterized_alert_params) }
 
       before { collection.with_data(foo: 'bar') }
 

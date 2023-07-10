@@ -3,11 +3,10 @@
 require 'spec_helper'
 
 describe QcAlertsController do
-  let(:rule1) { FactoryBot.create :qc_rule }
-  let(:rule2) { FactoryBot.create :qc_rule }
-
-  let!(:alert1) { FactoryBot.create :qc_alert, qc_rule_id: rule1.id }
-  let!(:alert2) { FactoryBot.create :qc_alert, :other_course, qc_rule_id: rule2.id }
+  let(:rule1) { create(:qc_rule) }
+  let(:rule2) { create(:qc_rule) }
+  let!(:alert1) { create(:qc_alert, qc_rule_id: rule1.id) }
+  let!(:alert2) { create(:qc_alert, :other_course, qc_rule_id: rule2.id) }
 
   let(:json) { JSON.parse response.body }
   let(:default_params) { {format: 'json'} }
@@ -25,7 +24,7 @@ describe QcAlertsController do
     end
 
     context 'with global ignored alerts' do
-      let!(:alert3) { FactoryBot.create :qc_alert, qc_rule_id: rule1.id, is_global_ignored: true }
+      let!(:alert3) { create(:qc_alert, qc_rule_id: rule1.id, is_global_ignored: true) }
 
       it 'only shows alerts that have not been globally ignored' do
         index
@@ -45,8 +44,8 @@ describe QcAlertsController do
     end
 
     describe 'filter by user' do
-      let!(:alert3) { FactoryBot.create :qc_alert, qc_rule_id: rule1.id }
-      let!(:alert4) { FactoryBot.create :qc_alert, qc_rule_id: rule2.id }
+      let!(:alert3) { create(:qc_alert, qc_rule_id: rule1.id) }
+      let!(:alert4) { create(:qc_alert, qc_rule_id: rule2.id) }
 
       let(:user_id) { '00000001-3100-4444-9999-000000000002' }
 
@@ -54,8 +53,8 @@ describe QcAlertsController do
 
       context 'with a ignore status' do
         before do
-          FactoryBot.create :qc_alert_status, user_id: user_id, qc_alert_id: alert3.id, ignored: true
-          FactoryBot.create :qc_alert_status, user_id: user_id, qc_alert_id: alert4.id, ignored: false
+          create(:qc_alert_status, user_id: user_id, qc_alert_id: alert3.id, ignored: true)
+          create(:qc_alert_status, user_id: user_id, qc_alert_id: alert4.id, ignored: false)
         end
 
         it { is_expected.to have_http_status :ok }
@@ -68,9 +67,9 @@ describe QcAlertsController do
 
         context 'with two alert statuses for another user' do
           before do
-            FactoryBot.create :qc_alert_status, qc_alert_id: alert2.id, user_id: other_user_id, ignored: true
-            FactoryBot.create :qc_alert_status, qc_alert_id: alert3.id, user_id: other_user_id, ignored: true
-            FactoryBot.create :qc_alert_status, qc_alert_id: alert4.id, user_id: other_user_id, ignored: false
+            create(:qc_alert_status, qc_alert_id: alert2.id, user_id: other_user_id, ignored: true)
+            create(:qc_alert_status, qc_alert_id: alert3.id, user_id: other_user_id, ignored: true)
+            create(:qc_alert_status, qc_alert_id: alert4.id, user_id: other_user_id, ignored: false)
           end
 
           let(:other_user_id) { '00000001-3100-4444-9999-000000000003' }
@@ -94,12 +93,12 @@ describe QcAlertsController do
   end
 
   describe '#create' do
-    subject(:create) { post :create, params: {qc_alert: {severity: 'high', status: 'active', qc_rule_id: rule2.id}} }
+    subject(:create_alert) { post :create, params: {qc_alert: {severity: 'high', status: 'active', qc_rule_id: rule2.id}} }
 
     it { is_expected.to have_http_status :created }
 
     it 'creates a new alert' do
-      expect { create }.to change(QcAlert, :count).from(2).to(3)
+      expect { create_alert }.to change(QcAlert, :count).from(2).to(3)
     end
   end
 

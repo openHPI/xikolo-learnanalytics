@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Reports::UserReport do
-  let(:report_job) { FactoryBot.create :report_job, task_scope: '00000001-3300-4444-9999-000000000001' }
+  let(:report_job) { create(:report_job, task_scope: '00000001-3300-4444-9999-000000000001') }
 
   let(:user_report) { described_class.new(report_job) }
 

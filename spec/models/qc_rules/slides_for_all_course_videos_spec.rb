@@ -5,22 +5,22 @@ require 'spec_helper'
 describe QcRules::SlidesForAllCourseVideos do
   subject(:rule) { described_class.new qc_rule }
 
-  let!(:qc_rule) { FactoryBot.create :qc_rule }
+  let!(:qc_rule) { create(:qc_rule) }
   let!(:test_course) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000002',
       start_date: DateTime.now.iso8601,
       end_date: 5.days.from_now.iso8601,
       status: 'preparation',
-      forum_is_locked: nil
+      forum_is_locked: nil)
   end
   let!(:test_course2) do
-    FactoryBot.build :test_course,
+    build(:test_course,
       id: '00000001-3100-4444-9999-000000000003',
       start_date: DateTime.now.iso8601,
       end_date: 5.days.from_now.iso8601,
       status: 'preparation',
-      forum_is_locked: nil
+      forum_is_locked: nil)
   end
 
   before do

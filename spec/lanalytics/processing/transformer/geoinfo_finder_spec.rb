@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe Lanalytics::Processing::Transformer::GeoinfoFinder do
   let(:original_event) do
-    FactoryBot.attributes_for(:amqp_exp_stmt).with_indifferent_access
+    attributes_for(:amqp_exp_stmt).with_indifferent_access
   end
 
   let(:processing_unit) { Lanalytics::Processing::Unit.new(:exp_event, original_event) }
@@ -26,7 +26,7 @@ describe Lanalytics::Processing::Transformer::GeoinfoFinder do
 
   describe 'with a user ip' do
     let(:original_event) do
-      FactoryBot.attributes_for(
+      attributes_for(
         :amqp_exp_stmt,
         in_context: {user_ip: '123.21.23.1'},
       ).with_indifferent_access
