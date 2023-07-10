@@ -14,13 +14,13 @@ module Lanalytics
 
         def setup
           non_elasticsearch_opts = %i[client name key description index]
-          config = instance_values.symbolize_keys.reject {|k, v| non_elasticsearch_opts.include? k }
+          config = instance_values.symbolize_keys.except(*non_elasticsearch_opts)
 
           @client = Elasticsearch::Client.new config
 
-          unless @client
-            raise 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...'
-          end
+          return if @client
+
+          raise 'No Elasticsearch::Client could be created. Plz have a look at the configuration ...'
         end
 
         def exec
