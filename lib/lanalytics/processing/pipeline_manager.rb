@@ -6,9 +6,7 @@ module Lanalytics
       include Singleton
 
       def self.setup_pipelines(pipelines_setup_file)
-        unless pipelines_setup_file
-          raise ArgumentError.new 'Given pipelines_setup_file cannot be nil!'
-        end
+        raise ArgumentError.new 'Given pipelines_setup_file cannot be nil!' unless pipelines_setup_file
 
         unless File.exist?(pipelines_setup_file)
           raise ArgumentError.new "File '#{pipelines_setup_file}' does not exist."
@@ -20,8 +18,8 @@ module Lanalytics
 
         begin
           instance.instance_eval(File.read(pipelines_setup_file))
-        rescue SyntaxError => error
-          raise "The following error occurred when registering pipeline #{pipelines_setup_file}: #{error.message}"
+        rescue SyntaxError => e
+          raise "The following error occurred when registering pipeline #{pipelines_setup_file}: #{e.message}"
         end
 
         instance
@@ -41,7 +39,8 @@ module Lanalytics
         @pipelines[pipeline.schema][pipeline.processing_action][pipeline.name] = pipeline
 
         Rails.logger.debug do
-          "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing action '#{pipeline.processing_action}'"
+          "Registered pipeline '#{pipeline.name}' in schema '#{pipeline.schema}' and for processing " \
+            "action '#{pipeline.processing_action}'"
         end
       end
 
@@ -77,9 +76,7 @@ module Lanalytics
       end
 
       def find_piplines(schema, processing_action, pipeline_name)
-        if schema.nil? || schema.empty?
-          return schema_pipelines_with(processing_action, pipeline_name).values
-        end
+        return schema_pipelines_with(processing_action, pipeline_name).values if schema.blank?
 
         pipeline = @pipelines[schema.to_sym][processing_action.to_sym][pipeline_name.to_s]
 
