@@ -21,7 +21,7 @@
   packageRules: [
     // Do not bump ruby version (only security patches)
     {
-      matchPackageNames: ["ruby"],
+      matchDepNames: ["ruby"],
       matchUpdateTypes: ["major", "minor"],
       enabled: false,
     },
