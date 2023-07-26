@@ -5,8 +5,8 @@ module Xikolo
     require 'xikolo/paginate/paginator'
     require 'xikolo/paginate/retrying_paginator'
 
-    def paginate_with_retries(**opts, &block)
-      RetryingPaginator.new(**opts, &block)
+    def paginate_with_retries(...)
+      RetryingPaginator.new(...)
     end
 
     def paginate(request, &block)
