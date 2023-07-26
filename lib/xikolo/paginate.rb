@@ -5,14 +5,14 @@ module Xikolo
     require 'xikolo/paginate/paginator'
     require 'xikolo/paginate/retrying_paginator'
 
-    def paginate_with_retries(**opts, &block)
-      RetryingPaginator.new(**opts, &block)
+    def paginate_with_retries(...)
+      RetryingPaginator.new(...)
     end
 
     def paginate(request, &block)
       paginator = Paginator.new(request)
 
-      if block_given?
+      if block
         paginator.each_item(&block)
       else
         paginator
@@ -20,5 +20,5 @@ module Xikolo
     end
   end
 
-  ::Xikolo.send :extend, Paginate
+  ::Xikolo.extend Paginate
 end
