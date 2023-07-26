@@ -12,7 +12,7 @@ module Xikolo
     def paginate(request, &block)
       paginator = Paginator.new(request)
 
-      if block_given?
+      if block
         paginator.each_item(&block)
       else
         paginator
@@ -20,5 +20,5 @@ module Xikolo
     end
   end
 
-  ::Xikolo.send :extend, Paginate
+  ::Xikolo.extend Paginate
 end
