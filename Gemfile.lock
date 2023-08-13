@@ -453,7 +453,7 @@ GEM
     telegraf (2.1.1)
       influxdb
     thor (1.2.2)
-    timecop (0.9.6)
+    timecop (0.9.7)
     timeout (0.4.0)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
