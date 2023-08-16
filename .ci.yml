@@ -1,4 +1,4 @@
-ruby: '2.7'
+ruby: '3.2'
 script:
   - bundle config set --local without 'development production integration'
   - bundle install

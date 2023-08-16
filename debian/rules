@@ -11,8 +11,8 @@ export PACKAGE=$(shell dh_listpackages)
 PKGBASE=$(CURDIR)/debian/${PACKAGE}
 PREFIX=/usr/lib/${PACKAGE}
 
-export RUBY=/usr/bin/ruby2.7
-export GEM_PATH=vendor/ruby/2.7.0
+export RUBY=/usr/bin/ruby3.2
+export GEM_PATH=vendor/ruby/3.2.0
 
 export RUBYOPT="-W:no-deprecated -W:no-experimental"
 export DEBIAN_DISABLE_RUBYGEMS_INTEGRATION=1
