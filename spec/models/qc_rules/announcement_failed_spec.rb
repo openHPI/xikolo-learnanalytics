@@ -7,7 +7,7 @@ describe QcRules::AnnouncementFailed do
 
   before do
     Stub.request(:news, :get)
-      .to_return Stub.json(news_index_url: '/news')
+      .to_return Stub.json({news_index_url: '/news'})
     Stub.request(
       :news, :get, '/news',
       query: {published: 'true'}
@@ -23,10 +23,10 @@ describe QcRules::AnnouncementFailed do
     ])
 
     Stub.request(:notification, :get)
-      .to_return Stub.json(mail_log_stats_url: '/mail_log_stats{?news_id}')
+      .to_return Stub.json({mail_log_stats_url: '/mail_log_stats{?news_id}'})
     Stub.request(
       :notification, :get, '/mail_log_stats?news_id=c97b9403-0e81-4857-a52f-a02e901856b1'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       news_id: 'c97b9403-0e81-4857-a52f-a02e901856b1',
       count: 205,
       success_count: 200,
@@ -35,7 +35,7 @@ describe QcRules::AnnouncementFailed do
       unique_count: 205,
       oldest: 3.days.ago.iso8601,
       newest: 1.day.ago.iso8601,
-    )
+    })
   end
 
   let!(:qc_rule) { create(:qc_rule) }

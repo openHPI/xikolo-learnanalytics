@@ -31,7 +31,7 @@ describe QcRules::TooLongVideos do
 
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(items_url: '/items')
+      .to_return Stub.json({items_url: '/items'})
     Stub.request(
       :course, :get, '/items',
       query: {course_id: test_course['id'], content_type: 'video', published: 'true'}
@@ -49,31 +49,31 @@ describe QcRules::TooLongVideos do
     ])
 
     Stub.request(:video, :get)
-      .to_return Stub.json(video_url: '/videos/{id}')
+      .to_return Stub.json({video_url: '/videos/{id}'})
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: '00000001-3100-4444-9999-000000000004',
       duration: 700, # 11 min 40 sec
-    )
+    })
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000005'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: '00000001-3100-4444-9999-000000000005',
       duration: 1560, # 26 min
-    )
+    })
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000006'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: '00000001-3100-4444-9999-000000000006',
       duration: 2040, # 34 min
-    )
+    })
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000007'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: '00000001-3100-4444-9999-000000000007',
       duration: 2700, # 45 min
-    )
+    })
   end
 
   describe '#run' do

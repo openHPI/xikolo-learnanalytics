@@ -5,21 +5,21 @@ require 'spec_helper'
 describe Xikolo::RetryingPromise do
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         stats1_url: '/stats1',
         stats2_url: '/stats2',
         stats3_url: '/stats3',
-      )
+      })
     Stub.request(
       :course, :get, '/stats1'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       kpi: 1000,
-    )
+    })
     Stub.request(
       :course, :get, '/stats2'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       kpi: 2000,
-    )
+    })
   end
 
   let(:retrying_promise) { described_class.new(dependencies, &task) }
@@ -49,9 +49,9 @@ describe Xikolo::RetryingPromise do
       before do
         Stub.request(
           :course, :get, '/stats3'
-        ).to_return Stub.json(
+        ).to_return Stub.json({
           kpi: 3000,
-        )
+        })
       end
 
       it 'returns all promise results' do
@@ -69,9 +69,9 @@ describe Xikolo::RetryingPromise do
           status: 503,
         ).to_return(
           status: 504,
-        ).to_return Stub.json(
+        ).to_return Stub.json({
           kpi: 3000,
-        )
+        })
       end
 
       it 'returns all promise results' do

@@ -25,7 +25,7 @@ describe QcRules::InitialAnnouncement do
 
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(enrollments_url: '/enrollments')
+      .to_return Stub.json({enrollments_url: '/enrollments'})
     Stub.request(
       :course, :get, '/enrollments',
       query: {course_id: test_course['id'], per_page: 1}
@@ -46,10 +46,10 @@ describe QcRules::InitialAnnouncement do
     ], headers: headers)
 
     Stub.request(:news, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         news_index_url: 'http://news.xikolo.tld/news',
         news_url: 'http://news.xikolo.tld/news/{id}',
-      )
+      })
     Stub.request(
       :news, :get, '/news',
       query: {course_id: test_course['id'], published: 'true'}

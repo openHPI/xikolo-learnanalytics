@@ -19,7 +19,7 @@ describe QcRules::DifficultSelftest do
 
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(items_url: '/items')
+      .to_return Stub.json({items_url: '/items'})
     Stub.request(
       :course, :get, '/items',
       query: {
@@ -36,15 +36,15 @@ describe QcRules::DifficultSelftest do
     ])
 
     Stub.request(:quiz, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         question_url: '/questions/{id}',
         submission_statistic_url: '/submission_statistics/{id}',
-      )
+      })
     Stub.request(
       :quiz, :get,
       '/submission_statistics/00000001-3100-4444-9999-000000000004',
       query: {embed: 'questions_base_stats'}
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       total_submissions: 2,
       total_submissions_distinct: 2,
       max_points: 10,
@@ -83,13 +83,13 @@ describe QcRules::DifficultSelftest do
           incorrect_submissions: 0,
         },
       ],
-    )
+    })
     Stub.request(
       :quiz, :get, '/questions/00000001-3100-4444-9999-000000000007'
-    ).to_return Stub.json(id: 2, text: 'Foo')
+    ).to_return Stub.json({id: 2, text: 'Foo'})
     Stub.request(
       :quiz, :get, '/questions/00000001-3100-4444-9999-000000000009'
-    ).to_return Stub.json(id: 2, text: 'Bar')
+    ).to_return Stub.json({id: 2, text: 'Bar'})
   end
 
   describe '#run' do

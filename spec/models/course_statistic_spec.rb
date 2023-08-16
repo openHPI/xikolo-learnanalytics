@@ -7,30 +7,30 @@ describe CourseStatistic do
 
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         course_url: '/courses/{id}',
         stats_url: '/stats',
         course_statistic_url: '/courses/{course_id}/statistic',
-      )
+      })
     Stub.request(
       :course, :get, "/courses/#{course_id}"
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: course_id,
       title: 'SAP Course',
       groups: ['affiliated'],
       status: 'active',
       start_date: 10.days.ago.iso8601,
-    )
+    })
     Stub.request(
       :course, :get, "/courses/#{course_id}/statistic"
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       enrollments: 200,
       last_day_enrollments: 20,
-    )
+    })
     Stub.request(
       :course, :get, '/stats',
       query: {course_id: course_id, key: 'extended'}
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       course_id: course_id,
       user_id: nil,
       student_enrollments: 25,
@@ -42,45 +42,45 @@ describe CourseStatistic do
       no_shows: 4,
       certificates_count: 10,
       new_users: 1,
-    )
+    })
     Stub.request(
       :course, :get, '/stats',
       query: {course_id: course_id, key: 'enrollments_by_day'}
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       student_enrollments_by_day: {DateTime.now.iso8601.to_s => 199},
-    )
+    })
 
     Stub.request(
       :xikolo, :get,
       headers: {'Authorization' => /Bearer .+/}
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       course_open_badge_stats_url: '/bridges/lanalytics/courses/{course_id}/open_badge_stats',
       course_ticket_stats_url: '/bridges/lanalytics/courses/{course_id}/ticket_stats',
-    )
+    })
     Stub.request(
       :xikolo, :get, "/courses/#{course_id}/open_badge_stats",
       headers: {'Authorization' => /Bearer .+/}
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       badges_issued: 185,
-    )
+    })
     Stub.request(
       :xikolo, :get, "/courses/#{course_id}/ticket_stats",
       headers: {'Authorization' => /Bearer .+/}
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       ticket_count: 1000,
       ticket_count_last_day: 100,
-    )
+    })
 
     Stub.request(:pinboard, :get)
-      .to_return Stub.json(statistic_url: '/statistics/{id}')
+      .to_return Stub.json({statistic_url: '/statistics/{id}'})
     Stub.request(
       :pinboard, :get, "/statistics/#{course_id}"
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       threads: 500,
       threads_last_day: 50,
       questions: 500,
       questions_last_day: 50,
-    )
+    })
 
     # elasticsearch
     stub_request(:post, 'http://localhost:9200/_count')

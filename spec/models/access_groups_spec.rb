@@ -10,7 +10,7 @@ describe AccessGroups do
 
   before do
     Stub.request(:account, :get)
-      .to_return Stub.json(groups_url: '/groups')
+      .to_return Stub.json({groups_url: '/groups'})
 
     Stub.request(
       :account, :get, '/groups', query: {tag: 'access'}

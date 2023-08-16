@@ -9,25 +9,25 @@ RSpec.describe Reports::UserReport do
 
   let(:base_requests) do
     Stub.request(:course, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         course_url: 'http://course.xikolo.tld/courses/{id}',
         sections_url: 'http://course.xikolo.tld/sections',
         enrollments_url: 'http://course.xikolo.tld/enrollments',
         items_url: 'http://course.xikolo.tld/items',
-      )
+      })
 
     Stub.request(
       :course, :get, "/courses/#{report_job.task_scope}"
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: report_job.task_scope,
       course_code: 'report_course',
-    )
+    })
 
     Stub.request(:account, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         accounts_url: 'http://account.xikolo.tld',
         users_url: 'http://account.xikolo.tld/users',
-      )
+      })
 
     Stub.request(
       :account, :get, '/users',

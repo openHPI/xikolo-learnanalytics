@@ -12,7 +12,7 @@ describe CalculateCourseStatsWorker do
 
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(courses_url: '/courses')
+      .to_return Stub.json({courses_url: '/courses'})
     Stub.request(
       :course, :get, '/courses',
       query: {groups: 'any'}

@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Xikolo::Retryable do
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(stats_url: '/stats')
+      .to_return Stub.json({stats_url: '/stats'})
   end
 
   let(:retryable) { described_class.new(max_retries: max_retries, wait: wait, &promise_block) }
@@ -23,7 +23,7 @@ describe Xikolo::Retryable do
         ).to_return(
           status: 502,
         ).to_return(
-          Stub.json(kpi: 3000),
+          Stub.json({kpi: 3000}),
         )
       end
 
@@ -57,9 +57,9 @@ describe Xikolo::Retryable do
     before do
       Stub.request(
         :course, :get, '/stats'
-      ).to_return Stub.json(
+      ).to_return Stub.json({
         kpi: 3000,
-      )
+      })
     end
 
     let(:max_retries) { 1 }
@@ -85,9 +85,9 @@ describe Xikolo::Retryable do
     before do
       Stub.request(
         :course, :get, '/stats'
-      ).to_return Stub.json(
+      ).to_return Stub.json({
         kpi: 3000,
-      )
+      })
     end
 
     it 'returns the promise\'s value' do
@@ -102,9 +102,9 @@ describe Xikolo::Retryable do
       before do
         Stub.request(
           :course, :get, '/stats'
-        ).to_return Stub.json(
+        ).to_return Stub.json({
           kpi: 3000,
-        )
+        })
       end
 
       it 'returns true' do

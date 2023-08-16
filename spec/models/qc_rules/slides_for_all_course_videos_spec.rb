@@ -25,7 +25,7 @@ describe QcRules::SlidesForAllCourseVideos do
 
   before do
     Stub.request(:course, :get)
-      .to_return Stub.json(items_url: '/items')
+      .to_return Stub.json({items_url: '/items'})
     Stub.request(
       :course, :get, '/items',
       query: {course_id: test_course['id'], content_type: 'video'}
@@ -40,19 +40,19 @@ describe QcRules::SlidesForAllCourseVideos do
     ])
 
     Stub.request(:video, :get)
-      .to_return Stub.json(video_url: '/videos/{id}')
+      .to_return Stub.json({video_url: '/videos/{id}'})
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000004'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: '00000001-3100-4444-9999-000000000004',
       thumbnail_archive_id: nil,
-    )
+    })
     Stub.request(
       :video, :get, '/videos/00000001-3100-4444-9999-000000000003'
-    ).to_return Stub.json(
+    ).to_return Stub.json({
       id: '00000001-3100-4444-9999-000000000003',
       thumbnail_archive_id: 'abc',
-    )
+    })
   end
 
   describe '#run' do

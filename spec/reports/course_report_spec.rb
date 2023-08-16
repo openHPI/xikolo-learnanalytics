@@ -10,12 +10,12 @@ describe Reports::CourseReport do
 
   let(:base_requests) do
     Stub.request(:course, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         course_url: '/courses/{id}',
         sections_url: '/sections',
         enrollments_url: '/enrollments',
         items_url: '/items',
-      )
+      })
 
     Stub.request(:course, :get, "/courses/#{report_job.task_scope}")
       .to_return Stub.json({})
@@ -81,9 +81,9 @@ describe Reports::CourseReport do
     ).to_return Stub.json([])
 
     Stub.request(:account, :get)
-      .to_return Stub.json(
+      .to_return Stub.json({
         users_url: '/users',
-      )
+      })
 
     Stub.request(
       :course, :get, '/items',
