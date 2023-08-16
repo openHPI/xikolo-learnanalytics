@@ -8,11 +8,7 @@ module Lanalytics
       attr_reader :datasources
 
       def self.setup_datasource(filename)
-        begin
-          datasource_config = YAML.load_file(filename, aliases: true).with_indifferent_access
-        rescue ArgumentError # Ruby 2.7 does not has aliases: keyword
-          datasource_config = YAML.load_file(filename).with_indifferent_access
-        end
+        datasource_config = YAML.load_file(filename, aliases: true).with_indifferent_access
         datasource_config = datasource_config[Rails.env] || datasource_config
 
         datasource_adapter = datasource_config[:datasource_adapter]
