@@ -9,7 +9,7 @@ module Lanalytics
 
       def self.query_dependent(**params)
         dep_metrics.each_with_object({}) do |metric, results|
-          results[metric[:class].name.demodulize] = metric[:class].query(params)[:count] * (metric[:weight] || 1)
+          results[metric[:class].name.demodulize] = metric[:class].query(**params)[:count] * (metric[:weight] || 1)
         end
       end
 
@@ -25,7 +25,7 @@ module Lanalytics
         end.join(', ')}.")
 
         @exec = proc do |params|
-          results = query_dependent(params)
+          results = query_dependent(**params)
           {count: results.values.sum}
         end
       end

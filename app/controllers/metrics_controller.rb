@@ -3,23 +3,6 @@
 require 'lanalytics/metric/base'
 
 class MetricsController < ApplicationController
-  def show
-    name = params[:name]
-    metric = Lanalytics::Metric.resolve(name)
-
-    if metric.nil?
-      metric_not_found_error
-      return
-    end
-
-    unless metric.available?
-      metric_not_available_error
-      return
-    end
-
-    render json: metric.query(metric_params)
-  end
-
   def index
     metrics = Lanalytics::Metric.all.map do |name|
       metric = Lanalytics::Metric.resolve(name)
@@ -34,6 +17,23 @@ class MetricsController < ApplicationController
     end
 
     render(json: metrics)
+  end
+
+  def show
+    name = params[:name]
+    metric = Lanalytics::Metric.resolve(name)
+
+    if metric.nil?
+      metric_not_found_error
+      return
+    end
+
+    unless metric.available?
+      metric_not_available_error
+      return
+    end
+
+    render json: metric.query(**metric_params)
   end
 
   private
