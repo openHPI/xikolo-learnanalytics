@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 2.7.0'
+ruby '~> 3.2.0'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1'
@@ -26,7 +26,7 @@ gem 'forgery'
 gem 'validates_email_format_of'
 
 # Connecting to RabbitMQ
-gem 'msgr', '~> 1.4'
+gem 'msgr', '~> 1.5'
 
 gem 'connection_pool'
 

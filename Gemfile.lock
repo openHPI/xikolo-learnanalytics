@@ -236,7 +236,7 @@ GEM
       activesupport (>= 4)
       bunny
     msgpack (1.6.1)
-    msgr (1.4.0)
+    msgr (1.5.0)
       activesupport
       bunny (>= 1.4, < 3.0)
     multi_json (1.15.0)
@@ -515,7 +515,7 @@ DEPENDENCIES
   mechanize
   memory_profiler
   mnemosyne-ruby (~> 1.12)
-  msgr (~> 1.4)
+  msgr (~> 1.5)
   multi_json
   nokogiri (~> 1.11)
   os
@@ -558,7 +558,7 @@ DEPENDENCIES
   will_paginate
 
 RUBY VERSION
-   ruby 2.7.8p225
+   ruby 3.2.2p53
 
 BUNDLED WITH
    2.4.15
