@@ -8,7 +8,11 @@ module Lanalytics
       attr_reader :datasources
 
       def self.setup_datasource(filename)
-        datasource_config = YAML.load_file(filename).with_indifferent_access
+        begin
+          datasource_config = YAML.load_file(filename, aliases: true).with_indifferent_access
+        rescue ArgumentError # Ruby 2.7 does not has aliases: keyword
+          datasource_config = YAML.load_file(filename).with_indifferent_access
+        end
         datasource_config = datasource_config[Rails.env] || datasource_config
 
         datasource_adapter = datasource_config[:datasource_adapter]
@@ -22,7 +26,7 @@ module Lanalytics
         datasource = datasource_class.new(datasource_config)
 
         Lanalytics::Processing::DatasourceManager.add_datasource(datasource)
-        Rails.logger.debug "The datasource config '#{filename}' loaded into DatasourceManager"
+        Rails.logger.debug { "The datasource config '#{filename}' loaded into DatasourceManager" }
       end
 
       def self.add_datasource(datasource)
@@ -46,9 +50,7 @@ module Lanalytics
           raise ArgumentError.new 'The block has to return a Datasource ...'
         end
 
-        unless datasource.key
-          raise ArgumentError.new 'The returned Datasource has to contain a key'
-        end
+        raise ArgumentError.new 'The returned Datasource has to contain a key' unless datasource.key
 
         instance.add_datasource(datasource)
 

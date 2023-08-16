@@ -7,7 +7,11 @@ require 'lanalytics/processing/datasource_manager'
 require 'lanalytics/processing/pipeline_manager'
 
 LANALYTICS_PIPELINE_FLIPPER_FILE = "#{Rails.root}/config/lanalytics_pipeline_flipper.yml"
-flipper_config = YAML.load_file(LANALYTICS_PIPELINE_FLIPPER_FILE).with_indifferent_access
+begin
+  flipper_config = YAML.load_file(LANALYTICS_PIPELINE_FLIPPER_FILE, aliases: true).with_indifferent_access
+rescue ArgumentError # Ruby 2.7 does not has aliases: keyword
+  flipper_config = YAML.load_file(LANALYTICS_PIPELINE_FLIPPER_FILE).with_indifferent_access
+end
 flipper_config = flipper_config[Rails.env] || flipper_config
 
 # Load all datasources
