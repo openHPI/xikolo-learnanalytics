@@ -264,8 +264,8 @@ GEM
     os (1.1.4)
     paginate-responder (2.1.0)
       rack-link_headers (>= 2.2)
-    paper_trail (14.0.0)
-      activerecord (>= 6.0)
+    paper_trail (15.0.0)
+      activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.23.0)
     parser (3.2.2.3)
@@ -522,7 +522,7 @@ DEPENDENCIES
   nokogiri (~> 1.11)
   os
   paginate-responder
-  paper_trail (~> 14.0)
+  paper_trail (~> 15.0)
   pg (~> 1.1)
   pry-byebug
   rack-remote
