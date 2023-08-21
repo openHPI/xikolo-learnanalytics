@@ -67,7 +67,7 @@ gem 'responders'
 gem 'will_paginate'
 
 # for versioning
-gem 'paper_trail', '~> 14.0'
+gem 'paper_trail', '~> 15.0'
 
 group :development do
   gem 'better_errors'
