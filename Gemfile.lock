@@ -516,7 +516,7 @@ DEPENDENCIES
   maxminddb
   mechanize
   memory_profiler
-  mnemosyne-ruby (~> 1.12)
+  mnemosyne-ruby (~> 1.15)
   msgr (~> 1.5)
   multi_json
   nokogiri (~> 1.11)
