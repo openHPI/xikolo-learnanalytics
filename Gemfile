@@ -12,7 +12,7 @@ gem 'nokogiri', '~> 1.11'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
 
-gem 'rails-rfc6570', '~> 2.3'
+gem 'rails-rfc6570', '~> 3.0'
 gem 'restify', '~> 1.15'
 
 gem 'concurrent-ruby', '~> 1.0'

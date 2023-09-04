@@ -311,7 +311,7 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    rails-rfc6570 (2.6.0)
+    rails-rfc6570 (3.0.0)
       actionpack (>= 4.2, < 7.1)
       addressable (~> 2.3)
     railties (6.1.7.6)
@@ -527,7 +527,7 @@ DEPENDENCIES
   pry-byebug
   rack-remote
   rails (~> 6.1)
-  rails-rfc6570 (~> 2.3)
+  rails-rfc6570 (~> 3.0)
   redis (~> 5.0)
   responders
   rest-client
