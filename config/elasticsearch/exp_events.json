@@ -129,6 +129,10 @@
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
+          "download_trigger": {
+            "type": "keyword",
+            "normalizer": "keyword_lowercase"
+          },
           "free_space": {
             "type": "long"
           },
@@ -247,6 +251,9 @@
           "onboarding_step": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
+          },
+          "only_visited_items": {
+            "type": "boolean"
           },
           "platform": {
             "type": "keyword",
@@ -388,6 +395,9 @@
           "section_id": {
             "type": "keyword",
             "normalizer": "keyword_lowercase"
+          },
+          "section_ids": {
+            "type": "text",
           },
           "service": {
             "type": "keyword",
