@@ -363,6 +363,9 @@
           "request_time": {
             "type": "float"
           },
+          "required_section": {
+            "type": "text"
+          },
           "response": {
             "type": "text"
           },
@@ -403,6 +406,9 @@
             "type": "keyword",
             "normalizer": "keyword_lowercase"
           },
+          "skipped_sections": {
+            "type": "text"
+          },
           "slides": {
             "type": "boolean"
           },
@@ -427,6 +433,9 @@
           },
           "estimated_time_effort": {
             "type": "integer"
+          },
+          "unlocked_sections": {
+            "type": "text"
           },
           "user_agent": {
             "type": "text"
