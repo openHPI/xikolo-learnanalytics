@@ -95,7 +95,7 @@ module Lanalytics
 
         original_event = original_event.with_indifferent_access
 
-        pipeline_ctx = PipelineContext.new(self, processing_opts)
+        pipeline_ctx = Lanalytics::Processing::PipelineContext.new(self, processing_opts)
 
         processing_units = []
         @extractors.each do |extractor|
@@ -112,25 +112,6 @@ module Lanalytics
         @loaders.each do |loader|
           loader.load(original_event, load_commands, pipeline_ctx)
         end
-      end
-    end
-
-    class PipelineContext
-      attr_reader :pipeline
-
-      def initialize(pipeline, opts = {})
-        @pipeline = pipeline
-
-        opts ||= {}
-        @opts = opts
-      end
-
-      def name
-        @pipeline.name
-      end
-
-      def processing_action
-        @pipeline.processing_action
       end
     end
   end
