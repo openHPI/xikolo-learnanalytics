@@ -3,6 +3,8 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["config:base"],
 
+  labels: ['Internal 🔨', 'Dependency 🧱'],
+
   // Only check for new updates and maintenance jobs weekly, on Sunday. New
   // merge requests should then bde ready to be merged (CI etc.) on Monday.
   schedule: ["every sunday"],
