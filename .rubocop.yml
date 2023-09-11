@@ -80,7 +80,7 @@ RSpec/ExampleLength:
 RSpec/ExpectInHook:
   Enabled: false
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   Exclude:
     - 'spec/client/**/*_spec.rb'
   CustomTransform:
