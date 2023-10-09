@@ -2,8 +2,7 @@
 *First, briefly describe what this merge request does.*
 
 *Then, describe the changes in more detail.*
-*Make sure potential reviewers have enough information to quickly dive in and understand the changes. Check our [Confluence](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/x/hZEAAg#LifecycleofaDevelopmentTicket-CreateaMergeRequest(MR)
-) for more details.*
+*Make sure potential reviewers have enough information to quickly dive in and understand the changes. Check our [documentation](https://xikolo.pages.xikolo.de/web/development/workflows/review/) for more details.*
 
 ## Decisions / Choices I made
 This text should provide background information on the changes you did. A great merge request answers at least the following question:

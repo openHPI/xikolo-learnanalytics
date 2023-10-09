@@ -154,4 +154,4 @@ The code for reports is placed under `app/models/reports`. The report UI is gene
 To generate reports:
 * MinIO must run properly to store reports in an S3 bucket.
 * Available reports must be configured to be displayed in the web client under http://0.0.0.0:3000/reports. The default configuration can be found under `app/xikolo.yml` (see `reports.types`).
-* A user must have the `lanalytics.report.admin` role to access this page. Check the [Reporting Permission](https://ares.epic.hpi.uni-potsdam.de/epicjira/confluence/display/XIKOLO/Reporting+Permission) page on how to grant this.
+* A user must have the `lanalytics.report.admin` role to access this page. Check the [Reporting Permission](https://xikolo.pages.xikolo.de/docs/reporting/permissions/) documentation on how to grant permission.
