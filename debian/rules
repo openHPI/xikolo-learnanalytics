@@ -41,15 +41,14 @@ override_dh_auto_build:
 		--install-dir $(GEM_PATH) \
 		--bindir bin
 
-	$(RUBY) -S bin/bundle install \
-		--path vendor \
-		--deployment \
-		--frozen \
-		--clean \
-		--retry 3 \
-		--shebang "${RUBY}" \
-		--binstubs \
-		--without development test integration
+	$(RUBY) -S bin/bundle config --local path 'vendor'
+	$(RUBY) -S bin/bundle config --local deployment 'true'
+	$(RUBY) -S bin/bundle config --local frozen 'true'
+	$(RUBY) -S bin/bundle config --local clean 'true'
+	$(RUBY) -S bin/bundle config --local shebang "${RUBY}"
+	$(RUBY) -S bin/bundle config --local without 'development test integration'
+	$(RUBY) -S bin/bundle install --retry 3
+	$(RUBY) -S bin/bundle binstubs --all
 
 	# Rails binstub is the only one not working without manual patching
 	# We cannot run `rails app:update:bin` as this generates a
