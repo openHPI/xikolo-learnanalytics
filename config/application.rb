@@ -22,6 +22,7 @@ module Lanalytics
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
 
+    # Auto and eager load library code
     config.autoload_paths += %W[#{config.root}/lib]
     config.eager_load_paths += %W[#{config.root}/lib]
 

@@ -1,6 +1,6 @@
 ruby: '3.2'
 script:
-  - bundle config set --local without 'development production integration'
+  - bundle config --local without 'development production integration'
   - bundle install
   - bundle exec rake ci:setup
   - bundle exec rspec -r rspec/teamcity -f Spec::Runner::Formatter::TeamcityFormatter
