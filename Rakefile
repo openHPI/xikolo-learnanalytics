@@ -20,14 +20,6 @@ namespace :ci do
   end
 end
 
-namespace :qc do
-  desc 'Run all rules'
-  task run_all_rules: :environment do
-    QcRunAllRules.new.perform
-    puts 'Finished.'
-  end
-end
-
 namespace :s3 do
   desc 'Create necessary S3 bucket(s) for reports (if it does not exist already)'
   task setup: :environment do

@@ -23,8 +23,6 @@ route 'xikolo.account.user.destroy', to: 'Lanalytics#destroy'
 route 'xikolo.course.course.create', to: 'Lanalytics#create'
 route 'xikolo.course.course.update', to: 'Lanalytics#update'
 
-route 'xikolo.course.course.destroy', to: 'QcAlert#destroy_course'
-
 route 'xikolo.course.item.create', to: 'Lanalytics#create'
 route 'xikolo.course.item.update', to: 'Lanalytics#update'
 route 'xikolo.course.item.destroy', to: 'Lanalytics#destroy'

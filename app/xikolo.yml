@@ -10,31 +10,6 @@ brand: xikolo
 # Where do we host the API for loading data from the connected Xikolo platform?
 bridge_api_url: http://localhost:3000/bridges/lanalytics
 
-qc_alert:
-  # Thresholds for video duration (in min) after which an alert with low/medium/high severity is created
-  video_duration:
-    low: 25
-    medium: 33
-    high: 44
-  # Thresholds for no-show rate (in percent) after which an alert is created
-  # after the first 24hours/48hours/7days of a course
-  no_show_rate:
-    24_hours: 60
-    48_hours: 55
-    7_days: 50
-  quiz_performance:
-    # Threshold for average quiz performance (in percent)
-    avg_percentage_threshold: 60
-    # Threshold for average quiz performance on first attempt (in percent)
-    avg_first_attempt_percentage_threshold: 40
-    # Threshold for average amount of attempts
-    avg_attempts_threshold: 3
-  difficult_quiz_question:
-    # Threshold for amount of correct submissions on quiz questions, if less alert is created
-    correct_submissions_threshold: 0.7
-    # Threshold for minimum submissions to question
-    minimum_submissions: 20
-
 # NOTE: Always add nested `reports` config options to all production machines,
 #       i.e., do not rely on the fallback to this file. This is required as
 #       the `s3_bucket` option is set on every production machine and only
