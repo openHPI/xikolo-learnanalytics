@@ -227,7 +227,6 @@ module Reports
             stats&.no_shows_at_end,
             stats&.roa_count,
             stats&.cop_count,
-            stats&.qc_count,
             stats&.completion_rate,
             stats&.consumption_rate,
             stats&.posts,
