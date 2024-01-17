@@ -2,6 +2,10 @@
 
 module Stub
   class << self
+    def url(service, path)
+      Addressable::URI.parse(Restify::Registry.fetch(service).uri).join(path)
+    end
+
     def request(service, http_method, path = '', **request_params)
       # Prefix the path with the service's base URL
       uri_matcher = "#{Restify::Registry.fetch(service).uri}#{path}"
@@ -12,7 +16,7 @@ module Stub
     end
 
     def response(body: nil, links: {}, **kwargs)
-      response = {status: 200, body: body, headers: {}}.merge kwargs
+      response = {status: 200, body:, headers: {}}.merge kwargs
 
       unless links.empty?
         links = links.map {|name, value| "<#{value}>;rel=#{name}" }
@@ -30,7 +34,7 @@ module Stub
       headers = kwargs.delete(:headers) || {}
 
       response(
-        body: body,
+        body:,
         headers: {
           'Content-Type' => 'application/json;charset=utf-8',
           'Content-Length' => body.length,

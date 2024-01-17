@@ -95,7 +95,7 @@ module Reports
 
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
-    def each_row(&block)
+    def each_row(&)
       # Initialize access groups to preload some data.
       access_groups if @include_access_groups
 
@@ -115,7 +115,7 @@ module Reports
       end
 
       courses.each do |course| # rubocop:disable Style/CombinableLoops
-        row_for_course(course, &block)
+        row_for_course(course, &)
       end
     end
 
@@ -209,7 +209,7 @@ module Reports
           end
 
           if @include_access_groups
-            memberships = access_groups.memberships_for(user['id'])
+            memberships = access_groups.memberships_for(user)
             values.append(escape_csv_string(memberships.join('; ')))
           end
 
@@ -451,7 +451,7 @@ module Reports
 
     def fetch_metric(metric, course_id, user_id)
       metric = "Lanalytics::Metric::#{metric}".constantize
-      metric.query(user_id: user_id, course_id: course_id)
+      metric.query(user_id:, course_id:)
     end
 
     def fetch_clustering_metrics(course)
@@ -471,7 +471,7 @@ module Reports
       result = Lanalytics::Clustering::Dimensions.query(
         course['id'], clustering_metrics, nil
       )
-      result.map {|x| [x['user_uuid'], x.except('user_uuid')] }.to_h
+      result.to_h {|x| [x['user_uuid'], x.except('user_uuid')] }
     end
 
     def calculate_top_performance(quantile)
@@ -499,24 +499,24 @@ module Reports
         'Age Group',
       ].tap do |headers|
         if @de_pseudonymized
-          headers.concat [
+          headers.push(
             'Full Name',
             'Email',
             'Birth Date',
-          ]
+          )
         end
 
         headers.append('Access Groups') if @include_access_groups
 
         if @include_profile
-          headers.concat ['Profile Picture']
+          headers.push 'Profile Picture'
           headers.concat profile_config.all_titles
         end
 
         headers.concat(auth_fields.headers) if @include_auth && @de_pseudonymized
 
         if @include_analytics_metrics
-          headers.concat [
+          headers.push(
             'Top Country (Code)',
             'Top Country (Name)',
             'Top City',
@@ -543,10 +543,10 @@ module Reports
             'Quiz Performance',
             'Graded Quiz Performance',
             'Ungraded Quiz Performance',
-          ]
+          )
         end
 
-        headers.concat [
+        headers.push(
           'Enrollment Delta in Days',
           'Forum Posts',
           'Forum Threads',
@@ -563,7 +563,7 @@ module Reports
           'Items Visited Percentage',
           'Points',
           'Points Percentage',
-        ]
+        )
 
         if @include_sections
           headers.concat(
@@ -590,7 +590,7 @@ module Reports
 
         headers.concat quiz_column_headers
 
-        headers.concat ['Course Code']
+        headers.push 'Course Code'
       end
     end
     # rubocop:enable all
@@ -671,7 +671,7 @@ module Reports
         wait: 60.seconds,
       ) do
         quiz_service.rel(:quiz_submissions).get(
-          user_id: user_id,
+          user_id:,
           only_submitted: true,
           course_id: course['id'],
         )
@@ -684,13 +684,13 @@ module Reports
       # Get last submission for every quiz
       all_submissions
         .group_by {|submission| submission['quiz_id'] }
-        .map do |quiz_id, arr|
+        .to_h do |quiz_id, arr|
           last_submission = arr.max_by do |s|
             DateTime.parse(s['quiz_submission_time'])
           end
 
           [quiz_id, last_submission]
-        end.to_h
+        end
     end
 
     def first_enrollment?(enrollment)
