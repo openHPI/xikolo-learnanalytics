@@ -5,47 +5,27 @@
 #
 class AccessGroups
   def initialize
-    # Preload all access groups (blocking) and the first page of their
-    # memberships (non-blocking).
-    @memberships_promises = access_groups_memberships_promises
+    # Preload the access groups
+    @access_groups = access_groups
   end
 
   # Returns an array with all access group names where a user is a member.
-  def memberships_for(user_id)
-    access_groups_memberships
-      .select {|_, user_ids| user_ids.include? user_id }
-      .keys
+  def memberships_for(user)
+    user_groups(user).intersection(@access_groups)
   end
 
   private
 
-  def access_groups_memberships
-    @access_groups_memberships ||=
-      @memberships_promises.to_h do |group_name, promise|
-        user_ids = Set.new
-        promise.each_item {|membership| user_ids.add(membership['user']) }
-
-        [group_name, user_ids]
-      end
+  def user_groups(user)
+    Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
+      user.rel(:groups).get(per_page: 1_000)
+    end.value!.pluck('name')
   end
 
-  def access_groups_memberships_promises
-    promises = {}
-
-    access_groups_promise.each_item do |group|
-      promises[group['name']] =
-        Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          group.rel(:memberships).get(per_page: 10_000)
-        end
-    end
-
-    promises
-  end
-
-  def access_groups_promise
-    Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
+  def access_groups
+    Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
       account_service.rel(:groups).get(tag: 'access')
-    end
+    end.value!.pluck('name')
   end
 
   def account_service

@@ -169,7 +169,7 @@ module Reports
 
         if @include_enrollment_evaluation
           headers.append('First Enrollment')
-          headers.concat(courses.values.map {|course| course['course_code'] })
+          headers.concat(courses.values.pluck('course_code'))
         end
       end
     end
@@ -208,7 +208,7 @@ module Reports
         )
 
         if @include_access_groups
-          memberships = access_groups.memberships_for(user['id'])
+          memberships = access_groups.memberships_for(user)
           values.append(escape_csv_string(memberships.join('; ')))
         end
 
@@ -391,7 +391,7 @@ module Reports
       enrollments_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:enrollments).get(
-            user_id: user_id,
+            user_id:,
             learning_evaluation: true,
             deleted: true,
             per_page: 200,
