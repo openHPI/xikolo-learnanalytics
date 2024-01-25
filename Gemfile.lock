@@ -88,6 +88,7 @@ GEM
     aws-sigv4 (1.8.0)
       aws-eventstream (~> 1, >= 1.0.2)
     base62-rb (0.3.1)
+    base64 (0.2.0)
     better_errors (2.10.1)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
@@ -213,13 +214,15 @@ GEM
       net-smtp
     marcel (1.0.2)
     maxminddb (0.1.22)
-    mechanize (2.9.2)
+    mechanize (2.10.0)
       addressable (~> 2.8)
+      base64
       domain_name (~> 0.5, >= 0.5.20190701)
       http-cookie (~> 1.0, >= 1.0.3)
       mime-types (~> 3.0)
       net-http-digest_auth (~> 1.4, >= 1.4.1)
       net-http-persistent (>= 2.5.2, < 5.0.dev)
+      nkf
       nokogiri (~> 1.11, >= 1.11.2)
       rubyntlm (~> 0.6, >= 0.6.3)
       webrick (~> 1.7)
@@ -255,6 +258,7 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.5.9)
+    nkf (0.2.0)
     nokogiri (1.16.0)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
