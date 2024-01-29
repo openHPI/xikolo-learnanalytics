@@ -74,7 +74,7 @@ class CourseStatistic < ApplicationRecord
         # enrollments
         total_enrollments: course_stats['enrollments'],
         current_enrollments: course_stats['current_enrollments'],
-        enrollments_per_day: enrollments_per_day,
+        enrollments_per_day:,
         new_users: extended_course_stats['new_users'],
 
         enrollments_last_day: course_stats['last_day_enrollments'],
@@ -106,8 +106,8 @@ class CourseStatistic < ApplicationRecord
         # success
         roa_count: certificates['record_of_achievement'],
         cop_count: certificates['confirmation_of_participation'],
-        completion_rate: completion_rate,
-        consumption_rate: consumption_rate,
+        completion_rate:,
+        consumption_rate:,
 
         # pinboard
         questions: pinboard_stats['threads'].to_i,
@@ -204,7 +204,7 @@ class CourseStatistic < ApplicationRecord
 
   class << self
     def versions_for(course_id, start_date, end_date = nil)
-      find_by!(course_id: course_id)
+      find_by!(course_id:)
         .versions
         .where.not(object: nil)
         .between(DateTime.parse(start_date), end_date || DateTime.now)
@@ -212,7 +212,7 @@ class CourseStatistic < ApplicationRecord
     end
 
     def last_version_at(course_id, date)
-      find_by!(course_id: course_id)
+      find_by!(course_id:)
         .versions
         .where.not(object: nil)
         .preceding(DateTime.parse(date).end_of_day + 1.day, true)

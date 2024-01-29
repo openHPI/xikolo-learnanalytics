@@ -277,7 +277,7 @@ module Reports
 
       sections_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 20.seconds) do
-          course_service.rel(:sections).get(course_id: course_id)
+          course_service.rel(:sections).get(course_id:)
         end
 
       sections_promise.each_item {|section| sections << section }
@@ -291,7 +291,7 @@ module Reports
       items_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           course_service.rel(:items).get(
-            course_id: course_id,
+            course_id:,
             content_type: 'peer_assessment',
           )
         end

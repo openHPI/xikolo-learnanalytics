@@ -59,7 +59,7 @@ class CourseStatisticDecorator < ApplicationDecorator
 
       # helpdesk
       helpdesk_tickets: model.helpdesk_tickets,
-      helpdesk_tickets_last_day: helpdesk_tickets_last_day,
+      helpdesk_tickets_last_day:,
 
       # open badges
       badge_issues: model.badge_issues,

@@ -27,7 +27,7 @@ route 'xikolo.course.item.create', to: 'Lanalytics#create'
 route 'xikolo.course.item.update', to: 'Lanalytics#update'
 route 'xikolo.course.item.destroy', to: 'Lanalytics#destroy'
 
-route 'xikolo.course.visit.create', to:  'Lanalytics#create'
+route 'xikolo.course.visit.create', to: 'Lanalytics#create'
 
 route 'xikolo.course.enrollment.completed', to: 'Lanalytics#create'
 route 'xikolo.course.enrollment.create', to: 'Lanalytics#create'
