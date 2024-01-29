@@ -74,13 +74,14 @@ group :development do
   gem 'binding_of_caller'
   gem 'memory_profiler'
   gem 'os'
-  gem 'pry-byebug'
   gem 'ruby-prof' # To do performance evaluation
 end
 
 group :development, :test do
   gem 'factory_bot_rails', '~> 6.0'
   gem 'listen'
+  gem 'pry'
+  gem 'pry-byebug'
   gem 'rspec', '~> 3.10'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
