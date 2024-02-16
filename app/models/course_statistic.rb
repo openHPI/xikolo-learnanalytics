@@ -106,6 +106,7 @@ class CourseStatistic < ApplicationRecord
         # success
         roa_count: certificates['record_of_achievement'],
         cop_count: certificates['confirmation_of_participation'],
+        qc_count: certificates['qualified_certificate'],
         completion_rate:,
         consumption_rate:,
 
