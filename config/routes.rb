@@ -19,17 +19,5 @@ Rails.application.routes.draw do
     # statistics
 
     resources :course_statistics, only: %i[index show]
-
-    # qc rules
-
-    resources :qc_rules, only: %i[index show create update]
-    resources :qc_recommendations, only: %i[index show]
-    resources :qc_alerts, only: %i[index show create update] do
-      collection do
-        post :ignore
-      end
-    end
-    resources :qc_alert_statuses, only: %i[index show create]
-    resources :qc_course_statuses, only: %i[index show create update]
   end
 end
