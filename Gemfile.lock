@@ -390,7 +390,7 @@ GEM
     rspec-support (3.13.0)
     rspec-teamcity (1.0.0)
       rspec (>= 2.99, >= 2.14.2, < 4)
-    rubocop (1.60.2)
+    rubocop (1.61.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -542,7 +542,7 @@ DEPENDENCIES
   rspec-rails
   rspec-sidekiq
   rspec-teamcity
-  rubocop (~> 1.60.0)
+  rubocop (~> 1.61.0)
   rubocop-performance (~> 1.20.0)
   rubocop-rails (~> 2.23.0)
   rubocop-rspec (~> 2.26.0)
