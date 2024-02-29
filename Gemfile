@@ -16,7 +16,7 @@ gem 'rails-rfc6570', '~> 3.0'
 gem 'restify', '~> 1.15'
 
 gem 'concurrent-ruby', '~> 1.0'
-gem 'mnemosyne-ruby', '~> 1.16'
+gem 'mnemosyne-ruby', '~> 2.0'
 gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'sentry-sidekiq'
