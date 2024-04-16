@@ -83,6 +83,7 @@ module Lanalytics
       # By using an after_initialize callback, we make sure that Redis can be
       # configured properly before we try to store any cron job information.
       app.config.after_initialize do
+        Sidekiq::Cron::Job.all.each(&:destroy)
         Sidekiq::Cron::Job.load_from_hash! app.config_for(:cron) || {}
       end
     end
