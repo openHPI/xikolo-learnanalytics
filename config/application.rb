@@ -83,7 +83,11 @@ module Lanalytics
       # By using an after_initialize callback, we make sure that Redis can be
       # configured properly before we try to store any cron job information.
       app.config.after_initialize do
+        # rubocop:disable Rails/FindEach
+        # `Sidekiq::Cron::Job.all` returns an array and not Active Record
+        # relation, so `find_each` is not defined.
         Sidekiq::Cron::Job.all.each(&:destroy)
+        # rubocop:enable Rails/FindEach
         Sidekiq::Cron::Job.load_from_hash! app.config_for(:cron) || {}
       end
     end
