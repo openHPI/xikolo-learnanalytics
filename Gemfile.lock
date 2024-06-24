@@ -404,6 +404,8 @@ GEM
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.31.3)
       parser (>= 3.3.1.0)
+    rubocop-factory_bot (2.26.1)
+      rubocop (~> 1.61)
     rubocop-performance (1.21.1)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
@@ -542,6 +544,7 @@ DEPENDENCIES
   rspec-sidekiq
   rspec-teamcity
   rubocop (~> 1.64.0)
+  rubocop-factory_bot (~> 2.26.1)
   rubocop-performance (~> 1.21.0)
   rubocop-rails (~> 2.25.0)
   rubocop-rspec (~> 3.0.0)
