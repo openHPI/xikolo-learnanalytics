@@ -1,6 +1,11 @@
-:concurrency: 5 # Limited by database pool size
+---
+# Limited by database pool size
+:concurrency: 5
 :verbose: true
-:queues: # This configuration is ignored in production. The queues are explicitly passed to the Debian services in their configs.
+
+# This configuration is ignored in production. The queues are explicitly
+# passed to the Debian services in their configs.
+:queues:
   - high
   - default
   - reports_default
