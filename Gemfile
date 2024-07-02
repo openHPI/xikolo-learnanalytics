@@ -7,6 +7,11 @@ ruby '~> 3.3.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1'
 
+gem 'csv'
+gem 'drb'
+gem 'mutex_m'
+gem 'syslog'
+
 gem 'nokogiri', '~> 1.11'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
