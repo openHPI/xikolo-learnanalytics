@@ -1,5 +1,6 @@
 ---
 include:
+  - path: compose.extra.yml
   - path: compose.background.yml
 
 x-base: &base
@@ -21,6 +22,12 @@ x-lanalytics: &lanalytics
     lanalytics-init:
       condition: service_completed_successfully
     lanalytics-postgres:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+    redis-cache:
+      condition: service_healthy
+    redis-sidekiq:
       condition: service_healthy
 
 services:
