@@ -1,0 +1,50 @@
+---
+include:
+  - path: compose.background.yml
+
+x-base: &base
+  image: xikolo-lanalytics:latest
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  env_file:
+    - .env
+  networks:
+    - xikolo
+  volumes:
+    - ./config/xikolo.yml:/etc/xikolo.yml:ro
+
+x-lanalytics: &lanalytics
+  <<: *base
+  restart: always
+  depends_on:
+    lanalytics-init:
+      condition: service_completed_successfully
+    lanalytics-postgres:
+      condition: service_healthy
+
+services:
+  lanalytics-init:
+    <<: *base
+    command: migrate
+    depends_on:
+      lanalytics-postgres:
+        condition: service_healthy
+
+  lanalytics-server:
+    <<: *lanalytics
+    command: server
+    ports:
+      - 5900:5900
+
+  lanalytics-msgr:
+    <<: *lanalytics
+    command: msgr
+
+  lanalytics-sidekiq:
+    <<: *lanalytics
+    command: sidekiq
+
+  lanalytics-sidekiq-reports:
+    <<: *lanalytics
+    command: sidekiq-reports

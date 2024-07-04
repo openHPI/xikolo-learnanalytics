@@ -54,6 +54,7 @@ gem 'sidekiq', '~> 7.0'
 gem 'sidekiq-cron', '~> 1.4'
 
 # Use unicorn as the app server
+gem 'puma'
 gem 'unicorn'
 gem 'unicorn-rails'
 

@@ -1,0 +1,35 @@
+---
+services:
+  lanalytics-postgres:
+    image: postgres:16.0-bookworm
+    restart: always
+    volumes:
+      - lanalytics-postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: xikolo-lanalytics
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_INITDB_ARGS: --locale=C.UTF-8 --encoding=UTF8
+    healthcheck:
+      test: pg_isready
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - xikolo
+
+  lanalytics-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.22
+    environment:
+      discovery.type: single-node
+    volumes:
+      - lanalytics-elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - xikolo
+
+volumes:
+  lanalytics-postgres:
+  lanalytics-elasticsearch:
+
+networks:
+  xikolo:
+    name: xikolo
