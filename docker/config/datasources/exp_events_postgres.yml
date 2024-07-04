@@ -1,0 +1,11 @@
+production:
+  datasource_adapter: PostgresqlDatasource
+  key: exp_events_postgres
+  name: Experience Events on Postgres
+  description: User Interaction Events
+  pool: 5
+  port: 5432
+  host: lanalytics-postgres
+  user: xikolo-lanalytics
+  database: xikolo-lanalytics
+  password: ~

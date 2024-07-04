@@ -13,7 +13,9 @@ x-base: &base
   networks:
     - xikolo
   volumes:
-    - ./config/xikolo.yml:/etc/xikolo.yml:ro
+    - ./config/xikolo.yml:/app/config/xikolo.yml:ro
+    - ./config/datasources/:/app/config/config/datasources/:ro
+    - ./config/lanalytics_pipeline_flipper.yml:/app/config/lanalytics_pipeline_flipper.yml:ro
 
 x-lanalytics: &lanalytics
   <<: *base

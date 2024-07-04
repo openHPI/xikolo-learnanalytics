@@ -1,0 +1,8 @@
+production:
+  datasources:
+    - exp_events_elastic.yml
+    - exp_events_postgres.yml
+    - link_tracking_events_elastic.yml
+  pipelines:
+    - exp_events_pipeline.prb
+    - link_tracking_events_pipeline.prb

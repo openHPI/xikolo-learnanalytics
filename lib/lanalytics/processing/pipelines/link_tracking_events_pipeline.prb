@@ -1,3 +1,5 @@
+# vim: ft=ruby
+
 pipeline_for('xikolo.web.referrer', :link_tracking_events_elastic, Lanalytics::Processing::Action::CREATE) do
   datasource = Lanalytics::Processing::DatasourceManager.datasource('link_tracking_events_elastic')
 

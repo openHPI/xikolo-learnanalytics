@@ -1,0 +1,11 @@
+production:
+  datasource_adapter: ElasticDatasource
+  key: exp_events_elastic
+  name: Experience Events on Elastic
+  description: User Interaction Events
+  hosts:
+    - lanalytics-elasticsearch
+  port: 9200
+  randomize_hosts: true
+  retry_on_failure: 5
+  index: exp
