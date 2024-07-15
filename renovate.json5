@@ -23,7 +23,7 @@
   packageRules: [
     // Do not bump ruby version (only security patches)
     {
-      matchDepNames: ["ruby"],
+      matchPackageNames: ['ruby', 'docker.io/ruby'],
       matchUpdateTypes: ["major", "minor"],
       enabled: false,
     },
