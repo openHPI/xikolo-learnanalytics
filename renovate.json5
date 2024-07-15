@@ -24,12 +24,12 @@
     // Do not bump ruby version (only security patches), but group them
     {
       matchPackageNames: ['ruby', 'docker.io/ruby'],
-      matchUpdateTypes: ["major", "minor"],
+      matchUpdateTypes: ['major', 'minor'],
       enabled: false,
     },
     {
       groupName: 'ruby',
-      matchDepNames: ['ruby'],
+      matchPackageNames: ['ruby', 'docker.io/ruby'],
     },
     // Disable major and minor updates (usually of docker images) in Gitlab CI
     // and docker-compose. They are carefully chosen to match the production
