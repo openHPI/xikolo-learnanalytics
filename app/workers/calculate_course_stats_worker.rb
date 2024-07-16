@@ -1,14 +1,23 @@
 # frozen_string_literal: true
 
 class CalculateCourseStatsWorker
-  include Sidekiq::Job
+  include Sidekiq::IterableJob
 
-  def perform
-    each_course do |course|
-      gather_stats! course['id']
+  def build_enumerator(**)
+    course_ids = [].tap do |ids|
+      each_course {|course| ids << course['id'] }
     end
+    array_enumerator(course_ids, **)
+  end
 
-    notify!
+  def each_iteration(course_id, *)
+    # Re-calculate the course statistics for the course
+    CourseStatistic.find_or_create_by(course_id:).tap(&:calculate!)
+  end
+
+  def on_complete
+    # Notify xi-notification to send out the statistic email
+    Msgr.publish({}, to: 'xikolo.lanalytics.course_stats.calculate')
   end
 
   private
@@ -21,14 +30,6 @@ class CalculateCourseStatsWorker
 
       yield course
     end
-  end
-
-  def gather_stats!(course_id)
-    CourseStatistic.find_or_create_by(course_id: course_id).tap(&:calculate!)
-  end
-
-  def notify!
-    Msgr.publish({}, to: 'xikolo.lanalytics.course_stats.calculate')
   end
 
   def course_service
