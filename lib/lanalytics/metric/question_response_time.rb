@@ -61,7 +61,7 @@ module Lanalytics
 
           question_time = Time.parse(question.first['_source']['timestamp'])
           answer_time = Time.parse(answer['timestamp'])
-          response_times << answer_time - question_time
+          response_times << (answer_time - question_time)
         end
 
         return nil if response_times.empty?
