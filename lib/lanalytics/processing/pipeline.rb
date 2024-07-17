@@ -78,7 +78,7 @@ module Lanalytics
       end
 
       def loaders_available?
-        @loaders.all? &:available?
+        @loaders.all?(&:available?)
       end
 
       def full_name
