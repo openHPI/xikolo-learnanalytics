@@ -49,7 +49,7 @@ module Lanalytics
 
         instance_eval(&block) if block_given?
 
-        # TODO:: Check for validity and type
+        # TODO: Check for validity and type
       end
 
       # These methods are used inside the block when block is initialized ...

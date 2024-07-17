@@ -78,7 +78,7 @@ module Lanalytics
         end
 
         def inspect
-          'Primary ' + super.inspect
+          "Primary #{super.inspect}"
         end
       end
     end

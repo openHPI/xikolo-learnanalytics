@@ -112,7 +112,6 @@ module Lanalytics
           @timestamp == other.timestamp &&
           @with_result == other.with_result &&
           @in_context == other.in_context
-
       end
       alias_method :eql?, :==
     end

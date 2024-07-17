@@ -5,9 +5,6 @@ require_relative 'stmt_component'
 module Lanalytics
   module Model
     class Lanalytics::Model::StmtVerb < Lanalytics::Model::StmtComponent
-      def initialize(type)
-        super(type)
-      end
 
       def as_json
         {
