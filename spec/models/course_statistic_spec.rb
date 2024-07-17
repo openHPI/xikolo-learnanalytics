@@ -98,7 +98,7 @@ describe CourseStatistic do
 
     let(:stats) { described_class.create(course_id:) }
 
-    it 'creates a new version', versioning: true do
+    it 'creates a new version', :versioning do
       expect { calculate }.to change { stats.reload.versions.count }.from(1).to(2)
     end
 

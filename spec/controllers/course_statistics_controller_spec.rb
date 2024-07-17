@@ -19,7 +19,7 @@ describe CourseStatisticsController do
       expect(json).to be_empty
     end
 
-    context 'when fetching historic data for a course', versioning: true do
+    context 'when fetching historic data for a course', :versioning do
       before { create(:course_statistic, :calculated) }
 
       let(:params) { super().merge(historic_data: 'true', course_id:, start_date: 2.days.ago.to_s) }

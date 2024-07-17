@@ -12,7 +12,7 @@ RSpec.describe Lanalytics::Metric::VisitCount do
   let(:start_time) { 2.weeks.ago.to_s }
   let(:end_date) { Time.zone.now.to_s }
 
-  describe '#query', elasticsearch: true do
+  describe '#query', :elasticsearch do
     before do
       stub_request(:post, 'http://localhost:9200/_count')
         .to_return(

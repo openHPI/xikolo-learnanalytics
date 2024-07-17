@@ -8,7 +8,7 @@ RSpec.describe Lanalytics::Metric::ExpEventsCountElasticMetric do
   let(:start_time) { 2.weeks.ago.to_s }
   let(:end_time) { Time.zone.now.to_s }
 
-  describe '#query', elasticsearch: true do
+  describe '#query', :elasticsearch do
     subject { described_class.query user_id:, course_id:, start_date: start_time, end_date: end_time }
 
     before do
