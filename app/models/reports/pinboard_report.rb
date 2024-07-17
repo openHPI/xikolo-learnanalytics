@@ -176,10 +176,10 @@ module Reports
           .groups_for_user(topic['user_id'])
           .join(';')
 
-        values.push
+        values.push(
           global_groups,
           course_groups,
-
+        )
       end
 
       values
