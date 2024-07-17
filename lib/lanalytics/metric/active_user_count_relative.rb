@@ -72,7 +72,7 @@ Default active users of last day.
           relative_users[id] = value.to_f / total_activity.to_f
         end
 
-        next relative_users unless course_id.present?
+        next relative_users if course_id.blank?
 
         result = {}
         result[:relative] = (relative_users[course_id] || 0).round(2)

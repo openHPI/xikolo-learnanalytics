@@ -33,7 +33,7 @@ module Lanalytics
 
       def self.add_to_total(result, collection, key)
         collection.each do |item|
-          unless result[item['key']].present?
+          if result[item['key']].blank?
             result[item['key']] = {}
             result[item['key']]['time'] = item['key']
           end

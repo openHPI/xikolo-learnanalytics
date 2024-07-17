@@ -7,11 +7,11 @@ module Lanalytics
 
       def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &block)
         # Check mandatory fields
-        if name.nil? || name.empty?
+        if name.blank?
           raise ArgumentError.new "'#{name}' cannot be nil or empty"
         end
 
-        if schema.nil? || schema.empty?
+        if schema.blank?
           raise ArgumentError.new "'#{schema}' cannot be nil"
         end
 
