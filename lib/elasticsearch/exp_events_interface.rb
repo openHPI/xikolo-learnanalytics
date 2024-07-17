@@ -15,9 +15,7 @@ module Elasticsearch
 
     # elasticsearch mapping
     def self.mapping
-      ActiveSupport::JSON.decode File.read(
-        Rails.root.join('config/elasticsearch/exp_events.json'),
-      )
+      ActiveSupport::JSON.decode Rails.root.join('config/elasticsearch/exp_events.json').read
     end
 
     def self.datasource

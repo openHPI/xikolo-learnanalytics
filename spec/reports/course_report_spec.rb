@@ -114,7 +114,7 @@ describe Reports::CourseReport do
     end
 
     it 'the CSV file has correct headers' do
-      file = File.open(Rails.root.join("tmp/#{report_job.id}/#{course_report.files.names.first}"))
+      file = Rails.root.join("tmp/#{report_job.id}/#{course_report.files.names.first}").open
       headers = CSV.read(file, headers: true).headers
 
       expect(headers).to contain_exactly('User Pseudo ID', 'Enrollment Date', 'First Enrollment', 'User created', 'Language', 'Age Group', 'Enrollment Delta in Days', 'Forum Posts', 'Forum Threads', 'Reactivated', 'Reactivated Submission Date', 'Confirmation of Participation', 'Record of Achievement', 'Qualified Certificate', 'Course Completed', 'Un-enrolled', 'Quantile', 'Top Performance', 'Items Visited', 'Items Visited Percentage', 'Points', 'Points Percentage', 'Course Code')
