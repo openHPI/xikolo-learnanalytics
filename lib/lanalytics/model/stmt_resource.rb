@@ -63,7 +63,7 @@ module Lanalytics
 
         @type == other.type && @uuid == other.uuid
       end
-      alias_method :eql?, :==
+      alias eql? ==
     end
   end
 end

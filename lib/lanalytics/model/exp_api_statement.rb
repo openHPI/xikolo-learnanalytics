@@ -105,7 +105,6 @@ module Lanalytics
       def ==(other)
         return false unless other.class == self.class
 
-
         @user == other.user &&
           @verb == other.verb &&
           @resource == other.resource &&
@@ -113,7 +112,7 @@ module Lanalytics
           @with_result == other.with_result &&
           @in_context == other.in_context
       end
-      alias_method :eql?, :==
+      alias eql? ==
     end
   end
 end

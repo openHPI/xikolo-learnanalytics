@@ -69,7 +69,6 @@ module Lanalytics
         points_progression result.dig('aggregations', 'by_day', 'buckets')
       end
 
-      private
 
       def self.points_progression(buckets)
         buckets&.each_with_object({}) do |b, h|

@@ -15,9 +15,9 @@ class FileCollection
   end
 
   def make(path)
-    @base_path.join(path).tap {|file|
+    @base_path.join(path).tap do |file|
       @files[path] = file
-    }
+    end
   end
 
   def zip(password)

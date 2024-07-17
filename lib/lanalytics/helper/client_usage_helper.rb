@@ -15,6 +15,6 @@ module Lanalytics::Helper::ClientUsageHelper
   end
 
   def mobile_app_runtimes
-    ['android', 'ios']
+    %w[android ios]
   end
 end

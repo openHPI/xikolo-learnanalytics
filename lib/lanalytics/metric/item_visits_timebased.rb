@@ -66,7 +66,6 @@ module Lanalytics
         }
       end
 
-      private
 
       def self.unique_visits(buckets)
         visited_items = []

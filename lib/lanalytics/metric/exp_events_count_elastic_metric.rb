@@ -43,7 +43,7 @@ module Lanalytics
       end
 
       def self.verbs_filter
-        if verbs == nil || verbs.size == 0
+        if verbs.nil? || verbs.size == 0
           return []
         end
 
