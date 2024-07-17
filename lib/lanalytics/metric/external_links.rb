@@ -24,9 +24,9 @@ module Lanalytics
                     minimum_should_match: 1,
                     should: [
                       {match: {'tracking_id' => tracking_id.to_s(format: :default)}},
-                      {match: {'tracking_id' => tracking_id.to_s(format: :base62)}}
+                      {match: {'tracking_id' => tracking_id.to_s(format: :base62)}},
                     ],
-                  }}
+                  }},
                 ],
               },
             },

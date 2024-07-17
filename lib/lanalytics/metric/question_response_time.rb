@@ -20,7 +20,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  {match: {verb: 'ANSWERED_QUESTION'}}
+                  {match: {verb: 'ANSWERED_QUESTION'}},
                 ] + (all_filters(user_id, course_id, nil)),
               },
             },
@@ -51,7 +51,7 @@ module Lanalytics
                 bool: {
                   must: [
                     {match_phrase: {'resource.resource_uuid' => question_id}},
-                    {match: {verb: 'ASKED_QUESTION'}}
+                    {match: {verb: 'ASKED_QUESTION'}},
                   ],
                 },
               },

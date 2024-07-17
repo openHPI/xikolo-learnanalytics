@@ -20,7 +20,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  {exists: {field: 'in_context.user_location_longitude'}}
+                  {exists: {field: 'in_context.user_location_longitude'}},
                 ] + (all_filters(nil, course_id, nil)),
                 filter: {
                   range: {

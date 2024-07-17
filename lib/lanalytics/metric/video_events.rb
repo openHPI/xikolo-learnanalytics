@@ -60,7 +60,7 @@ module Lanalytics
             match: {
               verb:,
             },
-          }
+          },
         ]
 
         conditions << add_filter if add_filter.present?

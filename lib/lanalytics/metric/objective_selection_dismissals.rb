@@ -23,7 +23,7 @@ module Lanalytics
 
           query_should = [
             {match: {'verb' => 'dismissed_objectives_modal'}},
-            {match: {'verb' => 'dismissed_objectives_infobox'}}
+            {match: {'verb' => 'dismissed_objectives_infobox'}},
           ]
 
           body = {

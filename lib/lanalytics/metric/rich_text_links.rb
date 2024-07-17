@@ -14,7 +14,7 @@ module Lanalytics
             bool: {
               must: [
                 {match: {tracking_type: 'rich_text_item_link'}},
-                {match: {tracking_id: params[:item_id]}}
+                {match: {tracking_id: params[:item_id]}},
               ],
             },
           },
@@ -34,7 +34,7 @@ module Lanalytics
                 earliest_timestamp: {
                   top_hits: {
                     sort: [
-                      {timestamp: {order: 'asc'}}
+                      {timestamp: {order: 'asc'}},
                     ],
                     _source: ['timestamp'],
                     size: 1,
@@ -43,7 +43,7 @@ module Lanalytics
                 latest_timestamp: {
                   top_hits: {
                     sort: [
-                      {timestamp: {order: 'desc'}}
+                      {timestamp: {order: 'desc'}},
                     ],
                     _source: ['timestamp'],
                     size: 1,

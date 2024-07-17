@@ -5,7 +5,7 @@ module Lanalytics
     class CourseActivity < CombinedMetric
       dependent_metrics [
         {class: PinboardActivity, weight: 0.5},
-        {class: VisitCount}
+        {class: VisitCount},
       ]
     end
   end

@@ -16,7 +16,7 @@ module Lanalytics
               must: [
                 {match: {tracking_type: 'profile_fields_data_protection_link'}},
                 {match: {course_id: params[:course_id]}},
-                {match: {user_id: params[:user_id]}}
+                {match: {user_id: params[:user_id]}},
               ],
             },
           },

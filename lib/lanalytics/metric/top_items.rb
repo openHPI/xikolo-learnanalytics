@@ -14,7 +14,7 @@ module Lanalytics
             query: {
               bool: {
                 must: [
-                  match: {verb: 'visited_item'}
+                  match: {verb: 'visited_item'},
                 ] + all_filters(nil, params[:course_id], nil),
               },
             },

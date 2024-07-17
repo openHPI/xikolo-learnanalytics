@@ -21,7 +21,7 @@ module Lanalytics
               minimum_should_match: 1,
               should: [
                 {match: {'verb' => 'share_button_click'}},
-                {match: {'verb' => 'share_course'}}
+                {match: {'verb' => 'share_course'}},
               ],
             },
           }

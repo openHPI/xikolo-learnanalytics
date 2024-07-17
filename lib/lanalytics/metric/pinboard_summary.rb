@@ -24,9 +24,9 @@ module Lanalytics
                       {match: {'verb' => 'answered_question'}},
                       {match: {'verb' => 'commented'}},
                       {match: {'verb' => 'visited_pinboard'}},
-                      {match: {'verb' => 'visited_question'}}
+                      {match: {'verb' => 'visited_question'}},
                     ],
-                  }}
+                  }},
                 ],
               },
             },

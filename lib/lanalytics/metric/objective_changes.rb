@@ -14,7 +14,7 @@ module Lanalytics
         result = datasource.exec do |client|
           query_must = [
             {match: {'verb' => 'selected_objective'}},
-            {exists: {field: 'in_context.old_objective'}}
+            {exists: {field: 'in_context.old_objective'}},
           ]
 
           if user_id.present?

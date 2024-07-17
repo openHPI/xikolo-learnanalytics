@@ -10,7 +10,7 @@ module Lanalytics::Helper::ClientUsageHelper
       'ios (ipod)',
       'windows phone',
       'blackberry',
-      'firefox os'
+      'firefox os',
     ]
   end
 

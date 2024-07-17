@@ -24,7 +24,7 @@ module Lanalytics
             body[:query] = {
               bool: {
                 must: [
-                  {match: {'course_id' => params[:course_id]}}
+                  {match: {'course_id' => params[:course_id]}},
                 ],
               },
             }

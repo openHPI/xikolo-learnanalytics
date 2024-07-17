@@ -5,7 +5,7 @@ module Lanalytics
     class PinboardActivity < CombinedMetric
       dependent_metrics [
         {class: PinboardPostingActivity},
-        {class: PinboardWatchCount, weight: 0.2}
+        {class: PinboardWatchCount, weight: 0.2},
       ]
     end
   end

@@ -38,7 +38,7 @@ module Lanalytics
             bool: {
               must: [
                 {match: {'resource.resource_uuid' => resource_id}},
-                {match: {verb: 'visited_item'}}
+                {match: {verb: 'visited_item'}},
               ],
             },
           },

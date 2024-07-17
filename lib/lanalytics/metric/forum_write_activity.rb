@@ -21,10 +21,10 @@ module Lanalytics
                       should: [
                         {match: {'verb' => 'asked_question'}},
                         {match: {'verb' => 'answered_question'}},
-                        {match: {'verb' => 'commented'}}
+                        {match: {'verb' => 'commented'}},
                       ],
                     },
-                  }
+                  },
                 ] + all_filters(params[:user_id], params[:course_id], nil),
               },
             },
