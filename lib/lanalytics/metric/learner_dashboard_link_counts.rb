@@ -31,14 +31,16 @@ module Lanalytics
               },
             },
           }
-          query[:query][:bool][:filter] = {
-            range: {
-              timestamp: {
-                gte: DateTime.parse(start_date).iso8601,
-                lte: DateTime.parse(end_date).iso8601,
+          if start_date.present? && end_date.present?
+            query[:query][:bool][:filter] = {
+              range: {
+                timestamp: {
+                  gte: DateTime.parse(start_date).iso8601,
+                  lte: DateTime.parse(end_date).iso8601,
+                },
               },
-            },
-          } if start_date.present? && end_date.present?
+            }
+          end
 
           client.count index: datasource.index, body: query
         end.fetch('count')
