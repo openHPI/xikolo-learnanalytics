@@ -36,8 +36,8 @@ module Lanalytics
               cities: {
                 terms: {
                   script:
-                    'doc["in_context.user_location_country_code"].value' \
-                    ' + ":" + ' \
+                    'doc["in_context.user_location_country_code"].value ' \
+                    '+ ":" + ' \
                     'doc["in_context.user_location_city"].value',
                   size: 100,
                 },

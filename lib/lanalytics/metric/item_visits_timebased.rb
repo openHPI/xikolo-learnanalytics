@@ -66,7 +66,6 @@ module Lanalytics
         }
       end
 
-
       def self.unique_visits(buckets)
         visited_items = []
         buckets&.each_with_object({}) do |b, h|
