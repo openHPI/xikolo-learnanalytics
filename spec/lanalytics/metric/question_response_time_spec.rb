@@ -10,7 +10,7 @@ RSpec.describe Lanalytics::Metric::QuestionResponseTime do
   let(:question_id) { 'b0a9164c-092b-4b70-bbae-1e59046fc171' }
 
   describe '#query' do
-    subject(:query) { described_class.query user_id: user_id, course_id: course_id, start_date: start_time, end_date: end_time }
+    subject(:query) { described_class.query user_id:, course_id:, start_date: start_time, end_date: end_time }
 
     before do
       stub_request(:post, 'http://localhost:9200/_search')

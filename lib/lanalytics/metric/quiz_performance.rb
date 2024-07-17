@@ -33,7 +33,7 @@ module Lanalytics
           client.search index: datasource.index, body: {
             size: 0,
             track_total_hits: true,
-            query: query,
+            query:,
             aggs: {
               sum_points: {
                 sum: {field: 'in_context.points'},
@@ -53,7 +53,7 @@ module Lanalytics
         quiz_statements_first_attempt = datasource.exec do |client|
           client.search index: datasource.index, body: {
             size: 0,
-            query: query,
+            query:,
             aggs: {
               sum_points: {
                 sum: {field: 'in_context.points'},

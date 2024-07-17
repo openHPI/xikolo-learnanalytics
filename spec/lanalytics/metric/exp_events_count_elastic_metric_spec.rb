@@ -9,7 +9,7 @@ RSpec.describe Lanalytics::Metric::ExpEventsCountElasticMetric do
   let(:end_time) { Time.zone.now.to_s }
 
   describe '#query', elasticsearch: true do
-    subject { described_class.query user_id: user_id, course_id: course_id, start_date: start_time, end_date: end_time }
+    subject { described_class.query user_id:, course_id:, start_date: start_time, end_date: end_time }
 
     before do
       stub_request(:post, 'http://localhost:9200/_count')

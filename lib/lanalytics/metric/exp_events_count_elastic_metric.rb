@@ -49,7 +49,7 @@ module Lanalytics
 
         filter = [{bool: {should: []}}]
         verbs.each do |verb|
-          filter[0][:bool][:should] << {match: {verb: verb}}
+          filter[0][:bool][:should] << {match: {verb:}}
         end
         filter
       end

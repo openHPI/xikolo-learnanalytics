@@ -58,7 +58,7 @@ module Lanalytics
           },
           {
             match: {
-              verb: verb,
+              verb:,
             },
           }
         ]

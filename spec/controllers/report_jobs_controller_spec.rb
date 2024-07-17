@@ -44,7 +44,7 @@ describe ReportJobsController do
   end
 
   describe '#create' do
-    subject(:create_action) { post :create, params: params }
+    subject(:create_action) { post :create, params: }
 
     it { is_expected.to have_http_status :created }
 

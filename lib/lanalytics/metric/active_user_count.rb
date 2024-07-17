@@ -59,7 +59,7 @@ module Lanalytics
             end
           end
 
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         {active_users: result['aggregations']['distinct_user_count']['value']}

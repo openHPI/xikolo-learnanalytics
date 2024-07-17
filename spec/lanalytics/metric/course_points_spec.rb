@@ -32,7 +32,7 @@ RSpec.describe Lanalytics::Metric::CoursePoints do
   end
 
   describe '#query' do
-    subject(:query) { described_class.query user_id: user_id, course_id: course_id, start_date: start_time, end_date: end_time }
+    subject(:query) { described_class.query user_id:, course_id:, start_date: start_time, end_date: end_time }
 
     before do
       stub_request(:post, 'http://localhost:9200/_search')

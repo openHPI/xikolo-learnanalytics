@@ -29,9 +29,9 @@ describe CourseStatistic do
     })
     Stub.request(
       :course, :get, '/stats',
-      query: {course_id: course_id, key: 'extended'}
+      query: {course_id:, key: 'extended'}
     ).to_return Stub.json({
-      course_id: course_id,
+      course_id:,
       user_id: nil,
       student_enrollments: 25,
       student_enrollments_by_day: nil,
@@ -45,7 +45,7 @@ describe CourseStatistic do
     })
     Stub.request(
       :course, :get, '/stats',
-      query: {course_id: course_id, key: 'enrollments_by_day'}
+      query: {course_id:, key: 'enrollments_by_day'}
     ).to_return Stub.json({
       student_enrollments_by_day: {DateTime.now.iso8601.to_s => 199},
     })
@@ -96,7 +96,7 @@ describe CourseStatistic do
   describe '#calculate!' do
     subject(:calculate) { stats.calculate! }
 
-    let(:stats) { described_class.create(course_id: course_id) }
+    let(:stats) { described_class.create(course_id:) }
 
     it 'creates a new version', versioning: true do
       expect { calculate }.to change { stats.reload.versions.count }.from(1).to(2)

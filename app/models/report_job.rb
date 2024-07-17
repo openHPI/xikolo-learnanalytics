@@ -104,14 +104,14 @@ class ReportJob < ApplicationRecord
 
     Lanalytics.telegraf.write(
       'report_jobs',
-      tags: {id: id, type: task_type},
+      tags: {id:, type: task_type},
       values: {
-        user_id: user_id,
+        user_id:,
         status: 'progress',
-        part: part,
-        of: of,
-        percentage: percentage,
-        progress: progress,
+        part:,
+        of:,
+        percentage:,
+        progress:,
       },
     )
 
@@ -120,7 +120,7 @@ class ReportJob < ApplicationRecord
     return if self.progress == progress
 
     Xikolo::Reconnect.on_stale_connection do
-      update progress: progress
+      update progress:
     end
   end
 
@@ -128,8 +128,8 @@ class ReportJob < ApplicationRecord
   def finish_with(attributes)
     Lanalytics.telegraf.write(
       'report_jobs',
-      tags: {id: id, type: task_type},
-      values: {user_id: user_id, status: 'done'},
+      tags: {id:, type: task_type},
+      values: {user_id:, status: 'done'},
     )
 
     Xikolo::Reconnect.on_stale_connection do
@@ -150,9 +150,9 @@ class ReportJob < ApplicationRecord
 
     Lanalytics.telegraf.write(
       'report_jobs',
-      tags: {id: id, type: task_type},
+      tags: {id:, type: task_type},
       values: {
-        user_id: user_id,
+        user_id:,
         status: 'failing',
         error: title,
         env_path: ENV.fetch('PATH', ''),

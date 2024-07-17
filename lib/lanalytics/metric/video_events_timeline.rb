@@ -69,7 +69,7 @@ module Lanalytics
         }
 
         result = datasource.exec do |client|
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         values = result.dig('aggregations', 'timestamps', 'buckets').map do |r|

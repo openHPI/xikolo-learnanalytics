@@ -50,7 +50,7 @@ RSpec.describe Lanalytics::Metric::Certificates do
 
   describe '#query' do
     subject(:query) do
-      described_class.query course_id: course_id, start_date: start_date, end_date: end_date
+      described_class.query course_id:, start_date:, end_date:
     end
 
     before do

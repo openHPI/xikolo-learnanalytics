@@ -75,7 +75,7 @@ module Lanalytics
               ).compact,
             },
           },
-          aggregations: aggregations,
+          aggregations:,
         }
 
         result = datasource.exec do |client|

@@ -60,7 +60,7 @@ module Lanalytics
           country_code, city_name = item['key'].split(':')
           result_sub_item = {
             city_name: city_name&.titleize,
-            country_code: country_code,
+            country_code:,
             country_code_iso3: IsoCountryCodes.find(country_code)&.alpha3,
             distinct_users: item.dig('ucount', 'value'),
             relative_users: item.dig('ucount', 'value').percent_of(total_users),

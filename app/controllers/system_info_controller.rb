@@ -13,7 +13,7 @@ class SystemInfoController < ApplicationController
       running: true,
       build_time: DateTime.strptime(time, 't%Y%m%d%H%M').iso8601,
       build_number: build_number[1..].to_i,
-      version: version,
+      version:,
       hostname: Socket.gethostname,
     )
   end

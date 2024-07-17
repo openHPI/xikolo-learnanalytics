@@ -30,7 +30,7 @@ module Lanalytics
             }
           end
 
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
         {count: result['aggregations']['referrer']['value']}
       end

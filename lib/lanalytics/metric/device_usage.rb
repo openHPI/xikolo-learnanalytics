@@ -143,7 +143,7 @@ module Lanalytics
         usage.sort_by! {|i| i[:total_activity] }.reverse!
 
         # add behavior
-        behavior = {usage: usage}
+        behavior = {usage:}
         processed_result[:behavior] = behavior
 
         processed_result

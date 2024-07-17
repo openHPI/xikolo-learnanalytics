@@ -136,7 +136,7 @@ module Lanalytics
         result = datasource.exec do |client|
           client.search(
             index: datasource.index,
-            body: body,
+            body:,
             filter_path: %w[
               aggregations.items.buckets.key
               aggregations.items.buckets.plays.user
@@ -173,7 +173,7 @@ module Lanalytics
             .rel(:video).get(id: item['content_id']).value!
 
           {
-            id: id,
+            id:,
             position: "#{section['position']}.#{item['position']}",
             title: item['title'],
             plays: ri&.dig('plays', 'user', 'value').to_i,
@@ -191,7 +191,7 @@ module Lanalytics
           videos = []
           Xikolo.paginate(
             course_api.rel(:items).get(
-              course_id: course_id,
+              course_id:,
               content_type: 'video',
             ),
           ) do |video|
@@ -204,7 +204,7 @@ module Lanalytics
           sections = []
           Xikolo.paginate(
             course_api.rel(:sections).get(
-              course_id: course_id,
+              course_id:,
               include_alternatives: true,
             ),
           ) do |section|

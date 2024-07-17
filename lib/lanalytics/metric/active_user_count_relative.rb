@@ -57,7 +57,7 @@ Default active users of last day.
               },
             },
           }
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         result['aggregations']['courses']['buckets'].each do |course|
@@ -87,9 +87,9 @@ Default active users of last day.
         if days_since_start <= 0
           result[:kpi_activity] = nil
         else
-          avg_activity_per_day = CourseActivity.query(course_id: course_id, start_date: start_date.to_s,
+          avg_activity_per_day = CourseActivity.query(course_id:, start_date: start_date.to_s,
             end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
-          activity_today = CourseActivity.query(course_id: course_id, start_date: (DateTime.now - 1.day).to_s,
+          activity_today = CourseActivity.query(course_id:, start_date: (DateTime.now - 1.day).to_s,
             end_date: DateTime.now.to_s)[:count].to_f
           result[:kpi_activity] = (avg_activity_per_day != 0 ? activity_today / avg_activity_per_day : 0).round(2)
         end

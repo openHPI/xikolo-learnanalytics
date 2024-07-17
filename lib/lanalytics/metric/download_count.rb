@@ -65,7 +65,7 @@ module Lanalytics
         end
 
         result = datasource.exec do |client|
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         course_api = Restify.new(:course).get.value!
@@ -87,7 +87,7 @@ module Lanalytics
           section = sections.find {|s| s['id'] == item['section_id'] }
 
           stats = {
-            id: id,
+            id:,
             position: "#{section['position']}.#{item['position']}",
             title: item['title'],
             total_downloads: ri&.dig('doc_count').to_i,
@@ -115,7 +115,7 @@ module Lanalytics
         videos = []
         Xikolo.paginate(
           Restify.new(:course).get.value!.rel(:items).get(
-            course_id: course_id,
+            course_id:,
             content_type: 'video',
           ),
         ) do |video|

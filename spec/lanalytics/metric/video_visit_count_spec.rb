@@ -10,7 +10,7 @@ RSpec.describe Lanalytics::Metric::VideoVisitCount do
 
   describe '#query', elasticsearch: true do
     subject(:query) do
-      described_class.query user_id: user_id, course_id: course_id, start_date: start_time, end_date: end_time
+      described_class.query user_id:, course_id:, start_date: start_time, end_date: end_time
     end
 
     before do

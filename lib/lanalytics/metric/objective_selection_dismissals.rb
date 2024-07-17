@@ -66,7 +66,7 @@ module Lanalytics
             },
           }
 
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         {

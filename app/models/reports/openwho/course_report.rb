@@ -231,7 +231,7 @@ module Reports::Openwho
 
     def fetch_metric(metric, course_id, user_id)
       metric = "Lanalytics::Metric::#{metric}".constantize
-      metric.query(user_id: user_id, course_id: course_id)
+      metric.query(user_id:, course_id:)
     end
 
     def reportable_country_regions

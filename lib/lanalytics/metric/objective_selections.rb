@@ -76,7 +76,7 @@ module Lanalytics
             },
           }
 
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         active_objectives = result.dig('aggregations', 'by_user', 'buckets')&.map do |b|
@@ -99,17 +99,17 @@ module Lanalytics
           # Count users with selected learning objectives
           total_active_objectives: result.dig('aggregations', 'distinct_user_count', 'value'),
           # Count currently selected (active) objectives (by objective_id)
-          active_objectives: active_objectives,
+          active_objectives:,
           # Count total selections
           total_selections: result.dig('hits', 'total', 'value'),
           # Count total selections (by objective_id)
-          total_selections_by_objective: total_selections_by_objective,
+          total_selections_by_objective:,
           # Average number of objectives per user
           avg_objectives_per_user: objectives_per_user.present? ? (objectives_per_user.reduce(:+) / objectives_per_user.size.to_f) : nil,
           # Count how often an objective was selected as first objective
-          initial_objectives: initial_objectives,
+          initial_objectives:,
           # Count the number of initial selections per modal context in which they were selected (infobox, popup, progress)
-          initial_selections_by_context: initial_selections_by_context,
+          initial_selections_by_context:,
         }
       end
     end

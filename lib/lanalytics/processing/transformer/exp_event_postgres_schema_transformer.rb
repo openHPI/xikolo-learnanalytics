@@ -209,7 +209,7 @@ class Transformer::ExpEventPostgresSchemaTransformer < Transformer::TransformSte
     verb = processing_unit[:deleted] ? :un_enrolled : :enrolled
     transform_punit_to_create load_commands,
       user_uuid: processing_unit[:user_id],
-      verb: verb,
+      verb:,
       resource: {
         uuid: processing_unit[:course_id],
         type: :course,

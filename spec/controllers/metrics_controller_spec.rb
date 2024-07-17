@@ -14,10 +14,10 @@ describe MetricsController do
     let(:params) do
       {
         name: 'pinboard_activity',
-        user_id: user_id,
-        course_id: course_id,
-        start_date: start_date,
-        end_date: end_date,
+        user_id:,
+        course_id:,
+        start_date:,
+        end_date:,
       }
     end
 
@@ -25,7 +25,7 @@ describe MetricsController do
       Lanalytics::Processing::DatasourceManager.datasource('exp_events_elastic').client
     end
 
-    let(:action) { -> { post :show, params: params } }
+    let(:action) { -> { post :show, params: } }
 
     context 'count' do
       it 'queries the metric, if available' do
@@ -33,7 +33,7 @@ describe MetricsController do
           .to receive(:available?).and_return(true)
         expect(Lanalytics::Metric::PinboardActivity)
           .to receive(:query)
-          .with(user_id: user_id, course_id: course_id, start_date: start_date, end_date: end_date)
+          .with(user_id:, course_id:, start_date:, end_date:)
         action.call
       end
 

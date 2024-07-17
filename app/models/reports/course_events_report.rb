@@ -164,8 +164,8 @@ module Reports
         start_date: course['start_date'],
         end_date: course['end_date'],
         verb: @verb,
-        page: page,
-        scroll_id: scroll_id,
+        page:,
+        scroll_id:,
       )
     end
 

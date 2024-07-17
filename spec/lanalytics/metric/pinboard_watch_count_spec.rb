@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Lanalytics::Metric::PinboardWatchCount do
   subject(:query) do
-    described_class.query user_id: user_id, course_id: course_id, start_date: start_time, end_date: end_date
+    described_class.query user_id:, course_id:, start_date: start_time, end_date:
   end
 
   let(:user_id) { SecureRandom.uuid }

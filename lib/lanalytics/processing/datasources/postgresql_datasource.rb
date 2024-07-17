@@ -42,9 +42,9 @@ module Lanalytics
 
         def postgres_config
           {
-            host: host, port: port,
+            host:, port:,
             dbname: database,
-            user: user, password: password,
+            user:, password:,
             connect_timeout: timeout
           }.reject {|_, v| v.nil? }
         end

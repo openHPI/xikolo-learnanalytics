@@ -8,7 +8,7 @@ describe CourseStatisticsController do
   let(:course_id) { '00000001-3300-4444-9999-000000000006' }
 
   describe '#index' do
-    subject(:index) { get :index, params: params }
+    subject(:index) { get :index, params: }
 
     let(:params) { {} }
 
@@ -22,7 +22,7 @@ describe CourseStatisticsController do
     context 'when fetching historic data for a course', versioning: true do
       before { create(:course_statistic, :calculated) }
 
-      let(:params) { super().merge(historic_data: 'true', course_id: course_id, start_date: 2.days.ago.to_s) }
+      let(:params) { super().merge(historic_data: 'true', course_id:, start_date: 2.days.ago.to_s) }
 
       it { is_expected.to have_http_status :ok }
 

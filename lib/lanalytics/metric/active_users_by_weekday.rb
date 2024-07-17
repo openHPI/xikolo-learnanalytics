@@ -69,7 +69,7 @@ module Lanalytics
           w_days.each do |w_day, data|
             result.append(
               day_of_week: w_day,
-              hour: hour,
+              hour:,
               avg_users: data[:user].to_f / data[:bucket_count],
             )
           end

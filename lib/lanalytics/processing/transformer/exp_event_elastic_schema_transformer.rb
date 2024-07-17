@@ -252,7 +252,7 @@ module Lanalytics
             user: {
               resource_uuid: processing_unit[:user_id],
             },
-            verb: verb,
+            verb:,
             resource: {
               resource_uuid: processing_unit[:course_id],
             },

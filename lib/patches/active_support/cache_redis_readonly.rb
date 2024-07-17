@@ -8,7 +8,7 @@ module Patches
       def failsafe(method, returning: nil)
         retryable = true
 
-        super(method, returning: returning) do
+        super(method, returning:) do
           yield
         rescue ::Redis::ReadOnlyError, ::RedisClient::ReadOnlyError
           if retryable

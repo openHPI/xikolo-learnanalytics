@@ -22,7 +22,7 @@ module Lanalytics
         }
 
         result = datasource.exec do |client|
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         {count: result.dig('hits', 'total', 'value').to_i}

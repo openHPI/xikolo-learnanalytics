@@ -20,9 +20,9 @@ module Lanalytics
         if days_since_start <= 0
           result[:kpi_social] = nil
         else
-          avg_social_per_day = PinboardActivity.query(course_id: course_id, start_date: start_date.to_s,
+          avg_social_per_day = PinboardActivity.query(course_id:, start_date: start_date.to_s,
             end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
-          social_today = PinboardActivity.query(course_id: course_id, start_date: (DateTime.now - 1.day).to_s,
+          social_today = PinboardActivity.query(course_id:, start_date: (DateTime.now - 1.day).to_s,
             end_date: DateTime.now.to_s)[:count].to_f
           result[:kpi_social] = (avg_social_per_day != 0 ? social_today / avg_social_per_day : 0).round(2)
         end

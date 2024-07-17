@@ -95,7 +95,7 @@ module Reports
     end
 
     def generate!
-      @job.update(annotation: annotation)
+      @job.update(annotation:)
 
       # We have to fetch these already at this point for cluster grouping and
       # progress calculation.
@@ -302,8 +302,8 @@ module Reports
       stats, * = Xikolo::RetryingPromise.new(
         Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
           course_service.rel(:enrollment_stats).get(
-            start_date: start_date,
-            end_date: end_date,
+            start_date:,
+            end_date:,
             classifier_id: c_id,
           )
         end,
@@ -316,8 +316,8 @@ module Reports
 
       if @include_active_users
         result = Lanalytics::Metric::ActiveUserCount.query(
-          start_date: start_date,
-          end_date: end_date,
+          start_date:,
+          end_date:,
           resource_id: c_id,
         )
 

@@ -8,7 +8,7 @@ describe Xikolo::Retryable do
       .to_return Stub.json({stats_url: '/stats'})
   end
 
-  let(:retryable) { described_class.new(max_retries: max_retries, wait: wait, &promise_block) }
+  let(:retryable) { described_class.new(max_retries:, wait:, &promise_block) }
   let(:max_retries) { 3 }
   let(:wait) { 0 }
   let(:promise_block) { proc { Restify.new(:course).get.value!.rel(:stats).get } }

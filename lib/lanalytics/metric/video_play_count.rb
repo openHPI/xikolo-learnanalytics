@@ -43,7 +43,7 @@ module Lanalytics
         }
 
         result = datasource.exec do |client|
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         {count: result.dig('aggregations', 'sum', 'value').to_i}
@@ -56,7 +56,7 @@ module Lanalytics
           videos = []
           Xikolo.paginate(
             course_api.rel(:items).get(
-              course_id: course_id,
+              course_id:,
               content_type: 'video',
             ),
           ) do |video|

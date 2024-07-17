@@ -56,7 +56,7 @@ module Lanalytics
           if verb.present?
             body[:query][:bool][:must] = {
               wildcard: {
-                verb: verb,
+                verb:,
               },
             }
           end
@@ -65,14 +65,14 @@ module Lanalytics
             client.search(
               index: datasource.index,
               scroll: '5m',
-              body: body,
+              body:,
             )
           end
         else
           result = datasource.exec do |client|
             client.scroll body: {
               scroll: '5m',
-              scroll_id: scroll_id,
+              scroll_id:,
             }
           end
         end

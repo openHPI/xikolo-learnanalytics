@@ -31,7 +31,7 @@ module Lanalytics
             }
           end
 
-          client.search index: datasource.index, body: body
+          client.search(index: datasource.index, body:)
         end
 
         result_set = {}
