@@ -509,7 +509,7 @@ module Reports
         headers.append('Access Groups') if @include_access_groups
 
         if @include_profile
-          headers.push 'Profile Picture'
+          headers.push('Profile Picture')
           headers.concat profile_config.all_titles
         end
 
@@ -590,7 +590,7 @@ module Reports
 
         headers.concat quiz_column_headers
 
-        headers.push 'Course Code'
+        headers.push('Course Code')
       end
     end
     # rubocop:enable all

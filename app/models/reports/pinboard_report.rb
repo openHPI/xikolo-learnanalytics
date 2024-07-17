@@ -100,10 +100,10 @@ module Reports
       ]
 
       if @include_permission_groups
-        headers.concat [
+        headers.push(
           'User Global Groups',
           'User Course Groups',
-        ]
+        )
       end
 
       headers
@@ -176,10 +176,10 @@ module Reports
           .groups_for_user(topic['user_id'])
           .join(';')
 
-        values.concat [
+        values.push
           global_groups,
           course_groups,
-        ]
+
       end
 
       values
