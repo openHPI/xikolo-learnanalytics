@@ -15,7 +15,7 @@ module Lanalytics
             command = load_command.class.name.demodulize.underscore
             entity = load_command.entity.class.name.demodulize.underscore
 
-            method("do_#{command}_for_#{entity}").call(load_command)
+            method(:"do_#{command}_for_#{entity}").call(load_command)
           rescue StandardError => e
             Rails.logger.error do
               "Happened in pipeline '#{pipeline_ctx.pipeline.full_name}' for original_event: #{e.message}"

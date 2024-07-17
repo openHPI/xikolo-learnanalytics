@@ -35,7 +35,7 @@ describe Lanalytics::Processing::Transformer::ExpEventElasticSchemaTransformer d
   let(:pipeline_ctx) { Struct.new(:processing_action).new(:CREATE) }
   let(:exp_event_elastic_transformer) { described_class.new }
   let(:transform_method) do
-    exp_event_elastic_transformer.method("transform_#{type}_punit_to_create")
+    exp_event_elastic_transformer.method(:"transform_#{type}_punit_to_create")
   end
 
   it 'transforms processing unit to nested (LoaORM) entity' do

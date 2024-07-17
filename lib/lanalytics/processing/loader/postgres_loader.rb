@@ -22,7 +22,7 @@ module Lanalytics
           load_commands.each do |load_command|
             command = load_command.class.name.demodulize.underscore
 
-            method("do_#{command}").call(load_command)
+            method(:"do_#{command}").call(load_command)
           end
         end
 
