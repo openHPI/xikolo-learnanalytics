@@ -105,7 +105,7 @@ module Lanalytics
           # Count total selections (by objective_id)
           total_selections_by_objective:,
           # Average number of objectives per user
-          avg_objectives_per_user: objectives_per_user.present? ? (objectives_per_user.reduce(:+) / objectives_per_user.size.to_f) : nil,
+          avg_objectives_per_user: objectives_per_user.present? ? (objectives_per_user.sum / objectives_per_user.size.to_f) : nil,
           # Count how often an objective was selected as first objective
           initial_objectives:,
           # Count the number of initial selections per modal context in which they were selected (infobox, popup, progress)
