@@ -131,14 +131,14 @@ module Reports
           ).value!.each do |submission_answer|
             if submission_answer['type'] ==
                'Xikolo::Submission::QuizSubmissionFreeTextAnswer'
-              submission_hash[:questions] \
+              submission_hash[:questions] 
                 [submission_question['quiz_question_id']][:freetext_answer] =
                 submission_answer['user_answer_text'].squish
             else
-              submission_hash[:questions] \
+              submission_hash[:questions] 
                 [submission_question['quiz_question_id']][:selected_answers] <<
                 submission_answer['quiz_answer_id']
-              submission_hash[:questions] \
+              submission_hash[:questions] 
                 [submission_question['quiz_question_id']][:freetext_answer] = ''
             end
           end
