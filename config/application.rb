@@ -3,7 +3,7 @@
 require_relative 'boot'
 
 # Require all patches before loading gems and application
-Dir[File.expand_path('../lib/patches/**/*.rb', __dir__)].sort.each {|f| require f }
+Dir[File.expand_path('../lib/patches/**/*.rb', __dir__)].each {|f| require f }
 
 require 'active_model/railtie'
 require 'active_job/railtie'

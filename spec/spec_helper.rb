@@ -42,7 +42,7 @@ Restify::Registry.store :test, 'http://lanalytics.xikolo.tld',
 Sidekiq::Testing.fake!
 
 ActiveRecord::Migration.maintain_test_schema!
-Dir[Rails.root.join('spec/support/**/*.rb')].sort.each {|f| require f }
+Dir[Rails.root.join('spec/support/**/*.rb')].each {|f| require f }
 
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
