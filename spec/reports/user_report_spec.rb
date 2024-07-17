@@ -47,7 +47,7 @@ RSpec.describe Reports::UserReport do
     base_requests
   end
 
-  context 'a csv file is generated successfully' do
+  context 'a CSV file is generated successfully' do
     before do
       user_report.generate!
     end
@@ -58,7 +58,7 @@ RSpec.describe Reports::UserReport do
     end
 
     it 'the CSV file has correct headers' do
-      file = File.open("#{Rails.root}/tmp/#{report_job.id}/#{user_report.files.names.first}")
+      file = File.open(Rails.root.join("tmp/#{report_job.id}/#{user_report.files.names.first}"))
       headers = CSV.read(file, headers: true).headers
 
       expect(headers).to contain_exactly('User Pseudo ID', 'Age Group', 'Language', 'Created')

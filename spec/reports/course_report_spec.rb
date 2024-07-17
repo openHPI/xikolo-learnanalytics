@@ -103,7 +103,7 @@ describe Reports::CourseReport do
     base_requests
   end
 
-  context 'a csv file is generated' do
+  context 'a CSV file is generated' do
     before do
       course_report.generate!
     end
@@ -114,7 +114,7 @@ describe Reports::CourseReport do
     end
 
     it 'the CSV file has correct headers' do
-      file = File.open("#{Rails.root}/tmp/#{report_job.id}/#{course_report.files.names.first}")
+      file = File.open(Rails.root.join("tmp/#{report_job.id}/#{course_report.files.names.first}"))
       headers = CSV.read(file, headers: true).headers
 
       expect(headers).to contain_exactly('User Pseudo ID', 'Enrollment Date', 'First Enrollment', 'User created', 'Language', 'Age Group', 'Enrollment Delta in Days', 'Forum Posts', 'Forum Threads', 'Reactivated', 'Reactivated Submission Date', 'Confirmation of Participation', 'Record of Achievement', 'Qualified Certificate', 'Course Completed', 'Un-enrolled', 'Quantile', 'Top Performance', 'Items Visited', 'Items Visited Percentage', 'Points', 'Points Percentage', 'Course Code')

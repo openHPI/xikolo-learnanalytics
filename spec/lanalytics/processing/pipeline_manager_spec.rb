@@ -16,27 +16,27 @@ describe Lanalytics::Processing::PipelineManager do
     it 'ensures to only load *.prb files' do
       # Raise ArgumentError.new("Wrong file format. It has to be a ruby file ending with '*.prb'.")
       expect do
-        described_class.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/dummy_pipeline_manager.rb")
+        described_class.setup_pipelines(Rails.root.join('spec/lanalytics/processing/pipelines/dummy_pipeline_manager.rb'))
       end.to raise_error ArgumentError, /^File '.*' has to end with 'prb'\.$/
 
       expect do
-        described_class.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/dummy_pipeline_manager.txt")
+        described_class.setup_pipelines(Rails.root.join('spec/lanalytics/processing/pipelines/dummy_pipeline_manager.txt'))
       end.to raise_error ArgumentError, /^File '.*' has to end with 'prb'\.$/
 
       # Raise ArgumentError.new("File '...' does not exists.")
       expect do
-        described_class.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/blabla_pipeline_manager.prb")
+        described_class.setup_pipelines(Rails.root.join('spec/lanalytics/processing/pipelines/blabla_pipeline_manager.prb'))
       end.to raise_error ArgumentError, /^File '.*' does not exist\.$/
     end
 
     it 'raises error if pipeline file is not ruby code' do
       expect do
-        described_class.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/erroneous_pipeline.prb")
+        described_class.setup_pipelines(Rails.root.join('spec/lanalytics/processing/pipelines/erroneous_pipeline.prb'))
       end.to raise_error(/^The following error occurred when registering pipeline/)
     end
 
     it 'loads pipelines from *.prb file' do
-      described_class.setup_pipelines("#{Rails.root}/spec/lanalytics/processing/pipelines/dummy_pipeline_manager.prb")
+      described_class.setup_pipelines(Rails.root.join('spec/lanalytics/processing/pipelines/dummy_pipeline_manager.prb'))
 
       pipeline1 = described_class.instance.find_piplines(:pipeline_manager_spec, Lanalytics::Processing::Action::CREATE, 'xikolo.lanalytics.pipeline_manager.pipeline1')
       expect(pipeline1).not_to be_nil
