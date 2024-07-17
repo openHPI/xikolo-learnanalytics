@@ -74,7 +74,7 @@ module Lanalytics
             raise ArgumentError.new 'value cannot be nil or blank'
           end
 
-          super(name, data_type, value)
+          super
         end
 
         def inspect

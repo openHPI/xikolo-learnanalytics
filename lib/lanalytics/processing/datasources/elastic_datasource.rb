@@ -8,7 +8,7 @@ module Lanalytics
         attr_reader :host, :port, :client, :index
 
         def initialize(elastic_config)
-          super(elastic_config)
+          super
           setup
         end
 

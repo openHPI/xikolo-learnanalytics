@@ -36,7 +36,7 @@ module DefaultParams
 
       kwargs[:format] ||= params.delete(:format) if params.key?(:format)
 
-      super(action, params:, **kwargs)
+      super
     end
   end
 end

@@ -7,7 +7,7 @@ module Lanalytics
         attr_reader :database, :host, :port, :user, :password, :timeout
 
         def initialize(postgres_config)
-          super(postgres_config)
+          super
           setup
         end
 
