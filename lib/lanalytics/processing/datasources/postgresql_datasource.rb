@@ -12,7 +12,7 @@ module Lanalytics
         end
 
         def pool_size
-          @pool.to_i  # comes from postgres_config file
+          @pool.to_i # comes from postgres_config file
         end
 
         def setup
