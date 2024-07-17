@@ -61,7 +61,7 @@ module Lanalytics
         result.dig('aggregations', 'links', 'buckets').map do |item|
           {
             link: item['key'],
-            total_clicks: item.dig('doc_count').to_i,
+            total_clicks: item['doc_count'].to_i,
             total_clicks_unique_users: item.dig('user', 'value').to_i,
             earliest_timestamp: item.dig('earliest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),
             latest_timestamp: item.dig('latest_timestamp', 'hits', 'hits', 0, '_source', 'timestamp'),

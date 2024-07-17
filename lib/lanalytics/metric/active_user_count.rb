@@ -16,7 +16,7 @@ module Lanalytics
         result = datasource.exec do |client|
           # default 30 min
           start_date = start_date.present? ? DateTime.parse(start_date) : (DateTime.now - 30.minutes)
-          end_date = end_date.present? ? DateTime.parse(end_date) : (DateTime.now)
+          end_date = end_date.present? ? DateTime.parse(end_date) : DateTime.now
 
           body = {
             size: 0,

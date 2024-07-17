@@ -51,7 +51,7 @@ module Lanalytics
                   by_resource: {
                     terms: {
                       field: 'resource.resource_uuid',
-                      size: 30000,
+                      size: 30_000,
                     },
                   },
                 },
@@ -84,7 +84,7 @@ module Lanalytics
       def self.total_visits(buckets)
         buckets&.each_with_object({}) do |b, h|
           h[Time.parse(b['key_as_string'].to_s).utc.strftime('%F')] = {
-            visits: b.dig('doc_count'),
+            visits: b['doc_count'],
             cumulative_visits: b.dig('cumulative_total_visits', 'value').to_i,
           }
         end

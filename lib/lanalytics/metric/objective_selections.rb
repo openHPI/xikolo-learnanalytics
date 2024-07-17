@@ -51,7 +51,7 @@ module Lanalytics
                 terms: {
                   field: 'user.resource_uuid',
                   order: {_count: 'desc'},
-                  size: 30000,
+                  size: 30_000,
                 },
                 aggs: {
                   current_objective: {

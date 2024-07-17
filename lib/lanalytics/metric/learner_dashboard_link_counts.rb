@@ -38,7 +38,7 @@ module Lanalytics
                 lte: DateTime.parse(end_date).iso8601,
               },
             },
-          } if start_date.present? and end_date.present?
+          } if start_date.present? && end_date.present?
 
           client.count index: datasource.index, body: query
         end.fetch('count')

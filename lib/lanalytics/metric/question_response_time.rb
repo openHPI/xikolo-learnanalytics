@@ -21,7 +21,7 @@ module Lanalytics
               bool: {
                 must: [
                   {match: {verb: 'ANSWERED_QUESTION'}},
-                ] + (all_filters(user_id, course_id, nil)),
+                ] + all_filters(user_id, course_id, nil),
               },
             },
           }
@@ -32,7 +32,7 @@ module Lanalytics
                 lte: DateTime.parse(end_date).iso8601,
               },
             },
-          } if start_date.present? and end_date.present?
+          } if start_date.present? && end_date.present?
 
           client.search index: datasource.index, body: query
         end['hits']['hits']

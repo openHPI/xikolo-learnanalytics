@@ -12,16 +12,16 @@ module Lanalytics
         start_date = params[:start_date]
         end_date = params[:end_date]
         start_date = start_date.present? ? DateTime.parse(start_date) : (DateTime.now - 1.minute)
-        end_date = end_date.present? ? DateTime.parse(end_date) : (DateTime.now)
+        end_date = end_date.present? ? DateTime.parse(end_date) : DateTime.now
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {
-            size: 10000,
+            size: 10_000,
             query: {
               bool: {
                 must: [
                   {exists: {field: 'in_context.user_location_longitude'}},
-                ] + (all_filters(nil, course_id, nil)),
+                ] + all_filters(nil, course_id, nil),
                 filter: {
                   range: {
                     timestamp: {

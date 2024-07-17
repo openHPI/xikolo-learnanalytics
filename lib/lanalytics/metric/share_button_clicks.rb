@@ -43,7 +43,7 @@ module Lanalytics
             },
           }
 
-          if start_date.present? and end_date.present?
+          if start_date.present? && end_date.present?
             query[:query][:bool][:filter] = {
               range: {
                 timestamp: {
