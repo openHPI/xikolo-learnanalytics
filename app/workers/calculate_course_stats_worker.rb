@@ -3,6 +3,11 @@
 class CalculateCourseStatsWorker
   include Sidekiq::IterableJob
 
+  # Since this job is scheduled via cron anyway, we reduce the amount of retries:
+  # 12 attempts, 1 hour apart
+  sidekiq_options retry: 12
+  sidekiq_retry_in { 1.hour.to_i }
+
   def build_enumerator(**)
     course_ids = [].tap do |ids|
       each_course {|course| ids << course['id'] }
