@@ -217,7 +217,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     maxminddb (0.1.22)
-    mechanize (2.10.1)
+    mechanize (2.11.0)
       addressable (~> 2.8)
       base64
       domain_name (~> 0.5, >= 0.5.20190701)
