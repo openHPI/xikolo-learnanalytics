@@ -20,13 +20,6 @@ Rails:
   Enabled: true
 
 #
-# False positives:
-#   * On Acfs::Resource#update_attributes!
-#
-Rails/ActiveRecordAliases:
-  Enabled: false
-
-#
 # Tobi finds it easier to understand what explicit methods like "#append" and
 # "#concat" actually do than operators like "<<" and "+" for arrays.
 #
