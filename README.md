@@ -73,25 +73,9 @@ import track from './common';
 track('my_verb', resource.uuid, resource.type, context);
 ```
 
-### Ember Frontend
-
-See `web/frontend/app/services/tracking.js#track`
-
-Usage:
-```
-tracking: service(),
-[...]
-this.get('tracking').track({
-  verb: 'my_verb',
-  resource: resource.uuid,
-  resourceType: resource.type,
-  context,
-});
-```
-
 ### API
 
-The Web Service and Ember Frontend track events via our API, which is also used by our native apps. The API endpoint documentation can be found here: https://dev.xikolo.de/api-docs/#endpoint-tracking-events.
+The web service tracks events via our API, which is also used by our native mobile apps. The API endpoint documentation can be found here: https://dev.xikolo.de/api-docs/#endpoint-tracking-events.
 
 ## Link Tracking
 
