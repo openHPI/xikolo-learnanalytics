@@ -55,8 +55,6 @@ gem 'sidekiq-cron', '~> 1.4'
 
 # Use unicorn as the app server
 gem 'puma'
-gem 'unicorn'
-gem 'unicorn-rails'
 
 gem 'iso_country_codes' # converting ISO country codes
 gem 'maxminddb' # Location tracking

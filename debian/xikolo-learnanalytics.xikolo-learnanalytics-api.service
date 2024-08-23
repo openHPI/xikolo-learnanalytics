@@ -1,29 +1,30 @@
 [Unit]
 Description=Xikolo Learn Analytics Service - API Server
+PartOf=${PACKAGE}.service
+
+After=${PACKAGE}-unicorn.service
+After=consul.service
 After=network.target
 After=nginx.service
-After=consul.service
-Requires=nginx.service
 Before=xikolo-active.service
-PartOf=${PACKAGE}.service
+Conflicts=${PACKAGE}-unicorn.service
+Requires=${PACKAGE}-api.socket
 
 [Service]
 User=www-data
 Group=www-data
 
-SyslogIdentifier=${PACKAGE}-unicorn
+SyslogIdentifier=${PACKAGE}-api
 WorkingDirectory=/usr/lib/${PACKAGE}
 RuntimeDirectory=${PACKAGE}
-PIDFile=/run/${PACKAGE}/unicorn.pid
+RuntimeDirectoryPreserve=yes
 
 EnvironmentFile=/etc/default/${PACKAGE}
 EnvironmentFile=-/etc/${PACKAGE}/env
 
-ExecStart=/usr/bin/${PACKAGE} unicorn -E none --config-file config/unicorn.rb --pid /run/${PACKAGE}/unicorn.pid --listen /run/${PACKAGE}/sock $UNICORN_ARGS
+ExecStart=/usr/bin/${PACKAGE} puma --config config/puma.production.rb --bind-to-activated-sockets=only $PUMA_ARGS
 ExecStartPost=-/etc/xikolo-hook.sh ${PACKAGE} unicorn started
-ExecReload=/bin/kill -USR2 $MAINPID
 ExecStop=-/etc/xikolo-hook.sh ${PACKAGE} unicorn stop
-ExecStop=/bin/kill -QUIT $MAINPID
 
 Restart=on-failure
 RestartSec=60s

@@ -82,8 +82,9 @@ override_dh_link:
 
 override_dh_installsystemd:
 	sed -i -e 's/$${PACKAGE}/${PACKAGE}/g' debian/*.service
+	sed -i -e 's/$${PACKAGE}/${PACKAGE}/g' debian/*.socket
 	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}
-	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-unicorn
-	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-sidekiq
-	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-reporting
+	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-api
 	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-msgr
+	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-reporting
+	dh_installsystemd --no-start --no-restart-after-upgrade --no-enable --name=${PACKAGE}-sidekiq

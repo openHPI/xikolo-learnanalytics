@@ -1,0 +1,16 @@
+[Unit]
+Description=Xikolo Learn Analytics Service - API server socket
+PartOf=${PACKAGE}.service
+
+[Socket]
+ListenStream=/run/${PACKAGE}/sock
+
+SocketUser=www-data
+SocketGroup=www-data
+
+ReusePort=true
+Backlog=1024
+NoDelay=true
+
+[Install]
+WantedBy=sockets.target
