@@ -7,71 +7,50 @@ ruby '~> 3.3.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1'
 
+gem 'puma'
+
+gem 'base64'
 gem 'csv'
 gem 'drb'
 gem 'mutex_m'
-gem 'syslog'
-
 gem 'nokogiri', '~> 1.11'
+gem 'syslog'
+gem 'uuid4'
 
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
-
-gem 'rails-rfc6570', '~> 3.0'
-gem 'restify', '~> 1.15'
-
-gem 'concurrent-ruby', '~> 1.0'
-gem 'mnemosyne-ruby', '~> 2.0'
-gem 'sentry-rails'
-gem 'sentry-ruby'
-gem 'sentry-sidekiq'
-gem 'telegraf', '~> 3.0'
-
-gem 'forgery'
-gem 'validates_email_format_of'
-
-# Connecting to RabbitMQ
-gem 'msgr', '~> 1.5'
-
+gem 'browser'
 gem 'connection_pool'
+gem 'iso_country_codes'
+gem 'maxminddb'
 
-# Different storage backends for data and files
+# Rails plugins
+gem 'decorate-responder'
+gem 'draper'
+gem 'link_header'
+gem 'paginate-responder'
+gem 'paper_trail', '~> 15.0' # for versioning
+gem 'rails-rfc6570', '~> 3.0'
+gem 'responders'
+gem 'will_paginate'
+
+# Messaging and background jobs
+gem 'msgr', '~> 1.5'
+gem 'sidekiq', '~> 7.0'
+gem 'sidekiq-cron', '~> 1.4'
+
+# Databases and clients
 gem 'aws-sdk-s3', '~> 1.16'
 gem 'elasticsearch', '~> 7.13.1'
 gem 'elasticsearch-transport', '~> 7.13.1'
 gem 'pg', '~> 1.1'
 gem 'redis', '~> 5.0'
+gem 'restify', '~> 1.15'
 
-gem 'multi_json'
-gem 'rest-client'
-
-gem 'link_header'
-gem 'ruby-progressbar'
-
-gem 'business_time'
-gem 'database_cleaner'
-gem 'sidekiq', '~> 7.0'
-gem 'sidekiq-cron', '~> 1.4'
-
-# Use unicorn as the app server
-gem 'puma'
-
-gem 'iso_country_codes' # converting ISO country codes
-gem 'maxminddb' # Location tracking
-
-gem 'browser' # Browser info
-
-gem 'uuid4'
-
-gem 'decorate-responder'
-gem 'draper'
-gem 'mechanize'
-gem 'paginate-responder'
-gem 'responders'
-gem 'will_paginate'
-
-# for versioning
-gem 'paper_trail', '~> 15.0'
+# Monitoring and metrics
+gem 'mnemosyne-ruby', '~> 2.0'
+gem 'sentry-rails'
+gem 'sentry-ruby'
+gem 'sentry-sidekiq'
+gem 'telegraf', '~> 3.0'
 
 group :development do
   gem 'better_errors'
@@ -82,6 +61,7 @@ group :development do
 end
 
 group :development, :test do
+  gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 6.0'
   gem 'listen'
   gem 'pry'
@@ -90,17 +70,13 @@ group :development, :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails'
+  gem 'rspec-sidekiq'
   gem 'rspec-teamcity', require: false
   gem 'rubocop', '~> 1.65.0'
   gem 'rubocop-factory_bot', '~> 2.26.1'
   gem 'rubocop-performance', '~> 1.21.0'
   gem 'rubocop-rails', '~> 2.26.0'
   gem 'rubocop-rspec', '~> 3.0.0'
-end
-
-group :test do
-  gem 'accept_values_for'
-  gem 'rspec-sidekiq'
   gem 'simplecov'
   gem 'timecop'
   gem 'webmock'
