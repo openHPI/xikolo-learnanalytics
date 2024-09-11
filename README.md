@@ -13,8 +13,7 @@ The lanalytics service is responsible for the processing of tracked learner inte
 * `git clone git@dev.xikolo.de:xikolo/lanalytics.git`
 * `cd lanalytics`
 * `bundle install`
-* `bundle exec rake db:drop db:create db:migrate`
-* `bundle exec rake db:seed`
+* `bundle exec rake db:drop db:prepare`
 * `bundle exec rake elastic:setup`
 * `bundle exec rake s3:setup`
   * Minio must be running. If Minio uses default port and credentials, no further setup is needed.
