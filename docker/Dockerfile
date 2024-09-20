@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.9@sha256:fe40cf4e92cd0c467be2cfc30657a680ae2398318afd50b0c80585784c604f28
 
-FROM docker.io/ruby:3.3.4-slim@sha256:7bb0e1e46378217ce0775845f6d64b039c56d2890bc715536e6687ab13fe2930 AS build
+FROM docker.io/ruby:3.3.5-slim@sha256:106f5d38fda9e58669b3cd7d8b06dab5acb4a86eb92319e0139bb903d8858784 AS build
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -61,7 +61,7 @@ EOF
 #
 # Runtime image
 #
-FROM docker.io/ruby:3.3.4-slim@sha256:7bb0e1e46378217ce0775845f6d64b039c56d2890bc715536e6687ab13fe2930
+FROM docker.io/ruby:3.3.5-slim@sha256:106f5d38fda9e58669b3cd7d8b06dab5acb4a86eb92319e0139bb903d8858784
 
 ARG TARGETARCH
 
