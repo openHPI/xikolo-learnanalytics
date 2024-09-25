@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1.9@sha256:fe40cf4e92cd0c467be2cfc30657a680ae2398318afd50b0c80585784c604f28
+# syntax = docker/dockerfile:1.10@sha256:865e5dd094beca432e8c0a1d5e1c465db5f998dca4e439981029b3b81fb39ed5
 
 FROM docker.io/ruby:3.3.5-slim@sha256:106f5d38fda9e58669b3cd7d8b06dab5acb4a86eb92319e0139bb903d8858784 AS build
 
