@@ -392,7 +392,7 @@ GEM
       sentry-ruby (~> 5.19.0)
       sidekiq (>= 3.0)
     set (1.1.0)
-    sidekiq (7.3.1)
+    sidekiq (7.3.2)
       concurrent-ruby (< 2)
       connection_pool (>= 2.3.0)
       logger
