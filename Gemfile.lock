@@ -211,7 +211,7 @@ GEM
       activesupport (>= 6.1)
       bunny
     msgpack (1.7.2)
-    msgr (1.5.0)
+    msgr (1.6.1)
       activesupport
       bunny (>= 1.4, < 3.0)
     multi_json (1.15.0)
