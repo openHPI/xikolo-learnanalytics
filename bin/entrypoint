@@ -18,7 +18,7 @@ migrate)
   # Create database and run all migrations. If no changes are needed,
   # nothing will happen.
   echo "[INFO] Running database migrations..."
-  set -- bundle exec rake db:create db:migrate
+  set -- bundle exec rake db:prepare
   ;;
 
 msgr)
