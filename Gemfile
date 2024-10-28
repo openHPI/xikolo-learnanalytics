@@ -75,7 +75,7 @@ group :development, :test do
   gem 'rubocop', '~> 1.67.0'
   gem 'rubocop-factory_bot', '~> 2.26.1'
   gem 'rubocop-performance', '~> 1.22.0'
-  gem 'rubocop-rails', '~> 2.26.0'
+  gem 'rubocop-rails', '~> 2.27.0'
   gem 'rubocop-rspec', '~> 3.2.0'
   gem 'simplecov'
   gem 'timecop'
