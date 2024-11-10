@@ -27,7 +27,7 @@ gem 'decorate-responder'
 gem 'draper'
 gem 'link_header'
 gem 'paginate-responder'
-gem 'paper_trail', '~> 15.0' # for versioning
+gem 'paper_trail', '~> 16.0' # for versioning
 gem 'rails-rfc6570', '~> 3.0'
 gem 'responders'
 gem 'will_paginate'
