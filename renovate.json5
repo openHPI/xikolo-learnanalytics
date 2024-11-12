@@ -1,60 +1,87 @@
-// vim: ft=json5
 {
-  $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["config:base"],
-
-  labels: ['Internal 🔨', 'Dependency 🧱'],
-
-  // Only check for new updates and maintenance jobs weekly, on Sunday. New
-  // merge requests should then bde ready to be merged (CI etc.) on Monday.
-  schedule: ["every sunday"],
-
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+  ],
+  labels: [
+    'Internal 🔨',
+    'Dependency 🧱',
+  ],
+  // Only check for new updates and maintenance jobs on a weekly basis.
+  schedule: [
+    'on sunday',
+  ],
   // Use semantic commits for renovate commits and MRs. This makes it easier to
-  // identify MR and when browsing the Git history. In the future, automatic
+  // identify MRs when browsing the Git history. In the future, automatic
   // changelog scripts can detect and classify changes correctly.
-  semanticCommits: "enabled",
-
+  semanticCommits: 'enabled',
+  // The bundler conservative mode avoids updating transitive dependencies
+  // when only parent packages are bumped. See bundler --conservative.
   postUpdateOptions: [
-    // bundler conservative mode avoids updating transitive dependencies
-    // when only parent packages are bumped. See bundler --conservative.
     'bundlerConservative',
   ],
-
   packageRules: [
-    // Do not bump ruby version (only security patches), but group them
+    // Do not bump the major Ruby version (only security patches), and group them.
     {
-      matchPackageNames: ['ruby', 'docker.io/ruby'],
-      matchUpdateTypes: ['major', 'minor'],
+      matchPackageNames: [
+        'ruby',
+        'docker.io/ruby',
+      ],
+      matchUpdateTypes: [
+        'major',
+        'minor',
+      ],
       enabled: false,
     },
     {
       groupName: 'ruby',
-      matchPackageNames: ['ruby', 'docker.io/ruby'],
+      matchPackageNames: [
+        'ruby',
+        'docker.io/ruby',
+      ],
     },
     // Disable major and minor updates (usually of docker images) in Gitlab CI
     // and docker-compose. They are carefully chosen to match the production
     // environment.
     {
-      matchManagers: ["gitlabci", "docker-compose"],
-      matchUpdateTypes: ["major", "minor"],
+      matchManagers: [
+        'gitlabci',
+        'docker-compose',
+      ],
+      matchUpdateTypes: [
+        'major',
+        'minor',
+      ],
       enabled: false,
     },
-    // Auto-merge digest updates e.g. in .gitlab-ci.yml
+    // Auto-merge digest updates, e.g. in `.gitlab-ci.yml`.
     {
-      matchUpdateTypes: ["digest", "lockFileMaintenance", "pin"],
+      matchUpdateTypes: [
+        'digest',
+        'lockFileMaintenance',
+        'pin',
+      ],
       automerge: true,
     },
-    // Group updates of all elasticsearch gems
+    // Group updates of all elasticsearch gems.
     {
-      matchDatasources: ["rubygems"],
-      matchPackagePrefixes: ["elasticsearch"],
-      groupName: "elasticsearch packages",
+      matchDatasources: [
+        'rubygems',
+      ],
+      groupName: 'elasticsearch packages',
+      matchPackageNames: [
+        'elasticsearch{/,}**',
+      ],
     },
     // Group sentry monorepo gems. They can only be upgraded together.
     {
-      matchDatasources: ["rubygems"],
-      matchPackagePatterns: ["^sentry"],
+      matchDatasources: [
+        'rubygems',
+      ],
       groupName: 'sentry monorepo',
-    }
+      matchPackageNames: [
+        '/^sentry/',
+      ],
+    },
   ],
 }
