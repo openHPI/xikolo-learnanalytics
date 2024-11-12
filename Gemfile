@@ -35,7 +35,7 @@ gem 'will_paginate'
 # Messaging and background jobs
 gem 'msgr', '~> 1.5'
 gem 'sidekiq', '~> 7.0'
-gem 'sidekiq-cron', '~> 1.4'
+gem 'sidekiq-cron', '~> 2.0'
 
 # Databases and clients
 gem 'aws-sdk-s3', '~> 1.16'
