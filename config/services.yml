@@ -8,7 +8,6 @@ common: &common
     peerassessment: <%= ENV['XIKOLO_SERVICE_PEERASSESSMENT'] || 'http://localhost:5400' %>
     pinboard: <%= ENV['XIKOLO_SERVICE_PINBOARD'] || 'http://localhost:3500' %>
     quiz: <%= ENV['XIKOLO_SERVICE_QUIZ'] || 'http://localhost:3800' %>
-    video: <%= ENV['XIKOLO_SERVICE_VIDEO'] || 'http://localhost:3600' %>
 
 development:
   <<: *common
@@ -25,4 +24,3 @@ test:
     notification: http://notification.xikolo.tld
     pinboard: http://pinboard.xikolo.tld
     quiz: http://quiz.xikolo.tld
-    video: http://video.xikolo.tld
