@@ -74,7 +74,7 @@ group :development, :test do
   gem 'rspec-teamcity', require: false
   gem 'rubocop', '~> 1.68.0'
   gem 'rubocop-factory_bot', '~> 2.26.1'
-  gem 'rubocop-performance', '~> 1.22.0'
+  gem 'rubocop-performance', '~> 1.23.0'
   gem 'rubocop-rails', '~> 2.27.0'
   gem 'rubocop-rspec', '~> 3.2.0'
   gem 'simplecov'
