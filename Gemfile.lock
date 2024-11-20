@@ -219,7 +219,7 @@ GEM
       bunny (>= 1.4, < 3.0)
     multi_json (1.15.0)
     multipart-post (2.4.1)
-    mutex_m (0.2.0)
+    mutex_m (0.3.0)
     net-imap (0.4.11)
       date
       net-protocol
