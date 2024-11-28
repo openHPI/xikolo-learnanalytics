@@ -72,7 +72,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rspec-sidekiq'
   gem 'rspec-teamcity', require: false
-  gem 'rubocop', '~> 1.68.0'
+  gem 'rubocop', '~> 1.69.0'
   gem 'rubocop-factory_bot', '~> 2.26.1'
   gem 'rubocop-performance', '~> 1.23.0'
   gem 'rubocop-rails', '~> 2.27.0'
