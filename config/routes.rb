@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  defaults format: 'json' do
+  defaults format: :json do
     root to: 'root#index'
 
     resources :system_info, only: [:show]
