@@ -39,8 +39,8 @@ gem 'sidekiq-cron', '~> 2.0'
 
 # Databases and clients
 gem 'aws-sdk-s3', '~> 1.16'
-gem 'elasticsearch', '~> 7.13.1'
-gem 'elasticsearch-transport', '~> 7.13.1'
+gem 'elasticsearch', '~> 7.17.0'
+gem 'elasticsearch-transport', '~> 7.17.0'
 gem 'pg', '~> 1.1'
 gem 'redis', '~> 5.0'
 gem 'restify', '~> 1.15'
