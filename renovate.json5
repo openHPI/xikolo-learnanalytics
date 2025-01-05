@@ -3,24 +3,34 @@
   extends: [
     'config:recommended',
   ],
+
   labels: [
     'Internal 🔨',
     'Dependency 🧱',
   ],
+
   // Only check for new updates and maintenance jobs on a weekly basis.
   schedule: [
     'on sunday',
   ],
+
   // Use semantic commits for renovate commits and MRs. This makes it easier to
   // identify MRs when browsing the Git history. In the future, automatic
   // changelog scripts can detect and classify changes correctly.
   semanticCommits: 'enabled',
+
   // The bundler conservative mode avoids updating transitive dependencies
   // when only parent packages are bumped. See bundler --conservative.
   postUpdateOptions: [
     'bundlerConservative',
   ],
+
   packageRules: [
+    // Disable on GitHub mirror
+    {
+      matchRepositories: ['openHPI/xikolo-learnanalytics'],
+      enabled: false,
+    },
     // Do not bump the major Ruby version (only security patches), and group them.
     {
       matchPackageNames: [
