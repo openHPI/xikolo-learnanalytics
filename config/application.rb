@@ -21,7 +21,7 @@ require 'action_view/railtie'
 Bundler.require(*Rails.groups)
 
 require 'telegraf/rails'
-require 'rails/secrets'
+require_relative '../lib/rails/secrets'
 
 module Lanalytics
   class Application < Rails::Application
