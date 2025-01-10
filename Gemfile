@@ -4,8 +4,7 @@ source 'https://rubygems.org'
 
 ruby '~> 3.3.0'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1'
+gem 'rails', '~> 7.2'
 
 gem 'puma'
 
