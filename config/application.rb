@@ -21,9 +21,12 @@ require 'action_view/railtie'
 Bundler.require(*Rails.groups)
 
 require 'telegraf/rails'
+require 'rails/secrets'
 
 module Lanalytics
   class Application < Rails::Application
+    include Rails::Secrets
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
 
