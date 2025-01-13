@@ -169,7 +169,7 @@ module Lanalytics
 
           section = sections.find {|s| s['id'] == item['section_id'] }
 
-          video_stats = Restify.new(:xikolo).get.value!.rel(:video_stats).get(video_id: item['content_id'])
+          video_stats = bridge_api.rel(:video_stats).get(video_id: item['content_id']).value!
 
           {
             id:,
@@ -214,6 +214,10 @@ module Lanalytics
 
         def course_api
           @course_api ||= Restify.new(:course).get.value!
+        end
+
+        def bridge_api
+          @bridge_api ||= Restify.new(:xikolo).get.value!
         end
       end
     end
