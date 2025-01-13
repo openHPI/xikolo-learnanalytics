@@ -169,17 +169,16 @@ module Lanalytics
 
           section = sections.find {|s| s['id'] == item['section_id'] }
 
-          video = Restify.new(:video).get.value!
-            .rel(:video).get(id: item['content_id']).value!
+          video_stats = Restify.new(:xikolo).get.value!.rel(:video_stats).get(video_id: item['content_id'])
 
           {
             id:,
             position: "#{section['position']}.#{item['position']}",
             title: item['title'],
             plays: ri&.dig('plays', 'user', 'value').to_i,
-            duration: video['duration'],
+            duration: video_stats['duration'],
             avg_farthest_watched: [
-              ri&.dig('avg_farthest_watched', 'value').to_f / video['duration'],
+              ri&.dig('avg_farthest_watched', 'value').to_f / video_stats['duration'],
               1.0,
             ].min, # avoid rounding errors over max
             forward_seeks: ri&.dig('seeks', 'forward', 'doc_count').to_i,
