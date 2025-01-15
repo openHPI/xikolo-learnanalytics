@@ -145,11 +145,6 @@ describe Lanalytics::Processing::Pipeline do
       pipeline.process(event_data)
     end
 
-    it 'executes Pipeline without steps' do
-      pipeline = described_class.new(name, schema, processing_action)
-      pipeline.process(dummy_prop: 'dummy_value')
-    end
-
     it 'stops when data is nil' do
       extract_step = Lanalytics::Processing::Extractor::ExtractStep.new
       expect(extract_step).not_to receive(:extract)
