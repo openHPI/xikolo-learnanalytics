@@ -50,7 +50,7 @@ module Xikolo
 
     Summary = Struct.new(:value, :total) do
       def to_f
-        [[0, value.to_f / total].max, 1].min
+        (value.to_f / total).clamp(0, 1)
       end
 
       def percentage
