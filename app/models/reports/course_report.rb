@@ -137,13 +137,12 @@ module Reports
           end,
         ).value!.first.count
 
-        start_date = Date.parse(course['start_date'])
+        start_date = course['start_date'] && Date.parse(course['start_date'])
         end_date = if course['end_date'].present?
                      Date.parse(course['end_date'])
                    else
                      Time.zone.today
-                   end
-        course_days = (end_date - start_date).to_i
+        course_days = (end_date - start_date).to_i if start_date.present?
       end
 
       enrollments_promise = Xikolo.paginate_with_retries(
@@ -309,7 +308,7 @@ module Reports
                 of: video_count,
               ) || '',
               forum_activity,
-              forum_activity.to_f / course_days,
+              course_days&.positive? ? (forum_activity.to_f / course_days) : '',
               forum_write_activity,
               clustering_metrics.dig(
                 user['id'], 'quiz_performance'
