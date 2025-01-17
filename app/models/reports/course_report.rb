@@ -142,6 +142,7 @@ module Reports
                      Date.parse(course['end_date'])
                    else
                      Time.zone.today
+                   end
         course_days = (end_date - start_date).to_i if start_date.present?
       end
 
