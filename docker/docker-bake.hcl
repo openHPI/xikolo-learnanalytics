@@ -30,7 +30,7 @@ target lanalytics {
     "org.opencontainers.image.ref.name=${TAG}",
     "org.opencontainers.image.revision=${CI_COMMIT_SHA}",
     "org.opencontainers.image.title=xikolo-lanalytics",
-    "org.opencontainers.image.vendor=Hasso-Plattner-Institut für Digital Engineering gGmbH",
+    "org.opencontainers.image.vendor=Hasso Plattner Institute for Digital Engineering gGmbH",
     "org.opencontainers.image.version=${TAG}",
   ]
 
