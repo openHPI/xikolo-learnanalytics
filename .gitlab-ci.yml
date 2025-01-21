@@ -13,6 +13,7 @@ cache:
     - apt-get --quiet --quiet update
     - apt-get --quiet --yes -o=Dpkg::Use-Pty=0 install build-essential libpq-dev libxml2-dev git
     - gem install bundler -v '~> 2.0'
+    - bundle config --local frozen 'true'
     - bundle config --local path '.cache/bundle'
     - bundle config --local without 'development production integration'
     - bundle install --jobs $(nproc) --retry 3
