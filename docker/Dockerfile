@@ -22,6 +22,7 @@ RUN <<EOF
     libidn11-dev \
     libpq-dev \
     libsodium23 \
+    libyaml-dev \
     pax-utils \
     shared-mime-info \
     tzdata
@@ -86,6 +87,7 @@ RUN <<EOF
     git \
     libcurl4 \
     libsodium23 \
+    libyaml-dev \
     nginx \
     shared-mime-info \
     tzdata \
