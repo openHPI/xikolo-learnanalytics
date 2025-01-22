@@ -232,9 +232,10 @@ GEM
       activesupport (>= 6.1)
       bunny
     msgpack (1.7.5)
-    msgr (1.6.1)
-      activesupport
+    msgr (1.7.0)
+      activesupport (>= 7.1)
       bunny (>= 1.4, < 3.0)
+      logger
     multi_json (1.15.0)
     multipart-post (2.4.1)
     mutex_m (0.3.0)
