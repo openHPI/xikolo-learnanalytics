@@ -69,6 +69,7 @@ build:image:
     - cd docker/
     - >
       docker buildx bake
+      --allow=fs.read=..
       -f docker-bake.hcl
       --set "*.cache-from=type=registry,ref=$CI_REGISTRY_IMAGE/xikolo-lanalytics:latest"
       --push
