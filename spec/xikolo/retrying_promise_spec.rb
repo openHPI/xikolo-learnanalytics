@@ -23,23 +23,17 @@ describe Xikolo::RetryingPromise do
   end
 
   let(:retrying_promise) { described_class.new(dependencies, &task) }
-  let(:dependencies) { [retryable1, retryable2, retryable3] }
+  let(:dependencies) do
+    [
+      Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats1).get },
+      Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats2).get },
+      Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats3).get },
+    ]
+  end
   let(:task) do
     proc do |retryable1, retryable2, retryable3|
       "#{retryable1['kpi']}, #{retryable2['kpi']}, #{retryable3['kpi']}"
     end
-  end
-
-  let(:retryable1) do
-    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats1).get }
-  end
-
-  let(:retryable2) do
-    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats2).get }
-  end
-
-  let(:retryable3) do
-    Xikolo::Retryable.new(max_retries: 3, wait: 0) { Restify.new(:course).get.value!.rel(:stats3).get }
   end
 
   describe '#value!' do
