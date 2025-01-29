@@ -54,6 +54,15 @@ RSpec.configure do |config|
       .to_rack(Lanalytics::Application)
     stub_request(:any, /test\.host/)
       .to_rack(Lanalytics::Application)
+    # Since v7.14.0, the client checks that it is connected to an Elasticsearch
+    # cluster by making a request to root and comparing version numbers and
+    # returned headers.
+    # See https://github.com/elastic/elasticsearch-ruby/releases/tag/v7.14.0.
+    stub_request(:get, 'http://localhost:9200/')
+      .to_return Stub.json(
+        {'version' => {'number' => '7.17.0'}},
+        headers: {'x-elastic-product' => 'Elasticsearch'},
+      )
   end
 
   config.around do |example|
