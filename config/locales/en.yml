@@ -61,12 +61,6 @@ en:
       options:
         course_statistics: Include course statistics.
         end_date: 'Optional latest date for statistics:'
-    openwho_course_report:
-      name: OpenWHO Course Report
-      desc: Custom course report for OpenWHO.
-    openwho_combined_course_report:
-      name: OpenWHO Combined Course Report
-      desc: Custom combined course report for OpenWHO.
     shared_options:
       machine_headers: Better machine-readable headers (lowercase and underscored).
       de_pseudonymized: De-pseudonymize report. Attention! Only use this option if the further processing of the data is in compliance with the data protection regulations of the platform.

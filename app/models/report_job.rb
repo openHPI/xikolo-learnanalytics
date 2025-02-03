@@ -20,8 +20,6 @@ class ReportJob < ApplicationRecord
     'enrollment_statistics_report' => Reports::EnrollmentStatisticsReport,
     'course_content_report' => Reports::CourseContentReport,
     'overall_course_summary_report' => Reports::OverallCourseSummaryReport,
-    'openwho_course_report' => Reports::Openwho::CourseReport,
-    'openwho_combined_course_report' => Reports::Openwho::CombinedCourseReport,
   }.freeze
 
   default_scope { order('updated_at DESC') }

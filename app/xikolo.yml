@@ -48,9 +48,6 @@ reports:
   # types:
   #   - course_report
   #   - combined_course_report
-  #   - openwho:
-  #     - course_report
-  #     - combined_course_report
   types:
     - course_report
     - combined_course_report

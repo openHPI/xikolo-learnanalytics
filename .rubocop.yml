@@ -79,7 +79,6 @@ RSpec/SpecFilePathFormat:
   CustomTransform:
     OpenSAP: opensap
     OpenHPI: openhpi
-    OpenWHO: openwho
 
 RSpec/MessageSpies:
   Enabled: false

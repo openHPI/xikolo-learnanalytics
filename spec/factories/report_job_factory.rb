@@ -59,15 +59,5 @@ FactoryBot.define do
       task_type   { 'overall_course_summary_report' }
       task_scope  { nil }
     end
-
-    trait :openwho_course_report do
-      task_type   { 'openwho_course_report' }
-      task_scope  { '5c677063-e198-4fb8-a121-aaca9482d372' }
-    end
-
-    trait :openwho_combined_course_report do
-      task_type   { 'openwho_combined_course_report' }
-      task_scope  { '5c677063-e198-4fb8-a121-aaca9482d372' }
-    end
   end
 end

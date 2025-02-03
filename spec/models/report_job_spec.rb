@@ -46,8 +46,6 @@ describe ReportJob do
       combined_course_report
       course_events_report
       user_report
-      openwho_course_report
-      openwho_combined_course_report
     ].each do |long_running_report|
       context long_running_report.to_s do
         let(:report_type) { long_running_report }

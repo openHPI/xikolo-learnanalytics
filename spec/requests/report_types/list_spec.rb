@@ -501,96 +501,6 @@ describe 'ReportTypes: List' do
     }
   end
 
-  let(:openwho_course_report) do
-    {
-      'type' => 'openwho_course_report',
-      'name' => 'OpenWHO Course Report',
-      'description' => 'Custom course report for OpenWHO.',
-      'scope' => {
-        'type' => 'select',
-        'name' => 'task_scope',
-        'label' => 'Select a course:',
-        'values' => 'courses',
-        'options' => {
-          'prompt' => 'Please select...',
-          'disabled' => '',
-          'required' => true,
-        },
-      },
-      'options' => [
-        {
-          'type' => 'checkbox',
-          'name' => 'machine_headers',
-          'label' => 'Better machine-readable headers (lowercase and underscored).',
-        },
-        {
-          'type' => 'checkbox',
-          'name' => 'de_pseudonymized',
-          'label' => 'De-pseudonymize report. Attention! Only use this option if the further processing of the data is in compliance with the data protection regulations of the platform.',
-        },
-        {
-          'type' => 'checkbox',
-          'name' => 'include_enrollment_evaluation',
-          'label' => 'Include enrollment evaluation for all courses for every user. This can significantly increase the time to create the report.',
-        },
-        {
-          'type' => 'text_field',
-          'name' => 'zip_password',
-          'label' => 'Optional password for the generated ZIP archive:',
-          'options' => {
-            'placeholder' => 'Password',
-            'input_size' => 'large',
-          },
-        },
-      ],
-    }
-  end
-
-  let(:openwho_combined_course_report) do
-    {
-      'type' => 'openwho_combined_course_report',
-      'name' => 'OpenWHO Combined Course Report',
-      'description' => 'Custom combined course report for OpenWHO.',
-      'scope' => {
-        'type' => 'select',
-        'name' => 'task_scope',
-        'label' => 'Select a classifier:',
-        'values' => 'classifiers',
-        'options' => {
-          'prompt' => 'Please select...',
-          'disabled' => '',
-          'required' => true,
-        },
-      },
-      'options' => [
-        {
-          'type' => 'checkbox',
-          'name' => 'machine_headers',
-          'label' => 'Better machine-readable headers (lowercase and underscored).',
-        },
-        {
-          'type' => 'checkbox',
-          'name' => 'de_pseudonymized',
-          'label' => 'De-pseudonymize report. Attention! Only use this option if the further processing of the data is in compliance with the data protection regulations of the platform.',
-        },
-        {
-          'type' => 'checkbox',
-          'name' => 'include_enrollment_evaluation',
-          'label' => 'Include enrollment evaluation for all courses for every user. This can significantly increase the time to create the report.',
-        },
-        {
-          'type' => 'text_field',
-          'name' => 'zip_password',
-          'label' => 'Optional password for the generated ZIP archive:',
-          'options' => {
-            'placeholder' => 'Password',
-            'input_size' => 'large',
-          },
-        },
-      ],
-    }
-  end
-
   context 'empty config' do
     let(:report_types) do
       <<~YML
@@ -632,7 +542,7 @@ describe 'ReportTypes: List' do
     it { expect(resource).to include overall_course_summary_report }
   end
 
-  context 'general and openwho reports' do
+  context 'general reports' do
     let(:report_types) do
       <<~YML
         reports:
@@ -647,9 +557,6 @@ describe 'ReportTypes: List' do
             - course_events_report
             - course_content_report
             - overall_course_summary_report
-            - openwho:
-              - course_report
-              - combined_course_report
       YML
     end
 
@@ -664,7 +571,5 @@ describe 'ReportTypes: List' do
     it { expect(resource).to include course_events_report }
     it { expect(resource).to include course_content_report }
     it { expect(resource).to include overall_course_summary_report }
-    it { expect(resource).to include openwho_course_report }
-    it { expect(resource).to include openwho_combined_course_report }
   end
 end
