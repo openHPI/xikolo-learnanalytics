@@ -77,7 +77,6 @@ RSpec/SpecFilePathFormat:
   Exclude:
     - 'spec/client/**/*_spec.rb'
   CustomTransform:
-    OpenSAP: opensap
     OpenHPI: openhpi
 
 RSpec/MessageSpies:

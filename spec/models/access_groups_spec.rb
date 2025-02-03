@@ -39,9 +39,6 @@ describe AccessGroups do
       {
         name: 'xikolo.affiliated',
       },
-      {
-        name: 'opensap.partner',
-      },
     ])
 
     Stub.request(
@@ -50,10 +47,6 @@ describe AccessGroups do
       {
         name: 'xikolo.affiliated',
         memberships_url: '/groups/xikolo.affiliated/memberships',
-      },
-      {
-        name: 'opensap.partner',
-        memberships_url: '/groups/opensap.partner/memberships',
       },
     ])
   end
@@ -76,7 +69,7 @@ describe AccessGroups do
     context 'user with two access groups' do
       let(:user) { user_two_groups }
 
-      it { is_expected.to eq(%w[xikolo.affiliated opensap.partner]) }
+      it { is_expected.to eq(%w[xikolo.affiliated]) }
     end
   end
 end
