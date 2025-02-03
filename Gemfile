@@ -77,6 +77,7 @@ group :development, :test do
   gem 'rubocop-performance', '~> 1.23.0'
   gem 'rubocop-rails', '~> 2.29.0'
   gem 'rubocop-rspec', '~> 3.4.0'
+  gem 'rubocop-rspec_rails', '~> 2.30.0'
   gem 'simplecov'
   gem 'timecop'
   gem 'webmock'

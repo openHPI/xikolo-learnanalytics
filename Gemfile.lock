@@ -408,6 +408,9 @@ GEM
       rubocop-ast (>= 1.31.1, < 2.0)
     rubocop-rspec (3.4.0)
       rubocop (~> 1.61)
+    rubocop-rspec_rails (2.30.0)
+      rubocop (~> 1.61)
+      rubocop-rspec (~> 3, >= 3.0.1)
     ruby-prof (1.7.1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
@@ -521,6 +524,7 @@ DEPENDENCIES
   rubocop-performance (~> 1.23.0)
   rubocop-rails (~> 2.29.0)
   rubocop-rspec (~> 3.4.0)
+  rubocop-rspec_rails (~> 2.30.0)
   ruby-prof
   sentry-rails
   sentry-ruby
