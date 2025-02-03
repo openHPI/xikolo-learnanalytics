@@ -560,7 +560,7 @@ describe 'ReportTypes: List' do
       YML
     end
 
-    it { expect(resource).to have(12).items }
+    it { expect(resource).to have(10).items }
     it { expect(resource).to include course_report }
     it { expect(resource).to include combined_course_report }
     it { expect(resource).to include user_report }
