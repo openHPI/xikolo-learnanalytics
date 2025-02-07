@@ -42,7 +42,7 @@ module Lanalytics
         client_types = filters.keys
 
         # Build aggregation for each combination of client types
-        aggregations = subsets(client_types).map do |subset|
+        aggregations = subsets(client_types).to_h do |subset|
           key = subset_key(subset)
           aggregation = {
             filter: {
@@ -59,7 +59,7 @@ module Lanalytics
             },
           }
           [key, aggregation]
-        end.to_h
+        end
 
         query = {
           size: 0,

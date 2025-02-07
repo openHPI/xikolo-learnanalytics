@@ -3,7 +3,7 @@
 class UserGroups
   def initialize(*)
     @users = {}
-    @groups = keys.map do |group_key|
+    @groups = keys.to_h do |group_key|
       group_name = group_name(group_key)
       user_ids = account_service.rel(:group).get(id: group_name).then do |group|
         ids = []
@@ -15,7 +15,7 @@ class UserGroups
         ids
       end.value!
       [group_key, user_ids]
-    end.to_h
+    end
   end
 
   def keys
