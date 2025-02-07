@@ -116,7 +116,7 @@ module Reports
           progress.update(classifier['cluster'], 0, max: timeframe_count.to_i)
         end
 
-        clusters = @classifiers.map {|c| c['cluster'] }.uniq
+        clusters = @classifiers.pluck('cluster').uniq
       end
 
       progress.update('overall', 0, max: timeframe_count.to_i)
