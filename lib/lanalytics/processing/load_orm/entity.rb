@@ -9,9 +9,9 @@ module Lanalytics
         attr_reader :entity_key, :primary_attribute, :attributes
 
         # factory method
-        def self.create(entity_key, &block)
+        def self.create(entity_key, &)
           entity = new(entity_key)
-          entity.instance_eval(&block)
+          entity.instance_eval(&)
 
           entity
         end

@@ -5,7 +5,7 @@ module Lanalytics
     class Pipeline
       attr_reader :name, :schema, :processing_action
 
-      def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &block)
+      def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &)
         # Check mandatory fields
         raise ArgumentError.new "'#{name}' cannot be nil or empty" if name.blank?
 
@@ -43,7 +43,7 @@ module Lanalytics
         @transformers      = transformers
         @loaders           = loaders
 
-        instance_eval(&block) if block_given?
+        instance_eval(&) if block_given?
 
         # TODO: Check for validity and type
       end

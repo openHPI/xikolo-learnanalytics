@@ -25,8 +25,8 @@ class ReportJob < ApplicationRecord
   default_scope { order('updated_at DESC') }
 
   class << self
-    def create(attributes = {}, &block)
-      super(attributes.merge(status: 'requested'), &block)
+    def create(attributes = {}, &)
+      super(attributes.merge(status: 'requested'), &)
     end
 
     def create_and_enqueue(params)

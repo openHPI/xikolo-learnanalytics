@@ -44,12 +44,12 @@ module Lanalytics
         end
       end
 
-      def pipeline_for(name, schema, processing_action, &block)
+      def pipeline_for(name, schema, processing_action, &)
         @pipelines[schema][processing_action][name] = Pipeline.new(
           name,
           schema,
           processing_action,
-          &block
+          &
         )
 
         Rails.logger.debug do

@@ -32,12 +32,12 @@ module Xikolo::Paginate
 
     private
 
-    def start(&request_blk)
+    def start(&)
       Xikolo::RetryingPromise.new(
         Xikolo::Retryable.new(
           max_retries: @max_retries,
           wait: @wait,
-          &request_blk
+          &
         ),
       )
     end
