@@ -76,9 +76,9 @@ Default active users of last day.
 
         result = {}
         result[:relative] = (relative_users[course_id] || 0).round(2)
-        result[:top] = result[:relative] != 0 ? relative_users.values.sort.reverse.find_index(result[:relative]) + 1 : 0
+        result[:top] = result[:relative] == 0 ? 0 : relative_users.values.sort.reverse.find_index(result[:relative]) + 1
         active_courses = relative_users.size
-        result[:deviation] = active_courses != 0 ? (result[:relative] - (1.0 / active_courses.to_f)).round(2) : 0
+        result[:deviation] = active_courses == 0 ? 0 : (result[:relative] - (1.0 / active_courses.to_f)).round(2)
         course = Restify.new(:course).get.value!
           .rel(:courses).get(id: course_id).value!
         start_date = DateTime.parse(course[0]['start_date'])
@@ -91,7 +91,7 @@ Default active users of last day.
             end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
           activity_today = CourseActivity.query(course_id:, start_date: (DateTime.now - 1.day).to_s,
             end_date: DateTime.now.to_s)[:count].to_f
-          result[:kpi_activity] = (avg_activity_per_day != 0 ? activity_today / avg_activity_per_day : 0).round(2)
+          result[:kpi_activity] = (avg_activity_per_day == 0 ? 0 : activity_today / avg_activity_per_day).round(2)
         end
 
         result

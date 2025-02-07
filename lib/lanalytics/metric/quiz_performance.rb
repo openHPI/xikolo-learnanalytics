@@ -65,34 +65,22 @@ module Lanalytics
           }
         end
 
-        sum_points =
-          quiz_statements.dig('aggregations', 'sum_points', 'value')
-        sum_max_points =
-          quiz_statements.dig('aggregations', 'sum_max_points', 'value')
-        avg =
-          if sum_max_points != 0
-            sum_points / sum_max_points.to_f * 100
-          else
-            0
-          end
+        sum_points = quiz_statements.dig('aggregations', 'sum_points', 'value')
+        sum_max_points = quiz_statements.dig('aggregations', 'sum_max_points', 'value')
+        avg = sum_max_points.zero? ? 0 : (sum_points / sum_max_points.to_f * 100)
         sum_points_first_attempt =
           quiz_statements_first_attempt.dig(
             'aggregations',
             'sum_points',
             'value',
           )
-        sum_max_points_first_attempt =
-          quiz_statements_first_attempt.dig(
-            'aggregations',
-            'sum_max_points',
-            'value',
-          )
+        sum_max_points_first_attempt = quiz_statements_first_attempt.dig(
+          'aggregations',
+          'sum_max_points',
+          'value',
+        )
         first_attempt_avg =
-          if sum_max_points_first_attempt != 0
-            sum_points_first_attempt / sum_max_points_first_attempt.to_f * 100
-          else
-            0
-          end
+          sum_max_points_first_attempt.zero? ? 0 : (sum_points_first_attempt / sum_max_points_first_attempt.to_f * 100)
 
         {
           total: quiz_statements.dig('hits', 'total', 'value'),
