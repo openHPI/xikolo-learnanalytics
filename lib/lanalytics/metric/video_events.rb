@@ -38,9 +38,7 @@ module Lanalytics
             result[item['key']]['time'] = item['key']
           end
 
-          if result[item['key']]['total'].blank?
-            result[item['key']]['total'] = 0
-          end
+          result[item['key']]['total'] = 0 if result[item['key']]['total'].blank?
           result[item['key']]['total'] += item['doc_count']
 
           result[item['key']][key] = item['doc_count']

@@ -45,9 +45,7 @@ module Lanalytics
       end
 
       def self.verbs_filter
-        if verbs.nil? || verbs.size == 0
-          return []
-        end
+        return [] if verbs.nil? || verbs.size == 0
 
         filter = [{bool: {should: []}}]
         verbs.each do |verb|

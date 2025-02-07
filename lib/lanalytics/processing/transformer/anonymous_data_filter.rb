@@ -7,9 +7,7 @@ module Lanalytics
         def transform(_original_event, processing_units, _load_commands, _pipeline_ctx)
           processing_units.each do |processing_unit|
             filter_anonymous_data processing_unit.data
-            if processing_unit[:in_context].present?
-              filter_anonymous_data processing_unit.data[:in_context]
-            end
+            filter_anonymous_data processing_unit.data[:in_context] if processing_unit[:in_context].present?
           end
         end
 

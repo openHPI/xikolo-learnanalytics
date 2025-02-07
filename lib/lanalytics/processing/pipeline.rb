@@ -7,13 +7,9 @@ module Lanalytics
 
       def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &block)
         # Check mandatory fields
-        if name.blank?
-          raise ArgumentError.new "'#{name}' cannot be nil or empty"
-        end
+        raise ArgumentError.new "'#{name}' cannot be nil or empty" if name.blank?
 
-        if schema.blank?
-          raise ArgumentError.new "'#{schema}' cannot be nil"
-        end
+        raise ArgumentError.new "'#{schema}' cannot be nil" if schema.blank?
 
         if processing_action.nil? || !Lanalytics::Processing::Action.valid(processing_action)
           raise ArgumentError.new "'#{processing_action}' is not accepted; only 'Action::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"

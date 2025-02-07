@@ -37,9 +37,7 @@ module Lanalytics
         result_set = {}
         result['aggregations']['referrer']['buckets'].each do |item|
           referrer = item['key']
-          if params[:group_hosts].presence
-            referrer = referrer.split('/').first
-          end
+          referrer = referrer.split('/').first if params[:group_hosts].presence
           result_set[referrer] = 0 if result_set[referrer].nil?
           result_set[referrer] += item['doc_count']
         end

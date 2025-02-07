@@ -8,9 +8,7 @@ module Lanalytics
       attr_accessor :type, :data
 
       def initialize(type, data)
-        unless data.is_a?(Hash)
-          raise ArgumentError.new 'Wrong type of data; Needs to be Hash'
-        end
+        raise ArgumentError.new 'Wrong type of data; Needs to be Hash' unless data.is_a?(Hash)
 
         @type = type
         @data = data.with_indifferent_access

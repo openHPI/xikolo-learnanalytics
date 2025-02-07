@@ -14,13 +14,9 @@ module Lanalytics
         result = datasource.exec do |client|
           query_must = [{match: {'verb' => 'selected_objective'}}]
 
-          if user_id.present?
-            query_must << {match: {'user.resource_uuid' => user_id}}
-          end
+          query_must << {match: {'user.resource_uuid' => user_id}} if user_id.present?
 
-          if course_id.present?
-            query_must << {match: {'in_context.context_id' => course_id}}
-          end
+          query_must << {match: {'in_context.context_id' => course_id}} if course_id.present?
 
           body = {
             size: 0,
