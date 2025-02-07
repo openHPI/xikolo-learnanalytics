@@ -77,7 +77,7 @@ module Lanalytics
 
         active_objectives = result.dig('aggregations', 'by_user', 'buckets')&.map do |b|
           b.dig('current_objective', 'hits', 'hits', 0, '_source', 'in_context', 'new_objective')
-        end.each_with_object(Hash.new(0)) {|e, h| h[e] += 1 }
+        end&.each_with_object(Hash.new(0)) {|e, h| h[e] += 1 }
         total_selections_by_objective = result.dig('aggregations', 'by_objective',
           'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e['doc_count']
