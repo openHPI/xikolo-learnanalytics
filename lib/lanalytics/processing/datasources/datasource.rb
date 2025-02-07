@@ -20,7 +20,7 @@ module Lanalytics
         end
 
         # Datasource specific methods
-        def exec(&block)
+        def exec
           raise NotImplementedError.new 'This method has to be implemented in the subclass!'
         end
 

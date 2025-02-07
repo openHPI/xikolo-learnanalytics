@@ -25,7 +25,7 @@ module Lanalytics
           PG::Connection.ping(postgres_config) == PG::Constants::PQPING_OK
         end
 
-        def exec(&block)
+        def exec
           return unless block_given?
 
           @connection_pool.with do |conn|
