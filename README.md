@@ -116,13 +116,13 @@ track('my_verb', resource.uuid, resource.type, context);
 
 ## Link tracking
 
-Internal and external links of the web application can be tracked.
+Internal and external links of the application can be tracked.
 The data is stored in Elasticsearch.
 
 The Elasticsearch data schema can be found in `config/elasticsearch/link_tracking_events.json`.
 If updated, make sure to update it for your Elasticsearch instance as well and increase the version number.
 
-A good starting point for this is `web/app/controllers/concerns/tracks_referrers.rb`.
+A good starting point for this is `app/controllers/concerns/tracks_referrers.rb` in the core application.
 
 ## Metrics
 
