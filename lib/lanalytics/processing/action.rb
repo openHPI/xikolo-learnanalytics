@@ -3,9 +3,9 @@
 module Lanalytics
   module Processing
     class Action
-      CREATE    = :CREATE
-      UPDATE    = :UPDATE
-      DESTROY   = :DESTROY
+      CREATE = :CREATE
+      UPDATE = :UPDATE
+      DESTROY = :DESTROY
       UNDEFINED = :UNDEFINED
 
       def self.valid(processing_action_to_check)

@@ -20,7 +20,7 @@ module Lanalytics
             processing_unit[:in_context][:runtime_version]  = safe_read { browser.version }           || '0'
             processing_unit[:in_context][:device]           = safe_read { browser.device.name }       || 'Unknown'
 
-            # merge platfrom 'iOS (iPhone)', 'iOS (iPad)' and 'iOS (iPod)' to 'iOS'
+            # Merge platforms 'iOS (iPhone)', 'iOS (iPad)' and 'iOS (iPod)' to 'iOS'.
             if processing_unit[:in_context][:platform].start_with? 'iOS'
               processing_unit[:in_context][:platform] =
                 'iOS'

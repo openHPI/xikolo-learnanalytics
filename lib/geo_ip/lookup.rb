@@ -17,7 +17,7 @@ module GeoIP
     def initialize
       # Ensure that you have a fresh version of the MaxMind GeoLite2 Database
       # located in vendor/lib/geo_ip/GeoLite2-Country.
-      # See https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
+      # See https://dev.maxmind.com/geoip/geolite2-free-geolocation-data.
       @db = MaxMindDB.new('vendor/lib/geo_ip/GeoLite2-City/GeoLite2-City.mmdb')
     end
 

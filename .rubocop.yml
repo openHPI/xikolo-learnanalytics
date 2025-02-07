@@ -21,8 +21,8 @@ Rails:
   Enabled: true
 
 #
-# Tobi finds it easier to understand what explicit methods like "#append" and
-# "#concat" actually do than operators like "<<" and "+" for arrays.
+# It's often easier to understand what explicit methods like "#append" and
+# "#concat" actually do compared to operators like "<<" and "+" for arrays.
 #
 Rails/ActiveSupportAliases:
   Enabled: false
@@ -93,7 +93,7 @@ RSpec/NestedGroups:
   Max: 5
 
 #
-# TODO: We have too many specs with too many lets
+# TODO: We have too many specs with too many lets!
 #
 RSpec/MultipleMemoizedHelpers:
   Max: 52

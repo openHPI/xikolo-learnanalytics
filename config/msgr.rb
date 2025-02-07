@@ -1,16 +1,11 @@
 # frozen_string_literal: true
 
 #
+# IT'S NOT ENOUGH TO SIMPLY ADD A ROUTE HERE!
+# YOU NEED TO GO TO LIB/LANALYTICS/PROCESSING/PIPELINES/ AND REGISTER PIPELINES.
+# OTHERWISE, YOU MIGHT BE STUCK WONDERING WHY YOUR EVENT IS NOT WORKING.
 #
-#
-# IT'S NOT ENOUGH TO SIMPLY ADD A ROUTE HERE,
-# YOU NEED TO GO TO LIB/LANALYTICS/PROCESSING/PIPELINES/...
-# AND REGISTER PIPELINES.
-# OTHERWISE YOU MIGHT BE STUCK WONDERING WHY YOUR EVENT IS NOT
-# WORKING
-#
-#
-#
+
 # ------------------- User Domain Entities -------------------
 route 'xikolo.account.user.create', to: 'Lanalytics#create'
 route 'xikolo.account.user.confirmed', to: 'Lanalytics#create'
@@ -66,6 +61,3 @@ route 'xikolo.web.exp_event.create', to: 'Lanalytics#handle_user_event'
 
 route 'xikolo.web.referrer', to: 'Lanalytics#create'
 route 'xikolo.web.tracking', to: 'Lanalytics#create'
-
-# If you want to know how the routes look like, you can puts them with the following line:x
-# puts @routes.inspect

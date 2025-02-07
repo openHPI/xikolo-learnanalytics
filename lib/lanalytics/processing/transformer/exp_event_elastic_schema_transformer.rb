@@ -47,8 +47,7 @@ module Lanalytics
             with_attribute :with_result, :entity, with_result_entity
 
             in_context_entity = Lanalytics::Processing::LoadORM::Entity.create(:IN_CONTEXT) do
-              # TODO: Refactor the underscore.downcase conversion to support
-              # nested json in the future
+              # TODO: Refactor the underscore.downcase conversion to support nested JSON in the future
               exp_stmt.in_context.each do |attribute, value|
                 with_attribute attribute.underscore.downcase, :string, value
               end

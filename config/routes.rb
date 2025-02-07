@@ -6,18 +6,15 @@ Rails.application.routes.draw do
 
     resources :system_info, only: [:show]
 
-    # metrics
-
+    # Metrics
     get 'metrics/:name', to: 'metrics#show', as: :metric
     get 'metrics', to: 'metrics#index'
 
-    # reports
-
+    # Reports
     resources :report_jobs, only: %i[index show create update destroy]
     resources :report_types, only: %i[index]
 
-    # statistics
-
+    # Statistics
     resources :course_statistics, only: %i[index show]
   end
 end
