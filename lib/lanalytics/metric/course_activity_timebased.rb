@@ -56,7 +56,7 @@ module Lanalytics
         # Format day0: { hour0: quantity, hour1: quantity }
         # For weekdays, 0 is Sunday
         buckets.each_with_object({}) do |bucket, hours|
-          time = Time.parse bucket['key_as_string']
+          time = Time.zone.parse bucket['key_as_string']
           hours[time.hour] ||= wday_scaffold
           hours[time.hour][time.wday] += bucket['doc_count']
         end
