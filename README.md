@@ -1,7 +1,9 @@
 # The openHPI Learning Analytics Service
 
 The learning analytics service (*"Lanalytics"*) of the [openHPI](https://open.hpi.de/) platform.
-The service is used for processing tracked learner interaction events, enables reports, and provides specific course statistics.
+
+This service was developed to enhance the functionality of the [core application](https://github.com/openHPI/xikolo-core/) and is intended to be operated alongside it.
+It is used for processing tracked learner interaction events, enables reports, and provides specific course statistics.
 
 ## License
 
@@ -103,7 +105,7 @@ All events are stored redundantly in Elasticsearch and Postgres.
 
 ### Capturing events
 
-See `app/assets/legacy/lanalytics/common.js#track` in the [xikolo-core](https://github.com/openHPI/xikolo-core) for details.
+See `app/assets/legacy/lanalytics/common.js#track` in the core application for details.
 
 Usage:
 ```js
