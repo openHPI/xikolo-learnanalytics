@@ -50,7 +50,7 @@ module Lanalytics
 
       # These methods are used inside the block when block is initialized ...
       def extractor(extractor)
-        unless extractor&.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
+        unless extractor.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
           raise ArgumentError.new 'Needs to be of type \'ExtractStep\'.'
         end
 
@@ -58,7 +58,7 @@ module Lanalytics
       end
 
       def transformer(transformer)
-        unless transformer&.is_a?(Lanalytics::Processing::Transformer::TransformStep)
+        unless transformer.is_a?(Lanalytics::Processing::Transformer::TransformStep)
           raise ArgumentError.new 'Needs to be of type \'TransformerStep\'.'
         end
 
@@ -66,7 +66,7 @@ module Lanalytics
       end
 
       def loader(loader)
-        unless loader&.is_a?(Lanalytics::Processing::Loader::LoadStep)
+        unless loader.is_a?(Lanalytics::Processing::Loader::LoadStep)
           raise ArgumentError.new 'Needs to be of type \'LoadStep\'.'
         end
 
