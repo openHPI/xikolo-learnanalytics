@@ -8,7 +8,7 @@ cache:
     - .cache/bundle
 
 .ruby:
-  image: ruby:3.3-slim
+  image: ruby:3.4-slim
   before_script:
     - apt-get --quiet --quiet update
     - apt-get --quiet --yes -o=Dpkg::Use-Pty=0 install build-essential libpq-dev libxml2-dev libyaml-dev git

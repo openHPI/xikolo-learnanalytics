@@ -12,8 +12,8 @@ Build-Depends:
   libpq-dev,
   libyaml-dev,
   pkg-config,
-  ruby3.3,
-  ruby3.3-dev,
+  ruby3.4,
+  ruby3.4-dev,
   tzdata
 
 Package: xikolo-learnanalytics
@@ -22,7 +22,7 @@ Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   libcurl4,
-  ruby3.3,
+  ruby3.4,
   tzdata,
   zip
 Description: Xikolo Learn Analytics Service

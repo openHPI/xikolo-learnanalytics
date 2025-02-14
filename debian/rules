@@ -11,8 +11,8 @@ export PACKAGE=$(shell dh_listpackages)
 PKGBASE=$(CURDIR)/debian/${PACKAGE}
 PREFIX=/usr/lib/${PACKAGE}
 
-export RUBY=/usr/bin/ruby3.3
-export GEM_PATH=vendor/ruby/3.3.0
+export RUBY=/usr/bin/ruby3.4
+export GEM_PATH=vendor/ruby/3.4.0
 
 export DEBIAN_DISABLE_RUBYGEMS_INTEGRATION=1
 
