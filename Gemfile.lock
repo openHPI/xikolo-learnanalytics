@@ -425,7 +425,7 @@ GEM
       sentry-ruby (~> 5.22.4)
       sidekiq (>= 3.0)
     set (1.1.1)
-    sidekiq (7.3.8)
+    sidekiq (7.3.9)
       base64
       connection_pool (>= 2.3.0)
       logger
