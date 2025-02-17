@@ -42,7 +42,7 @@ gem 'elasticsearch', '~> 7.17.0'
 gem 'elasticsearch-transport', '~> 7.17.0'
 gem 'pg', '~> 1.1'
 gem 'redis', '~> 5.0'
-gem 'restify', '~> 1.15'
+gem 'restify', '~> 2.0'
 
 # Monitoring and metrics
 gem 'mnemosyne-ruby', '~> 2.0'
