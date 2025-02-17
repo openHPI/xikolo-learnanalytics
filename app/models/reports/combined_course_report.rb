@@ -90,15 +90,15 @@ module Reports
     private
 
     def courses
-      @courses ||= course_service.rel(:courses).get(
+      @courses ||= course_service.rel(:courses).get({
         cat_id: @job.task_scope,
         groups: 'any',
-      ).value!
+      }).value!
     end
 
     def classifier
       @classifier ||= course_service.rel(:classifier)
-        .get(id: @job.task_scope).value!
+        .get({id: @job.task_scope}).value!
     end
   end
 end

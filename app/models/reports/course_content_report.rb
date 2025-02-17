@@ -70,9 +70,10 @@ module Reports
       progress.update(course['id'], 0)
 
       items_promise = Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-        course_service.rel(:items).get(
-          course_id: course['id'], per_page: 500,
-        )
+        course_service.rel(:items).get({
+          course_id: course['id'],
+          per_page: 500,
+        })
       end
 
       items_promise.each_item do |item, page|
@@ -104,11 +105,11 @@ module Reports
     end
 
     def course
-      @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
+      @course ||= course_service.rel(:course).get({id: @job.task_scope}).value!
     end
 
     def sections
-      @sections ||= course_service.rel(:sections).get(course_id: course['id'], per_page: 50).value!
+      @sections ||= course_service.rel(:sections).get({course_id: course['id'], per_page: 50}).value!
     end
 
     def course_service

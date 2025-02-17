@@ -10,7 +10,7 @@ module Lanalytics
       exec do |params|
         course_service = Restify.new(:course).get.value!
 
-        course = course_service.rel(:course).get(id: params[:course_id]).value!
+        course = course_service.rel(:course).get({id: params[:course_id]}).value!
 
         result = datasource.exec do |client|
           client.search index: datasource.index, body: {

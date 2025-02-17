@@ -8,26 +8,26 @@ class CourseStatistic < ApplicationRecord
   # rubocop:disable Metrics/ParameterLists
   # rubocop:disable Metrics/PerceivedComplexity
   def calculate!
-    course = course_service.rel(:course).get(id: course_id).value!
+    course = course_service.rel(:course).get({id: course_id}).value!
 
     Xikolo::RetryingPromise.new(
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-        course_service.rel(:course_statistic).get(course_id: course['id'])
+        course_service.rel(:course_statistic).get({course_id: course['id']})
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-        course_service.rel(:stats).get(course_id: course['id'], key: 'extended')
+        course_service.rel(:stats).get({course_id: course['id'], key: 'extended'})
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-        course_service.rel(:stats).get(course_id: course['id'], key: 'enrollments_by_day')
+        course_service.rel(:stats).get({course_id: course['id'], key: 'enrollments_by_day'})
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-        pinboard_service.rel(:statistic).get(id: course['id'])
+        pinboard_service.rel(:statistic).get({id: course['id']})
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-        bridge_api.rel(:course_ticket_stats).get(course_id: course['id'])
+        bridge_api.rel(:course_ticket_stats).get({course_id: course['id']})
       end,
       Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-        bridge_api.rel(:course_open_badge_stats).get(course_id: course['id'])
+        bridge_api.rel(:course_open_badge_stats).get({course_id: course['id']})
       end,
     ) do |course_stats, extended_course_stats, enrollment_stats, pinboard_stats, ticket_stats, badge_stats|
       days_since_course_start = course['start_date'] && (Time.zone.today - course['start_date'].to_date).to_i

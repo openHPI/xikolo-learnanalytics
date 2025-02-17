@@ -189,15 +189,16 @@ module Reports
     def each_topic(&block)
       topic_filters.each do |filters|
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          pinboard_service.rel(:questions).get(**filters, per_page: 50)
+          pinboard_service.rel(:questions).get({**filters, per_page: 50})
         end.each_item(&block)
       end
     end
 
     def each_answer(topic, &block)
-      pinboard_service.rel(:answers).get(
-        question_id: topic['id'], per_page: 250,
-      ).value!.each do |answer|
+      pinboard_service.rel(:answers).get({
+        question_id: topic['id'],
+        per_page: 250,
+      }).value!.each do |answer|
         yield [
           answer['id'],
           '',
@@ -223,9 +224,11 @@ module Reports
     end
 
     def each_comment(object, type)
-      pinboard_service.rel(:comments).get(
-        commentable_id: object['id'], commentable_type: type, per_page: 250,
-      ).value!.each do |comment|
+      pinboard_service.rel(:comments).get({
+        commentable_id: object['id'],
+        commentable_type: type,
+        per_page: 250,
+      }).value!.each do |comment|
         question_id = case comment['commentable_type']
                         when 'Question'
                           comment['commentable_id']
@@ -287,7 +290,7 @@ module Reports
     end
 
     def course
-      @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
+      @course ||= course_service.rel(:course).get({id: @job.task_scope}).value!
     end
 
     def sections
@@ -297,7 +300,7 @@ module Reports
         sections_promise = Xikolo.paginate_with_retries(
           max_retries: 3, wait: 60.seconds,
         ) do
-          course_service.rel(:sections).get(course_id: course['id'])
+          course_service.rel(:sections).get({course_id: course['id']})
         end
 
         sections_promise.each_item do |section|
@@ -315,7 +318,7 @@ module Reports
         items_promise = Xikolo.paginate_with_retries(
           max_retries: 3, wait: 60.seconds,
         ) do
-          course_service.rel(:items).get(course_id: course['id'])
+          course_service.rel(:items).get({course_id: course['id']})
         end
 
         items_promise.each_item do |item|
@@ -333,7 +336,7 @@ module Reports
         collab_spaces_promise = Xikolo.paginate_with_retries(
           max_retries: 3, wait: 60.seconds,
         ) do
-          collab_space_service.rel(:collab_spaces).get(course_id: course['id'])
+          collab_space_service.rel(:collab_spaces).get({course_id: course['id']})
         end
 
         collab_spaces_promise.each_item do |space|

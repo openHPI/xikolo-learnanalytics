@@ -3,7 +3,7 @@
 module Lanalytics
   module Metric
     class ActiveUserCountRelative < ExpEventsElasticMetric
-      description """
+      description "
 Calculates activity compared to the platform and itself for the last day.
 Result if course_id present:
   - relative: percentage of active users compared to total platform activity
@@ -12,7 +12,7 @@ Result if course_id present:
   - kpi_activity: activity_today / avg_activity_of_course
 
 Default active users of last day.
-""".strip
+".strip
 
       optional_parameter :start_date, :end_date, :course_id
 
@@ -80,7 +80,7 @@ Default active users of last day.
         active_courses = relative_users.size
         result[:deviation] = active_courses == 0 ? 0 : (result[:relative] - (1.0 / active_courses.to_f)).round(2)
         course = Restify.new(:course).get.value!
-          .rel(:courses).get(id: course_id).value!
+          .rel(:courses).get({id: course_id}).value!
         start_date = DateTime.parse(course[0]['start_date'])
         days_since_start = (DateTime.now.to_date - start_date.to_date).to_i
 

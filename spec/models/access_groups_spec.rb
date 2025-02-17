@@ -6,11 +6,11 @@ describe AccessGroups do
   let(:access_groups) { described_class.new }
   let(:account_service) { Restify.new(:account).get.value! }
   let(:user_no_groups_data) { build(:'account:user') }
-  let(:user_no_groups) { account_service.rel(:user).get(id: user_no_groups_data['id']).value! }
+  let(:user_no_groups) { account_service.rel(:user).get({id: user_no_groups_data['id']}).value! }
   let(:user_one_group_data) { build(:'account:user') }
-  let(:user_one_group) { account_service.rel(:user).get(id: user_one_group_data['id']).value! }
+  let(:user_one_group) { account_service.rel(:user).get({id: user_one_group_data['id']}).value! }
   let(:user_two_groups_data) { build(:'account:user') }
-  let(:user_two_groups) { account_service.rel(:user).get(id: user_two_groups_data['id']).value! }
+  let(:user_two_groups) { account_service.rel(:user).get({id: user_two_groups_data['id']}).value! }
 
   before do
     Stub.request(:account, :get)

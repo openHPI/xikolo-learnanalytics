@@ -51,9 +51,10 @@ module Reports
 
       users_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          account_service.rel(:users).get(
-            confirmed: false, per_page: 500,
-          )
+          account_service.rel(:users).get({
+            confirmed: false,
+            per_page: 500,
+          })
         end
 
       users_promise.each_item do |user, page|

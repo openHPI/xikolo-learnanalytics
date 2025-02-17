@@ -11,7 +11,7 @@ module Lanalytics
         course_id = params[:course_id]
 
         course = Restify.new(:course).get.value!
-          .rel(:courses).get(id: course_id).value!
+          .rel(:courses).get({id: course_id}).value!
         start_date = DateTime.parse(course[0]['start_date'])
         days_since_start = (DateTime.now.to_date - start_date.to_date).to_i
 

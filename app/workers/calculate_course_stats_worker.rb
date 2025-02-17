@@ -29,7 +29,7 @@ class CalculateCourseStatsWorker
 
   def each_course
     Xikolo.paginate(
-      course_service.rel(:courses).get(groups: 'any'),
+      course_service.rel(:courses).get({groups: 'any'}),
     ) do |course|
       next if course['status'] == 'preparation' || course['external_course_url'].present?
 
