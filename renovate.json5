@@ -83,6 +83,12 @@
         'elasticsearch{/,}**',
       ],
     },
+    // Group rubocop gems. They often depend on each other.
+    {
+      matchDatasources: ['rubygems'],
+      matchPackageNames: ['rubocop', '/^rubocop-/'],
+      groupName: 'rubocop',
+    },
     // Group sentry monorepo gems. They can only be upgraded together.
     {
       matchDatasources: [
