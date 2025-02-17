@@ -301,11 +301,11 @@ module Reports
     def fetch_data(start_date, end_date, c_id = nil)
       stats, * = Xikolo::RetryingPromise.new(
         Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-          course_service.rel(:enrollment_stats).get(
+          course_service.rel(:enrollment_stats).get({
             start_date:,
             end_date:,
             classifier_id: c_id,
-          )
+          })
         end,
       ).value!
 

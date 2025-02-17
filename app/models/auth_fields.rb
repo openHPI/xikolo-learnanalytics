@@ -8,7 +8,7 @@ class AuthFields
   def values(user_id)
     authorizations = Xikolo::RetryingPromise.new(
       Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-        account_service.rel(:authorizations).get(user: user_id)
+        account_service.rel(:authorizations).get({user: user_id})
       end,
     ).value!.first
 

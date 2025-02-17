@@ -55,10 +55,10 @@ module Lanalytics
         def video_items(course_id)
           videos = []
           Xikolo.paginate(
-            course_api.rel(:items).get(
+            course_api.rel(:items).get({
               course_id:,
               content_type: 'video',
-            ),
+            }),
           ) do |video|
             videos.append(video)
           end

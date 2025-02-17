@@ -78,7 +78,6 @@ module Reports
 
         index = 0
 
-        # rubocop:disable Performance/RedundantBlockCall
         block.call do |row|
           csv << row
           csv.flush

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 class FileCollection
   def initialize(base_path)
     @files = {}
@@ -39,7 +40,7 @@ class FileCollection
       system '/usr/bin/zip', path, *names, chdir: @base_path
     end
 
-    raise "Zipping files failed: #{$?}" if $?.exitstatus > 0
+    raise "Zipping files failed: #{$CHILD_STATUS}" if $CHILD_STATUS.exitstatus > 0
 
     @base_path.join(path)
   end

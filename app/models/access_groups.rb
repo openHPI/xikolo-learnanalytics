@@ -18,13 +18,13 @@ class AccessGroups
 
   def user_groups(user)
     Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-      user.rel(:groups).get(per_page: 1_000)
+      user.rel(:groups).get({per_page: 1_000})
     end.value!.pluck('name')
   end
 
   def access_groups
     Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-      account_service.rel(:groups).get(tag: 'access')
+      account_service.rel(:groups).get({tag: 'access'})
     end.value!.pluck('name')
   end
 

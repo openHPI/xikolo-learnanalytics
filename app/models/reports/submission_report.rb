@@ -97,10 +97,10 @@ module Reports
       submissions_promise = Xikolo.paginate_with_retries(
         max_retries: 3, wait: 60.seconds,
       ) do
-        quiz_service.rel(:quiz_submissions).get(
+        quiz_service.rel(:quiz_submissions).get({
           quiz_id: @job.task_scope,
           only_submitted: true,
-        )
+        })
       end
 
       submissions_promise.each_item do |submission, page|
@@ -114,21 +114,22 @@ module Reports
           submission_hash[:accessed_at].to_i
         submission_hash[:user_id] = submission['user_id']
 
-        user = account_service.rel(:user).get(id: submission['user_id']).value!
+        user = account_service.rel(:user).get({id: submission['user_id']}).value!
         submission_hash[:user_name] = escape_csv_string(user['full_name'])
         submission_hash[:user_email] = user['email']
 
         submission_hash[:points] = submission['points']
 
-        quiz_service.rel(:quiz_submission_questions).get(
-          quiz_submission_id: submission['id'], per_page: 250,
-        ).value!.each do |submission_question|
+        quiz_service.rel(:quiz_submission_questions).get({
+          quiz_submission_id: submission['id'],
+          per_page: 250,
+        }).value!.each do |submission_question|
           submission_hash[:questions][submission_question['quiz_question_id']][:selected_answers] = []
 
-          quiz_service.rel(:quiz_submission_answers).get(
+          quiz_service.rel(:quiz_submission_answers).get({
             quiz_submission_question_id: submission_question['id'],
             per_page: 500,
-          ).value!.each do |submission_answer|
+          }).value!.each do |submission_answer|
             if submission_answer['type'] == 'Xikolo::Submission::QuizSubmissionFreeTextAnswer'
               submission_hash[:questions][submission_question['quiz_question_id']][:freetext_answer] =
                 submission_answer['user_answer_text'].squish
@@ -201,11 +202,11 @@ module Reports
     def load_all_quiz_questions
       hash = Hash.new {|h, k| h[k] = Hash.new(&h.default_proc) }
 
-      quiz = quiz_service.rel(:quiz).get(id: @job.task_scope).value!
-      quiz_questions = quiz_service.rel(:questions).get(
+      quiz = quiz_service.rel(:quiz).get({id: @job.task_scope}).value!
+      quiz_questions = quiz_service.rel(:questions).get({
         quiz_id: quiz['id'],
         per_page: 250,
-      ).value!
+      }).value!
 
       quiz_questions.each do |quiz_question|
         hash[quiz_question['id']][:question_text] = quiz_question['text']
@@ -215,10 +216,10 @@ module Reports
         answers_promise = Xikolo.paginate_with_retries(
           max_retries: 3, wait: 60.seconds,
         ) do
-          quiz_service.rel(:answers).get(
+          quiz_service.rel(:answers).get({
             question_id: quiz_question['id'],
             per_page: 250,
-          )
+          })
         end
 
         answers_promise.each_item do |quiz_answer|
@@ -239,13 +240,13 @@ module Reports
 
     def item
       @item ||= course_service.rel(:items)
-        .get(content_id: @job.task_scope).value!.first.tap do |item|
+        .get({content_id: @job.task_scope}).value!.first.tap do |item|
         raise 'Quiz not found. Did you provide the Item ID instead of the Content ID?' if item.nil?
       end
     end
 
     def course
-      @course ||= course_service.rel(:course).get(id: item['course_id']).value!
+      @course ||= course_service.rel(:course).get({id: item['course_id']}).value!
     end
 
     def account_service

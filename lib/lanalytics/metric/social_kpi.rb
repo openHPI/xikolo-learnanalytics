@@ -11,7 +11,7 @@ module Lanalytics
         course_id = params[:course_id]
 
         course = Restify.new(:course).get.value!
-          .rel(:courses).get(id: course_id).value!
+          .rel(:courses).get({id: course_id}).value!
         start_date = DateTime.parse(course[0]['start_date'])
         days_since_start = (DateTime.now.to_date - start_date.to_date).to_i
 
@@ -24,7 +24,7 @@ module Lanalytics
             course_id:,
             start_date: start_date.to_s,
             end_date: (start_date + days_since_start.day).to_s,
-          )[:count].to_f / days_since_start.to_f
+          )[:count].to_f / days_since_start
           social_today = PinboardActivity.query(
             course_id:,
             start_date: (DateTime.now - 1.day).to_s,

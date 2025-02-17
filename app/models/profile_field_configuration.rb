@@ -28,7 +28,7 @@ class ProfileFieldConfiguration < ApplicationRecord
 
     def all_titles
       users = Restify.new(:account).get.value!
-        .rel(:users).get(per_page: 1).value!
+        .rel(:users).get({per_page: 1}).value!
 
       return [] if users.blank?
 

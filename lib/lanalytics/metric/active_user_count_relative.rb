@@ -3,7 +3,7 @@
 module Lanalytics
   module Metric
     class ActiveUserCountRelative < ExpEventsElasticMetric
-      description """
+      description "
 Calculates activity compared to the platform and itself for the last day.
 Result if course_id present:
   - relative: percentage of active users compared to total platform activity
@@ -12,7 +12,7 @@ Result if course_id present:
   - kpi_activity: activity_today / avg_activity_of_course
 
 Default active users of last day.
-""".strip
+".strip
 
       optional_parameter :start_date, :end_date, :course_id
 
@@ -69,7 +69,7 @@ Default active users of last day.
         relative_users = {}
 
         active_users.each do |id, value|
-          relative_users[id] = value.to_f / total_activity.to_f
+          relative_users[id] = value.to_f / total_activity
         end
 
         next relative_users if course_id.blank?
@@ -80,7 +80,7 @@ Default active users of last day.
         active_courses = relative_users.size
         result[:deviation] = active_courses == 0 ? 0 : (result[:relative] - (1.0 / active_courses.to_f)).round(2)
         course = Restify.new(:course).get.value!
-          .rel(:courses).get(id: course_id).value!
+          .rel(:courses).get({id: course_id}).value!
         start_date = DateTime.parse(course[0]['start_date'])
         days_since_start = (DateTime.now.to_date - start_date.to_date).to_i
 
@@ -88,7 +88,7 @@ Default active users of last day.
           result[:kpi_activity] = nil
         else
           avg_activity_per_day = CourseActivity.query(course_id:, start_date: start_date.to_s,
-            end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
+            end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start
           activity_today = CourseActivity.query(course_id:, start_date: (DateTime.now - 1.day).to_s,
             end_date: DateTime.now.to_s)[:count].to_f
           result[:kpi_activity] = (avg_activity_per_day == 0 ? 0 : activity_today / avg_activity_per_day).round(2)

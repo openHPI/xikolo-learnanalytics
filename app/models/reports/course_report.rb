@@ -107,7 +107,7 @@ module Reports
           Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
             course_service
               .rel(:enrollments)
-              .get(course_id: course['id'], per_page: 1, deleted: true)
+              .get({course_id: course['id'], per_page: 1, deleted: true})
           end,
         ).value!.first.response.headers['X_TOTAL_COUNT'].to_i
 
@@ -129,11 +129,11 @@ module Reports
 
         video_count ||= Xikolo::RetryingPromise.new(
           Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-            course_service.rel(:items).get(
+            course_service.rel(:items).get({
               course_id: course['id'],
               content_type: 'video',
               was_available: true,
-            )
+            })
           end,
         ).value!.first.count
 
@@ -149,32 +149,34 @@ module Reports
       enrollments_promise = Xikolo.paginate_with_retries(
         max_retries: 3, wait: 60.seconds,
       ) do
-        course_service.rel(:enrollments).get(
-          course_id: course['id'], per_page: 1000, deleted: true,
-        )
+        course_service.rel(:enrollments).get({
+          course_id: course['id'],
+          per_page: 1000,
+          deleted: true,
+        })
       end
 
       enrollments_promise.each_item do |e, enrollment_page|
         user = Xikolo::RetryingPromise.new(
           Xikolo::Retryable.new(max_retries: 5, wait: 90.seconds) do
-            account_service.rel(:user).get(id: e['user_id'])
+            account_service.rel(:user).get({id: e['user_id']})
           end,
         ).value!.first
 
         Xikolo::RetryingPromise.new(
           Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-            course_service.rel(:enrollments).get(
+            course_service.rel(:enrollments).get({
               course_id: course['id'],
               user_id: e['user_id'],
               deleted: true,
               learning_evaluation: true,
-            )
+            })
           end,
           Xikolo::Retryable.new(max_retries: 3, wait: 20.seconds) do
-            pinboard_service.rel(:statistic).get(
+            pinboard_service.rel(:statistic).get({
               id: course['id'],
               user_id: user['id'],
-            )
+            })
           end,
         ) do |enrollments, stat_pinboard|
           enrollment = enrollments.first
@@ -362,10 +364,10 @@ module Reports
           if @include_sections
             progresses = Xikolo::RetryingPromise.new(
               Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-                course_service.rel(:progresses).get(
+                course_service.rel(:progresses).get({
                   user_id: user['id'],
                   course_id: course['id'],
-                )
+                })
               end,
             ).value!.first
 
@@ -599,7 +601,7 @@ module Reports
       # return an array with the course
       @courses ||= Xikolo::RetryingPromise.new(
         Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-          course_service.rel(:course).get(id: @job.task_scope)
+          course_service.rel(:course).get({id: @job.task_scope})
         end,
       ).value!
     end
@@ -611,11 +613,11 @@ module Reports
     def course_sections
       @course_sections ||= Xikolo::RetryingPromise.new(
         Xikolo::Retryable.new(max_retries: 3, wait: 60.seconds) do
-          course_service.rel(:sections).get(
+          course_service.rel(:sections).get({
             course_id: course['id'],
             published: true,
             include_alternatives: true,
-          )
+          })
         end,
       ).value!.first
     end
@@ -647,10 +649,10 @@ module Reports
         items_promise = Xikolo.paginate_with_retries(
           max_retries: 3, wait: 60.seconds,
         ) do
-          course_service.rel(:items).get(
+          course_service.rel(:items).get({
             course_id: course['id'],
             content_type: 'quiz',
-          )
+          })
         end
 
         items_promise.each_item do |quiz|
@@ -670,11 +672,11 @@ module Reports
         max_retries: 3,
         wait: 60.seconds,
       ) do
-        quiz_service.rel(:quiz_submissions).get(
+        quiz_service.rel(:quiz_submissions).get({
           user_id:,
           only_submitted: true,
           course_id: course['id'],
-        )
+        })
       end
 
       submissions_promise.each_item do |submissions|
@@ -700,11 +702,11 @@ module Reports
         max_retries: 3,
         wait: 60.seconds,
       ) do
-        course_service.rel(:enrollments).get(
+        course_service.rel(:enrollments).get({
           user_id: enrollment['user_id'],
           deleted: true,
           per_page: 500,
-        )
+        })
       end
 
       enrollments_promise.each_item do |enrollments|

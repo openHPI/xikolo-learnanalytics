@@ -5,7 +5,7 @@ class UserGroups
     @users = {}
     @groups = keys.to_h do |group_key|
       group_name = group_name(group_key)
-      user_ids = account_service.rel(:group).get(id: group_name).then do |group|
+      user_ids = account_service.rel(:group).get({id: group_name}).then do |group|
         ids = []
         Xikolo.paginate(
           group.rel(:members).get,

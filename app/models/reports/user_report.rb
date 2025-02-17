@@ -183,7 +183,7 @@ module Reports
 
       users_promise =
         Xikolo.paginate_with_retries(max_retries: 5, wait: 90.seconds) do
-          account_service.rel(:users).get(confirmed: true, per_page: 250)
+          account_service.rel(:users).get({confirmed: true, per_page: 250})
         end
 
       users_promise.each_item do |user, page|
@@ -372,10 +372,10 @@ module Reports
 
       courses_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          course_service.rel(:courses).get(
+          course_service.rel(:courses).get({
             groups: 'any',
             public: true,
-          )
+          })
         end
 
       courses_promise.each_item do |course|
@@ -390,12 +390,12 @@ module Reports
 
       enrollments_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          course_service.rel(:enrollments).get(
+          course_service.rel(:enrollments).get({
             user_id:,
             learning_evaluation: true,
             deleted: true,
             per_page: 200,
-          )
+          })
         end
 
       enrollments_promise.each_item do |enrollment|

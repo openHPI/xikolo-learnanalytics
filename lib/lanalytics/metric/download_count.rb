@@ -72,10 +72,10 @@ module Lanalytics
 
         sections = []
         Xikolo.paginate(
-          course_api.rel(:sections).get(
+          course_api.rel(:sections).get({
             course_id: params[:course_id],
             include_alternatives: true,
-          ),
+          }),
         ) do |section|
           sections << section
         end
@@ -114,10 +114,10 @@ module Lanalytics
       def self.video_items(course_id)
         videos = []
         Xikolo.paginate(
-          Restify.new(:course).get.value!.rel(:items).get(
+          Restify.new(:course).get.value!.rel(:items).get({
             course_id:,
             content_type: 'video',
-          ),
+          }),
         ) do |video|
           videos.append(video)
         end

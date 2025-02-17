@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe 'ReportJob: Delete' do
-  subject(:delete) { api.rel(:report_job).delete(id: report_job.id).value! }
+  subject(:delete) { api.rel(:report_job).delete({id: report_job.id}).value! }
 
   let(:api) { Restify.new(:test).get.value! }
   let(:report_job) { create(:report_job) }

@@ -71,9 +71,9 @@ RSpec.describe Lanalytics::Model::ExpApiStatement do
 
     it 'does not initialize when some combination of critical components is missing' do
       7.times do |i|
-        user = nil unless (i & 1) > 0
-        verb = nil unless (i & 2) > 0
-        resource = nil unless (i & 4) > 0
+        user = nil unless i.anybits?(1)
+        verb = nil unless i.anybits?(2)
+        resource = nil unless i.anybits?(4)
 
         failure_message = "user: #{user ? 'not nil' : 'nil'}, verb: #{verb ? 'not nil' : 'nil'}, resource: #{resource ? 'not nil' : 'nil'}"
 

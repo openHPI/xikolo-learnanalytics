@@ -34,7 +34,7 @@ describe Reports::CourseReport do
       :course, :get, '/sections',
       query:
         {
-          course_id: '',
+          course_id: nil,
           include_alternatives: true,
           published: true,
         }
@@ -54,7 +54,7 @@ describe Reports::CourseReport do
       :course, :get, '/enrollments',
       query:
         {
-          course_id: '',
+          course_id: nil,
           per_page: 50,
           deleted: true,
         }
@@ -64,7 +64,7 @@ describe Reports::CourseReport do
       :course, :get, '/enrollments',
       query:
         {
-          course_id: '',
+          course_id: nil,
           per_page: 1,
           deleted: true,
         }
@@ -74,7 +74,7 @@ describe Reports::CourseReport do
       :course, :get, '/enrollments',
       query:
         {
-          course_id: '',
+          course_id: nil,
           per_page: 1000,
           deleted: true,
         }

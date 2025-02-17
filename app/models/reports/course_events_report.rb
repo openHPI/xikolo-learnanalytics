@@ -170,23 +170,23 @@ module Reports
     end
 
     def course
-      @course ||= course_service.rel(:course).get(id: @job.task_scope).value!
+      @course ||= course_service.rel(:course).get({id: @job.task_scope}).value!
     end
 
     def sections
-      @sections ||= course_service.rel(:sections).get(
+      @sections ||= course_service.rel(:sections).get({
         course_id: course['id'],
         per_page: 200,
-      ).value!.index_by do |item|
+      }).value!.index_by do |item|
         item['id']
       end
     end
 
     def items
-      @items ||= course_service.rel(:items).get(
+      @items ||= course_service.rel(:items).get({
         course_id: course['id'],
         per_page: 500,
-      ).value!.index_by do |item|
+      }).value!.index_by do |item|
         item['id']
       end
     end

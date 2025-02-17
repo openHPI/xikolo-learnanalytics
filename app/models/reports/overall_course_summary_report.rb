@@ -149,11 +149,11 @@ module Reports
 
       courses_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          course_service.rel(:courses).get(
+          course_service.rel(:courses).get({
             exclude_external: true,
             groups: 'any',
             per_page: 500,
-          )
+          })
         end
 
       courses_promise.each_item do |course, page|
@@ -278,7 +278,7 @@ module Reports
 
       sections_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 20.seconds) do
-          course_service.rel(:sections).get(course_id:)
+          course_service.rel(:sections).get({course_id:})
         end
 
       sections_promise.each_item {|section| sections << section }
@@ -291,17 +291,17 @@ module Reports
 
       items_promise =
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
-          course_service.rel(:items).get(
+          course_service.rel(:items).get({
             course_id:,
             content_type: 'peer_assessment',
-          )
+          })
         end
 
       items_promise.each_item do |item|
         break if pa_type == 'team'
 
         pa = peerassessment_service
-          .rel(:peer_assessment).get(id: item['content_id']).value!
+          .rel(:peer_assessment).get({id: item['content_id']}).value!
 
         pa_type = pa['is_team_assessment'] ? 'team' : 'solo'
       end

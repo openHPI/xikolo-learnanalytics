@@ -2,7 +2,7 @@
 
 class CreateDatasources < ActiveRecord::Migration[4.2]
   def change
-    create_table :datasources, id: false do |t| # rubocop:disable Rails/CreateTableWithTimestamps
+    create_table :datasources, id: false do |t|
       t.string :key, null: false
       t.string :name
       t.text :description

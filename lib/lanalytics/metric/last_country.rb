@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 module Lanalytics
   module Metric
     class LastCountry < ExpEventsElasticMetric

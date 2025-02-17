@@ -48,7 +48,7 @@ module Lanalytics
 
         items =
           if params[:item_id]
-            [course_api.rel(:item).get(id: params[:item_id]).value!]
+            [course_api.rel(:item).get({id: params[:item_id]}).value!]
           else
             video_items(params[:course_id])
           end
@@ -148,7 +148,7 @@ module Lanalytics
         end
 
         if params[:item_id]
-          section = course_api.rel(:section).get(id: items.first['section_id']).value!
+          section = course_api.rel(:section).get({id: items.first['section_id']}).value!
 
           result_data(items.first, [section], result)
         else
@@ -169,7 +169,7 @@ module Lanalytics
 
           section = sections.find {|s| s['id'] == item['section_id'] }
 
-          video_stats = bridge_api.rel(:video_stats).get(video_id: item['content_id']).value!
+          video_stats = bridge_api.rel(:video_stats).get({video_id: item['content_id']}).value!
 
           {
             id:,
@@ -189,10 +189,10 @@ module Lanalytics
         def video_items(course_id)
           videos = []
           Xikolo.paginate(
-            course_api.rel(:items).get(
+            course_api.rel(:items).get({
               course_id:,
               content_type: 'video',
-            ),
+            }),
           ) do |video|
             videos.append(video)
           end
@@ -202,10 +202,10 @@ module Lanalytics
         def sections(course_id)
           sections = []
           Xikolo.paginate(
-            course_api.rel(:sections).get(
+            course_api.rel(:sections).get({
               course_id:,
               include_alternatives: true,
-            ),
+            }),
           ) do |section|
             sections.append(section)
           end

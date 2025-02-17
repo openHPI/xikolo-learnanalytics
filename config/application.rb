@@ -109,9 +109,6 @@ module Lanalytics
       end
     end
 
-    # Restify: Do not wrap hashes with object-like accessors
-    Restify::Processors::Json.indifferent_access = false
-
     # Load our custom Xikolo libs
     require 'xikolo'
 
