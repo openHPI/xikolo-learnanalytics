@@ -11,24 +11,24 @@ module DefaultParams
   end
 
   module InstanceMethods
-    def get(action, **kwargs)
-      process(action, method: 'GET', **kwargs)
+    def get(action, **)
+      process(action, method: 'GET', **)
     end
 
-    def put(action, **kwargs)
-      process(action, method: 'PUT', **kwargs)
+    def put(action, **)
+      process(action, method: 'PUT', **)
     end
 
-    def post(action, **kwargs)
-      process(action, method: 'POST', **kwargs)
+    def post(action, **)
+      process(action, method: 'POST', **)
     end
 
-    def patch(action, **kwargs)
-      process(action, method: 'PATCH', **kwargs)
+    def patch(action, **)
+      process(action, method: 'PATCH', **)
     end
 
-    def delete(action, **kwargs)
-      process(action, method: 'DELETE', **kwargs)
+    def delete(action, **)
+      process(action, method: 'DELETE', **)
     end
 
     def process(action, params: {}, **kwargs)

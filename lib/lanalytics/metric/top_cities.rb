@@ -66,7 +66,6 @@ module Lanalytics
             relative_users: item.dig('ucount', 'value').percent_of(total_users),
           }
           processed_result.append(result_sub_item)
-        # rubocop:disable Lint/HandleExceptions
         rescue IsoCountryCodes::UnknownCodeError
           # ignored
         end

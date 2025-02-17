@@ -24,7 +24,7 @@ module Lanalytics
             course_id:,
             start_date: start_date.to_s,
             end_date: (start_date + days_since_start.day).to_s,
-          )[:count].to_f / days_since_start.to_f
+          )[:count].to_f / days_since_start
           social_today = PinboardActivity.query(
             course_id:,
             start_date: (DateTime.now - 1.day).to_s,

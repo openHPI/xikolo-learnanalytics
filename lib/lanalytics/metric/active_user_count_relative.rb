@@ -69,7 +69,7 @@ Default active users of last day.
         relative_users = {}
 
         active_users.each do |id, value|
-          relative_users[id] = value.to_f / total_activity.to_f
+          relative_users[id] = value.to_f / total_activity
         end
 
         next relative_users if course_id.blank?
@@ -88,7 +88,7 @@ Default active users of last day.
           result[:kpi_activity] = nil
         else
           avg_activity_per_day = CourseActivity.query(course_id:, start_date: start_date.to_s,
-            end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start.to_f
+            end_date: (start_date + days_since_start.day).to_s)[:count].to_f / days_since_start
           activity_today = CourseActivity.query(course_id:, start_date: (DateTime.now - 1.day).to_s,
             end_date: DateTime.now.to_s)[:count].to_f
           result[:kpi_activity] = (avg_activity_per_day == 0 ? 0 : activity_today / avg_activity_per_day).round(2)

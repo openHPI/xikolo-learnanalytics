@@ -11,7 +11,6 @@ module Lanalytics
 
       optional_parameter :course_id, :start_date, :end_date
 
-      # rubocop:disable Metrics/BlockLength
       exec do |params|
         # Build filters for different client types
         mobile_web_platforms_conditions = mobile_platforms.map do |platform|
@@ -109,7 +108,6 @@ module Lanalytics
         subset.sort.join('_')
       end
 
-      # rubocop:disable Metrics/AbcSize
       def self.intersection_users(result, intersections, client_types)
         # Inclusion-exclusion principle
         sign = (-1)**(client_types.size + 1)
@@ -120,7 +118,6 @@ module Lanalytics
           end * subset_sign
         end) * sign
       end
-      # rubocop:enable all
 
       def self.union_users(result, client_types)
         key = subset_key(client_types)

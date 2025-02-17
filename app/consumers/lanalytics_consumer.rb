@@ -28,7 +28,7 @@ class LanalyticsConsumer < Msgr::Consumer
       return
     end
 
-    pipelines.each do |_schema, schema_pipeline|
+    pipelines.each_value do |schema_pipeline|
       schema_pipeline.process(payload, processing_opts(message))
     end
   end
