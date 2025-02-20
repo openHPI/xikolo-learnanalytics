@@ -42,12 +42,6 @@ module Xikolo
       @mutex.synchronize { ns_get }
     end
 
-    private
-
-    def ns_get
-      Summary.new(@current.values.sum, @maximum.values.sum)
-    end
-
     Summary = Struct.new(:value, :total) do
       def to_f
         (value.to_f / total).clamp(0, 1)
@@ -60,6 +54,12 @@ module Xikolo
       def to_i
         percentage.round
       end
+    end
+
+    private
+
+    def ns_get
+      Summary.new(@current.values.sum, @maximum.values.sum)
     end
   end
 end
