@@ -12,27 +12,31 @@ module Lanalytics
         raise ArgumentError.new "'#{schema}' cannot be nil" if schema.blank?
 
         if processing_action.nil? || !Lanalytics::Processing::Action.valid(processing_action)
-          raise ArgumentError.new "'#{processing_action}' is not accepted; only 'Action::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
+          raise ArgumentError.new \
+            "'#{processing_action}' is not accepted; only 'Action::{CREATE, UPDATE, DESTROY, UNDEFINED}' are accepted"
         end
 
         extractors ||= []
         extractors.each_with_index do |extract_step, i|
           unless extract_step.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
-            raise ArgumentError.new "Element #{i} in extractors is a '#{extract_step.class.name}', but needs to be a 'Lanalytics::Processing::Extractor::ExtractStep'"
+            raise ArgumentError.new \
+              "Element #{i} in extractors is a '#{extract_step.class.name}', but needs to be a 'Lanalytics::Processing::Extractor::ExtractStep'"
           end
         end
 
         transformers ||= []
         transformers.each_with_index do |transform_step, i|
           unless transform_step.is_a?(Lanalytics::Processing::Transformer::TransformStep)
-            raise ArgumentError.new "Element #{i} in transformers is a '#{transform_step.class.name}', but needs to be a 'Lanalytics::Processing::Transformer::TransformStep'"
+            raise ArgumentError.new \
+              "Element #{i} in transformers is a '#{transform_step.class.name}', but needs to be a 'Lanalytics::Processing::Transformer::TransformStep'"
           end
         end
 
         loaders ||= []
         loaders.each_with_index do |load_step, i|
           unless load_step.is_a?(Lanalytics::Processing::Loader::LoadStep)
-            raise ArgumentError.new "Element #{i} in loaders is a '#{load_step.class.name}', but needs to be a 'Lanalytics::Processing::Loader::LoadStep'"
+            raise ArgumentError.new \
+              "Element #{i} in loaders is a '#{load_step.class.name}', but needs to be a 'Lanalytics::Processing::Loader::LoadStep'"
           end
         end
 

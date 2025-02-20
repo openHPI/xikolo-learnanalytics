@@ -3,7 +3,11 @@
 module Lanalytics
   module Metric
     class ObjectiveSelections < ExpEventsElasticMetric
-      description 'Learning objective measures including the number of users with objective, selections by objective, average number of objectives, and distribution of selected objectives.'
+      description <<~DOC
+        Learning objective measures including the number of users with objective,
+        selections by objective, average number of objectives, and distribution
+        of selected objectives.
+      DOC
 
       optional_parameter :course_id, :user_id
 
@@ -77,17 +81,19 @@ module Lanalytics
 
         active_objectives = result.dig('aggregations', 'by_user', 'buckets')&.map do |b|
           b.dig('current_objective', 'hits', 'hits', 0, '_source', 'in_context', 'new_objective')
-        end&.each_with_object(Hash.new(0)) {|e, h| h[e] += 1 }
-        total_selections_by_objective = result.dig('aggregations', 'by_objective',
-          'buckets')&.each_with_object({}) do |e, h|
+        end&.tally
+        total_selections_by_objective = result.dig(
+          'aggregations', 'by_objective', 'buckets'
+        )&.each_with_object({}) do |e, h|
           h[e['key']] = e['doc_count']
         end
-        objectives_per_user = result.dig('aggregations', 'by_user', 'buckets')&.map {|b| b['doc_count'] }
+        objectives_per_user = result.dig('aggregations', 'by_user', 'buckets')&.pluck('doc_count')
         initial_objectives = result.dig('aggregations', 'by_objective', 'buckets')&.each_with_object({}) do |e, h|
           h[e['key']] = e.dig('initial_objectives', 'doc_count')
         end
-        initial_selections_by_context = result.dig('aggregations', 'initial_objectives', 'by_modal_context',
-          'buckets')&.each_with_object({}) do |e, h|
+        initial_selections_by_context = result.dig(
+          'aggregations', 'initial_objectives', 'by_modal_context', 'buckets'
+        )&.each_with_object({}) do |e, h|
           h[e['key']] = e['doc_count']
         end
 
@@ -101,10 +107,13 @@ module Lanalytics
           # Count total selections (by objective_id)
           total_selections_by_objective:,
           # Average number of objectives per user
-          avg_objectives_per_user: objectives_per_user.present? ? (objectives_per_user.sum / objectives_per_user.size.to_f) : nil,
+          avg_objectives_per_user: if objectives_per_user.present?
+                                     objectives_per_user.sum / objectives_per_user.size.to_f
+                                   end,
           # Count how often an objective was selected as first objective
           initial_objectives:,
-          # Count the number of initial selections per modal context in which they were selected (infobox, popup, progress)
+          # Count the number of initial selections per modal context in which
+          # they were selected (infobox, popup, progress)
           initial_selections_by_context:,
         }
       end

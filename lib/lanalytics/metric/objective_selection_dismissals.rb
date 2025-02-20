@@ -3,7 +3,9 @@
 module Lanalytics
   module Metric
     class ObjectiveSelectionDismissals < ExpEventsElasticMetric
-      description 'Number of objectives selection dismissals by type (modal/infobox) and number of occurrences where both were dismissed.'
+      description <<~DOC
+        Number of objectives selection dismissals by type (modal/infobox) and number of occurrences where both were dismissed.
+      DOC
 
       optional_parameter :course_id, :user_id
 

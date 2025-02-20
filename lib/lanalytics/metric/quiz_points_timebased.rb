@@ -3,7 +3,9 @@
 module Lanalytics
   module Metric
     class QuizPointsTimebased < ExpEventsElasticMetric
-      description 'Returns the cumulated scored and maximum points for quizzes(!) over the specified time span (per day).'
+      description <<~DOC
+        Returns the cumulated scored and maximum points for quizzes(!) over the specified time span (per day).
+      DOC
 
       required_parameter :start_date, :end_date
 
