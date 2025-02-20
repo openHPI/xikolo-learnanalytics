@@ -2,6 +2,7 @@
 
 class AddEnrollmentStatsToCourseStatistics < ActiveRecord::Migration[4.2]
   # rubocop:disable Rails/BulkChangeTable
+  # rubocop:disable Rails/ReversibleMigration
   def change
     add_column :course_statistics, :enrollments_at_course_start_netto, :integer
     add_column :course_statistics, :enrollments_at_course_middle_netto, :integer
