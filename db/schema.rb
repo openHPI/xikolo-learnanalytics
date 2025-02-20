@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_04_094103) do
-
+ActiveRecord::Schema[7.2].define(version: 2022_03_04_094103) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -40,13 +39,13 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
     t.integer "helpdesk_tickets"
     t.integer "helpdesk_tickets_last_day"
     t.float "completion_rate"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.datetime "start_date", precision: nil
+    t.datetime "end_date", precision: nil
     t.integer "new_users"
     t.json "enrollments_per_day"
     t.boolean "hidden"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.integer "days_since_coursestart"
     t.integer "questions_in_learning_rooms"
     t.integer "questions_last_day_in_learning_rooms"
@@ -80,8 +79,8 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
     t.integer "resource_id"
     t.jsonb "in_context"
     t.jsonb "with_result"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index "((in_context ->> 'course_id'::text))", name: "events_in_context_course_id"
   end
 
@@ -89,8 +88,8 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
     t.string "name", null: false
     t.boolean "sensitive", default: false, null: false
     t.boolean "omittable", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "qc_alert_statuses", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
@@ -99,16 +98,16 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
     t.boolean "ignored"
     t.boolean "ack"
     t.boolean "muted"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "qc_alerts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid "qc_rule_id"
     t.string "status"
     t.uuid "course_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "severity"
     t.text "annotation"
     t.json "qc_alert_data"
@@ -119,20 +118,20 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
     t.uuid "qc_rule_id"
     t.uuid "course_id"
     t.string "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "qc_recommendations", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.uuid "qc_alert_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "qc_rules", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
     t.string "worker"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "is_active"
     t.boolean "is_global"
   end
@@ -142,10 +141,10 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
     t.string "task_scope"
     t.string "status"
     t.string "job_params"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.uuid "user_id"
-    t.datetime "file_expire_date"
+    t.datetime "file_expire_date", precision: nil
     t.integer "progress"
     t.string "annotation"
     t.text "error_text"
@@ -156,24 +155,23 @@ ActiveRecord::Schema.define(version: 2022_03_04_094103) do
   create_table "resources", id: :serial, force: :cascade do |t|
     t.string "uuid"
     t.string "resource_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "verbs", id: :serial, force: :cascade do |t|
     t.string "verb"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
     t.string "item_type", null: false
     t.string "event", null: false
     t.string "whodunnit"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.json "object"
     t.uuid "item_id", null: false
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
-
 end
