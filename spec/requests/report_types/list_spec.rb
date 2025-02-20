@@ -541,35 +541,4 @@ describe 'ReportTypes: List' do
     it { expect(resource).to include course_content_report }
     it { expect(resource).to include overall_course_summary_report }
   end
-
-  context 'general reports' do
-    let(:report_types) do
-      <<~YML
-        reports:
-          types:
-            - course_report
-            - combined_course_report
-            - user_report
-            - unconfirmed_user_report
-            - submission_report
-            - pinboard_report
-            - enrollment_statistics_report
-            - course_events_report
-            - course_content_report
-            - overall_course_summary_report
-      YML
-    end
-
-    it { expect(resource).to have(10).items }
-    it { expect(resource).to include course_report }
-    it { expect(resource).to include combined_course_report }
-    it { expect(resource).to include user_report }
-    it { expect(resource).to include unconfirmed_user_report }
-    it { expect(resource).to include submission_report }
-    it { expect(resource).to include pinboard_report }
-    it { expect(resource).to include enrollment_statistics_report }
-    it { expect(resource).to include course_events_report }
-    it { expect(resource).to include course_content_report }
-    it { expect(resource).to include overall_course_summary_report }
-  end
 end
