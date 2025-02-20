@@ -7,9 +7,9 @@ require:
   - rubocop-rspec_rails
 
 AllCops:
+  TargetRailsVersion: 7.2
+  TargetRubyVersion: 3.4
   NewCops: enable
-  TargetRubyVersion: 3.3
-  TargetRailsVersion: 6.1
   Exclude:
     - 'bin/**'
     - 'db/schema.rb'
