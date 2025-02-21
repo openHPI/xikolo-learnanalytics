@@ -37,6 +37,12 @@ Rails/ApplicationRecord:
     - 'db/**/*'
 
 #
+# To broken for other methods in non-Rails contexts
+#
+Rails/Delegate:
+  Enabled: false
+
+#
 # Often when triggered it just wants to pass joined paths as separate
 # arguments but that can hurt readability.
 #

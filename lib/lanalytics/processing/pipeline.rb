@@ -5,7 +5,7 @@ module Lanalytics
     class Pipeline
       attr_reader :name, :schema, :processing_action
 
-      def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &)
+      def initialize(name, schema, processing_action, extractors = [], transformers = [], loaders = [], &) # rubocop:disable Metrics/ParameterLists
         # Check mandatory fields
         raise ArgumentError.new "'#{name}' cannot be nil or empty" if name.blank?
 
@@ -18,29 +18,29 @@ module Lanalytics
 
         extractors ||= []
         extractors.each_with_index do |extract_step, i|
-          unless extract_step.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
-            raise ArgumentError.new \
-              "Element #{i} in extractors is a '#{extract_step.class.name}', but needs to be a " \
-                "'Lanalytics::Processing::Extractor::ExtractStep'"
-          end
+          next if extract_step.is_a?(Lanalytics::Processing::Extractor::ExtractStep)
+
+          raise ArgumentError.new \
+            "Element #{i} in extractors is a '#{extract_step.class.name}', but needs to be a " \
+            "'Lanalytics::Processing::Extractor::ExtractStep'"
         end
 
         transformers ||= []
         transformers.each_with_index do |transform_step, i|
-          unless transform_step.is_a?(Lanalytics::Processing::Transformer::TransformStep)
-            raise ArgumentError.new \
-              "Element #{i} in transformers is a '#{transform_step.class.name}', but needs to be " \
-                "a 'Lanalytics::Processing::Transformer::TransformStep'"
-          end
+          next if transform_step.is_a?(Lanalytics::Processing::Transformer::TransformStep)
+
+          raise ArgumentError.new \
+            "Element #{i} in transformers is a '#{transform_step.class.name}', but needs to be " \
+            "a 'Lanalytics::Processing::Transformer::TransformStep'"
         end
 
         loaders ||= []
         loaders.each_with_index do |load_step, i|
-          unless load_step.is_a?(Lanalytics::Processing::Loader::LoadStep)
-            raise ArgumentError.new \
-              "Element #{i} in loaders is a '#{load_step.class.name}', but needs to be " \
-                "a 'Lanalytics::Processing::Loader::LoadStep'"
-          end
+          next if load_step.is_a?(Lanalytics::Processing::Loader::LoadStep)
+
+          raise ArgumentError.new \
+            "Element #{i} in loaders is a '#{load_step.class.name}', but needs to be " \
+            "a 'Lanalytics::Processing::Loader::LoadStep'"
         end
 
         @name              = name

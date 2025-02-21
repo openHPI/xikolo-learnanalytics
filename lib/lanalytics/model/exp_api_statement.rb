@@ -7,7 +7,7 @@ module Lanalytics
     class ExpApiStatement
       attr_reader :user, :verb, :resource, :timestamp, :with_result, :in_context
 
-      def initialize(user, verb, resource, timestamp = DateTime.now, with_result = {}, in_context = {})
+      def initialize(user, verb, resource, timestamp = DateTime.now, with_result = {}, in_context = {}) # rubocop:disable Metrics/ParameterLists
         unless user.is_a? Lanalytics::Model::StmtUser
           raise ArgumentError.new "'user' argument cannot be nil and should be Lanalytics::Model::StmtUser"
         end
