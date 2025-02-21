@@ -29,7 +29,8 @@ end
 #   AND (current_timestamp - observed_event_timestamp) > ('60 min'::interval);
 
 # UPDATE observed_events
-# SET observed_event_duration = (extract(epoch from timestamp '2014-12-04T12:07:00Z') - extract(epoch from observed_event_timestamp)) / 60::float
+# SET observed_event_duration = (extract(epoch from timestamp '2014-12-04T12:07:00Z') -
+#   extract(epoch from observed_event_timestamp)) / 60::float
 # WHERE
 #   user_id = '00000001-3100-4444-9999-000000000002'
 #   AND observed_event_duration IS NULL;

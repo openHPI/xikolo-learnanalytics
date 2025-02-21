@@ -70,7 +70,9 @@ module Lanalytics
           user: result['aggregations']['user']['value'],
           web: result['aggregations']['web']['count']['value'],
           mobile: result['aggregations']['mobile']['count']['value'],
-          mixed: result['aggregations']['mobile']['count']['value'] + result['aggregations']['web']['count']['value'] - result['aggregations']['user']['value'],
+          mixed: result['aggregations']['mobile']['count']['value'] +
+            result['aggregations']['web']['count']['value'] -
+            result['aggregations']['user']['value'],
         }
       end
     end
