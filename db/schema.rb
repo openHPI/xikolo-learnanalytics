@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2022_03_04_094103) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_21_154821) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -90,50 +90,6 @@ ActiveRecord::Schema[7.2].define(version: 2022_03_04_094103) do
     t.boolean "omittable", default: false, null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-  end
-
-  create_table "qc_alert_statuses", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "qc_alert_id"
-    t.uuid "user_id"
-    t.boolean "ignored"
-    t.boolean "ack"
-    t.boolean "muted"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-  end
-
-  create_table "qc_alerts", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "qc_rule_id"
-    t.string "status"
-    t.uuid "course_id"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.string "severity"
-    t.text "annotation"
-    t.json "qc_alert_data"
-    t.boolean "is_global_ignored", default: false, null: false
-  end
-
-  create_table "qc_course_statuses", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "qc_rule_id"
-    t.uuid "course_id"
-    t.string "status"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-  end
-
-  create_table "qc_recommendations", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.uuid "qc_alert_id"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-  end
-
-  create_table "qc_rules", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.string "worker"
-    t.datetime "created_at", precision: nil
-    t.datetime "updated_at", precision: nil
-    t.boolean "is_active"
-    t.boolean "is_global"
   end
 
   create_table "report_jobs", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
