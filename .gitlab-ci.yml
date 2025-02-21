@@ -22,37 +22,8 @@ cache:
 
 lint:rubocop:
   extends: .ruby
-  # Load list of changed files by comparing the current HEAD to the master
-  # branch. This isn't perfect as merge requests might not target the master
-  # branch, but targeting merge requests creates two CI pipelines, one for
-  # commits and pushes, and another, detached pipeline, for the merge request
-  # creation. This breaks the MR pipeline view (as only one is shown) and does
-  # not get rerun on pushes to existing MR branches. Diffing to the master
-  # branch should cover at least 80% of all cases.
-  #
-  # Use `--force-exclusion` as rubocop otherwise will not apply exclusion lists
-  # to the passed file list, but we are getting the files directory from the git
-  # commit.
-  #
-  # Use `tee` to print the list of files we are running on to ease debugging.
   script:
-    - BASE=$(git merge-base origin/master HEAD)
-    - >
-      git diff --name-only --diff-filter=d ${BASE} HEAD
-      | tee /dev/stderr
-      | xargs --no-run-if-empty bundle exec rubocop --force-exclusion --parallel
-  except:
-    refs: [master]
-
-# Generate a rubocop summary for each master commit but only warn if there are
-# linting offenses. The `worst` formatter will only print a list of files with
-# the number of offenses in it and the total count of offenses.
-lint:rubocop:master:
-  extends: .ruby
-  script: bundle exec rubocop --parallel --format worst
-  only:
-    refs: [master]
-  allow_failure: true
+    - bundle exec rubocop --parallel
 
 build:image:
   stage: build
