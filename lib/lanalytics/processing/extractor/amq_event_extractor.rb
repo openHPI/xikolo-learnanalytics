@@ -5,6 +5,8 @@ module Lanalytics
     module Extractor
       class AmqEventExtractor < ExtractStep
         def initialize(type = nil)
+          super()
+
           @type = type
         end
 

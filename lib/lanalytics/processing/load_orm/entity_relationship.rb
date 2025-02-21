@@ -17,7 +17,7 @@ module Lanalytics
           relationship
         end
 
-        def initialize(relationship_key)
+        def initialize(relationship_key) # rubocop:disable Lint/MissingSuper
           @relationship_key = relationship_key
           @attributes       = []
         end
