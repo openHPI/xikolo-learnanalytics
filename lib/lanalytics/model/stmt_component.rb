@@ -16,7 +16,7 @@ module Lanalytics
       end
 
       # JSON Serialization (Marshalling)
-      def to_json(*ary
+      def to_json(*ary)
         {
           json_class: self.class.name,
           data: as_json,
