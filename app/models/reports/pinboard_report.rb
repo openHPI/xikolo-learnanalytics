@@ -109,15 +109,15 @@ module Reports
       headers
     end
 
-    def each_post(&block)
+    def each_post(&)
       topics_counter = 0
       progress.update(course['id'], 0)
 
       each_topic do |topic, page|
         yield transform_topic(topic)
 
-        each_comment(topic, 'Question', &block)
-        each_answer(topic, &block) unless topic['discussion_flag']
+        each_comment(topic, 'Question', &)
+        each_answer(topic, &) unless topic['discussion_flag']
 
         topics_counter += 1
         progress.update(
@@ -186,15 +186,15 @@ module Reports
     end
     # rubocop:enable all
 
-    def each_topic(&block)
+    def each_topic(&)
       topic_filters.each do |filters|
         Xikolo.paginate_with_retries(max_retries: 3, wait: 60.seconds) do
           pinboard_service.rel(:questions).get({**filters, per_page: 50})
-        end.each_item(&block)
+        end.each_item(&)
       end
     end
 
-    def each_answer(topic, &block)
+    def each_answer(topic, &)
       pinboard_service.rel(:answers).get({
         question_id: topic['id'],
         per_page: 250,
@@ -219,7 +219,7 @@ module Reports
         ]
 
         # get comments for each answer
-        each_comment(answer, 'Answer', &block)
+        each_comment(answer, 'Answer', &)
       end
     end
 
