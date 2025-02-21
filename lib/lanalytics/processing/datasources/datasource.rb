@@ -5,7 +5,7 @@ module Lanalytics
     module Datasources
       # Responsible for handling the connections
       class Datasource
-        attr_reader :key, :name, :description
+        attr_reader :key, :description
 
         def initialize(args)
           args.each do |k, v|
