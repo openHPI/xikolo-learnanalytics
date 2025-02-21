@@ -98,7 +98,7 @@ module Lanalytics
       end
 
       def self._load(serialized_stmt_array)
-        new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! {|arg| Marshal.load(arg) })
+        new(*serialized_stmt_array.split(':|exp_api_stmt|:').map! {|arg| Marshal.load(arg) }) # rubocop:disable Security/MarshalLoad
       end
 
       # Implementing the equals method
