@@ -16,11 +16,11 @@ module Lanalytics
       end
 
       # JSON Serialization (Marshalling)
-      def to_json(*a)
+      def to_json(*ary
         {
           json_class: self.class.name,
           data: as_json,
-        }.to_json(*a)
+        }.to_json(*ary)
       end
 
       def ==(other)
