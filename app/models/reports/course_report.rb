@@ -93,8 +93,6 @@ module Reports
 
     private
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def each_row(&)
       # Initialize access groups to preload some data.
       access_groups if @include_access_groups
@@ -489,8 +487,6 @@ module Reports
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def headers
       @headers ||= [
         @de_pseudonymized ? 'User ID' : 'User Pseudo ID',
@@ -595,7 +591,6 @@ module Reports
         headers.push('Course Code')
       end
     end
-    # rubocop:enable all
 
     def courses
       # return an array with the course

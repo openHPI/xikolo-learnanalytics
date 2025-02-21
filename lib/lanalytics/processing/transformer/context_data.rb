@@ -4,8 +4,6 @@ module Lanalytics
   module Processing
     module Transformer
       class ContextData < TransformStep
-        # rubocop:disable Metrics/CyclomaticComplexity
-        # rubocop:disable Metrics/PerceivedComplexity
         def transform(_original_event, processing_units, _load_commands, _pipeline_ctx)
           processing_units.each do |processing_unit|
             next if processing_unit[:in_context].nil? || processing_unit[:in_context][:user_agent].nil?

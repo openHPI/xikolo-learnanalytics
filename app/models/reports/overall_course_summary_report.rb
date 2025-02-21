@@ -141,8 +141,6 @@ module Reports
       headers
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def each_course
       courses_counter = 0
       progress.update('courses', 0)

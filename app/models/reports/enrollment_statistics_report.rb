@@ -195,7 +195,6 @@ module Reports
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def dates
       @dates ||=
         begin

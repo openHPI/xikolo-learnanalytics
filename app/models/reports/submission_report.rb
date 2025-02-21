@@ -152,7 +152,6 @@ module Reports
       end
     end
 
-    # rubocop:disable Metrics/PerceivedComplexity
     def transform_submission(row)
       values = [
         if @de_pseudonymized

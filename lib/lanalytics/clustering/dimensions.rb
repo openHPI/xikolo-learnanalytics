@@ -97,8 +97,6 @@ class Lanalytics::Clustering::Dimensions # rubocop:disable Metrics/ClassLength
   # -----------------------
   # COMBINE DIMENSIONS - BUILD A SINGLE BIG QUERY
   # -----------------------
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def self.aggregate_dimensions_data(queries, dimensions, cluster_group_user_uuids)
     user_uuids = (0..dimensions.length - 1).map do |i|
       "query#{i}.user_uuid"
@@ -158,7 +156,6 @@ class Lanalytics::Clustering::Dimensions # rubocop:disable Metrics/ClassLength
 
     perform_query(final_query)
   end
-  # rubocop:enable all
 
   def self.build_verb_query(verb, course_uuid = nil, user_uuids = nil)
     s1 = "select e.user_uuid, count(*) as #{verb}_metric

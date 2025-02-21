@@ -187,12 +187,11 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Enabled: false
 
-#
-# This seems to be the cop that is closest to what we're interested in, which
-# is the kind of complexity that usually surfaces in deep nesting.
-#
 Metrics/CyclomaticComplexity:
-  Enabled: true
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
 
 # -----------------------------------------------------------------------------
 #                                   Style

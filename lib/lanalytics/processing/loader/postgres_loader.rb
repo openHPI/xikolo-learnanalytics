@@ -98,7 +98,6 @@ module Lanalytics
           execute_sql(custom_load_command.query)
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
         # rubocop:disable Lint/DuplicateBranch
         def sql_value_of(attribute)
           case attribute.data_type

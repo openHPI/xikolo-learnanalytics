@@ -51,7 +51,6 @@ module Lanalytics
           end
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
         def json_value_of(attribute)
           case attribute.data_type
             when :bool

@@ -128,7 +128,6 @@ module Reports
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def transform_topic(topic)
       section_id = implicit_section_id(topic['implicit_tags'])
       item_id = implicit_item_id(topic['implicit_tags'])

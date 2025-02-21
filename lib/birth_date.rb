@@ -5,7 +5,6 @@ class BirthDate
     @birth_date = from birth_date
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def age_group_at(current_date)
     case age_at(current_date)
       when 0...20

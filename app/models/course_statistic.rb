@@ -4,9 +4,7 @@ class CourseStatistic < ApplicationRecord
   has_paper_trail
 
   # rubocop:disable Metrics/BlockLength
-  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  # rubocop:disable Metrics/PerceivedComplexity
   def calculate!
     course = course_service.rel(:course).get({id: course_id}).value!
 
