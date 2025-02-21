@@ -58,6 +58,16 @@ Rails/SkipsModelValidations:
     - 'db/migrations/**.rb'
     - 'spec/**/*_spec.rb'
 
+#
+# We cannot change existing migrations.
+#
+Rails/ThreeStateBooleanColumn:
+  Exclude:
+    - db/migrate/20160501000003_create_quality_control.rb
+    - db/migrate/20160501000007_change_rule_col_type_to_bool.rb
+    - db/migrate/20160607123036_add_is_global_field.rb
+    - db/migrate/20160805112014_add_course_statistics.rb
+
 # -----------------------------------------------------------------------------
 #                                   RSPEC
 
