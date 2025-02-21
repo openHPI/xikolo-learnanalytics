@@ -9,9 +9,9 @@ module Lanalytics
 
       exec do |params|
         resource_id = params[:resource_id]
-        total_item_visits = get_data resource_id, false, false
-        total_item_visits_day = get_data resource_id, true, false
-        total_item_visits_now = get_data resource_id, false, true
+        total_item_visits = get_data(resource_id, last_day_only: false, now_only: false)
+        total_item_visits_day = get_data(resource_id, last_day_only: true, now_only: false)
+        total_item_visits_now = get_data(resource_id, last_day_only: false, now_only: true)
 
         result = {}
 
@@ -33,7 +33,7 @@ module Lanalytics
         result
       end
 
-      def self.get_data(resource_id, last_day_only = false, now_only = false)
+      def self.get_data(resource_id, last_day_only: false, now_only: false)
         query = {
           size: 0,
           track_total_hits: true,
