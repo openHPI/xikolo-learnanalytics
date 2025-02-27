@@ -18,7 +18,7 @@ services:
       - xikolo
 
   lanalytics-elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.27
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.28
     environment:
       discovery.type: single-node
     volumes:
