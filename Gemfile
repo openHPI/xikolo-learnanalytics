@@ -40,6 +40,7 @@ gem 'sidekiq-cron', '~> 2.0'
 gem 'aws-sdk-s3', '~> 1.16'
 gem 'elasticsearch', '~> 7.17.0'
 gem 'elasticsearch-transport', '~> 7.17.0'
+gem 'faraday-typhoeus' # required for elasticsearch trying to use faraday 2+ and typhoeus
 gem 'pg', '~> 1.1'
 gem 'redis', '~> 5.0'
 gem 'restify', '~> 2.0'

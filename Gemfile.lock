@@ -170,6 +170,9 @@ GEM
       logger
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    faraday-typhoeus (1.1.0)
+      faraday (~> 2.0)
+      typhoeus (~> 1.4)
     ffi (1.17.1)
     ffi (1.17.1-x86_64-linux-gnu)
     fugit (1.11.1)
@@ -493,6 +496,7 @@ DEPENDENCIES
   elasticsearch (~> 7.17.0)
   elasticsearch-transport (~> 7.17.0)
   factory_bot_rails (~> 6.0)
+  faraday-typhoeus
   iso_country_codes
   link_header
   listen
