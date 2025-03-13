@@ -33,7 +33,7 @@ gem 'will_paginate'
 
 # Messaging and background jobs
 gem 'msgr', '~> 1.5'
-gem 'sidekiq', '~> 7.0'
+gem 'sidekiq', '~> 8.0'
 gem 'sidekiq-cron', '~> 2.0'
 
 # Databases and clients
