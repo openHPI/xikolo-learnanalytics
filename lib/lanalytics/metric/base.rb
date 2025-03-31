@@ -21,9 +21,9 @@ module Lanalytics
       def all
         Rails.root.join('lib/lanalytics/metric')
           .to_enum(:each_child)
-          .map { _1.basename.to_s.split('.').first.camelize }
+          .map { it.basename.to_s.split('.').first.camelize }
           .sort
-          .reject { IGNORED_METRIC_CLASSES.include? _1 }
+          .reject { IGNORED_METRIC_CLASSES.include? it }
       end
     end
 
